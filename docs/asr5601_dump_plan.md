@@ -29,7 +29,7 @@ Key values from the embedded `5601S` entry:
 | BLE ROM base | `0x1000D000` |
 | App base | `0x10048000` |
 | ATE base | `0x100F0000` |
-| OTA info | `0x10008000` |
+| OTA tag address | `0x10008000` |
 | Bootloader size | 32768 bytes |
 
 What the code actually does:
@@ -79,12 +79,12 @@ Bench bring-up, download mode:
 | chip to host | `:<label><hex>$` lines | one line per block |
 
 The host does not need to send the `AsrIot560x ` handshake if the banner already
-arrived. The handshake exists to wake the monitor when the host missed the
-banner or when DOGO is about to burn.
+arrived. DOGO sends it before a burn; its role outside that flow is not
+documented.
 
 The label is ten characters in DOGO's parser. `0x10000000` is ten characters,
 so the likely shape is `:0x10000000<hex>$`. The parser accepts any ten-character
-alphanumeric label and groups by label, so a partition name works too.
+label and groups by label, so a partition name works too.
 
 ## Hardware
 
@@ -143,7 +143,7 @@ about the real chip.
    release. `SEL1` (P01) has no pad and its internal pull-down holds it at 0,
    which is the required download strap.
 5. Run `python tools/asr5601_dump.py --port COM7 --probe`.
-6. If there is no banner, try **921600 8N1** and repeat.
+6. If there is no banner, rerun with `--baud 921600` and repeat.
 7. Stop if the only reply is silence. Do not send anything but the probe
    commands.
 
@@ -171,13 +171,14 @@ Run:
 python tools/asr5601_dump.py --port COM7 --baud 115200 --dump dumps/asr
 ```
 
-The tool sends only `coredump flash all\r\n`. It captures until the line has
-been idle for ten seconds, retries once if nothing arrives, writes the raw text,
-then parses it.
+The tool sends the read command `coredump flash all\r\n` after the monitor is
+awake; before that it may send the handshake or a bare CRLF. It captures until
+the line has been idle for ten seconds, retries once if nothing arrives, writes
+the raw text, then parses it.
 
 Order of attempts:
 
-1. Downloads monitor at 115200, `coredump flash all`.
+1. Download monitor at 115200, `coredump flash all`.
 2. If rejected or silent, the same at 921600.
 3. If the monitor has no such command, boot the app (`SEL0 = 0`), open UART1 at
    115200 (or the app's log baud), and send `coredump flash all` again.
@@ -219,7 +220,8 @@ Only if Phases 2 and 3 fail.
 2. Beep PZ20 against QFN pins 36 and 37. If either connects, SWD costs a wire,
    not a rework.
 3. OpenOCD with the ST-Link: `cortex_m` target, connect-under-reset,
-   `dump_image asr.bin 0x10000000 0x100000`.
+   `dump_image asr.bin 0x10000000 0x100000` for the 1 MB part, or `0x80000` for
+   the 512 KB part.
 4. If reads return zeros or fault, the debug port is locked. Stop. That is
    decap territory and out of scope.
 
