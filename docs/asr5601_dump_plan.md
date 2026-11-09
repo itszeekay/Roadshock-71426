@@ -1,5 +1,7 @@
 # ASR5601S dump plan
 
+MCU: **ASR5601S** (QFN-48) — button panel main controller. This plan dumps the ASR, not either STM8S003.
+
 Status: Phase 0 is complete. The protocol is known well enough to run on the
 bench, but nothing has been read from the ASR yet. The remaining unknowns are
 behavioral, not structural:

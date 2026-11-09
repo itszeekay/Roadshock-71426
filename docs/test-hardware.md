@@ -1,5 +1,7 @@
 # Bench and test hardware
 
+MCUs tested: **STM8S003F3P6** (base), **STM8S003K3** (panel), **ASR5601S** (panel main controller).
+
 The hardware used to reverse-engineer and test the 71426. Most of it is not part
 of the final product.
 

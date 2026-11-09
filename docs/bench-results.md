@@ -1,5 +1,7 @@
 # Bench results
 
+MCUs: base **STM8S003F3P6**, panel **STM8S003K3**; ASR5601S dump still open.
+
 Everything here was measured on real hardware or read from the dumped images.
 
 ## Dumps

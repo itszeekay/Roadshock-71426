@@ -1,5 +1,7 @@
 # Panel LED display protocol - nibble to RGB map
 
+MCU: **STM8S003K3** (button panel RGB LED display driver). Not the STM8S003F3P6 on the base board.
+
 Status: STM8 side fully decompiled (Ghidra, Roadstm8Panel project, 147/147
 functions). Color order per channel is still a bench measurement.
 

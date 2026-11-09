@@ -1,5 +1,7 @@
 # ASR5601S datasheet notes
 
+MCU: **ASR5601S** (QFN-48) — the button panel main controller; different from both STM8S003 parts described in `firmware.md`.
+
 These notes are a review of the ASR560X Series Datasheet V1.4.0. The OCR text
 and a compressed print are in
 [`reference/asr560x/drive/`](../reference/asr560x/drive/), with provenance in

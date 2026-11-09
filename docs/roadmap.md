@@ -1,5 +1,7 @@
 # Roadmap: CAN gateway and PDU
 
+MCUs: base **STM8S003F3P6**, button panel **STM8S003K3** (LED driver) + **ASR5601S** (panel main controller).
+
 ## The target
 
 Both products use the **same middle MCU** on the J2 cable between the panel

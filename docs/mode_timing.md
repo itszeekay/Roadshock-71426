@@ -1,5 +1,7 @@
 # Stock channel modes - dispatch and timing
 
+MCU: **STM8S003F3P6** (base board). The mode dispatch lives in the base firmware, not the panel STM8S003K3.
+
 Status: mode dispatch recovered from the base-board decompilation (Roadstm8true
 project, Ghidra 11.3.1, sha256 `a730e8b0bd32861a02fdfd75ada5a78f632b85e54de8cb0b6a3d2d85f1dcef62`,
 256/256 functions). Timing values still need bench confirmation.

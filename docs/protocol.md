@@ -1,5 +1,7 @@
 # Protocol
 
+Base link: **STM8S003F3P6** (base, 2400 baud). Display link: **STM8S003K3** (panel, 115200 baud). Do not mix them up; they are different MCUs on different boards.
+
 There are **two** UART links on the button panel. Do not confuse them.
 
 | Link | Baud | Direction | Purpose |

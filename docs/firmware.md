@@ -16,13 +16,13 @@ using the Ghidra names recorded in `tools/ghidra/build_project.py`. They match
 - `iwdg_setup` / `iwdg_refresh`: independent watchdog started and refreshed.
 - `tim4_egr_set` / `tim4_ier_set` / `tim4_etr_write` / `tim4_enable`: TIM4
   scheduler tick started.
-- `uart1_init_2400` (0x9B17): sets `DAT_0007=0x0C`, `DAT_0006=0x80`,
-  `DAT_0002=0x960`, then calls `uart1_configure` (0x8F7E). The BRR split is
+- `uart1_init_2400` (0x9B17): sets `UART1_CR1 mask 0x0C`, `UART1_CR3 mask 0x80`,
+  `baud argument 0x960`, then calls `uart1_configure` (0x8F7E). The BRR split is
   done via `shr_4` (`sub_99dc`, `>> 4`). Live value: 2400 baud
   (`BRR1=0xA0`, `BRR2=0x1A`).
 - `outputs_init` (0x94D6) and `pa_outputs_init` (0x9B72): `gpio_init`
   (0x9541) on PD and PA, then the 12-entry pin table is applied.
-- `state_table_init` (0x917B): builds the scheduler state block at `UNK_01bf`
+- `state_table_init` (0x917B): builds the scheduler state block (`sched_block`)
   and installs the `tx_queue_drain` / `mode_tick` callbacks.
 - Enable interrupts, then `message_post_loop` (0x8080) posts the unsolicited
   `0x1B` startup frame (see `protocol.md`).
@@ -32,27 +32,27 @@ using the Ghidra names recorded in `tools/ghidra/build_project.py`. They match
 Two loops run concurrently:
 
 - `link_service_loop` (0x8EE6): waits for `uart_flag_c` (set by
-  `uart1_rx_isr`). When set it copies the frame to `DAT_021d`, calls
+  `uart1_rx_isr`). When set it copies the frame to `frame_base`, calls
   `frame_handler`, then clears the length and flags. It also services the
-  `DAT_02d5` flag (set when the ACC blackout completes) and the `UNK_01bf`
+  `frame_ready` flag (set when the ACC blackout completes) and the `sched_block`
   state block, and refreshes the watchdog each pass.
 - `tim4_isr` (0x9608) / `mode_tick` (0x8700): the TIM4 interrupt walks five
   state blocks, counts `uart_flag_b` down to set `uart_flag_c`, advances
-  `DAT_02db` toward `DAT_02d5`, and decrements the `_DAT_02cb` timer. This is
+  `sampler_on` toward `frame_ready`, and decrements the scheduler timer. This is
   the scheduler behind blink/pulse timing; exact periods still need bench
   measurement (see `mode_timing.md`).
 
 ### Frame handler
 
 `frame_handler` (0x851A) validates the 11-byte additive checksum over
-`DAT_021d` and dispatches on `DAT_021f` (type):
+`frame_base` and dispatches on `frame_type`:
 
 | Type | Handler | Effect |
 |---:|---|---|
 | 7 | inline + `config_mode_handler` (0x8146) | master power / parameter; 6 payload bytes expand to 12 nibbles, then post `0x1700` |
 | 8 | `button_bitmask_handler` (0x82B3) | button bitmask into channel state, post `0x1800` |
 | 0x0B | `cmd_0b_handler` (0x8640) | config/state update, EEPROM write, post `0x1B02` |
-| 0x0D | `cmd_0d_handler` (0x8689) | `0x0D 0` sets `_DAT_02cb=10000`; `0x0D 1` resets state |
+| 0x0D | `cmd_0d_handler` (0x8689) | `0x0D 0` sets the scheduler timer to 10000; `0x0D 1` resets state |
 | 0x19 | `cmd_19_handler` (0x860C) | searches the message queue for a matching sequence and clears it |
 | other | `noop_c` (0x86C8) | acknowledged nowhere; frame dropped |
 
@@ -71,8 +71,8 @@ A bad checksum also drops the frame. Every accepted frame gets a reply with
 | 7 | 8 | pulse path |
 
 Each internal branch writes `0x10*N` or `*pb | N` through
-`channel_state_write` (0x828D), which advances `DAT_000e` and loops while
-`DAT_000e < 0x0C`. The type-7 parameter path runs the same logic over 12
+`channel_state_write` (0x828D), which advances `ch_edit` and loops while
+`ch_edit < 0x0C`. The type-7 parameter path runs the same logic over 12
 nibbles via `config_mode_handler`. The four stock modes (toggle / momentary /
 pulse / blinking) are implemented by this dispatch. Exact blink/pulse timing
 and EEPROM encoding are bench items; see `mode_timing.md`.
@@ -91,11 +91,11 @@ and EEPROM encoding are bench items; see `mode_timing.md`.
 ### ACC and safety paths
 
 - `acc_sense_sample` (0x9223) reads PA_IDR bit1 (PA1) with an 8-sample
-  debounce into `DAT_02da`.
+  debounce into `acc_data`.
 - `ext0_pa1_isr` (0x99E1) fires when PA1 is low: it takes the reset path
-  (`reset_startup`), sets `DAT_02d4`, and reconfigures the sampler. When the
+  (`reset_startup`), sets `sched_flag`, and reconfigures the sampler. When the
   ignition sense is low the firmware drops the outputs.
-- The master-off path (`DAT_01f9` set by type 7 with a zero payload byte, or
+- The master-off path (`master_off` set by type 7 with a zero payload byte, or
   `cmd_0d_handler` with `0x0D 1`) forces all outputs off.
 
 ### RAM globals
@@ -149,11 +149,17 @@ register-bank spill; application state starts at `0x0182`.
 
 ### Button and reply path
 
-- `button_frame_builder` (0x8B96) is gated by `DAT_01f9` (master on). When the
+- `button_frame_builder` (0x8B96) is gated by `master_off` (master on). When the
   master is off it falls back to `idle_reply_builder` (0x8C31), which fills the
   reply payload with `0x88` (idle).
 - Replies use `message_post_loop`, which assembles the 11-byte frame and adds
   the 8-bit sum checksum.
+
+### What the stock firmware accepts over UART
+
+See `uart_capabilities.md`: button events, master power, and per-channel
+mode config work over the 2400-baud link with the stock firmware; PWM,
+panel LEDs, and firmware replacement do not.
 
 ### Decompilation method
 
@@ -185,7 +191,7 @@ The panel STM8 is **not** a button controller. It is an RGB LED driver:
 - 147 functions, but no GPIO input read and no button scan anywhere.
 - All 24 descriptor pins are configured as outputs (`gpio_init` mode `0xF0`,
   initial high = LED off).
-- UART1 is initialized at **115200** (`uart1_init_115200`, `DAT_0002=0xC200`).
+- UART1 is initialized at **115200** (`uart1_init_115200`, baud argument 0xC200 = 115200).
 - RX is a **9-byte** frame `0x5A … 0xEE`; four payload bytes -> 8 nibbles ->
   8 groups of 3 pins (`display_frame_handler`, 0x844C).
 - 8 RGB LEDs, one per channel (see `pinouts.md` and `panel_led_map.md`).
