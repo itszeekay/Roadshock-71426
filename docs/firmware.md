@@ -36,11 +36,14 @@ Two loops run concurrently:
   `frame_handler`, then clears the length and flags. It also services the
   `frame_ready` flag (set when the ACC blackout completes) and the `sched_block`
   state block, and refreshes the watchdog each pass.
-- `tim4_isr` (0x9608) / `mode_tick` (0x8700): the TIM4 interrupt walks five
-  state blocks, counts `uart_flag_b` down to set `uart_flag_c`, advances
-  `sampler_on` toward `frame_ready`, and decrements the scheduler timer. This is
-  the scheduler behind blink/pulse timing; exact periods still need bench
-  measurement (see `mode_timing.md`).
+- The scheduler is software-driven, not TIM4-timed. `tim4_isr` (0x9608) is
+  not a hot loop: TIM4_PSCR/TIM4_ARR are never written, so the timer runs at
+  reset defaults and its update interrupt is effectively not the pacing
+  source. The main loop walks the `sched_block` table (five 11-byte entries)
+  through installed callback pointers, and `mode_tick` (0x8700) divides that
+  loop rate by 3 (`mode_div`). Blink/pulse pacing is therefore a function of
+  main-loop throughput (UART polling), not a clocked timer. Exact periods
+  need a bench measurement (see `mode_timing.md`).
 
 ### Frame handler
 
