@@ -1,0 +1,35 @@
+# Roadshock base board - custom firmware
+# Target: STM8S003F3P6 (8 KB flash, 1 KB RAM)
+#
+# Requires SDCC with the stm8 backend (sdcc -mstm8).
+#   make          -> build/roadshock.ihx
+#   make flash    -> program via stm8flash (see docs/reproduce.md)
+
+CC      ?= sdcc
+AS      ?= sdasstm8
+CFLAGS  ?= -mstm8 --std-sdcc99 -I src
+LDFLAGS ?= -mstm8 --out-fmt-ihx
+
+SRC     := src/main.c src/board.c src/protocol.c
+OBJ     := $(SRC:src/%.c=build/%.rel)
+TARGET  := build/roadshock.ihx
+
+all: $(TARGET)
+
+build:
+	@mkdir -p build
+
+build/%.rel: src/%.c | build
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TARGET): $(OBJ)
+	$(CC) $(LDFLAGS) $(OBJ) -o $@
+	@echo "built $@"
+
+flash: $(TARGET)
+	stm8flash -c stlinkv2 -p stm8s003f3 -w $(TARGET)
+
+clean:
+	rm -rf build
+
+.PHONY: all flash clean

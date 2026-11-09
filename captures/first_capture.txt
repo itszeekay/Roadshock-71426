@@ -1,0 +1,80 @@
+HB A=1b/1f B=1b/1f
+HB A=1b/1f B=1b/1f
+HB A=1b/1f B=1b/1f
+FRAME A len=5 00 ff 1b 0a 24 |....$|
+FRAME A len=5 00 ff 1b 0a 24 |....$|
+FRAME A len=5 00 ff 1b 0a 24 |....$|
+HB A=16b/4f B=1b/1f
+FRAME B len=11 00 00 08 0c 72 40 20 02 00 00 e8 |....r@ ....|
+FRAME A len=11 00 ff 18 00 72 40 20 02 00 00 eb |....r@ ....|
+FRAME B len=11 01 00 08 0c 62 40 20 02 00 00 d9 |....b@ ....|
+FRAME A len=11 01 ff 18 00 62 40 20 02 00 00 dc |....b@ ....|
+HB A=38b/6f B=23b/3f
+FRAME B len=11 02 00 08 0c 83 88 88 88 88 88 41 |..........A|
+FRAME A len=11 02 ff 18 00 83 88 88 88 88 88 44 |..........D|
+FRAME A len=11 03 ff 18 00 82 88 88 88 88 88 44 |..........D|
+FRAME B len=11 03 00 08 0c 82 88 88 88 88 88 41 |..........A|
+HB A=60b/8f B=45b/5f
+HB A=60b/8f B=45b/5f
+FRAME B len=11 04 00 08 0c 62 50 20 02 00 00 ec |....bP ....|
+FRAME A len=11 04 ff 18 00 62 50 20 02 00 00 ef |....bP ....|
+FRAME B len=11 05 00 08 0c 62 51 20 02 00 00 ee |....bQ ....|
+FRAME B len=11 06 00 08 0c 88 88 88 83 88 88 45 |..........E|
+FRAME B len=11 07 00 08 0c 88 88 88 82 88 88 45 |..........E|
+FRAME A len=26 05 ff 18 00 62 51 20 02 00 00 f1 06 ff 18 00 88 88 88 83 88 88 48 07 ff 18 00 |....bQ ..............H....|
+FRAME A len=7 88 88 88 82 88 88 48 |......H|
+FRAME B len=11 08 00 08 0c 62 51 20 12 00 00 01 |....bQ ....|
+FRAME A len=5 08 ff 18 00 62 |....b|
+FRAME A len=6 51 20 12 00 00 04 |Q ....|
+FRAME B len=11 09 00 08 0c 62 51 21 12 00 00 03 |....bQ!....|
+FRAME A len=6 09 ff 18 00 62 51 |....bQ|
+FRAME A len=5 21 12 00 00 06 |!....|
+FRAME B len=11 0a 00 08 0c 88 88 38 88 88 88 fe |......8....|
+FRAME B len=11 0b 00 08 0c 88 88 28 88 88 88 ef |......(....|
+FRAME A len=22 0b ff 18 00 88 88 28 88 88 88 f2 0a ff 18 00 88 88 38 88 88 88 01 |......(..........8....|
+FRAME B len=11 0a 00 08 0c 88 88 38 88 88 88 fe |......8....|
+FRAME B len=11 0c 00 08 0c 88 88 88 83 88 88 4b |..........K|
+FRAME B len=2 0d 00 |..|
+FRAME A len=11 0c ff 18 00 88 88 88 83 88 88 4e |..........N|
+FRAME B len=9 08 0c 88 88 88 82 88 88 4b |........K|
+FRAME A len=11 0d ff 18 00 88 88 88 82 88 88 4e |..........N|
+FRAME B len=11 0e 00 07 00 62 40 20 02 00 00 d9 |....b@ ....|
+FRAME A len=12 0e ff 17 00 00 62 40 20 02 00 00 e8 |.....b@ ....|
+FRAME B len=11 0f 00 07 01 62 51 31 12 00 00 0d |....bQ1....|
+FRAME A len=12 0f ff 17 00 01 62 51 31 12 00 00 1c |.....bQ1....|
+FRAME B len=11 10 00 07 00 62 40 20 02 00 00 db |....b@ ....|
+FRAME A len=12 10 ff 17 00 00 62 40 20 02 00 00 ea |.....b@ ....|
+FRAME B len=11 11 00 07 01 62 51 31 12 00 00 0f |....bQ1....|
+FRAME B len=2 11 00 |..|
+FRAME A len=12 11 ff 17 00 01 62 51 31 12 00 00 1e |.....bQ1....|
+FRAME B len=9 07 01 62 51 31 12 00 00 0f |..bQ1....|
+FRAME B len=11 12 00 08 0c 72 51 31 12 00 00 2c |....rQ1...,|
+FRAME B len=1 12 |.|
+FRAME B len=4 00 08 0c 72 |...r|
+FRAME A len=11 12 ff 18 00 72 51 31 12 00 00 2f |....rQ1.../|
+FRAME B len=6 51 31 12 00 00 2c |Q1...,|
+FRAME B len=11 13 00 08 0c 83 88 88 88 88 88 52 |..........R|
+FRAME B len=11 14 00 08 0c 82 88 88 88 88 88 52 |..........R|
+FRAME A len=18 13 ff 18 00 83 88 88 88 88 88 55 14 ff 18 00 82 88 88 |..........U.......|
+FRAME A len=4 88 88 88 55 |...U|
+FRAME B len=11 15 00 08 0c 83 88 88 88 88 88 54 |..........T|
+FRAME B len=3 16 00 08 |...|
+FRAME A len=11 15 ff 18 00 83 88 88 88 88 88 57 |..........W|
+FRAME B len=4 0c 82 88 88 |....|
+FRAME A len=11 16 ff 18 00 82 88 88 88 88 88 57 |..........W|
+FRAME B len=4 88 88 88 54 |...T|
+FRAME B len=11 17 00 07 00 62 40 20 02 00 00 e2 |....b@ ....|
+FRAME B len=2 17 00 |..|
+FRAME B len=4 07 00 62 40 |..b@|
+FRAME A len=12 17 ff 17 00 00 62 40 20 02 00 00 f1 |.....b@ ....|
+FRAME B len=5 20 02 00 00 e2 | ....|
+]0;🐍Done | 10.3.1\
+Code stopped by auto-reload. Reloading soon.
+soft reboot
+[2K[0Gcode.py output:
+]0;🐍code.py | 10.3.1\TAP READY baud=2400 gap=25ms
+]0;🐍Done | 10.3.1\
+Code stopped by auto-reload. Reloading soon.
+soft reboot
+[2K[0Gcode.py output:
+]0;🐍code.py | 10.3.1\

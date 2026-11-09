@@ -1,0 +1,237 @@
+log error [Errno 30] Read-only filesystem
+
+F 380654 B 31 00 08 0c 10 00 00 00 00 00 55
+
+log error [Errno 30] Read-only filesystem
+
+F 380690 A 31 ff 18 00 10 00 00 00 00 00 58
+
+log error [Errno 30] Read-only filesystem
+
+F 382083 B 32 00 08 0c 00 00 00 00 00 00 46
+
+log error [Errno 30] Read-only filesystem
+
+F 382122 A 32 ff 18
+
+log error [Errno 30] Read-only filesystem
+
+F 382295 A 00 00 00 00 00 00 00 49
+
+log error [Errno 30] Read-only filesystem
+
+F 383589 B 33 00 08 0c 01 00 00 00 00 00 48
+
+log error [Errno 30] Read-only filesystem
+
+F 383623 A 33
+
+log error [Errno 30] Read-only filesystem
+
+F 383796 A ff 18 00 01 00 00 00 00 00 4b
+
+log error [Errno 30] Read-only filesystem
+
+F 385015 B 34 00 08 0c 00 00 00 00 00 00 48
+
+log error [Errno 30] Read-only filesystem
+
+F 385058 A 34
+
+log error [Errno 30] Read-only filesystem
+
+F 385230 A ff 18 00 00 00 00 00 00 00 4b
+
+log error [Errno 30] Read-only filesystem
+
+F 386142 B 35 00 08 0c 00 10 00 00 00 00 59
+
+log error [Errno 30] Read-only filesystem
+
+F 386357 A 35 ff 18 00 00 10 00 00 00 00 5c
+
+log error [Errno 30] Read-only filesystem
+
+F 387495 B 36 00 08 0c 00 00 00 00 00 00 4a
+
+log error [Errno 30] Read-only filesystem
+
+F 387533 A 36 ff 18 00 00
+
+log error [Errno 30] Read-only filesystem
+
+F 387706 A 00 00 00 00 00 4d
+
+log error [Errno 30] Read-only filesystem
+
+F 388624 B 37 00 08 0c 00 01 00 00 00 00 4c
+
+log error [Errno 30] Read-only filesystem
+
+F 388658 A 37
+
+log error [Errno 30] Read-only filesystem
+
+F 388833 A ff 18 00 00 01 00 00 00 00 4f
+
+log error [Errno 30] Read-only filesystem
+
+F 390131 B 38 00 08 0c 00 00 00 00 00 00 4c
+
+log error [Errno 30] Read-only filesystem
+
+F 390338 A 38 ff 18 00 00 00 00 00 00 00 4f
+
+log error [Errno 30] Read-only filesystem
+
+F 391110 B 39 00 08 0c 00 00 10 00 00 00 5d
+
+log error [Errno 30] Read-only filesystem
+
+F 391311 A 39 ff 18 00 00 00 10 00 00 00 60
+
+log error [Errno 30] Read-only filesystem
+
+F 393064 B 3a 00 08 0c 00 00 00 00 00 00 4e
+
+log error [Errno 30] Read-only filesystem
+
+F 393271 A 3a ff 18 00 00 00 00 00 00 00 51
+
+log error [Errno 30] Read-only filesystem
+
+F 393966 B 3b 00 08 0c 00 00 01 00 00 00 50
+
+log error [Errno 30] Read-only filesystem
+
+F 394175 A 3b ff 18 00 00 00 01 00 00 00 53
+
+log error [Errno 30] Read-only filesystem
+
+F 395846 B 3c 00 08 0c 00 00 00 00 00 00 50
+
+log error [Errno 30] Read-only filesystem
+
+F 396048 A 3c ff 18 00 00 00 00 00 00 00 53
+
+log error [Errno 30] Read-only filesystem
+
+F 396748 B 3d 00 08 0c 00 00 00 10 00 00 61
+
+log error [Errno 30] Read-only filesystem
+
+F 396953 A 3d ff 18 00 00 00 00 10 00 00 64
+
+log error [Errno 30] Read-only filesystem
+
+F 398403 B 3e 00 08 0c 00 00 00 00 00 00 52
+
+log error [Errno 30] Read-only filesystem
+
+F 398437 A 3e ff 18 00 00
+
+log error [Errno 30] Read-only filesystem
+
+F 398609 A 00 00 00 00 00 55
+
+log error [Errno 30] Read-only filesystem
+
+F 399230 B 3f 00 08 0c 00 00 00 01 00 00 54
+
+log error [Errno 30] Read-only filesystem
+
+F 399258 A 3f ff 18 00 00 00 00 01 00 00 57
+
+log error [Errno 30] Read-only filesystem
+
+F 400659 B 40 00 08 0c 00 00 00 00 00 00 54
+
+log error [Errno 30] Read-only filesystem
+
+F 400690 A 40
+
+log error [Errno 30] Read-only filesystem
+
+F 400862 A ff 18 00 00 00 00 00 00 00 57
+
+log error [Errno 30] Read-only filesystem
+
+F 401713 B 41 00 07 00 00 00 00 00 00 00 48
+
+log error [Errno 30] Read-only filesystem
+
+F 401921 A 41 ff 17 00 00 00 00 00 00 00 00 57
+
+log error [Errno 30] Read-only filesystem
+
+F 402917 B 42 00 07 01 00 00 00 00 00 00 4a
+
+log error [Errno 30] Read-only filesystem
+
+F 403134 A 42 ff 17 00 01 00 00 00 00 00 00 59
+
+]0;🐍Done | 10.3.1\
+
+Code stopped by auto-reload. Reloading soon.
+
+soft reboot
+
+[2K[0Gcode.py output:
+
+]0;🐍code.py | 10.3.1\]0;🐍Done | 10.3.1\
+
+Code stopped by auto-reload. Reloading soon.
+
+soft reboot
+
+[2K[0Gcode.py output:
+
+]0;🐍code.py | 10.3.1\TAP READY baud=2400
+
+HB 450608 A=0/0 B=0/0
+
+HB 465609 A=0/0 B=0/0
+
+HB 480610 A=0/0 B=0/0
+
+HB 495611 A=0/0 B=0/0
+
+HB 510612 A=0/0 B=0/0
+
+HB 525613 A=0/0 B=0/0
+
+HB 540614 A=0/0 B=0/0
+
+HB 555615 A=0/0 B=0/0
+
+HB 570616 A=0/0 B=0/0
+
+HB 585617 A=0/0 B=0/0
+
+HB 600618 A=0/0 B=0/0
+
+HB 615619 A=0/0 B=0/0
+
+HB 630620 A=0/0 B=0/0
+
+HB 645621 A=0/0 B=0/0
+
+HB 660622 A=0/0 B=0/0
+
+HB 675623 A=0/0 B=0/0
+
+HB 690624 A=0/0 B=0/0
+
+HB 705625 A=0/0 B=0/0
+
+HB 720626 A=0/0 B=0/0
+
+HB 735627 A=0/0 B=0/0
+
+HB 750628 A=0/0 B=0/0
+
+HB 765629 A=0/0 B=0/0
+
+HB 780630 A=0/0 B=0/0
+
+exited
