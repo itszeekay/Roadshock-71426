@@ -58,6 +58,17 @@ Verified twice: by continuity on the board and against the firmware's own
 
 PA1 is the ACC/ignition input.
 
+## Output stage
+
+- High-side **P-channel D30PW40A** (TO-263 / D2PAK, 30 A / 40 V), driven by a
+  SOT-23 **FMMT493** NPN (marking `493`) with a gate pull-up; active-high.
+- **Channels 1–2 (30 A)** are fitted with **two D30PW40A in parallel**;
+  channels 3–4 (20 A), 5–6 (10 A) and 7–8 (5 A) use one each.
+- Terminal label inside the lid: **1–2 = 30 A, 3–4 = 20 A, 5–6 = 10 A,
+  7–8 = 5 A**.
+- The manual's per-circuit list is 5, 5, 10, 10, 20, 20, 30, 30 for buttons
+  1–8; the lid label gives the physical order with terminal 1 at 30 A.
+
 ## Protocol
 
 Verified from live captures:

@@ -13,6 +13,9 @@
 
 The base is the board with the fused outputs and the switch panel connector.
 
+![Base MCU close-up](../images/base-stm8.jpg)
+*Base MCU: STM8S003F3P6 in TSSOP-20 (marking `003F3P6`, lot `CHN524RLY`).*
+
 | Item | Value |
 |---|---|
 | MCU | **STM8S003F3P6**, TSSOP-20, 8 KB flash, 1 KB RAM |
@@ -35,12 +38,44 @@ Output map (verified from the firmware table and by measurement):
 
 The firmware table has 12 entries; entries 8–11 are PB4 spares.
 
+### Output stage
+
+Each gang is high-side switched by a **P-channel D30PW40A** (TO-263 / D2PAK,
+30 A / 40 V), driven through a SOT-23 **FMMT493** NPN (marking `493`) with a
+gate pull-up. MCU high → NPN on → gate low → P-FET on; the channels are
+active-high.
+
+**Channels 1 and 2 (the 30 A outputs) use two D30PW40A devices in parallel.**
+Channels 3–4 (20 A), 5–6 (10 A) and 7–8 (5 A) use one each.
+
+The terminal label inside the lid gives the order:
+
+| Terminal | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Fuse | 30 A | 30 A | 20 A | 20 A | 10 A | 10 A | 5 A | 5 A |
+
+![Terminal positions](../images/terminal-positions.jpg)
+*Terminal label inside the lid: 8…1 = 5 A, 5 A, 10 A, 10 A, 20 A, 20 A, 30 A, 30 A.*
+
+![D30PW40A marking](../images/mosfet-d30pw40a.jpg)
+*D30PW40A P-channel MOSFET marking (`WM`, `D30PW40A`, `2508`).*
+
+![Output stage](../images/output-stage.jpg)
+*Output stage: D30PW40A MOSFETs alongside the fuse holders.*
+
+The manual's per-circuit list reads 5, 5, 10, 10, 20, 20, 30, 30 for buttons
+1–8; the lid label shows the same group sizes with terminal 1 at 30 A, so use
+the label for the physical order.
+
 There is **no current sensing**, no ADC use, and no I2C in the stock firmware.
 
 ## Button panel
 
 ![Button panel PCB, bottom side](../images/panel-pcb.jpg)
 *Button panel PCB (bottom side): ASR5601S (U1), STM8S003K3 (U2), J3 and the J2 cable.*
+
+![Button panel, top side](../images/panel-front.jpg)
+*Button panel, top side: 8 tactile buttons (K1–K8), the RGB LEDs, and the `Wei Ming 8KEY TZJ V1.4` case marking.*
 
 The panel contains two processors.
 

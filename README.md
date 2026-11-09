@@ -35,6 +35,8 @@ No vendor source code is included.
 | Base ↔ panel link | UART, **2400 baud 8N1**, 11-byte frames, additive checksum |
 | Panel display link | UART, **115200 8N1**, 9-byte `0x5A … 0xEE` frames, 8 nibbles = 8 RGB LEDs |
 | Base outputs | 8 channels; stock is on/off only; our firmware adds **hardware PWM** (TIM1) |
+| Output stage | 8 × **D30PW40A** high-side P-FETs; channels **1–2 (30 A) use two in parallel** |
+| Per-channel fuses | 1–2: 30 A · 3–4: 20 A · 5–6: 10 A · 7–8: 5 A |
 | Current sensing | **None** on the stock board |
 | ADC / I2C in stock firmware | **Unused** in both STM8 images |
 | Custom base firmware | SDCC 4.5, ~2.6 KB of the 8 KB flash |
@@ -45,12 +47,20 @@ No vendor source code is included.
 
 <table>
 <tr>
-<td width="50%"><img src="images/base-unit.jpg" alt="Base unit with fuses"></td>
-<td width="50%"><img src="images/panel-connectors.jpg" alt="Button panel connectors"></td>
+<td width="50%"><img src="images/base-unit.jpg" alt="Base/output unit"></td>
+<td width="50%"><img src="images/panel-front.jpg" alt="Button panel top side"></td>
 </tr>
 <tr>
-<td><em>Base/output unit: 8 fused outputs, relay/ MOSFET power stage, STM8S003F3P6.</em></td>
-<td><em>Button panel: ASR5601S (U1), STM8S003K3 (U2), J3 programming header, J2 cable.</em></td>
+<td><em>Base/output unit: 8 fused outputs, D30PW40A high-side MOSFETs, STM8S003F3P6.</em></td>
+<td><em>Button panel top side: 8 tactile buttons and RGB LEDs.</em></td>
+</tr>
+<tr>
+<td><img src="images/panel-pcb.jpg" alt="Button panel bottom side"></td>
+<td><img src="images/panel-connectors.jpg" alt="Button panel connectors"></td>
+</tr>
+<tr>
+<td><em>Button panel PCB (bottom): ASR5601S (U1), STM8S003K3 (U2).</em></td>
+<td><em>J3 (ASR UART1 / boot mode) and the J2 cable.</em></td>
 </tr>
 </table>
 
@@ -59,6 +69,9 @@ No vendor source code is included.
 - STM8S003F3P6 (TSSOP-20), 8 KB flash, 1 KB RAM.
 - 8 output channels on a 12-entry `{port, mask}` table:
   **PA3, PA2, PC7, PC6, PC5, PC4, PC3, PD2**.
+- High-side output stage: **D30PW40A** P-channel MOSFETs (TO-263, 30 A / 40 V),
+  driven by **FMMT493** NPNs; channels **1–2 use two FETs in parallel**.
+- Fuse ratings, terminals 1–8: **30, 30, 20, 20, 10, 10, 5, 5 A**.
 - One digital input: **PA1 = ACC/ignition sense**.
 - No ADC, no I2C, no current sense.
 - SWIM programming header; option bytes unprotected.
@@ -74,6 +87,9 @@ Two processors with a clear split:
 
 The STM8 has **no button inputs** — all 24 GPIOs are outputs. The buttons are on
 the ASR. This was the key discovery that explains the board.
+
+The top side of the panel carries the 8 tactile buttons (K1–K8) and the RGB
+LEDs; the bottom side carries the ASR and the STM8.
 
 ---
 

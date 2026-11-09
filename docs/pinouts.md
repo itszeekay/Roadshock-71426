@@ -30,6 +30,9 @@ All port names are STM8 port names. Package pin numbers are in brackets.
 The firmware's output table is 12 records of `{port address, mask}`; channels
 1–8 use the pins above and entries 8–11 are PB4 spares.
 
+Per-channel fuse ratings (terminals 1–8): **30, 30, 20, 20, 10, 10, 5, 5 A**.
+Channels 1–2 use two **D30PW40A** MOSFETs in parallel; the others use one.
+
 ## Button panel — STM8S003K3 (LQFP-32)
 
 | Pin | Name | Use |
