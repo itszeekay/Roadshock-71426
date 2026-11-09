@@ -186,11 +186,12 @@ A plausible first block has a stack pointer around `0x2000xxxx` and a reset
 vector into flash. A block of all `0xFF` means the wrong region or a protected
 region.
 
-If the first block looks right, read the full 1 MB twice, in separate power
-cycles, to two directories.
+If the first block looks right, read the full part twice, in separate power
+cycles, to two directories. The ASR560X family ships with 1 MB or 512 KB of
+flash; read 1 MB first and trim trailing `0xFF` if the part is the smaller one.
 
-Exit criterion: two captures whose parsed `flash.bin` files are 1,048,576 bytes
-and have identical SHA-256.
+Exit criterion: two captures whose parsed `flash.bin` files are the same size
+and have identical SHA-256, covering the full part.
 
 ## Phase 4: verify and archive
 
@@ -231,15 +232,16 @@ Only if Phases 2 and 3 fail.
 | Capture has `:<label><hex>$` | normal; the tool rebuilds `flash.bin` |
 | Capture has only `$<hex>$` | normal for the ReadImage path; the tool writes `readimage.bin` |
 | Read returns all `0xFF` | wrong base address or a protected region; try the app base `0x10048000` |
+| Read is clean for 512 KB, then all `0xFF` | the part is the 512 KB version; trim the tail |
 | Only one clean read, second differs | treat it as no dump; the ASR has no restore image |
 | SWD locked, UART has no read | stop and reassess; no cheap path left |
 | CLI help lists erase but no read | do not experiment with erase; the restore image does not exist |
 
 ## Definition of done
 
-Two byte-identical 1 MB images, their SHA-256, a carved partition map, and a
-note in `docs/` describing exactly how they were read. That matches the standard
-used for the STM8 dumps.
+Two byte-identical full-flash images, their SHA-256, a carved partition map, and
+a note in `docs/` describing exactly how they were read. That matches the
+standard used for the STM8 dumps.
 
 Phases 1 to 3 are an afternoon if the monitor accepts the command. If it does
 not, Phase 5 is a short detour only when PZ20 reaches the SWD pads.

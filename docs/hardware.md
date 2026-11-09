@@ -130,7 +130,7 @@ The panel PCB marking on U1 reads `ASR5601S`, `FD1A21G`, `P19K89-00`.
 
 - No CAN transceiver/controller on either stock board.
 - No current shunt or current-sense amplifier.
-- No external flash on the ASR (1 MB is inside the SiP).
+- No external flash on the ASR (1 MB or 512 KB is inside the SiP).
 - No light sensor path in the STM8 firmware (no ADC at all).
 
 If an ambient-light sensor exists on the panel, it is on the ASR (which has
