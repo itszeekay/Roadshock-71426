@@ -79,6 +79,7 @@ HEADER_PANEL = """/*
 
 ROLE = {
     # base (Roadstm8true)
+    0x8000: "reset vector",
     0x9CD8: "reset/startup: SP=0x03FF",
     0x8F7E: "UART1 configure (CR1/CR3/BRR1/BRR2/CR2)",
     0x9B17: "UART1 init for 2400 baud (DAT_0002=0x960)",
