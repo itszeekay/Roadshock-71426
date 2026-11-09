@@ -132,7 +132,9 @@ gaps with `0xFF`, and writes a SHA-256 next to it.
 2. Wire J3: `TX` to bridge RX, `RX` to bridge TX, `GND` to GND, `RST` and
    `SEL0` to two free GPIOs. Do not connect +3.3.
 3. Check the idle level on J3 TX, about 3.3 V, before connecting anything.
-4. Start at **115200 8N1**. Assert `SEL0 = 1`, pulse `RST` low, release.
+4. Start at **115200 8N1**. Assert `SEL0 = 1` (pad P00), pulse `RST` low,
+   release. `SEL1` (P01) has no pad and its internal pull-down holds it at 0,
+   which is the required download strap.
 5. Run `python tools/asr5601_dump.py --port COM7 --probe`.
 6. If there is no banner, try **921600 8N1** and repeat.
 7. Stop if the only reply is silence. Do not send anything but the probe
