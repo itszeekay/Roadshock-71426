@@ -3,7 +3,6 @@
 **Harbor Freight SKU 71426** ·
 [product page](https://www.harborfreight.com/universal-led-8-gang-switch-panel-71426.html) ·
 [owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf)
-(PDF link, not redistributed here)
 
 Firmware analysis, pinouts, wire protocol, and a practical path to a
 CAN-controlled power distribution unit (PDU) built on the stock hardware.
@@ -20,7 +19,6 @@ boards:
 
 Everything here was obtained from hardware the author owns: SWIM dumps of two
 unprotected STM8 microcontrollers, static analysis, and passive UART captures.
-No vendor source code is included.
 
 ---
 
@@ -218,7 +216,7 @@ tools/      protocol reference, PWM tests, ASR dump tools, Ghidra scripts
 reference/  curated ASR560X documentation, DOGO extraction and chip table
 rp2040/     CircuitPython sniffer, impersonator, base emulator, CAN sketch
 captures/   real bus captures
-images/     board photos (EXIF/GPS stripped)
+images/     board photos
 ```
 
 ---
@@ -272,11 +270,10 @@ liability for damage or injury.
 
 Original code and documentation in this repository are released under the MIT
 license (see [`LICENSE`](LICENSE)). Stock firmware dumps are provided for
-interoperability and research on hardware owned by the author; vendor firmware
-remains the property of its respective owners. No vendor source code or ASR BLE
-stack/ROM is redistributed here. The ASR reference archive includes ASR-published
-documentation, the DOGO tool, and a derived OCR/print of the ASR560X datasheet;
-those remain ASR's property. See [`NOTICE.md`](NOTICE.md).
+interoperability and research on hardware owned by the author. Vendor material
+remains the property of its respective owners. The ASR reference archive
+contains ASR-published documentation, the DOGO tool, and an OCR text and print
+of the ASR560X datasheet. See [`NOTICE.md`](NOTICE.md).
 
 Harbor Freight and the product names are trademarks of their owners. This
 project is not affiliated with or endorsed by Harbor Freight, the OEM, or ASR

@@ -24,7 +24,7 @@
 | `drive/DOGO_extract/chip_table.txt` | Generated from `data.pyc` |
 | `drive/DOGO_extract/dump_path.dis.txt` | Annotated disassembly produced from `pyserial_demo.pyc` |
 | `drive/DOGO_extract/README.md` | Notes on the extraction and protocol |
-| `drive/ASR560X_test_image_layout.md` | Derived from ASR's public 560X demo image, which is not redistributed |
+| `drive/ASR560X_test_image_layout.md` | Derived from ASR's public 560X demo image |
 | `drive/ASR560X_Datasheet_V1.4.0_EN.ocr.txt` | OCR text of ASR's V1.4.0 datasheet |
 | `drive/ASR560X_Datasheet_V1.4.0_EN.print_150dpi.pdf` | 150 dpi print of the datasheet |
 | `meta/ASR560X_datasheet_provenance.md` | Source, original size, OCR method and limitations |
@@ -40,15 +40,11 @@ https://drive.google.com/file/d/15PWqvktRdqpaRSQ3lrGuPQahQKwdiC1G/view?usp=shari
 
 The image is a full flash image for the ASR560X transparent-transmission demo.
 ASR's readme says it contains bootloader, BLE ROM and app, and is written at
-`0x10000000`. Its bootloader string is `ASRBOOTLOADER-560X-MX-V2.0.3`. It is
-**not redistributed here** because it contains the ASR BLE ROM. Only the derived
-partition layout note is included.
-
-The PDFs were re-saved with author and creator metadata removed. Their visible
-content is unchanged.
+`0x10000000`. Its bootloader string is `ASRBOOTLOADER-560X-MX-V2.0.3`. The image
+is available from ASR at the link above. Its partition layout is in
+`drive/ASR560X_test_image_layout.md`.
 
 The ASR560X datasheet source is ASR's Baidu Pan share:
-https://pan.baidu.com/s/19k-GYoEX1FZoNk6SNfoOrw (code `brif`). The original
-2,045,676-byte, 46-page vector PDF is not included. The OCR text and 150 dpi
-print are derived from ASR's published copy. See
+https://pan.baidu.com/s/19k-GYoEX1FZoNk6SNfoOrw (code `brif`). The print is
+derived from ASR's 2,045,676-byte, 46-page vector PDF. See
 `meta/ASR560X_datasheet_provenance.md`.

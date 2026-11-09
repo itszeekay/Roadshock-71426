@@ -3,8 +3,7 @@
 **Product:** ROADSHOCK Universal LED 8 Gang Switch Panel,
 **Harbor Freight SKU 71426**.
 [Product page](https://www.harborfreight.com/universal-led-8-gang-switch-panel-71426.html) ·
-[owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf)
-(linked, not redistributed).
+[owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf).
 
 ## Base board (power/output module)
 

@@ -4,13 +4,10 @@ A small, curated copy of ASR Microelectronics' public ASR560X documentation and
 tools. It exists because ASR's original links are disappearing and the ASR5601S
 dump work depends on a few of them.
 
-Only the files used by the Roadshock work are included. The full site mirror and
-the SDK are not. The original 2 MB vector datasheet is not included either; an
-OCR text and a 150 dpi print of ASR's V1.4.0 datasheet are. One ASR582X page is
-kept in `notes/` because it is the only ASR document found that names the read
-command. ASR's 560X demo flash image is not redistributed because it contains
-the ASR BLE ROM; its partition layout is recorded in
-`drive/ASR560X_test_image_layout.md`.
+Only the files used by the Roadshock work are included. The ASR560X V1.4.0
+datasheet is included as OCR text and a 150 dpi print. One ASR582X page is kept
+in `notes/` because it is the only ASR document found that names the read
+command.
 
 ## Contents
 
@@ -35,16 +32,10 @@ the ASR BLE ROM; its partition layout is recorded in
 ## Datasheet status
 
 The archive contains ASR560X Series Datasheet V1.4.0 (2023-09-18) as OCR text
-and a 150 dpi print. The original 2 MB vector PDF is not included. The OCR is
-useful for grep and table reading order; use the print PDF for exact table
-cells. Source and OCR limitations are in
+and a 150 dpi print. The print is derived from ASR's 2,045,676-byte, 46-page
+vector PDF. The OCR is useful for grep and table reading order; use the print
+PDF for exact table cells. Source and OCR limitations are in
 [meta/ASR560X_datasheet_provenance.md](meta/ASR560X_datasheet_provenance.md).
-
-The V1.2.1 datasheet is not included. It is available only through a credit-gated
-CSDN re-upload.
-
-The `analysis/asr6601.pdf` file sometimes mistaken for this datasheet is the
-**ASR6601** datasheet, a different LoRa chip. It is not included.
 
 The datasheet review is in
 [docs/asr5601_datasheet.md](../../docs/asr5601_datasheet.md). It corrected the
@@ -67,10 +58,10 @@ keypad block, peripheral map and power passives.
 - The embedded `data.pyc` chip table gives the 5601S image addresses, the ASCII
   handshake `AsrIot560x` and the 921600 high-speed baud without needing
   `config.ini`.
-- ASR's 560X demo image is a known-good flash layout. Its bootloader identifies
-  itself as `ASRBOOTLOADER-560X-MX-V2.0.3` and its partition table includes
-  `COREDUMP`. The offsets and signatures are in
-  `drive/ASR560X_test_image_layout.md`; the image itself is not redistributed.
+- ASR publishes the 560X demo image, which contains the bootloader, BLE ROM and
+  app. Its bootloader identifies itself as `ASRBOOTLOADER-560X-MX-V2.0.3` and its
+  partition table includes `COREDUMP`. The offsets and signatures are in
+  `drive/ASR560X_test_image_layout.md`.
 - The selected EN pages cover the boot, memory layout, download tool and FAQ.
 - The two ZH pages cover the AT command list and the SDK firmware types.
 
@@ -110,5 +101,4 @@ ASR's property. They are included for preservation, interoperability and repair
 research, with no license granted. If ASR or a rights holder asks for removal,
 the files will be removed.
 
-PDF author and creator metadata was stripped before publication. The visible
-content is unchanged. `MANIFEST.sha256` covers the files as published.
+`MANIFEST.sha256` covers the files as published.

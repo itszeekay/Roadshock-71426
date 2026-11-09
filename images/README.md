@@ -1,7 +1,7 @@
 # Images
 
-Board photos used in the documentation. All were re-encoded to strip EXIF/GPS
-and resized to at most 1600 px on the long edge. The originals are not included.
+Board photos used in the documentation. No location metadata is retained. The
+images are sized to at most 1600 px on the long edge.
 
 | File | Shows |
 |---|---|

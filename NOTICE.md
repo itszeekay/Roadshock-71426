@@ -18,23 +18,20 @@ open an issue.
 
 ## Vendor reference archive
 
-`reference/asr560x/` contains a curated set of ASR-published documentation and
-the DOGO tool, included for preservation and interoperability research because
-ASR's original links are disappearing. It also contains Python modules extracted
-from that tool for protocol analysis, and an OCR text and 150 dpi print of the
-ASR560X V1.4.0 datasheet. Copyright remains with ASR Microelectronics; no license
-is granted. PDF author and creator metadata was stripped. If ASR or a rights
-holder asks for removal, the files will be removed.
+`reference/asr560x/` contains ASR-published documentation, the DOGO tool,
+Python modules extracted from it, and an OCR text and 150 dpi print of the
+ASR560X V1.4.0 datasheet. This material is included for preservation and
+interoperability research. Copyright remains with ASR Microelectronics; no
+license is granted. If ASR or a rights holder asks for removal, the files will
+be removed.
 
-The rest of the repository contains no vendor source code. In particular it does
-not include the ASR SDK, the ASR BLE stack or ROM, the ST Standard Peripheral
-Library, or the community STM8 SLEIGH module. ASR's 560X demo flash image is not
-included because it contains the BLE ROM; only a derived partition layout note is
-published.
+ASR publishes the ASR560X demo image, which contains the bootloader, BLE ROM
+and app. Its partition layout is documented in
+`reference/asr560x/drive/ASR560X_test_image_layout.md`.
 
-Those are referenced by name/URL where relevant. The decompiled C is a
-reconstruction produced from the author's own dumps; the STM8 SLEIGH module is
-an independent third-party project.
+Vendor material in this repository remains the property of its respective
+owners. The decompiled C is a reconstruction produced from the author's own
+dumps; the STM8 SLEIGH module is an independent third-party project.
 
 ## Trademarks
 

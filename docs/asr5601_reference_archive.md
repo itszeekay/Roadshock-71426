@@ -19,13 +19,10 @@ A curated subset of ASR's public ASR560X material, chosen for the dump work:
 | `reference/asr560x/SOURCES.md` | Source URL, Drive ID or Baidu share for each file |
 | `reference/asr560x/MANIFEST.sha256` | Hashes of the published files |
 
-The original 2 MB vector datasheet is not included. The archive has a page-marked
-OCR text and a 150 dpi print. Not included: the full site mirror, other ASR
-product families, and the ASR SDK. The one ASR582X page above is kept because it
-documents the read command. ASR's 560X demo flash image is not redistributed
-because it contains the ASR BLE ROM; its partition layout is in
-`reference/asr560x/drive/ASR560X_test_image_layout.md`. PDF author and creator
-metadata was stripped before publication.
+The archive has the V1.4.0 datasheet as a page-marked OCR text and a 150 dpi
+print. The ASR582X page above is kept because it documents the read command.
+ASR's 560X demo image contains the bootloader, BLE ROM and app; its partition
+layout is in `reference/asr560x/drive/ASR560X_test_image_layout.md`.
 
 ## What Phase 0 changed
 

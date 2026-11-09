@@ -59,8 +59,8 @@ the same UART1 monitor, but it has not been proven on the 5601S.
 
 The layout note from ASR's public 560X transparent-transmission image confirms
 the flash bootloader is `ASRBOOTLOADER-560X-MX-V2.0.3` and that `COREDUMP` is a
-partition name. The image itself is not redistributed because it contains the
-ASR BLE ROM. The image contains no CLI command strings, which suggests the `>>>`
+partition name. ASR publishes the image, which contains the bootloader, BLE ROM
+and app. The image contains no CLI command strings, which suggests the `>>>`
 monitor and its commands live in mask ROM, not in the flash bootloader. If the
 ROM monitor does not implement `coredump flash all`, the fallback is the same
 command to the running app on UART1.

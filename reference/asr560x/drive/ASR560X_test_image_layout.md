@@ -5,9 +5,9 @@ transparent-transmission demo. It is written at `0x10000000`. Its partition
 boundaries match the ASR560X developer guide, so it is a useful template for
 carving the panel dump.
 
-The image itself is **not redistributed here** because it contains the ASR BLE
-ROM. It is available from the ASR Drive link in [SOURCES.md](../SOURCES.md).
-This note records the offsets and signatures only.
+ASR publishes the image at the Drive link in [SOURCES.md](../SOURCES.md). The
+image contains the bootloader, BLE ROM and app. This note records its partition
+offsets and signatures.
 
 | Offset in image | Address | Size | Signature found |
 |---|---|---|---|
