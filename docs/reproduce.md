@@ -8,6 +8,7 @@
 | SDCC 4.5 | build the custom base firmware |
 | Python 3 + `pyserial` | protocol tests and console capture |
 | Adafruit Feather RP2040 + CircuitPython | bus capture / impersonation |
+| Optional: Adafruit RP2040 CAN Bus Feather (MCP25625) | early CAN bench testing; not part of the current design |
 | Optional: USB-UART adapter | ASR J3 experiments |
 
 ---

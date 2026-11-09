@@ -38,6 +38,7 @@ No vendor source code is included.
 | Output stage | 8 × **D30PW40A** high-side P-FETs; channels **1–2 (30 A) use two in parallel** |
 | Per-channel fuses | 1–2: 30 A · 3–4: 20 A · 5–6: 10 A · 7–8: 5 A |
 | Current sensing | **None** on the stock board |
+| Bench CAN | **Adafruit RP2040 CAN Bus Feather** (MCP25625); used for early tests, not in the current design |
 | ADC / I2C in stock firmware | **Unused** in both STM8 images |
 | Custom base firmware | SDCC 4.5, ~2.6 KB of the 8 KB flash |
 
@@ -190,6 +191,13 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 - The final CAN gateway/PDU hardware (CAN controller choice, current sensing).
 
 ---
+
+## Test hardware
+
+The bench used an Adafruit Feather RP2040 DVI for UART capture and an
+**Adafruit RP2040 CAN Bus Feather (MCP25625)** for early CAN testing. The CAN
+Feather is not part of the current design and is not actively used. See
+[`docs/test-hardware.md`](docs/test-hardware.md).
 
 ## Repository layout
 

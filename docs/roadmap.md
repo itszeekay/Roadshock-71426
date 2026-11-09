@@ -58,6 +58,8 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
 
 4. **CAN**
    - Add MCP2515 or CAN2040; test with a USB-CAN adapter or a second Feather.
+   - Bench note: early testing used an Adafruit RP2040 CAN Bus Feather
+     (MCP25625). It is not part of the current design.
    - Implement the CAN ID map.
 
 5. **PDU variant**

@@ -3,6 +3,7 @@
 | Document | Contents |
 |---|---|
 | [hardware.md](hardware.md) | Boards, identified ICs, connectors, power, programming headers, photos |
+| [test-hardware.md](test-hardware.md) | Bench hardware, including the CAN Bus Feather used for early testing |
 | [pinouts.md](pinouts.md) | Base output map, panel RGB LED map, STM8 TSSOP-20/LQFP-32, ASR5601S QFN-48, Feather wiring |
 | [protocol.md](protocol.md) | 2400-baud frame format, message types, replies, checksum, display link |
 | [firmware.md](firmware.md) | Base and panel firmware behaviour, decompilation, custom firmware |

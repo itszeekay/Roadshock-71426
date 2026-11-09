@@ -11,6 +11,9 @@ CircuitPython examples for the 2400-baud link. Copy the file you want to
 | `base_emulator.py` | emulate the base for a standalone panel |
 | `can_gateway.ino` | Arduino CAN-gateway skeleton (not yet validated) |
 
+`can_gateway.ino` targets the Adafruit RP2040 CAN Bus Feather (MCP25625) used
+for early bench testing. That board is not part of the current design.
+
 ## Passive listen
 
 | Feather | Board |
