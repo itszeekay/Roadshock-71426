@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASR560X Series BLE Programming Tool User Manual &mdash; ASR IoT Docs latest version documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=fb0ba70a"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ASR560X Demo Project/ SDK" href="../Demo-Project/index.html" />
+    <link rel="prev" title="ASR560X Download Tool" href="index.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="asriot" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/ASR560X/Download-Tool/560X_Programming.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ASR IoT Docs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../iot.html"> IoT/AIoT Wi-Fi MCU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E9%80%8F%E4%BC%A0.html"> Wi-Fi Interface Transceiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lora.html"> LoRa Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E8%93%9D%E7%89%99.html"> Bluetooth Product</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Language</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/">简体中文</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR550X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Datasheet/index.html">ASR550X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Download-Tool/index.html">ASR550X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Quick-Start/index.html">ASR550X Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR560X</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Datasheet/index.html">ASR560X Series Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware-Reference/index.html">ASR560X Hardware Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ASR560X Download Tool</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> ASR560X Series_BLE Programming Tool User Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-1">1. Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instructions-for-use">2. Instructions for Use</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-functions">2.1 Basic Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#program-download">2.2 Program Download</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#program-start-up">2.3 Program Start-up</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commonly-used-functions">3. Commonly Used Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flash-erase">3.1 Flash Erase</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#save-log">3.2 Save Log</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Demo-Project/index.html">ASR560X Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Quick-Start/index.html">ASR560X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">ASR560X Series FAQs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR582X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Datasheet/index.html">ASR582X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Download-Tool/index.html">ASR582X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Quick-Start/index.html">ASR582X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Certification/index.html">ASR582X Certifcation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR6601</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Datasheet/index.html">ASR6601 Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Hardware-Reference/index.html">ASR6601 Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Download-Tool/index.html">ASR6601 Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Demo-Project/index.html">ASR6601 Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Quick-Start/index.html">ASR6601 Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/FAQ/index.html">ASR6601 FAQs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Test-Report/index.html">ASR6601 Test Report and Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ASR IoT Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ASR560X Download Tool</a></li>
+      <li class="breadcrumb-item active">ASR560X Series BLE Programming Tool User Manual</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/ASR560X/Download-Tool/560X_Programming.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="asr560x-series-ble-programming-tool-user-manual">
+<h1>ASR560X Series BLE Programming Tool User Manual<a class="headerlink" href="#asr560x-series-ble-programming-tool-user-manual" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/ASR560X/烧录工具介绍/560X_编程工具.html">简体中文</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p><strong>About this Document</strong></p>
+<p>This document mainly introduces the configuration and use of the DOGO tool for ASR560X series BLE chip development.</p>
+<p><strong>Intended Readers</strong></p>
+<p>This document is mainly for engineers who use this chip to develop their own platform and products, for instance:</p>
+<ul class="simple">
+<li><p>PCB Hardware Development Engineer</p></li>
+<li><p>Software Engineer</p></li>
+<li><p>Technical Support Engineer</p></li>
+</ul>
+<p><strong>Included Chip Models</strong></p>
+<p>The product models corresponding to this document are as follows.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Core</p></th>
+<th class="head"><p>SiP Flash</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ASR560X</p></td>
+<td><p>BLE 5.1 full feature (compatible with 5.2) BLE SIG Mesh IEEE 802.15.4 2.4G Proprietary</p></td>
+<td><p>ARM CM0+</p></td>
+<td><p>1 MB/ 512 KB</p></td>
+<td><p>AOA/AOD/Voice/IRTxRx/ Quadrature Decoder/Keypad/ 5V UART/5V GPIO/Wi-Fi concurrent</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Copyright Notice</strong></p>
+<p>© 2023 ASR Microelectronics Co., Ltd. All rights reserved. No part of this document can be reproduced, transmitted, transcribed, stored, or translated into any language in any form or by any means without the written permission of ASR Microelectronics Co., Ltd.</p>
+<p><strong>Trademark Statement</strong></p>
+<p>ASR and ASR Microelectronics Co., Ltd. are trademarks of ASR Microelectronics Co., Ltd.</p>
+<p>Other trade names, trademarks, and registered trademarks mentioned in this document are the property of their respective owners and are hereby declared.</p>
+<p><strong>Disclaimer</strong></p>
+<p>ASR does not give any warranty of any kind and may make improvements and/or changes in this document or in the product described in this document at any time.</p>
+<p>This document is only used as a guide, and no contents in the document constitute any form of warranty. Information in this document is subject to change without notice.</p>
+<p>All liability, including liability for infringement of any proprietary rights caused by using the information in this document, is disclaimed.</p>
+<p><strong>ASR Microelectronics Co., Ltd.</strong></p>
+<p>Address: 9F, Building 10, No. 399 Keyuan Road, Zhangjiang High-tech Park, Pudong New Area, Shanghai, 201203, China</p>
+<p>Homepage: <a class="reference external" href="http://www.asrmicro.com/">http://www.asrmicro.com/</a></p>
+<p><strong>Revision History</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Date</p></th>
+<th class="head"><p>Version</p></th>
+<th class="head"><p>Release Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2023.05</p></td>
+<td><p>V1.1.2</p></td>
+<td><p>First Release.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="introduction-1">
+<span id="id2"></span><h2>1. Introduction<a class="headerlink" href="#introduction-1" title="Link to this heading"></a></h2>
+<p>This document mainly introduces the configuration and use of the DOGO tool for ASR5601 BLE chip development.</p>
+<p>The following Figure shows the interface of the download debug tool DOGO.</p>
+<blockquote>
+<div><p><img alt="image1" src="../../_images/%E5%9B%BE1-11.png" /></p>
+</div></blockquote>
+<p>DOGO supports serial debugging and program download functions:</p>
+<ol class="arabic simple">
+<li><p><strong>Serial debugging function</strong>: it supports interaction of serial AT commands, Hex display and exporting log to file and bulk sending of multiple AT commands.</p></li>
+<li><p><strong>Program download function</strong>: it supports downloading multiple firmware.</p></li>
+<li><p><strong>High-speed download function</strong>: It supports downloading firmware in high-speed mode. Check the “high” option to increase the download rate to 921600 bps automatically.</p></li>
+</ol>
+</section>
+<section id="instructions-for-use">
+<h2>2. Instructions for Use<a class="headerlink" href="#instructions-for-use" title="Link to this heading"></a></h2>
+<section id="basic-functions">
+<h3>2.1 Basic Functions<a class="headerlink" href="#basic-functions" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Connect the serial port to PC and ASR5601 EVB, click the “DetectPort” button, and select the corresponding port number in the “SelectPort” box.</p></li>
+<li><p>Make the corresponding settings according to the corresponding serial port status, and click “OpenPort” after the settings are completed.</p></li>
+<li><p>In the serial command sending area, :raw-latex:<a href="#id3"><span class="problematic" id="id4">`</span></a>rn <a href="#id5"><span class="problematic" id="id6">`</span></a>is appended to the ASCII code sent by default, so there is no need to add it manually, and it supports regular sending and Hex sending.</p></li>
+<li><p>It supports timestamp capture function. Check the “Timestamp” option, and the prefix of the captured log will be added with a timestamp.</p></li>
+</ol>
+</section>
+<section id="program-download">
+<h3>2.2 Program Download<a class="headerlink" href="#program-download" title="Link to this heading"></a></h3>
+<section id="bootloader-download">
+<h4>2.2.1 Bootloader Download<a class="headerlink" href="#bootloader-download" title="Link to this heading"></a></h4>
+<ol class="arabic simple">
+<li><p><strong>Step 1</strong>: Select the jumper (the jumper for setting download mode and P4/P5 jumper as shown in the figure) and configure the ASR5601 EVB to UART download mode: MODEL_SEL1 = 0, MODEL_SEL0 = 1, and configure the download serial port to P4/P5. After that, turn on the power switch, and the red light will be lit.</p></li>
+</ol>
+<blockquote>
+<div><p><img alt="image2" src="../../_images/%E5%9B%BE2-1.png" /></p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p><strong>Step 2</strong>: Connect the serial port to PC and ASR5601 EVB click the “DetectPort” button, select the corresponding serial port and start configuration (baud rate: 115200 bps, 8 data bits, no parity bits, and 1 stop bit), and click “OpenPort” after the setting is completed. Select “ChipType” as 560X.</p></li>
+<li><p><strong>Step 3</strong>: Click “SetPath”, then click “browser” for Bootloader in the pop-up window to enter the directory and select the bootloader file to be downloaded. After that, click “Save” to close the window, and then check “only bootloader” and “high” for greater download speed.</p></li>
+</ol>
+<blockquote>
+<div><p><img alt="image3" src="../../_images/%E5%9B%BE2-2.png" /></p>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p><strong>Step 4</strong>: Press the reset button on the EVB, and the serial console will print “1F2E3D00”, then click “Burn”, and the bin file will be programmed. When the progress bar reaches 100%, it means the bin file has been downloaded successfully.</p></li>
+</ol>
+<blockquote>
+<div><p><img alt="image4" src="../../_images/%E5%9B%BE2-3.png" /></p>
+</div></blockquote>
+</section>
+<section id="ble-rom-download">
+<h4>2.2.2 BLE ROM Download<a class="headerlink" href="#ble-rom-download" title="Link to this heading"></a></h4>
+<p><strong>Steps 1, 2, and 4</strong> are the same as the steps for Bootloader download.</p>
+<p><strong>Step 3:</strong> Click “SetPath”, then click “browser” for ROM in the pop-up window to enter the directory and select the ROM file to be downloaded. After that, click “Save” to close the window, and then check “only rom” and “high” for greater download speed.</p>
+<blockquote>
+<div><p><img alt="image5" src="../../_images/%E5%9B%BE2-4.png" /></p>
+</div></blockquote>
+</section>
+<section id="app-download">
+<h4>2.2.3 APP Download<a class="headerlink" href="#app-download" title="Link to this heading"></a></h4>
+<p><strong>Steps 1, 2, and 4</strong> are the same as the steps for Bootloader download.</p>
+<p><strong>Step 3:</strong> Click “SetPath”, then click “browser” for APP in the pop-up window to enter the directory and select the APP file to be downloaded. After that, click “Save” to close the window, and then check “only image” and “high” for greater download speed.</p>
+<blockquote>
+<div><p><img alt="image6" src="../../_images/%E5%9B%BE2-5.png" /></p>
+</div></blockquote>
+</section>
+<section id="ate-download">
+<h4>2.2.4 ATE Download<a class="headerlink" href="#ate-download" title="Link to this heading"></a></h4>
+<p><strong>Steps 1, 2, and 4</strong> are the same as the steps for Bootloader download.</p>
+<p><strong>Step 3:</strong> Click “SetPath”, then click “browser” for ATE in the pop-up window to enter the directory and select the ATE file to be downloaded. After that, click “Save” to close the window, and then check “only ate” and “high” for greater download speed.</p>
+<blockquote>
+<div><p><img alt="image7" src="../../_images/%E5%9B%BE2-6.png" /></p>
+</div></blockquote>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>ATE firmware is mainly used for device production testing, and it does not affect the running of app programs without downloading it.</p>
+</div>
+</section>
+<section id="download-four-firmware">
+<h4>2.2.5 Download Four Firmware<a class="headerlink" href="#download-four-firmware" title="Link to this heading"></a></h4>
+<p><strong>Steps 1, 2, and 4</strong> are the same as the steps for Bootloader download.</p>
+<p><strong>Step 3</strong>: Click “SetPath” and when the small window pops up:</p>
+<ol class="arabic simple">
+<li><p>Click “browser” for Bootloader to enter the directory and select the Bootloader file to be downloaded.</p></li>
+<li><p>Click “browser” for BLE ROM to enter the directory and select the ROM file to be downloaded.</p></li>
+<li><p>Click “browser” for APP to enter the directory and select the APP file to be downloaded.</p></li>
+<li><p>Click “browser” for ATE to enter the directory and select the ATE file to be downloaded.</p></li>
+</ol>
+<p>Click “Save” to close the window, and then check “high” for greater download speed.</p>
+<blockquote>
+<div><p><img alt="image8" src="../../_images/%E5%9B%BE2-7.png" /></p>
+</div></blockquote>
+</section>
+</section>
+<section id="program-start-up">
+<h3>2.3 Program Start-up<a class="headerlink" href="#program-start-up" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>After downloading all the firmware, change the jumper of EVB to normal boot mode (as shown below), then press the Reset button, the SoC will reboot and print the Bootloader log.</p></li>
+</ol>
+<blockquote>
+<div><p><img alt="image9" src="../../_images/%E5%9B%BE2-8.png" /></p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>The following figure is an example of the program starting normally. Both Bootloader and APP start normally.</p></li>
+</ol>
+<blockquote>
+<div><p><img alt="image10" src="../../_images/%E5%9B%BE2-9.png" /></p>
+</div></blockquote>
+</section>
+</section>
+<section id="commonly-used-functions">
+<h2>3. Commonly Used Functions<a class="headerlink" href="#commonly-used-functions" title="Link to this heading"></a></h2>
+<section id="flash-erase">
+<h3>3.1 Flash Erase<a class="headerlink" href="#flash-erase" title="Link to this heading"></a></h3>
+<p>Flash erase can be performed using the DOGO tool. Refer to the following figure for the steps:</p>
+<blockquote>
+<div><p><img alt="image11" src="../../_images/%E5%9B%BE3-1.png" /></p>
+</div></blockquote>
+</section>
+<section id="save-log">
+<h3>3.2 Save Log<a class="headerlink" href="#save-log" title="Link to this heading"></a></h3>
+<p>Check the “ReceiveFile” option on the right side of the DOGO tool, and then click “OpenPort”. The log data was received, and it will be saved to the tool directory recev_data.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Users need to check the ” ReceiveFile” option and then open the serial port to enable the log saving function.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="ASR560X Download Tool" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../Demo-Project/index.html" class="btn btn-neutral float-right" title="ASR560X Demo Project/ SDK" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright ASR Microelectronics Co., Ltd.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

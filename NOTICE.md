@@ -16,14 +16,17 @@ They are not claimed to be free works. The stock firmware remains the property
 of its respective owners. If you are a rights holder and want a file removed,
 open an issue.
 
-## No vendor source code
+## Vendor reference archive
 
-This repository does **not** contain:
+`reference/asr560x/` contains a curated set of ASR-published documentation and
+the DOGO tool, included for preservation and interoperability research because
+ASR's original links are disappearing. Copyright remains with ASR
+Microelectronics; no license is granted. PDF author and creator metadata was
+stripped. If ASR or a rights holder asks for removal, the files will be removed.
 
-- ASR SDK source, ASR BLE stack/ROM binaries, or ASR datasheet text,
-- ST Standard Peripheral Library source,
-- the community STM8 SLEIGH module,
-- vendor schematics or manuals.
+The rest of the repository contains no vendor source code. In particular it does
+not include the ASR SDK, the ASR BLE stack or ROM, the ST Standard Peripheral
+Library, or the community STM8 SLEIGH module.
 
 Those are referenced by name/URL where relevant. The decompiled C is a
 reconstruction produced from the author's own dumps; the STM8 SLEIGH module is

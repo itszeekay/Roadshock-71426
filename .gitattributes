@@ -2,3 +2,7 @@
 *.bin binary
 *.jpg binary
 *.ihx text eol=lf
+reference/** -text -diff
+*.pdf binary
+*.exe binary
+*.7z binary

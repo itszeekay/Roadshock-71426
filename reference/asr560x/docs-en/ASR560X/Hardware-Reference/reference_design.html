@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASR560X Series Reference Design &mdash; ASR IoT Docs latest version documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=fb0ba70a"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ASR560X Series Development Board User Guide" href="Development_Board.html" />
+    <link rel="prev" title="ASR560X Series Hardware Design Guide" href="hardware_design.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="asriot" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/ASR560X/Hardware-Reference/reference_design.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ASR IoT Docs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../iot.html"> IoT/AIoT Wi-Fi MCU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E9%80%8F%E4%BC%A0.html"> Wi-Fi Interface Transceiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lora.html"> LoRa Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E8%93%9D%E7%89%99.html"> Bluetooth Product</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Language</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/">简体中文</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR550X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Datasheet/index.html">ASR550X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Download-Tool/index.html">ASR550X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Quick-Start/index.html">ASR550X Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR560X</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Datasheet/index.html">ASR560X Series Datasheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ASR560X Hardware Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hardware_design.html"> ASR560X Series Hardware Design Guide</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> ASR560X Series Reference Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#asr560x-qfn48-reference-design">1. ASR560X QFN48 Reference Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#asr560x-qfn48-reference-bom">2. ASR560X QFN48 Reference BOM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#asr560x-qfn32-reference-design">3. ASR560X QFN32 Reference Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#asr560x-qfn32-reference-bom">4. ASR560X QFN32 Reference BOM</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Development_Board.html"> ASR560X Series Development Board User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Schematics.html"> ASR560X Series Development Board Schematics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Download-Tool/index.html">ASR560X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Demo-Project/index.html">ASR560X Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Quick-Start/index.html">ASR560X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">ASR560X Series FAQs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR582X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Datasheet/index.html">ASR582X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Download-Tool/index.html">ASR582X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Quick-Start/index.html">ASR582X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Certification/index.html">ASR582X Certifcation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR6601</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Datasheet/index.html">ASR6601 Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Hardware-Reference/index.html">ASR6601 Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Download-Tool/index.html">ASR6601 Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Demo-Project/index.html">ASR6601 Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Quick-Start/index.html">ASR6601 Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/FAQ/index.html">ASR6601 FAQs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Test-Report/index.html">ASR6601 Test Report and Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ASR IoT Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ASR560X Hardware Reference</a></li>
+      <li class="breadcrumb-item active">ASR560X Series Reference Design</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/ASR560X/Hardware-Reference/reference_design.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="asr560x-series-reference-design">
+<h1>ASR560X Series Reference Design<a class="headerlink" href="#asr560x-series-reference-design" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/ASR560X/硬件介绍/参考设计.html">简体中文</a></p>
+<section id="asr560x-qfn48-reference-design">
+<h2>1. ASR560X QFN48 Reference Design<a class="headerlink" href="#asr560x-qfn48-reference-design" title="Link to this heading"></a></h2>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="../../_images/图1-15.png"><img alt="ASR560X QFN48 HV Reference Design (click to enlarge)" src="../../_images/%E5%9B%BE1-15.png" style="width: 635.4px; height: 326.4px;" /></a>
+<figcaption>
+<p><span class="caption-text">ASR560X QFN48 HV Reference Design (click to enlarge)</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../../_images/图1-22.png"><img alt="ASR560X QFN48 LV Reference Design (click to enlarge)" src="../../_images/%E5%9B%BE1-22.png" style="width: 634.8px; height: 312.9px;" /></a>
+<figcaption>
+<p><span class="caption-text">ASR560X QFN48 LV Reference Design (click to enlarge)</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="asr560x-qfn48-reference-bom">
+<h2>2. ASR560X QFN48 Reference BOM<a class="headerlink" href="#asr560x-qfn48-reference-bom" title="Link to this heading"></a></h2>
+<center><p>ASR560X QFN48 HV Reference BOM</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Number</p></th>
+<th class="head"><p>Qty.</p></th>
+<th class="head"><p>Ref Des</p></th>
+<th class="head"><p>Value/Model</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>3</p></td>
+<td><p>C1, C2, C9</p></td>
+<td><p>2.2uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>5</p></td>
+<td><p>C3, C4, C6, C8, C14</p></td>
+<td><p>0.1uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>2</p></td>
+<td><p>C5, C7</p></td>
+<td><p>1uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1</p></td>
+<td><p>C12</p></td>
+<td><p>0.5pF (GRM0335C1ER50BZ01)</p></td>
+<td><p>Matching Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>C13</p></td>
+<td><p>1.2pF (GRM0335C1E1R2CD01)</p></td>
+<td><p>Matching Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>1</p></td>
+<td><p>C17</p></td>
+<td><p>470nF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>1</p></td>
+<td><p>L1</p></td>
+<td><p>LQH2HPN4R7MJRL</p></td>
+<td><p>DCDC Inductor (current＞100mA)</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>1</p></td>
+<td><p>L3</p></td>
+<td><p>2.7nH (LQP03TN2N7B0)</p></td>
+<td><p>Matching Inductor</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>1</p></td>
+<td><p>R2</p></td>
+<td><p>10K</p></td>
+<td><p>Resistor</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>1</p></td>
+<td><p>U1</p></td>
+<td><p>ASR5601_QFN48</p></td>
+<td><p>BLE SoC</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>1</p></td>
+<td><p>X1</p></td>
+<td><p>32.768KHz</p></td>
+<td><p>Crystal</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>1</p></td>
+<td><p>X2</p></td>
+<td><p>16MHz/10ppm/9pF</p></td>
+<td><p>Crystal</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>ASR560X QFN48 LV Reference BOM</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Number</p></th>
+<th class="head"><p>Qty.</p></th>
+<th class="head"><p>Ref Des</p></th>
+<th class="head"><p>Value/Model</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>3</p></td>
+<td><p>C1, C2, C9</p></td>
+<td><p>2.2uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>5</p></td>
+<td><p>C3, C4, C6, C8, C14</p></td>
+<td><p>0.1uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>2</p></td>
+<td><p>C5, C7</p></td>
+<td><p>1uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1</p></td>
+<td><p>C12</p></td>
+<td><p>0.5pF (GRM0335C1ER50BZ01)</p></td>
+<td><p>Matching Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>C13</p></td>
+<td><p>1.2pF (GRM0335C1E1R2CD01)</p></td>
+<td><p>Matching Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>1</p></td>
+<td><p>C17</p></td>
+<td><p>470nF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>1</p></td>
+<td><p>L1</p></td>
+<td><p>LQH2HPN4R7MJRL</p></td>
+<td><p>DCDC Inductor (current＞100mA)</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>1</p></td>
+<td><p>L3</p></td>
+<td><p>2.7nH (LQP03TN2N7B0)</p></td>
+<td><p>Matching Inductor</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>1</p></td>
+<td><p>R2</p></td>
+<td><p>10K</p></td>
+<td><p>Resistor</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>1</p></td>
+<td><p>U1</p></td>
+<td><p>ASR5601_QFN48</p></td>
+<td><p>BLE SoC</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>1</p></td>
+<td><p>X1</p></td>
+<td><p>32.768KHz</p></td>
+<td><p>Crystal</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>1</p></td>
+<td><p>X2</p></td>
+<td><p>16MHz/10ppm/9pF</p></td>
+<td><p>Crystal</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="asr560x-qfn32-reference-design">
+<h2>3. ASR560X QFN32 Reference Design<a class="headerlink" href="#asr560x-qfn32-reference-design" title="Link to this heading"></a></h2>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../../_images/图1-3.png"><img alt="ASR560X QFN32 HV Reference Design (click to enlarge)" src="../../_images/%E5%9B%BE1-3.png" style="width: 656.4000000000001px; height: 407.20000000000005px;" /></a>
+<figcaption>
+<p><span class="caption-text">ASR560X QFN32 HV Reference Design (click to enlarge)</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="../../_images/图1-4.png"><img alt="ASR560X QFN32 LV Reference Design (click to enlarge)" src="../../_images/%E5%9B%BE1-4.png" style="width: 651.2px; height: 404.40000000000003px;" /></a>
+<figcaption>
+<p><span class="caption-text">ASR560X QFN32 LV Reference Design (click to enlarge)</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="asr560x-qfn32-reference-bom">
+<h2>4. ASR560X QFN32 Reference BOM<a class="headerlink" href="#asr560x-qfn32-reference-bom" title="Link to this heading"></a></h2>
+<center><p>ASR560X QFN32 HV Reference BOM</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Number</p></th>
+<th class="head"><p>Qty.</p></th>
+<th class="head"><p>Ref Des</p></th>
+<th class="head"><p>Value/Model</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>3</p></td>
+<td><p>C1, C4, C11</p></td>
+<td><p>2.2uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>5</p></td>
+<td><p>C2, C6, C7, C10, C16</p></td>
+<td><p>0.1uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>2</p></td>
+<td><p>C8, C9</p></td>
+<td><p>1uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1</p></td>
+<td><p>C14</p></td>
+<td><p>0.5pF (GRM15555C1HR50BA01)</p></td>
+<td><p>Matching Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>C15</p></td>
+<td><p>1.2pF (GRM15555C1H1R2BA01)</p></td>
+<td><p>Matching Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>1</p></td>
+<td><p>C16</p></td>
+<td><p>470nF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>1</p></td>
+<td><p>L1</p></td>
+<td><p>LQH2HPN4R7MJRL</p></td>
+<td><p>DCDC Inductor (current＞100mA)</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>1</p></td>
+<td><p>L3</p></td>
+<td><p>1.8nH (LQG15HS1N8B02)</p></td>
+<td><p>Matching Inductor</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>1</p></td>
+<td><p>R7</p></td>
+<td><p>10K</p></td>
+<td><p>Resistor</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>1</p></td>
+<td><p>U1</p></td>
+<td><p>ASR5601</p></td>
+<td><p>BLE SoC</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>1</p></td>
+<td><p>X1</p></td>
+<td><p>16MHz/10ppm/9pF</p></td>
+<td><p>Crystal</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>1</p></td>
+<td><p>X2</p></td>
+<td><p>32.768KHz</p></td>
+<td><p>Crystal</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>ASR560X QFN32 LV Reference BOM</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Number</p></th>
+<th class="head"><p>Qty.</p></th>
+<th class="head"><p>Ref Des</p></th>
+<th class="head"><p>Value/Model</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>3</p></td>
+<td><p>C1, C4, C11</p></td>
+<td><p>2.2uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>5</p></td>
+<td><p>C2, C6, C7, C10, C16</p></td>
+<td><p>0.1uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>2</p></td>
+<td><p>C8, C9</p></td>
+<td><p>1uF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1</p></td>
+<td><p>C14</p></td>
+<td><p>0.5pF (GRM15555C1HR50BA01)</p></td>
+<td><p>Matching Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1</p></td>
+<td><p>C15</p></td>
+<td><p>1.2pF (GRM15555C1H1R2BA01)</p></td>
+<td><p>Matching Capacitor</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>1</p></td>
+<td><p>C16</p></td>
+<td><p>470nF</p></td>
+<td><p>Filter Capacitor</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>1</p></td>
+<td><p>L1</p></td>
+<td><p>LQH2HPN4R7MJRL</p></td>
+<td><p>DCDC Inductor (current＞100mA)</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>1</p></td>
+<td><p>L3</p></td>
+<td><p>1.8nH (LQG15HS1N8B02)</p></td>
+<td><p>Matching Inductor</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>1</p></td>
+<td><p>R7</p></td>
+<td><p>10K</p></td>
+<td><p>Resistor</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>1</p></td>
+<td><p>U1</p></td>
+<td><p>ASR5601</p></td>
+<td><p>BLE SoC</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>1</p></td>
+<td><p>X1</p></td>
+<td><p>16MHz/10ppm/9pF</p></td>
+<td><p>Crystal</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>1</p></td>
+<td><p>X2</p></td>
+<td><p>32.768KHz</p></td>
+<td><p>Crystal</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hardware_design.html" class="btn btn-neutral float-left" title="ASR560X Series Hardware Design Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Development_Board.html" class="btn btn-neutral float-right" title="ASR560X Series Development Board User Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright ASR Microelectronics Co., Ltd.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

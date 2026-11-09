@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASR560X Series Hardware Design Guide &mdash; ASR IoT Docs latest version documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=fb0ba70a"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ASR560X Series Reference Design" href="reference_design.html" />
+    <link rel="prev" title="ASR560X Hardware Reference" href="index.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="asriot" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/ASR560X/Hardware-Reference/hardware_design.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ASR IoT Docs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../iot.html"> IoT/AIoT Wi-Fi MCU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E9%80%8F%E4%BC%A0.html"> Wi-Fi Interface Transceiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lora.html"> LoRa Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E8%93%9D%E7%89%99.html"> Bluetooth Product</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Language</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/">简体中文</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR550X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Datasheet/index.html">ASR550X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Download-Tool/index.html">ASR550X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Quick-Start/index.html">ASR550X Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR560X</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Datasheet/index.html">ASR560X Series Datasheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ASR560X Hardware Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> ASR560X Series Hardware Design Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overview">1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#schematic-design">2. Schematic Design</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#external-power-input-pin-vbata">2.1 External Power Input Pin (VBATA)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#internal-power-bypass-pin">2.2 Internal Power Bypass Pin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#internal-dcdc-power">2.3 Internal DCDC Power</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#internal-power-input-pin">2.4 Internal Power Input Pin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#crystal">2.5 Crystal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cx-bypass-capacitor">2.6 CX Bypass Capacitor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reset-pin">2.7 Reset Pin</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rf-front-end-design">3. RF Front-end Design</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#qfn32-rf-matching-schematic">3.1 QFN32 RF Matching Schematic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qfn48-rf-matching-schematic">3.2 QFN48 RF Matching Schematic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rf-matching-layout">3.3 RF Matching Layout</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mic-circuit-design">4. MIC Circuit Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key-circuit-design">5. Key Circuit Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gpio-introduction">6. GPIO Introduction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pin-mux">6.1 PIN MUX</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#io-pad-voltage">6.2 IO Pad Voltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mode-selection">6.3 Mode Selection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#p27-p28-p29-gpio-function">6.4 P27/P28/P29 GPIO Function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#debug-port">6.5 DEBUG Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-wake-up">6.6 GPIO Wake-up</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adc-function">6.7 ADC Function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usb-alternate-function-pin">6.8 USB Alternate Function Pin</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#test-point-introduction">7. Test Point Introduction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference_design.html"> ASR560X Series Reference Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Development_Board.html"> ASR560X Series Development Board User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Schematics.html"> ASR560X Series Development Board Schematics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Download-Tool/index.html">ASR560X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Demo-Project/index.html">ASR560X Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Quick-Start/index.html">ASR560X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">ASR560X Series FAQs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR582X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Datasheet/index.html">ASR582X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Download-Tool/index.html">ASR582X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Quick-Start/index.html">ASR582X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Certification/index.html">ASR582X Certifcation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR6601</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Datasheet/index.html">ASR6601 Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Hardware-Reference/index.html">ASR6601 Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Download-Tool/index.html">ASR6601 Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Demo-Project/index.html">ASR6601 Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Quick-Start/index.html">ASR6601 Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/FAQ/index.html">ASR6601 FAQs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Test-Report/index.html">ASR6601 Test Report and Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ASR IoT Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ASR560X Hardware Reference</a></li>
+      <li class="breadcrumb-item active">ASR560X Series Hardware Design Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/ASR560X/Hardware-Reference/hardware_design.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="asr560x-series-hardware-design-guide">
+<h1>ASR560X Series Hardware Design Guide<a class="headerlink" href="#asr560x-series-hardware-design-guide" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/ASR560X/硬件介绍/硬件设计.html">简体中文</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p><strong>About This Document</strong></p>
+<p>This document is a guide for ASR560X hardware design, including the schematic design, layout notes, and suggestions to critical materials selection.</p>
+<p><strong>Included Chip Models</strong></p>
+<p>The product models corresponding to this document are as follows.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Core</p></th>
+<th class="head"><p>SiP Flash</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ASR560X</p></td>
+<td><p>BLE 5.1 full feature (compatible with 5.2)/BLE SIG Mesh/IEEE 802.15.4/2.4G Proprietary</p></td>
+<td><p>ARM CM0+</p></td>
+<td><p>1 MB/ 512 KB</p></td>
+<td><p>AOA/AOD/Voice/IRTxRx/Quadrature Decoder/Keypad/5V UART/5V GPIO/Wi-Fi concurrent</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Copyright Notice</strong></p>
+<p>© 2022 ASR Microelectronics Co., Ltd. All rights reserved. No part of this document can be reproduced, transmitted, transcribed, stored, or translated into any language in any form or by any means without the written permission of ASR Microelectronics Co., Ltd.</p>
+<p><strong>Trademark Statement</strong></p>
+<p>ASR and ASR Microelectronics Co., Ltd. are trademarks of ASR Microelectronics Co., Ltd.</p>
+<p>Other trade names, trademarks, and registered trademarks mentioned in this document are the property of their respective owners and are hereby declared.</p>
+<p><strong>Disclaimer</strong></p>
+<p>ASR does not give any warranty of any kind and may make improvements and/or changes in this document or in the product described in this document at any time.</p>
+<p>This document is only used as a guide, and no contents in the document constitute any form of warranty. Information in this document is subject to change without notice.</p>
+<p>All liability, including liability for infringement of any proprietary rights caused by using the information in this document, is disclaimed.</p>
+<p><strong>Document Version</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Date</strong></p></th>
+<th class="head"><p><strong>Version</strong></p></th>
+<th class="head"><p><strong>Release Notes</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2023.04</p></td>
+<td><p>V2.1.0</p></td>
+<td><p>Updated Section 2.5: Crystal and Section 2.7: Reset Pin.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="overview">
+<h2>1. Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>ASR560X is a family of highly integrated single-chip Bluetooth Low Energy 5.1 full feature (compatible with 5.2)/IEEE 802.15.4/2.4G Proprietary multi-protocol SoC solutions. Some models also support BLE Mesh Network (SIG MESH V1.0.x). Detailed part number illustration is provided in the figure and table below.</p>
+<center><p><img alt="image1" src="../../_images/%E5%9B%BE1-14.png" /></p>
+<p><img alt="image2" src="../../_images/%E5%9B%BE1-21.png" /></p>
+</center><p>For more details about ASR560X, please refer to <em>ASR560X Series_Datasheet.</em></p>
+</section>
+<section id="schematic-design">
+<h2>2. Schematic Design<a class="headerlink" href="#schematic-design" title="Link to this heading"></a></h2>
+<p>ASR560X SoC chip is designed with a single power supply, and the input voltage of the power supply can range from 1.7 V to 5 V (the wide-voltage version chip). Refer to <em>Chapter 1</em> for the specific input voltage range applied to different models of chips.</p>
+<p>ASR560X is available in QFN32 (4 mm x 4 mm) and QFN48 (6 mm x 6 mm) packages. The two packages differ only in the number of digital IOs available.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The schematics in this document are given for <strong>QFN32</strong>. Pins with the same name have different pin numbers in QFN48 package.</p>
+</div>
+<section id="external-power-input-pin-vbata">
+<h3>2.1 External Power Input Pin (VBATA)<a class="headerlink" href="#external-power-input-pin-vbata" title="Link to this heading"></a></h3>
+<p>ASR560X has only one external power input pin, namely <strong>VBATA</strong>, while VBATB is the bypass pin for the internal power supply. The capacitors should be placed as close to the corresponding pins of the chip as possible.</p>
+<p>For ASR560X-XL models (that is, the VBATA input voltage is <strong>less than or equal to</strong> <strong>3.6 V</strong>), the VBATA and VBATB pins <strong>must be connected</strong> as shown in the figure below:</p>
+<center><p><img alt="image3" src="../../_images/%E5%9B%BE2-12.png" /></p>
+<p>External Power Input Pin VBATA (Connected to VBATB)</p>
+</center><p>For the other chip models (that is, the VBATA input voltage is <strong>higher than 3.6 V</strong>), the VBATA and VBATB pins <strong>must not be connected</strong> as shown in the figure below:</p>
+<center><p><img alt="image4" src="../../_images/%E5%9B%BE2-22.png" /></p>
+<p>External Power Input Pin VBATA (Not connected to VBATB)</p>
+</center></section>
+<section id="internal-power-bypass-pin">
+<h3>2.2 Internal Power Bypass Pin<a class="headerlink" href="#internal-power-bypass-pin" title="Link to this heading"></a></h3>
+<p>ASR560X has three bypass pins for the internal power supply. These pins only need to connect to external capacitors. The capacitance is shown in the figure below.</p>
+<p>Place the capacitors as close to the corresponding pins of the chip as possible.</p>
+<center><p><img alt="image5" src="../../_images/%E5%9B%BE2-32.png" /></p>
+<p>Three Bypass Pins for the Internal Power Supply</p>
+</center></section>
+<section id="internal-dcdc-power">
+<h3>2.3 Internal DCDC Power<a class="headerlink" href="#internal-dcdc-power" title="Link to this heading"></a></h3>
+<p>ASR560X has a built-in DCDC controller. VDCOUT is the output pin of the internal DCDC power supply, which is used by other internal circuits of the chip. L1 is a 4.7 μH DCDC inductor (for example, the ASR560X demo board uses MURATA LQH2HPN4R7MJRL inductor). Select the power inductor whose rated current is greater than 600 mA. The DCR of the power inductor should be less than 200 mΩ whenever possible.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For non-battery-powered application scenarios such as a USB Dongle, if power consumption is not critical, the L1 device can be omitted to save cost and the PCB area. At this time, the VDCOUT is switched to the internal LDO (requiring software configuration).</p>
+</div>
+<center><p><img alt="image6" src="../../_images/%E5%9B%BE2-42.png" /></p>
+<p>External Power Inductor</p>
+</center><p>Place the inductors and capacitors as close as possible to the corresponding pins. The surface layer under the DCDC inductor should be kept clean. Note that the VSSD pin is the ground pin of the internal DCDC and needs to be single grounded (do not connect this pin directly to the EPAD under the chip to prevent noise interference), as shown in the following figure.</p>
+<center><p><img alt="image7" src="../../_images/%E5%9B%BE2-52.png" /></p>
+<p>External Power Inductor Layout</p>
+</center></section>
+<section id="internal-power-input-pin">
+<h3>2.4 Internal Power Input Pin<a class="headerlink" href="#internal-power-input-pin" title="Link to this heading"></a></h3>
+<p>VCCRFA/VCCRFB/VCCBB are the power input pins of each functional module inside the chip, and connect these pins to the VDCOUT output pin.</p>
+<p>Place a capacitor close to each input pin.</p>
+<center><p><img alt="image8" src="../../_images/%E5%9B%BE2-62.png" /></p>
+<p>Internal Power Pins Connected to VDCOUT</p>
+</center></section>
+<section id="crystal">
+<h3>2.5 Crystal<a class="headerlink" href="#crystal" title="Link to this heading"></a></h3>
+<p>It is recommended to use 16 MHz (or 32 MHz), 10 ppm and 9 pF crystals. For example, the ASR560X demo board uses HOSONIC E3FB16E007900E crystal.</p>
+<p>The 32.768 kHz crystal is optional. ASR560X has a built-in 32.768 kHz RC oscillator (within ±200 ppm accuracy by software calibration). If the application scenario requires high accuracy (like ±20 ppm), an external RTC crystal is preferable, such as the HOSONIC ETST003277900E crystal used in the demo board.</p>
+<center><p><img alt="image9" src="../../_images/%E5%9B%BE2-71.png" /></p>
+<p>Crystal Schematic</p>
+</center><center><p><img alt="image10" src="../../_images/%E5%9B%BE2-81.png" /></p>
+<p>Crystal Specification</p>
+</center><div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>For application scenarios with high-precision requirement or harsh operating conditions, it is recommended to use an external RTC crystal. If the 32.768 kHz RC oscillator is used, the area for an external RTC crystal still needs to be reserved, and the XO32KI pin (RTC_CLK) cannot be floating and must be connected to GND through the 0R resistor.</p>
+</div>
+<p>The surface layer under the crystal should be kept clean. Make sure no traces are routed under the crystal, as shown in the figure below.</p>
+<center><p><img alt="image11" src="../../_images/%E5%9B%BE2-91.png" /></p>
+<p>Crystal Layout</p>
+</center></section>
+<section id="cx-bypass-capacitor">
+<h3>2.6 CX Bypass Capacitor<a class="headerlink" href="#cx-bypass-capacitor" title="Link to this heading"></a></h3>
+<p>CX1 and CX2 are the bypass pins of the internal charge pump of the chip. A 0.1 μF capacitor needs to be added close to these two pins.</p>
+<center><p><img alt="image12" src="../../_images/%E5%9B%BE2-10.png" /></p>
+<p>CX Bypass Capacitor</p>
+</center></section>
+<section id="reset-pin">
+<h3>2.7 Reset Pin<a class="headerlink" href="#reset-pin" title="Link to this heading"></a></h3>
+<p>The RESET pin has an internal 25K pull-up resistor, which will be pulled up automatically after the VBATB is powered up.The chip also has integrated a delay circuit. When the VBATB is powered up to 1.7 V, there is an 8 ms delay before the SoC sreally starts up.</p>
+<p>In the scenario of rapid and repeated power up and down, users need to add a diode fast discharge circuit based on the general RC reset circuit to ensure that the RESET pin level can be powered down at the same time as VBATB.These circuit can keep the reset avilable when it is in the scenario. The recommended reset circuit is as follows:</p>
+<center><p><img alt="image13" src="../../_images/%E5%9B%BE2-111.png" /></p>
+<p>RESET Pin</p>
+</center><p>The recommended circuit parameters are: 51 KΩ, 100 pF, IN4148.</p>
+<p>Users can make some adjustments to this circuit depending on the application scenario, such as:</p>
+<ol class="arabic simple">
+<li><p>in application scenarios where the VBATB is not repeatedly and rapidly powered up and down, the diode can be left unsoldered;</p></li>
+<li><p>in scenarios where the RESET pin is not controlled by other circuits, no components need to be soldered, but it is recommended to reserve the footprint of three component for debugging;</p></li>
+<li><p>in the scenario where the RESET pin is controlled by other circuits, only the 51 K pull-up resistors can be soldered.</p></li>
+</ol>
+</section>
+</section>
+<section id="rf-front-end-design">
+<h2>3. RF Front-end Design<a class="headerlink" href="#rf-front-end-design" title="Link to this heading"></a></h2>
+<p>The front-end of the RF pin needs a π-type matching network for harmonic suppression. If there is an on-board antenna, another π-type matching network should be reserved for antenna matching.</p>
+<p>It should be noted that <strong>the values of the components in the first π-type network for the QFN32 and QFN48 packages is slightly different</strong>. The LC value shown in the following figures is based on the demo board design. It varies in the different PCB design.</p>
+<section id="qfn32-rf-matching-schematic">
+<h3>3.1 QFN32 RF Matching Schematic<a class="headerlink" href="#qfn32-rf-matching-schematic" title="Link to this heading"></a></h3>
+<center><p><img alt="image14" src="../../_images/%E5%9B%BE3-12.png" /></p>
+</center></section>
+<section id="qfn48-rf-matching-schematic">
+<h3>3.2 QFN48 RF Matching Schematic<a class="headerlink" href="#qfn48-rf-matching-schematic" title="Link to this heading"></a></h3>
+<center><p><img alt="image15" src="../../_images/%E5%9B%BE3-21.png" /></p>
+</center></section>
+<section id="rf-matching-layout">
+<h3>3.3 RF Matching Layout<a class="headerlink" href="#rf-matching-layout" title="Link to this heading"></a></h3>
+<p>The matching circuitry should be placed as close as possible to the RF pin of the chip, the RF trace should be as short as possible and 50 ohm impedance is required.</p>
+<center><p><img alt="image16" src="../../_images/%E5%9B%BE3-31.png" /></p>
+</center></section>
+</section>
+<section id="mic-circuit-design">
+<h2>4. MIC Circuit Design<a class="headerlink" href="#mic-circuit-design" title="Link to this heading"></a></h2>
+<p>ASR560X supports two common MIC connection methods: differential and single-ended. Pay attention to the following notes when designing the circuit:</p>
+<p>1. The T-type RC filter circuit should be placed close to the power supply pin of the MIC.</p>
+<p>2. The MIC_IN/IP signal traces should be routed to the MIC pin following the differential pair routing rules and protected by GND isolation, whether a single-ended or differential MIC device. For a single-ended MIC, the MIC_IN should be connected to the ground near the capacitor at the MIC side, as shown in the figure below.</p>
+<center><p><img alt="image17" src="../../_images/%E5%9B%BE4-11.png" /></p>
+<p>MIC Circuit</p>
+</center><p>If the MIC noise is critical, an external LDO can be added close to the MIC to reduce the power supply noise. The LDO can be controlled by GPIO, so that it can be turned off during sleep.</p>
+<center><p><img alt="image18" src="../../_images/%E5%9B%BE4-21.png" /></p>
+<p>MIC Circuit (Powered by External LDO)</p>
+</center><p>When using the MIC function, a 470 nF filter capacitor needs to be placed as close to the VMICTM pin as possible.</p>
+<center><p><img alt="image19" src="../../_images/%E5%9B%BE4-3.png" /></p>
+<p>VMICTM Pin</p>
+</center><div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>1. VMICTM (Pin3): When using the MIC function, a 470 nF filter capacitor (C16) needs to be placed as close to the VMICTM pin as possible; when the MIC function is not used, C16 can be removed. In addition, the 10K resistor (R7) should be pulled down whether the MIC function is used or not.</p>
+<p>2. Pay attention to the restrictions in Section <em>6.4</em> when P27/P28/P29 is used as GPIO.</p>
+</div>
+</section>
+<section id="key-circuit-design">
+<h2>5. Key Circuit Design<a class="headerlink" href="#key-circuit-design" title="Link to this heading"></a></h2>
+<p>ASR560X supports a normal key matrix consisting of rows and columns. For details, refer to the <em>Digital Pin Mux Table (KEY_COLx and KEY_ROWx)</em> in <em>Section 6.1: PIN MUX</em>. The row key IO is selected from <em>KEY_ROWx</em>, and the column key IO is selected from <em>KEY_COLx</em>.</p>
+<p>In addition to the normal key matrix, the ADC function pin can be used as key input through detecting the voltage divided by resistors, which is suitable for application scenarios with few keys or insufficient IOs (QFN32).</p>
+<center><p><img alt="image20" src="../../_images/%E5%9B%BE5-1.png" /></p>
+<p>ADC Key Circuit Example</p>
+</center></section>
+<section id="gpio-introduction">
+<h2>6. GPIO Introduction<a class="headerlink" href="#gpio-introduction" title="Link to this heading"></a></h2>
+<section id="pin-mux">
+<h3>6.1 PIN MUX<a class="headerlink" href="#pin-mux" title="Link to this heading"></a></h3>
+<p>All digital IOs can be reconfigured via software. The Pin Mux table is shown as follows. Note that 48-pin ASR560X has all 30 IOs, while 32-pin ASR560X has P00~P10 and P27~P29 IOs, of which P27, P28 and P29 can be used as GPIO or analog IOs for audio input.</p>
+<center><p>QFN48 Digital Pin Mux Table -I</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Num.</p></th>
+<th class="head"><p>Pin Name</p></th>
+<th class="head"><p>Func=0</p></th>
+<th class="head"><p>Func=1</p></th>
+<th class="head"><p>Func=2</p></th>
+<th class="head"><p>Func=3</p></th>
+<th class="head"><p>Func=4</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>P00</p></td>
+<td><p>NA</p></td>
+<td><p>UART2_TXD</p></td>
+<td><p>I2C0_SCL</p></td>
+<td><p>I2C1_SCL</p></td>
+<td><p>PWM10</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>P01</p></td>
+<td><p>NA</p></td>
+<td><p>UART2_RXD</p></td>
+<td><p>I2C0_SDA</p></td>
+<td><p>I2C1_SDA</p></td>
+<td><p>PWM11</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>P02</p></td>
+<td><p>GPIO2</p></td>
+<td><p>UART0_TXD</p></td>
+<td><p>SPI0_CS</p></td>
+<td><p>I2C0_SCL</p></td>
+<td><p>PWM0</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>P03</p></td>
+<td><p>GPIO3</p></td>
+<td><p>UART0_RXD</p></td>
+<td><p>SPI0_CLK</p></td>
+<td><p>I2C0_SDA</p></td>
+<td><p>PWM1</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>P04</p></td>
+<td><p>GPIO4</p></td>
+<td><p>UART1_TXD</p></td>
+<td><p>SPI0_TXD</p></td>
+<td><p>I2C1_SCL</p></td>
+<td><p>PWM2</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>P05</p></td>
+<td><p>GPIO5</p></td>
+<td><p>UART1_RXD</p></td>
+<td><p>SPI0_RXD</p></td>
+<td><p>I2C1_SDA</p></td>
+<td><p>PWM3</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>P06</p></td>
+<td><p>SWC</p></td>
+<td><p>UART3_TXD</p></td>
+<td><p>SPI1_CS</p></td>
+<td><p>I2S_SCLK</p></td>
+<td><p>PWM4</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>P07</p></td>
+<td><p>SWD</p></td>
+<td><p>UART3_RXD</p></td>
+<td><p>SPI1_CLK</p></td>
+<td><p>I2S_LRCK</p></td>
+<td><p>PWM5</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>P08</p></td>
+<td><p>GPIO8</p></td>
+<td><p>UART2_TXD</p></td>
+<td><p>SPI1_TXD</p></td>
+<td><p>I2S_DI</p></td>
+<td><p>PWM6</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>P09</p></td>
+<td><p>GPIO9</p></td>
+<td><p>UART2_RXD</p></td>
+<td><p>SPI1_RXD</p></td>
+<td><p>I2S_MCLK</p></td>
+<td><p>PWM7</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>P10</p></td>
+<td><p>GPIO10</p></td>
+<td><p>UART3_TXD</p></td>
+<td><p>IR1</p></td>
+<td><p>I2S_DO</p></td>
+<td><p>PWM8</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>P11</p></td>
+<td><p>GPIO11</p></td>
+<td><p>UART1_TXD</p></td>
+<td><p>SPI0_CS</p></td>
+<td><p>I2C1_SCL</p></td>
+<td><p>PWM9</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>P12</p></td>
+<td><p>GPIO12</p></td>
+<td><p>UART1_RXD</p></td>
+<td><p>SPI0_CLK</p></td>
+<td><p>I2C1_SDA</p></td>
+<td><p>PWM10</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>P13</p></td>
+<td><p>GPIO13</p></td>
+<td><p>UART3_TXD</p></td>
+<td><p>SPI0_TXD</p></td>
+<td><p>I2C0_SCL</p></td>
+<td><p>PWM11</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>P14</p></td>
+<td><p>GPIO14</p></td>
+<td><p>UART3_RXD</p></td>
+<td><p>SPI0_RXD</p></td>
+<td><p>I2C0_SDA</p></td>
+<td><p>PWM0</p></td>
+</tr>
+<tr class="row-odd"><td><p>16</p></td>
+<td><p>P15</p></td>
+<td><p>GPIO15</p></td>
+<td><p>UART0_TXD</p></td>
+<td><p>SPI1_CS</p></td>
+<td><p>I2S_SCLK</p></td>
+<td><p>PWM1</p></td>
+</tr>
+<tr class="row-even"><td><p>17</p></td>
+<td><p>P16</p></td>
+<td><p>GPIO16</p></td>
+<td><p>UART0_RXD</p></td>
+<td><p>SPI1_CLK</p></td>
+<td><p>I2S_LRCK</p></td>
+<td><p>PWM2</p></td>
+</tr>
+<tr class="row-odd"><td><p>18</p></td>
+<td><p>P17</p></td>
+<td><p>GPIO17</p></td>
+<td><p>UART0_CTS</p></td>
+<td><p>SPI1_TXD</p></td>
+<td><p>I2S_DI</p></td>
+<td><p>PWM3</p></td>
+</tr>
+<tr class="row-even"><td><p>19</p></td>
+<td><p>P18</p></td>
+<td><p>GPIO18</p></td>
+<td><p>UART0_RTS</p></td>
+<td><p>SPI1_RXD</p></td>
+<td><p>I2S_MCLK</p></td>
+<td><p>PWM4</p></td>
+</tr>
+<tr class="row-odd"><td><p>20</p></td>
+<td><p>P19</p></td>
+<td><p>GPIO19</p></td>
+<td><p>UART2_TXD</p></td>
+<td><p>SPI0_CS</p></td>
+<td><p>I2C0_SCL</p></td>
+<td><p>PWM5</p></td>
+</tr>
+<tr class="row-even"><td><p>21</p></td>
+<td><p>P20</p></td>
+<td><p>GPIO20</p></td>
+<td><p>UART2_RXD</p></td>
+<td><p>SPI0_CLK</p></td>
+<td><p>I2C0_SDA</p></td>
+<td><p>PWM6</p></td>
+</tr>
+<tr class="row-odd"><td><p>22</p></td>
+<td><p>P21</p></td>
+<td><p>GPIO21</p></td>
+<td><p>UART0_TXD</p></td>
+<td><p>SPI0_TXD</p></td>
+<td><p>I2C1_SCL</p></td>
+<td><p>PWM7</p></td>
+</tr>
+<tr class="row-even"><td><p>23</p></td>
+<td><p>P22</p></td>
+<td><p>GPIO22</p></td>
+<td><p>UART0_RXD</p></td>
+<td><p>SPI0_RXD</p></td>
+<td><p>I2C1_SDA</p></td>
+<td><p>PWM8</p></td>
+</tr>
+<tr class="row-odd"><td><p>24</p></td>
+<td><p>P23</p></td>
+<td><p>GPIO23</p></td>
+<td><p>UART1_TXD</p></td>
+<td><p>SPI1_CS</p></td>
+<td><p>I2C0_SCL</p></td>
+<td><p>PWM9</p></td>
+</tr>
+<tr class="row-even"><td><p>25</p></td>
+<td><p>P24</p></td>
+<td><p>GPIO24</p></td>
+<td><p>UART1_RXD</p></td>
+<td><p>SPI1_CLK</p></td>
+<td><p>I2C0_SDA</p></td>
+<td><p>PWM10</p></td>
+</tr>
+<tr class="row-odd"><td><p>26</p></td>
+<td><p>P25</p></td>
+<td><p>GPIO25</p></td>
+<td><p>UART3_TXD</p></td>
+<td><p>SPI1_TXD</p></td>
+<td><p>I2C1_SCL</p></td>
+<td><p>PWM11</p></td>
+</tr>
+<tr class="row-even"><td><p>27</p></td>
+<td><p>P26</p></td>
+<td><p>GPIO26</p></td>
+<td><p>UART3_RXD</p></td>
+<td><p>SPI1_RXD</p></td>
+<td><p>I2C1_SDA</p></td>
+<td><p>PWM0</p></td>
+</tr>
+<tr class="row-odd"><td><p>28</p></td>
+<td><p>P27</p></td>
+<td><p>GPIO27</p></td>
+<td><p>UART1_TXD</p></td>
+<td><p>UART2_RXD</p></td>
+<td><p>I2C0_SCL</p></td>
+<td><p>PWM1</p></td>
+</tr>
+<tr class="row-even"><td><p>29</p></td>
+<td><p>P28</p></td>
+<td><p>GPIO28</p></td>
+<td><p>UART1_RXD</p></td>
+<td><p>KEY_ROW4</p></td>
+<td><p>I2C0_SDA</p></td>
+<td><p>PWM2</p></td>
+</tr>
+<tr class="row-odd"><td><p>30</p></td>
+<td><p>P29</p></td>
+<td><p>GPIO29</p></td>
+<td><p>UART2_TXD</p></td>
+<td><p>KEY_ROW5</p></td>
+<td><p>I2S_DO</p></td>
+<td><p>PWM3</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>QFN48 Digital Pin Mux Table -II</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Num.</p></th>
+<th class="head"><p>Pin Name</p></th>
+<th class="head"><p>Func=5</p></th>
+<th class="head"><p>Func=6</p></th>
+<th class="head"><p>Func=7</p></th>
+<th class="head"><p>Func=8</p></th>
+<th class="head"><p>ADC_MUX</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>P00</p></td>
+<td><p>GPIO0</p></td>
+<td><p>KEY_COL4</p></td>
+<td><p>AXIS_2_P</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>P01</p></td>
+<td><p>GPIO1</p></td>
+<td><p>KEY_COL5</p></td>
+<td><p>AXIS_2_N</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>P02</p></td>
+<td><p>AXIS_0_P</p></td>
+<td><p>KEY_ROW0</p></td>
+<td><p>I2S_DI</p></td>
+<td><p>SWC</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>P03</p></td>
+<td><p>AXIS_0_N</p></td>
+<td><p>KEY_ROW1</p></td>
+<td><p>I2S_MCLK</p></td>
+<td><p>SWD</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>P04</p></td>
+<td><p>UART0_CTS</p></td>
+<td><p>KEY_ROW2</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>I2C0_SCL</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>P05</p></td>
+<td><p>UART0_RTS</p></td>
+<td><p>KEY_ROW3</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>I2C0_SDA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>P06</p></td>
+<td><p>AXIS_1_P</p></td>
+<td><p>KEY_COL0</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>GPIO6</p></td>
+<td><p>AUXADC_CH0</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>P07</p></td>
+<td><p>AXIS_1_N</p></td>
+<td><p>KEY_COL1</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>GPIO7</p></td>
+<td><p>AUXADC_CH1</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>P08</p></td>
+<td><p>AXIS_2_P</p></td>
+<td><p>KEY_COL2</p></td>
+<td><p>USB_DP</p></td>
+<td><p>NA</p></td>
+<td><p>AUXADC_CH2</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>P09</p></td>
+<td><p>AXIS_2_N</p></td>
+<td><p>KEY_COL3</p></td>
+<td><p>USB_DM</p></td>
+<td><p>NA</p></td>
+<td><p>AUXADC_CH3</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>P10</p></td>
+<td><p>UART0_CTS</p></td>
+<td><p>KEY_ROW4</p></td>
+<td><p>NA</p></td>
+<td><p>NA</p></td>
+<td><p>AUXADC_CH4</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>P11</p></td>
+<td><p>AXIS_1_N</p></td>
+<td><p>KEY_ROW4</p></td>
+<td><p>SWC</p></td>
+<td><p>NA</p></td>
+<td><p>AUXADC_CH5</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>P12</p></td>
+<td><p>I2S_DO</p></td>
+<td><p>KEY_ROW5</p></td>
+<td><p>SWD</p></td>
+<td><p>NA</p></td>
+<td><p>AUXADC_CH6</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>P13</p></td>
+<td><p>AXIS_0_P</p></td>
+<td><p>KEY_COL4</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>NA</p></td>
+<td><p>AUXADC_CH7</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>P14</p></td>
+<td><p>AXIS_0_N</p></td>
+<td><p>KEY_COL5</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>16</p></td>
+<td><p>P15</p></td>
+<td><p>AXIS_1_P</p></td>
+<td><p>KEY_ROW6</p></td>
+<td><p>USB_DP</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>17</p></td>
+<td><p>P16</p></td>
+<td><p>IR0</p></td>
+<td><p>KEY_ROW7</p></td>
+<td><p>USB_DM</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>18</p></td>
+<td><p>P17</p></td>
+<td><p>AXIS_2_P</p></td>
+<td><p>KEY_COL6</p></td>
+<td><p>SWC</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>19</p></td>
+<td><p>P18</p></td>
+<td><p>AXIS_2_N</p></td>
+<td><p>KEY_COL7</p></td>
+<td><p>SWD</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>20</p></td>
+<td><p>P19</p></td>
+<td><p>AXIS_0_P</p></td>
+<td><p>KEY_ROW8</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>21</p></td>
+<td><p>P20</p></td>
+<td><p>AXIS_0_N</p></td>
+<td><p>KEY_ROW9</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>22</p></td>
+<td><p>P21</p></td>
+<td><p>AXIS_1_P</p></td>
+<td><p>KEY_ROW10</p></td>
+<td><p>NA</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>23</p></td>
+<td><p>P22</p></td>
+<td><p>AXIS_1_N</p></td>
+<td><p>KEY_ROW11</p></td>
+<td><p>NA</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>24</p></td>
+<td><p>P23</p></td>
+<td><p>AXIS_2_P</p></td>
+<td><p>KEY_ROW12</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>25</p></td>
+<td><p>P24</p></td>
+<td><p>AXIS_2_N</p></td>
+<td><p>KEY_ROW13</p></td>
+<td><p>LPUART_TXD</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>26</p></td>
+<td><p>P25</p></td>
+<td><p>NA</p></td>
+<td><p>KEY_ROW2</p></td>
+<td><p>NA</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>27</p></td>
+<td><p>P26</p></td>
+<td><p>I2S_DO</p></td>
+<td><p>KEY_ROW3</p></td>
+<td><p>NA</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>28</p></td>
+<td><p>P27</p></td>
+<td><p>KEY_COL0</p></td>
+<td><p>KEY_ROW0</p></td>
+<td><p>NA</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>29</p></td>
+<td><p>P28</p></td>
+<td><p>KEY_COL1</p></td>
+<td><p>KEY_ROW1</p></td>
+<td><p>NA</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>30</p></td>
+<td><p>P29</p></td>
+<td><p>KEY_COL2</p></td>
+<td><p>KEY_ROW4</p></td>
+<td><p>NA</p></td>
+<td><p>NA</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you need to use LPUART RXD, select one pad from P02~P26 through the configuration register, and configure the pad as GPIO (no input and no output mode). For more details, please refer to <em>Section</em> <em>2.4.3: UART</em> in <em>ASR560X Series_Datasheet</em>.</p>
+</div>
+</section>
+<section id="io-pad-voltage">
+<h3>6.2 IO Pad Voltage<a class="headerlink" href="#io-pad-voltage" title="Link to this heading"></a></h3>
+<p>When the VBATA input voltage is greater than or equal to 3.3 V, the IO voltage of P02/P03/P04/ P05 follows VBATA, and the voltage of the other GPIOs follows VBATB (in this case, VBATB is fixed at 3.3 V); when the VBATA input voltage is less than 3.3 V, all IO voltage follows VBATA.</p>
+<center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>IO Pad Voltage</strong></p></th>
+<th class="head"><p><strong>VBATA&gt;=3.3V</strong></p></th>
+<th class="head"><p><strong>VBATA&lt;3.3V</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Voltage of P02/P03/P04/P05</p></td>
+<td><p>=VBATA</p></td>
+<td><p>=VBATA</p></td>
+</tr>
+<tr class="row-odd"><td><p>Voltage of the other IOs</p></td>
+<td><p>=3.3V</p></td>
+<td><p>=VBATA</p></td>
+</tr>
+</tbody>
+</table>
+</center></section>
+<section id="mode-selection">
+<h3>6.3 Mode Selection<a class="headerlink" href="#mode-selection" title="Link to this heading"></a></h3>
+<p>There are two alternate function pins (SEL0/SEL1) used to configure different boot modes when the chip is powered on, as shown in the following table.</p>
+<center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Mode Name</strong></p></th>
+<th class="head"><p><strong>MODE_SEL1 P01</strong></p></th>
+<th class="head"><p><strong>MODE_SEL0 P00</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Boot with Flash</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Boot with UART</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</center><p>The detailed description of the boot modes is as follows:</p>
+<ul class="simple">
+<li><p><strong>Boot with Flash</strong>: After the chip is powered on, it runs the code in the internal flash. This is the default boot mode.</p></li>
+<li><p><strong>Boot with UART</strong>: After the chip is powered on, it enters the UART download mode. In this mode, the default UART1 TX/RX (P04/P05) serial ports are used to download the BootLoader and Image to the internal Flash through the host software.</p></li>
+</ul>
+<p><strong>Notes on SEL pin configuration:</strong></p>
+<p>1. All GPIOs have internal pull-down resistors. If you need to set SEL0/SEL1 to 0, just leave it floating.</p>
+<p>2. After the chip is powered on and reset, it will automatically detect the high or low level of SEL0 and SEL1 pins to enter and stay in the corresponding mode. The state change of SEL0 and SEL1 pins only takes effect when power up the chip again or an external reset occurs.</p>
+<p>3. If there are no special requirements, only the P00 (SEL0) test point needs to be reserved. Boot with UART mode is the most commonly used download mode in production.</p>
+<p>4. It is recommended not to use these two mode selection pins as GPIO. If they need to be used as GPIO, the user must ensure that there is no external pull-up circuit to prevent high levels from being detected on these two pins after the chip is powered on, thus entering the wrong mode and cannot run normally.</p>
+</section>
+<section id="p27-p28-p29-gpio-function">
+<h3>6.4 P27/P28/P29 GPIO Function<a class="headerlink" href="#p27-p28-p29-gpio-function" title="Link to this heading"></a></h3>
+<p>When P27/P28/P29 is used as GPIO, the following restrictions should be noted:</p>
+<p>1. Considering that P27 has a test mode function, <strong>it is strongly recommended not to use this pin as GPIO</strong>. If it is necessary to use P27 as GPIO, it <strong>must not be used as input</strong> and there <strong>must be no external pull-up circuit</strong> to prevent a high level from being detected on this pin when the chip is powered on, thus entering the test mode.</p>
+<p>2. When P28 or P29 is configured as input pull-up, due to the small internal pull-up resistance of P28 and P29, the power consumption will be relatively large after they are pulled low. For application scenarios requiring strict power consumption, it is recommended not to use these two pins as input.</p>
+<p>3. When P28 or P29 is configured as high-level output (push-pull), in low-power modes, the internal 10K resistor is connected to GND, and the power consumption will be relatively large. For application scenarios requiring strict power consumption, it is recommended not to use these two pins as output.</p>
+<p>4. P27/P28/P29 cannot be configured as high-impedance input.</p>
+</section>
+<section id="debug-port">
+<h3>6.5 DEBUG Port<a class="headerlink" href="#debug-port" title="Link to this heading"></a></h3>
+<p>UART1 TX/RX (P04/P05) are used as the default serial ports for DEBUG log input and output. In addition, they act as the default serial ports for program download in the UART boot mode with a dedicated test point.</p>
+<p>If the Bluetooth Direct Test Mode is used to test the Low energy PHY layer, full-featured serial ports (TX/RX/CTS/RTS) are required. To facilitate the test, all the test points for UART0_TX/ UART0_RX/UART0_CTS/UART0_RTS (P02/P03/P04/P05) must be reserved.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If the UART1_RX pin is only used for program download, it is recommended to add a pull-up resistor to prevent this pin from floating during normal startup to cause RX to enter an abnormal state.</p>
+</div>
+</section>
+<section id="gpio-wake-up">
+<h3>6.6 GPIO Wake-up<a class="headerlink" href="#gpio-wake-up" title="Link to this heading"></a></h3>
+<p>Except for two GPIO pins (P00 and P01), the other IOs can be used as wakeup interrupt pins triggered by high-level, low-level, rising edge or falling edge.</p>
+</section>
+<section id="adc-function">
+<h3>6.7 ADC Function<a class="headerlink" href="#adc-function" title="Link to this heading"></a></h3>
+<p>The ASR560X chip integrates one ADC controller, which has eight general-purpose channels, one dedicated channel for temperature sampling, and one dedicated channel for supply voltage sampling. For the 48-pin chip, P06 to P13 corresponds to ADC CH0 to CH7; for the 32-pin chip, P06 to P10 corresponds to ADC CH0 to CH4.</p>
+<p><strong>The internal ADC reference voltage is 1.2 V</strong>, so when the IO is configured as the ADC input function, the user must ensure that the external input voltage divided by the resistor is within the effective voltage range of 0 to 1.2 V.</p>
+</section>
+<section id="usb-alternate-function-pin">
+<h3>6.8 USB Alternate Function Pin<a class="headerlink" href="#usb-alternate-function-pin" title="Link to this heading"></a></h3>
+<p>When the IOs are configured as USB_DP/DM alternate function pins, the PCB trace routing should follow the differential pair routing rules.</p>
+</section>
+</section>
+<section id="test-point-introduction">
+<h2>7. Test Point Introduction<a class="headerlink" href="#test-point-introduction" title="Link to this heading"></a></h2>
+<p>1. Use thick wires for the probes on the fixture to connect the power supply and the ground.</p>
+<p>2. The reset pin can be connected to the fixture and manually controlled by the reset button, or they can be connected to and controlled by the host IO.</p>
+<p>3. The test point of the mode selection pin (SEL0/SEL1) can be connected to the fixture and manually pull high or low (floating) with a switch, or it can be connected to and controlled by the host IO. The unused mode selection pin can be left floating.</p>
+<p>4. The UART1 TX/RX (P04/P05) used for image download and debugging log input/output should be connected to the external serial port.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The probes on the fixture are used to contact the test points in the production testing, and the time when each probe touches the corresponding test point may be different, which will affect the judgment of the level of the SEL pin after the chip is powered on. For instance, the probe has not touched the test point for the SEL pin, and the probes for the power supply and the ground are connected at this time, which will cause the chip to judge that the SEL input pin is at low level, so that the chip will not enter the download mode. It is recommended to select the SEL pin probe slightly longer (1-2 mm) than other probes to ensure that the test point of the SEL pin has been pressed by the probe before the module is powered on.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="ASR560X Hardware Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference_design.html" class="btn btn-neutral float-right" title="ASR560X Series Reference Design" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright ASR Microelectronics Co., Ltd.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

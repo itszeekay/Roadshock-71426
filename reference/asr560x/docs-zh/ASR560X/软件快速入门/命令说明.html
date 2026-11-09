@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASR560X 系列 BLE Mesh AT命令说明 &mdash; ASR IoT Docs latest version 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8eed9ff9"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" />
+    <link rel="next" title="ASR560X 常见问题" href="../%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html" />
+    <link rel="prev" title="ASR560X 系列 BLE OTA over GATT 设计规范" href="%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="asriot-cn" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/ASR560X/%E8%BD%AF%E4%BB%B6%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/%E5%91%BD%E4%BB%A4%E8%AF%B4%E6%98%8E.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ASR IoT Docs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../iot.html"> IoT/AIoT Wi-Fi MCU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E9%80%8F%E4%BC%A0.html"> Wi-Fi Interface Transceiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lora.html"> LoRa Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E8%93%9D%E7%89%99.html"> Bluetooth Product</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">语言</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://asriot.readthedocs.io/en/latest/">English</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR550X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E8%8A%AF%E7%89%87%E8%A7%84%E6%A0%BC/index.html">ASR550X 芯片规格</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E7%A1%AC%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">ASR550X 硬件介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E7%83%A7%E5%BD%95%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/index.html">ASR550X 烧录工具介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E6%BC%94%E7%A4%BA%E5%B7%A5%E7%A8%8B/index.html">ASR550X 演示工程/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E8%BD%AF%E4%BB%B6%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">ASR550X 软件快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">ASR550X 常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E8%AE%A4%E8%AF%81/index.html">ASR550X 认证</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A/index.html">ASR550X 测试报告及指南</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR560X</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../%E8%8A%AF%E7%89%87%E8%A7%84%E6%A0%BC/index.html">ASR560X 芯片规格</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%A1%AC%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">ASR560X 硬件介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%83%A7%E5%BD%95%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/index.html">ASR560X 烧录工具介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E6%BC%94%E7%A4%BA%E5%B7%A5%E7%A8%8B/index.html">ASR560X 演示工程/ SDK</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ASR560X 软件快速入门</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.html"> ASR560X 系列开发环境搭建与编译指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97.html"> ASR560X 系列开发入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E9%85%8D%E7%BD%AE.html"> ASR560X 系列内存布局配置应用手册</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://pan.baidu.com/s/1Tkn3rmrzc7slQo6XE-RIow?pwd=s5u5"> ASR560X 系列快速入门指南</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://pan.baidu.com/s/10XVbwwkZe1Nvfc1rAt5eNw?pwd=6b7h"> ASR560X 系列外设用户指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SDK%E5%9B%BA%E4%BB%B6%E7%B1%BB%E5%9E%8B.html"> ASR560X 系列 SDK 固件类型和烧录说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E4%BD%8E%E5%8A%9F%E8%80%97%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97.html"> ASR560X 系列 BLE 低功耗应用指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97.html"> ASR560X 系列 HardFault 问题分析参考指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83.html"> ASR560X 系列 BLE OTA over GATT 设计规范</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> ASR560X 系列 BLE Mesh AT命令说明</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">前言</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#at">1. AT命令</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#set-network-param">1.1 set_network_param</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set-relay-param">1.2 set_relay_param</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#send-unicast-pkt">1.3 send_unicast_pkt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#send-group-pkt">1.4 send_group_pkt</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference external" href="https://pan.baidu.com/s/1zeo4tEGtfoDSlYq7FMDfTA?pwd=0jb3"> ASR IoT 系列 BLE AT命令说明</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">ASR560X 常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E8%AE%A4%E8%AF%81/index.html">ASR560X 认证</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A/index.html">ASR560X 测试报告</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR582X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/%E8%8A%AF%E7%89%87%E8%A7%84%E6%A0%BC/index.html">ASR582X 芯片规格</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/%E7%A1%AC%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">ASR582X 硬件介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/%E7%83%A7%E5%BD%95%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/index.html">ASR582X 烧录工具介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/%E6%BC%94%E7%A4%BA%E5%B7%A5%E7%A8%8B/index.html">ASR582X 演示工程/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/%E8%BD%AF%E4%BB%B6%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">ASR582X 软件快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">ASR582X 常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/%E8%AE%A4%E8%AF%81/index.html">ASR582X 认证</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A/index.html">ASR582X 测试报告及指南</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR6601</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E8%8A%AF%E7%89%87%E8%A7%84%E6%A0%BC/index.html">ASR6601 芯片规格</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E7%A1%AC%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">ASR6601 硬件介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E7%83%A7%E5%BD%95%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/index.html">ASR6601 烧录工具介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E6%BC%94%E7%A4%BA%E5%B7%A5%E7%A8%8B/index.html">ASR6601 演示工程/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E8%BD%AF%E4%BB%B6%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">ASR6601 软件快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">ASR6601 常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A/index.html">ASR6601 测试报告及指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ASR IoT Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ASR560X 软件快速入门</a></li>
+      <li class="breadcrumb-item active">ASR560X 系列 BLE Mesh AT命令说明</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/ASR560X/软件快速入门/命令说明.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="asr560x-ble-mesh-at">
+<h1>ASR560X 系列 BLE Mesh AT命令说明<a class="headerlink" href="#asr560x-ble-mesh-at" title="Link to this heading"></a></h1>
+<section id="id1">
+<h2>前言<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p><strong>关于本文档</strong></p>
+<p>本文档主要介绍用于测试 ASR560X 系列开发板的 BLE Mesh AT 命令说明。</p>
+<p><strong>读者对象</strong></p>
+<p>本文档主要适用于以下工程师：</p>
+<ul class="simple">
+<li><p>单板硬件开发工程师</p></li>
+<li><p>软件工程师</p></li>
+<li><p>技术支持工程师</p></li>
+</ul>
+<p><strong>产品型号</strong></p>
+<p>本文档适用于 ASR560X 系列蓝牙芯片。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Core</p></th>
+<th class="head"><p>SiP Flash</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ASR560X</p></td>
+<td><p>BLE 5.1 full feature (compatible with 5.2) SIG MESH V1.0.x IEEE 802.15.4 2.4G Proprietary</p></td>
+<td><p>ARM CM0+</p></td>
+<td><p>1 MB/ 512 KB</p></td>
+<td><p>AOA/AOD/Voice/IRTxRx/ Quadrature Decoder/Keypad/ 5V UART/5V GPIO/ Wi-Fi concurrent</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>版权公告</strong></p>
+<p>版权归 © 2022 翱捷科技股份有限公司所有。保留一切权利。未经翱捷科技股份有限公司的书面许可，不得以任何形式或手段复制、传播、转录、存储或翻译本文档的部分或所有内容。</p>
+<p><strong>商标声明</strong></p>
+<p>ASR、翱捷和其他翱捷商标均为翱捷科技股份有限公司的商标。</p>
+<p>本文档提及的其他所有商标名称、商标和注册商标均属其各自所有人的财产，特此声明。</p>
+<p><strong>免责声明</strong></p>
+<p>翱捷科技股份有限公司对本文档内容不做任何形式的保证，并会对本文档内容或本文中介绍的产品进行不定期更新。</p>
+<p>本文档仅作为使用指导，本文的所有内容不构成任何形式的担保。本文档中的信息如有变更，恕不另行通知。</p>
+<p>本文档不负任何责任，包括使用本文档中的信息所产生的侵犯任何专有权行为的责任。</p>
+<p><strong>防静电警告</strong></p>
+<p>静电放电（ESD）可能会损坏本产品。使用本产品进行操作时，须小心进行静电防护，避免静电损坏产品。</p>
+<p><strong>翱捷科技股份有限公司</strong></p>
+<p>地址：上海市浦东新区科苑路399号张江创新园10号楼9楼 邮编：201203</p>
+<p>官网： <a class="reference external" href="http://www.asrmicro.com/">http://www.asrmicro.com/</a></p>
+<p><strong>文档修订历史</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>日期</p></th>
+<th class="head"><p>版本号</p></th>
+<th class="head"><p>发布说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2022.12</p></td>
+<td><p>V1.0.0</p></td>
+<td><p>首次发布。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="at">
+<h2>1. AT命令<a class="headerlink" href="#at" title="Link to this heading"></a></h2>
+<section id="set-network-param">
+<h3>1.1 set_network_param<a class="headerlink" href="#set-network-param" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>命令</strong></p></th>
+<th class="head"><p>set_network_param &lt;count&gt; &lt;interval&gt;</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>响应</strong></p></td>
+<td><p>ack</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>功能</strong></p></td>
+<td><p>设置Mesh Network Transmit。</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>参数说明</strong></p></td>
+<td><p>count：Network PDU发送次数 取值范围1≤count≤8；interval：Network PDU发送间隔 单位：10 ms 取值范围1≤count≤32</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>示例</strong></p></td>
+<td><p>设置Network PDU发送次数为3，发送间隔为30 ms：set_network_param 3 3</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>注意</strong></p></td>
+<td><p>安卓手机在配网时会设置该参数，可在配网成功后再设置该参数。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="set-relay-param">
+<h3>1.2 set_relay_param<a class="headerlink" href="#set-relay-param" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>命令</strong></p></th>
+<th class="head"><p>set_relay_param &lt;state&gt; &lt;count&gt; &lt;interval&gt;</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>响应</strong></p></td>
+<td><p>ack</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>功能</strong></p></td>
+<td><p>设置Mesh Relay Retransmit。</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>参数说明</strong></p></td>
+<td><p>state：1：开启relay 0：关闭relay；count：Network PDU Relay发送次数 取值范围1≤count≤8；interval：Network PDU Relay发送间隔 单位：10 ms 取值范围1≤count≤32</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>示例</strong></p></td>
+<td><p>打开relay，设置Network PDU relay发送次数为1，发送间隔为30 ms：set_relay_param 1 1 3</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>注意</strong></p></td>
+<td><p>无</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="send-unicast-pkt">
+<h3>1.3 send_unicast_pkt<a class="headerlink" href="#send-unicast-pkt" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>命令</strong></p></th>
+<th class="head"><p>send_unicast_pkt &lt;model_option&gt; &lt;dst&gt;&lt;ttl&gt;&lt;onoff&gt;</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>响应</strong></p></td>
+<td><p>ack</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>功能</strong></p></td>
+<td><p>发送单播消息。</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>参数说明</strong></p></td>
+<td><p>model_option：1：Vendor model 0：Generic OnOff Client model；dst：目标设备单播地址；ttl：Network PDU TTL 取值范围0≤ttl≤127；onoff：开关状态 1：开 0：关</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>示例</strong></p></td>
+<td><p>本地 model 为 Generic OnOff Client model，向目标设备地址为 10 的设备发送开灯单播消息，ttl为10：send_unicast_pkt 0 10 10 1</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>注意</strong></p></td>
+<td><p>无</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="send-group-pkt">
+<h3>1.4 send_group_pkt<a class="headerlink" href="#send-group-pkt" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>命令</strong></p></th>
+<th class="head"><p>send_group_pkt &lt;model_option&gt; &lt;dst&gt;&lt;ttl&gt;&lt;onoff&gt;</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>响应</strong></p></td>
+<td><p>ack</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>功能</strong></p></td>
+<td><p>发送组播消息</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>参数说明</strong></p></td>
+<td><p>model_option：1：Vendor model 0：Generic OnOff Client model；dst：目标设备订阅的组地址；ttl：Network PDU TTL 取值范围0≤ttl≤127；onoff：开关状态 1：开 0：关</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>示例</strong></p></td>
+<td><p>本地 model 为 Generic OnOff Client model，向订阅组播地址 0xC000 的设备发送开灯组播消息，ttl 为 10： send_group_pkt 0 0xC000 10 1</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>注意</strong></p></td>
+<td><p>无</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83.html" class="btn btn-neutral float-left" title="ASR560X 系列 BLE OTA over GATT 设计规范" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="../%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html" class="btn btn-neutral float-right" title="ASR560X 常见问题" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 ASR Microelectronics Co., Ltd。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

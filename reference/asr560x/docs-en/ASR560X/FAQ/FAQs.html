@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASR560X Series FAQs &mdash; ASR IoT Docs latest version documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=fb0ba70a"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ASR582X Datasheet" href="../../ASR582X/Datasheet/index.html" />
+    <link rel="prev" title="ASR560X Series FAQs" href="index.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="asriot" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/ASR560X/FAQ/FAQs.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ASR IoT Docs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../iot.html"> IoT/AIoT Wi-Fi MCU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E9%80%8F%E4%BC%A0.html"> Wi-Fi Interface Transceiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lora.html"> LoRa Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E8%93%9D%E7%89%99.html"> Bluetooth Product</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Language</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/">简体中文</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR550X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Datasheet/index.html">ASR550X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Download-Tool/index.html">ASR550X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Quick-Start/index.html">ASR550X Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR560X</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Datasheet/index.html">ASR560X Series Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware-Reference/index.html">ASR560X Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Download-Tool/index.html">ASR560X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Demo-Project/index.html">ASR560X Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Quick-Start/index.html">ASR560X Quick Start</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ASR560X Series FAQs</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> ASR560X Series FAQs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tool">1. Tool</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-download-the-firmware-to-the-development-board">1.1 How to download the firmware to the development board?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#why-is-there-1f2e3d81-when-downloading">1.2 Why is there “1F2E3D81” when downloading?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#is-it-necessary-to-download-ate-firmware">1.3 Is it necessary to download ATE firmware?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#can-the-app-firmware-be-downloaded-separately-if-only-it-is-updated">1.4 Can the APP firmware be downloaded separately if only it is updated?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-erase-the-internal-flash-of-the-chip">1.5 How to erase the internal flash of the chip?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#development-environment-setup">2. Development Environment Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#does-it-support-development-compilation-and-debugging-in-the-keil-environment">2.1 Does it support development, compilation and debugging in the KEIL environment?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#does-it-support-compilation-in-the-linux-environment">2.2 Does it support compilation in the Linux environment?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#does-it-support-versions-other-than-gcc-5-4">2.3 Does it support versions other than GCC 5.4?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#platform">3. Platform</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#how-is-the-chips-built-in-flash-layout-divided">3.1 How is the chip’s built-in flash Layout divided?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#is-the-chips-built-in-flash-available-to-users">3.2 Is the chip’s built-in flash available to users?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-use-the-watchdog">3.3 How to use the watchdog?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-api-can-be-called-to-make-the-system-reboot">3.4 What API can be called to make the system reboot?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-the-difference-between-a-software-timer-app-timer-and-a-hardware-timer">3.5 What is the difference between a software timer (app_timer) and a hardware timer?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-are-the-rules-for-using-the-mac-address-and-the-corresponding-read-and-write-apis">3.6 What are the rules for using the MAC address and the corresponding read and write APIs?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-configure-the-clock-for-the-peripheral-project">3.7 How to configure the clock for the peripheral project?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-are-the-considerations-for-pwm-input-output-mode">3.8 What are the considerations for PWM input/output mode?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-the-maximum-output-frequency-of-spi-and-pwm">3.9 What is the maximum output frequency of SPI and PWM?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-the-number-of-channels-range-and-resolution-of-adc">3.10 What is the number of channels, range, and resolution of ADC?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ble-stack">4. BLE Stack</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#api-use">4.1 API Use</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#problems-that-may-be-encountered-in-developing-the-advertising-function">4.2 Problems that May Be Encountered in Developing the Advertising Function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-roms-are-available-for-the-mesh-demo">4.3 What ROMs are available for the Mesh demo?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#is-there-a-limit-to-the-max-len-parameter-ble-stack-when-defining-the-service">4.4 Is there a limit to the max_len parameter BLE stack when defining the service?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-the-main-function-of-the-app-ble-complete-event-handler-callback">4.5 What is the main function of the app_ble_complete_event_handler() callback?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-does-sonata-gatt-cmp-notify-mean">4.6 What does SONATA_GATT_CMP_NOTIFY mean?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-will-the-asr560x-do-when-the-host-sends-att-read-blob-req">4.7 What will the ASR560X do when the host sends ATT_READ_BLOB_REQ?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-use-both-the-advertising-and-scan-functions">4.8 How to use both the advertising and scan functions?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#low-power-consumption">5. Low-power consumption</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-the-process-of-entering-and-exiting-ds4-mode">5.1 What is the process of entering and exiting DS4 mode?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-use-the-slp-duration-backoff-parameter">5.2 How to use the slp_duration_backoff parameter?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-configure-low-volt">5.3 How to configure low_volt?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#why-is-there-a-glitch-at-the-gpio-level-when-waking-up-from-sleep-mode">5.4 Why is there a glitch at the GPIO level when waking up from Sleep mode?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-get-the-wake-up-source">5.5 How to get the wake-up source?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-avoid-the-high-power-consumption-when-the-p06-of-qfn32-ic-pulls-up-or-outputs-high-in-low-power-state">5.6 How to avoid the high power consumption when the P06 of QFN32 IC pulls up or outputs high in low-power state?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-avoid-abnormal-pwm-output-in-low-power-state">5.7 How to avoid abnormal PWM output in low-power state?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#is-online-simulation-supported-in-low-power-state">5.8 Is online simulation supported in low-power state?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#should-the-ble-stack-be-reinitialized-after-waking-up-from-sleep-mode">5.9 Should the BLE stack be reinitialized after waking up from Sleep mode?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#will-xo16m-be-completely-powered-down-in-low-power-state">5.10 Will XO16M be completely powered down in low-power state?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-are-the-considerations-for-low-power-serial-ports">5.11 What are the considerations for low-power serial ports?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#does-the-ble-stack-use-rco32k-or-xo32k-in-low-power-mode-by-default-how-to-switch-the-32k-clock-source">5.12 Does the BLE stack use RCO32K or XO32K in low-power mode by default? How to switch the 32K clock source?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#assert">6. Assert</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#why-is-there-assert-error-id-180">6.1 Why is there ASSERT ERROR: id=180?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#why-is-there-assert-error-id-387">6.2 Why is there ASSERT ERROR: id= 387?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#why-is-there-assert-error-id-3623">6.3 Why is there ASSERT ERROR: id= 3623?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#why-is-there-assert-error-id-3625">6.4 Why is there ASSERT ERROR: id= 3625?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ota">7. OTA</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-implement-a-custom-gatt-ota-upgrade">7.1 How to implement a custom GATT OTA upgrade?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-are-requirements-for-the-version-and-break-point-parameters-in-sonata-ota-init">7.2 What are requirements for the version and break_point parameters in sonata_ota_init()?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware">8. Hardware</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-the-difference-in-power-consumption-between-the-high-voltage-and-low-voltage-ic">8.1 What is the difference in power consumption between the high-voltage and low-voltage IC?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-are-the-restrictions-on-the-use-of-p27-p28-p29">8.2 What are the restrictions on the use of P27/P28/P29?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#can-the-dc-dc-inductor-and-capacitor-be-omitted-if-the-system-is-powered-by-the-ldo">8.3 Can the DC-DC inductor and capacitor be omitted if the system is powered by the LDO?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-switch-the-power-supply-mode">8.4 How to switch the power supply mode?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-the-gpio-port-level-when-ic-starts">8.5 What is the GPIO port level when IC starts?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-the-accuracy-of-the-internal-low-frequency-32k-rc">8.6 What is the accuracy of the internal low-frequency 32K RC?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#does-it-support-the-external-pa-if-so-how-to-configure-it">8.7 Does it support the external PA? If so, how to configure it?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-deal-with-large-deviations-of-the-center-frequency">8.8 How to deal with large deviations of the center frequency?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR582X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Datasheet/index.html">ASR582X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Download-Tool/index.html">ASR582X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Quick-Start/index.html">ASR582X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Certification/index.html">ASR582X Certifcation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR6601</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Datasheet/index.html">ASR6601 Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Hardware-Reference/index.html">ASR6601 Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Download-Tool/index.html">ASR6601 Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Demo-Project/index.html">ASR6601 Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Quick-Start/index.html">ASR6601 Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/FAQ/index.html">ASR6601 FAQs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Test-Report/index.html">ASR6601 Test Report and Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ASR IoT Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ASR560X Series FAQs</a></li>
+      <li class="breadcrumb-item active">ASR560X Series FAQs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/ASR560X/FAQ/FAQs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="asr560x-series-faqs">
+<h1>ASR560X Series FAQs<a class="headerlink" href="#asr560x-series-faqs" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/ASR560X/常见问题/常见问题.html">简体中文</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p><strong>About This Document</strong></p>
+<p>This document introduces frequently asked questions and answers during the development of the ASR560X series Bluetooth SoC chips.</p>
+<p><strong>Intended Readers</strong></p>
+<p>This document is mainly for engineers who use this chip to develop their own platform and products, for instance:</p>
+<ul class="simple">
+<li><p>PCB Hardware Development Engineer</p></li>
+<li><p>Software Engineer</p></li>
+<li><p>Technical Support Engineer</p></li>
+</ul>
+<p><strong>Included Chip Models</strong></p>
+<p>The product models corresponding to this document are as follows.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Core</p></th>
+<th class="head"><p>SiP Flash</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ASR560X</p></td>
+<td><p>BLE 5.1 full feature (compatible with 5.2) SIG MESH V1.0.x IEEE 802.15.4 2.4G Proprietary</p></td>
+<td><p>ARM CM0+</p></td>
+<td><p>1 MB/ 512 KB</p></td>
+<td><p>AOA/AOD/Voice/IRTxRx/ Quadrature Decoder/Keypad/ 5V UART/5V GPIO/ Wi-Fi concurrent</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Copyright Notice</strong></p>
+<p>© 2023 ASR Microelectronics Co., Ltd. All rights reserved. No part of this document can be reproduced, transmitted, transcribed, stored, or translated into any languages in any form or by any means without the written permission of ASR Microelectronics Co., Ltd.</p>
+<p><strong>Trademark Statement</strong></p>
+<p>ASR and ASR Microelectronics Co., Ltd. are trademarks of ASR Microelectronics Co., Ltd.</p>
+<p>Other trade names, trademarks and registered trademarks mentioned in this document are property of their respective owners.</p>
+<p><strong>Electrostatic Discharge (ESD) Warning</strong></p>
+<p>This product can be damaged by Electrostatic Discharge (ESD). When handling with this device, the people should be very careful to conduct the ESD protection to avoid any device damage caused by ESD event.</p>
+<p><strong>Disclaimer</strong></p>
+<p>ASR do not give any warranty of any kind and may make improvements and/or changes in this document or in the product described in this document at any time.</p>
+<p>This document is only used as a guide, and no contents in the document constitute any form of warranty. Information in this document is subject to change without notice.</p>
+<p>All liability, including liability for infringement of any proprietary rights caused by using the information in this document is disclaimed.</p>
+<p><strong>ASR Microelectronics Co., Ltd.</strong></p>
+<p>Address: 9F, Building 10, No. 399 Keyuan Road, Zhangjiang High-tech Park, Pudong New Area, Shanghai, 201203, China</p>
+<p>Homepage: <a class="reference external" href="http://www.asrmicro.com/">http://www.asrmicro.com/</a></p>
+<p><strong>Revision History</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Date</p></th>
+<th class="head"><p>Version</p></th>
+<th class="head"><p>Release Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2023.03</p></td>
+<td><p>V1.4.0</p></td>
+<td><p>Adjusted descriptions in some sections.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tool">
+<h2>1. Tool<a class="headerlink" href="#tool" title="Link to this heading"></a></h2>
+<section id="how-to-download-the-firmware-to-the-development-board">
+<h3>1.1 How to download the firmware to the development board?<a class="headerlink" href="#how-to-download-the-firmware-to-the-development-board" title="Link to this heading"></a></h3>
+<p>Please refer to <a class="reference external" href="https://drive.google.com/file/d/1ie_yM-ItQ5_PIh5NClD7macu2FYobJXd/view">*ASR560X Series_Development Board User’s Guide*</a>.</p>
+</section>
+<section id="why-is-there-1f2e3d81-when-downloading">
+<h3>1.2 Why is there “1F2E3D81” when downloading?<a class="headerlink" href="#why-is-there-1f2e3d81-when-downloading" title="Link to this heading"></a></h3>
+<p>It indicates a communication exception. The serial port hardware connection and the host computer tool should be checked.</p>
+</section>
+<section id="is-it-necessary-to-download-ate-firmware">
+<h3>1.3 Is it necessary to download ATE firmware?<a class="headerlink" href="#is-it-necessary-to-download-ate-firmware" title="Link to this heading"></a></h3>
+<p>Normally only the BOOTLOAD/ROM/APP firmware should be downloaded, not the ATE firmware.</p>
+</section>
+<section id="can-the-app-firmware-be-downloaded-separately-if-only-it-is-updated">
+<h3>1.4 Can the APP firmware be downloaded separately if only it is updated?<a class="headerlink" href="#can-the-app-firmware-be-downloaded-separately-if-only-it-is-updated" title="Link to this heading"></a></h3>
+<p>Yes, it can be done by checking the *<strong>only image*</strong> radio box in the DOGO tool.</p>
+</section>
+<section id="how-to-erase-the-internal-flash-of-the-chip">
+<h3>1.5 How to erase the internal flash of the chip?<a class="headerlink" href="#how-to-erase-the-internal-flash-of-the-chip" title="Link to this heading"></a></h3>
+<p>The flash can be erased using the DOGO tool, referring to the steps in the following figure:</p>
+<center><p><img alt="image1" src="../../_images/%E5%9B%BE1-12.png" /></p>
+</center></section>
+</section>
+<section id="development-environment-setup">
+<h2>2. Development Environment Setup<a class="headerlink" href="#development-environment-setup" title="Link to this heading"></a></h2>
+<section id="does-it-support-development-compilation-and-debugging-in-the-keil-environment">
+<h3>2.1 Does it support development, compilation and debugging in the KEIL environment?<a class="headerlink" href="#does-it-support-development-compilation-and-debugging-in-the-keil-environment" title="Link to this heading"></a></h3>
+<p>Yes, it does. Please refer to <a class="reference external" href="https://drive.google.com/file/d/1fxLgH2Qb8LqPhN-SnOTdsTBjrlVmEsLJ/view">*ASR560X Series_Development Environment Setup Guide*</a> for details.</p>
+</section>
+<section id="does-it-support-compilation-in-the-linux-environment">
+<h3>2.2 Does it support compilation in the Linux environment?<a class="headerlink" href="#does-it-support-compilation-in-the-linux-environment" title="Link to this heading"></a></h3>
+<p>Yes, it does. Please refer to <a class="reference external" href="https://drive.google.com/file/d/1fxLgH2Qb8LqPhN-SnOTdsTBjrlVmEsLJ/view">*ASR560X Series_Development Environment Setup Guide*</a> for the specific environment configuration.</p>
+</section>
+<section id="does-it-support-versions-other-than-gcc-5-4">
+<h3>2.3 Does it support versions other than GCC 5.4?<a class="headerlink" href="#does-it-support-versions-other-than-gcc-5-4" title="Link to this heading"></a></h3>
+<p>No, it doesn’t. In the Windows environment, the <em>gcc-arm-none-eabi-5_4-2016q3-20160926</em> version in the SDK tools/toolchain directory must be used. The cross-compilation tool for the Linux environment can be downloaded via <a class="reference external" href="https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2">https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2</a>.</p>
+</section>
+</section>
+<section id="platform">
+<h2>3. Platform<a class="headerlink" href="#platform" title="Link to this heading"></a></h2>
+<section id="how-is-the-chips-built-in-flash-layout-divided">
+<h3>3.1 How is the chip’s built-in flash Layout divided?<a class="headerlink" href="#how-is-the-chips-built-in-flash-layout-divided" title="Link to this heading"></a></h3>
+<p>1. Please refer to section 3.1 Flash of <a class="reference external" href="https://drive.google.com/file/d/1fxLgH2Qb8LqPhN-SnOTdsTBjrlVmEsLJ/view">*ASR560X Series_Developer Guide*</a>.</p>
+<p>2. Please refer to the definition in the sonata_board.c file in the SDK.</p>
+</section>
+<section id="is-the-chips-built-in-flash-available-to-users">
+<h3>3.2 Is the chip’s built-in flash available to users?<a class="headerlink" href="#is-the-chips-built-in-flash-available-to-users" title="Link to this heading"></a></h3>
+<p>The 4 KB space of the COREDUMP_START_ADDR starting address can be used when the SYSTEM_COREDUMP macro is undefined.</p>
+</section>
+<section id="how-to-use-the-watchdog">
+<h3>3.3 How to use the watchdog?<a class="headerlink" href="#how-to-use-the-watchdog" title="Link to this heading"></a></h3>
+<p>1. The watchdog will be powered down when SoC enters low-power state;</p>
+<p>2. The watchdog counter will be reloaded in the watchdog interrupt by default. To disable this function, the NVIC_DisableIRQ() API should be used to disable the watchdog interrupt after the watchdog is initialized;</p>
+<p>3. It is recommended to kick the dog in the while loop of main.c.</p>
+</section>
+<section id="what-api-can-be-called-to-make-the-system-reboot">
+<h3>3.4 What API can be called to make the system reboot?<a class="headerlink" href="#what-api-can-be-called-to-make-the-system-reboot" title="Link to this heading"></a></h3>
+<p>The NVIC_SystemReset() API.</p>
+</section>
+<section id="what-is-the-difference-between-a-software-timer-app-timer-and-a-hardware-timer">
+<h3>3.5 What is the difference between a software timer (app_timer) and a hardware timer?<a class="headerlink" href="#what-is-the-difference-between-a-software-timer-app-timer-and-a-hardware-timer" title="Link to this heading"></a></h3>
+<p>1. The clock source of the hardware timer is a high-frequency clock. It has a separate hardware controller supporting interrupt triggering and supports µs-level timing;</p>
+<p>2. The clock source of the software timer is a low-frequency 32K clock provided by the BLE stack. It does not support interrupt triggering and can only be triggered by the BLE stack scheduling, and it supports ms-level timing;</p>
+<p>3. The hardware timer does not support waking up the SoC from sleep mode;</p>
+<p>4. The software timer supports waking up the SoC from sleep mode, which is applicable to open the timed task scheduling in low-power scenario.</p>
+</section>
+<section id="what-are-the-rules-for-using-the-mac-address-and-the-corresponding-read-and-write-apis">
+<h3>3.6 What are the rules for using the MAC address and the corresponding read and write APIs?<a class="headerlink" href="#what-are-the-rules-for-using-the-mac-address-and-the-corresponding-read-and-write-apis" title="Link to this heading"></a></h3>
+<p>The default rules for using the MAC address are as follows:</p>
+<p>1. If the MAC address is written in eFuse, use the MAC address in eFuse;</p>
+<p>2. If the MAC address is not written in eFuse and is written in NVDS, use the MAC address in NVDS;</p>
+<p>3. If no MAC address is written in either eFuse or NVDS, the BLE stack will generate a static random address and write it to NVDS, which will also be used by BLE stacks subsequently;</p>
+<p>4. The read and write APIs are sonata_get_bt_address() and sonata_set_bt_address(), respectively;</p>
+<p>5. sonata_set_bt_address() is used to write the MAC address to NVDS.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The priority of reading to eFuse and NVDS can be adjusted. Please refer to app_config() and ble_user_addr_callbacks() of the sonata_hl_beacon_rel demo app.c file for details.</p>
+</div>
+</section>
+<section id="how-to-configure-the-clock-for-the-peripheral-project">
+<h3>3.7 How to configure the clock for the peripheral project?<a class="headerlink" href="#how-to-configure-the-clock-for-the-peripheral-project" title="Link to this heading"></a></h3>
+<p>Boost the CPU clock speed to 64 MHz using the sys_clk_cfg(DIG_SEL_DPLL_64M) API.</p>
+</section>
+<section id="what-are-the-considerations-for-pwm-input-output-mode">
+<h3>3.8 What are the considerations for PWM input/output mode?<a class="headerlink" href="#what-are-the-considerations-for-pwm-input-output-mode" title="Link to this heading"></a></h3>
+<p>The capture input channel and PWM output channel of CAPn, PWM2n, and PWM2n+1 are based on the same waveform generator, so users must select either the CAP input or PWM output function when the controller was initiated, the PWM controller can only output one frequency waveform of PWM2n or PWM2n+1 in the group.</p>
+</section>
+<section id="what-is-the-maximum-output-frequency-of-spi-and-pwm">
+<h3>3.9 What is the maximum output frequency of SPI and PWM?<a class="headerlink" href="#what-is-the-maximum-output-frequency-of-spi-and-pwm" title="Link to this heading"></a></h3>
+<p>1. The maximum output frequency of SPI MASTER is CLK/2, which is recommended not to exceed 16 MHz.</p>
+<p>2. The maximum output frequency of PWM is CLK/3, which is recommended not to exceed 5 MHz.</p>
+</section>
+<section id="what-is-the-number-of-channels-range-and-resolution-of-adc">
+<h3>3.10 What is the number of channels, range, and resolution of ADC?<a class="headerlink" href="#what-is-the-number-of-channels-range-and-resolution-of-adc" title="Link to this heading"></a></h3>
+<p>1. For QFN32 package, there are 5 ADC channels, with channels 0 to 4 corresponding to P06 to P10 respectively;</p>
+<p>2. For QFN48 package, there are 8 ADC channels, with channels 0 to 7 corresponding to P06 to P13 respectively;</p>
+<p>3. The ADC range is 1.2 V, so the voltage to be sampled must be less than 1.2 V;</p>
+<p>4. The ADC resolution is 12 bits.</p>
+</section>
+</section>
+<section id="ble-stack">
+<h2>4. BLE Stack<a class="headerlink" href="#ble-stack" title="Link to this heading"></a></h2>
+<section id="api-use">
+<h3>4.1 API Use<a class="headerlink" href="#api-use" title="Link to this heading"></a></h3>
+<section id="what-are-the-considerations-for-using-the-sonata-api-app-timer-set-sonata-api-app-timer-clear-api">
+<h4>4.1.1 What are the considerations for using the sonata_api_app_timer_set()/sonata_api_app_timer_clear() API?<a class="headerlink" href="#what-are-the-considerations-for-using-the-sonata-api-app-timer-set-sonata-api-app-timer-clear-api" title="Link to this heading"></a></h4>
+<p>1. This API can only be used after SONATA_GAP_CMP_BLE_ON;</p>
+<p>2. The user-defined timer_id cannot be repeated and should be greater than 40;</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For versions after SDK 1.5.0, the user-defined timer_id doesn’t have such restriction;*</p>
+</div>
+<p>3. The unit of the delay parameter is <em>ms</em>;</p>
+<p>4. The timeout callback function should be registered using the sonata_api_register_app_timer_callback() API before using this API;</p>
+<p>5. No time-consuming tasks can be executed in the timeout callback function, which should enter and exit quickly;</p>
+<p>6. In low-power state, this API can be used to wake up SoC and execute the task (the wake-up source should be configured as BLE_TIMER);</p>
+<p>7. If users need to use this API after waking up from sleep state, this API must be called in the app_after_ble_wkup_cb() function;</p>
+<p>8. The sonata_api_app_timer_set() API and sonata_api_app_timer_clear() API cannot be called in the interrupt service routine;</p>
+<p>9. To loop execute the callback function corresponding to the timer id, users need to simply reconfigure it once in the callback function using the sonata_api_app_timer_set() API.</p>
+</section>
+<section id="how-many-bytes-can-the-sonata-fs-write-api-write-at-most-at-a-time-is-the-written-data-placed-in-nvds">
+<h4>4.1.2 How many Bytes can the sonata_fs_write() API write at most at a time? Is the written data placed in NVDS?<a class="headerlink" href="#how-many-bytes-can-the-sonata-fs-write-api-write-at-most-at-a-time-is-the-written-data-placed-in-nvds" title="Link to this heading"></a></h4>
+<p>1. As the type of the sonata_fs_write() API length parameter is uint8_t, its maximum length is 255 Bytes;</p>
+<p>2. The written data is placed in NVDS;</p>
+<p>3. When using this API, the tag should be user-defined and must be greater than or equal to APP_DATA_SAVE_TAG_FIRST and less than APP_DATA_SAVE_TAG_LAST.</p>
+</section>
+<section id="what-is-the-maximum-number-of-msgs-that-can-be-registered-by-the-sonata-api-app-msg-register-api-and-how-to-use-the-api">
+<h4>4.1.3 What is the maximum number of MSGs that can be registered by the sonata_api_app_msg_register() API, and how to use the API?<a class="headerlink" href="#what-is-the-maximum-number-of-msgs-that-can-be-registered-by-the-sonata-api-app-msg-register-api-and-how-to-use-the-api" title="Link to this heading"></a></h4>
+<p>1. The maximum number of MSGs is 31. The MSG parameter is an ID and a function pointer;</p>
+<p>2. Use the sonata_api_send_app_msg() API to trigger and access the function corresponding to the ID;</p>
+<p>3. No time-consuming tasks can be executed in the callback function, which should enter and exit quickly.</p>
+</section>
+<section id="what-is-the-usage-of-sonata-ble-prevent-sleep-set-sonata-ble-prevent-sleep-clear">
+<h4>4.1.4 What is the usage of sonata_ble_prevent_sleep_set()/ sonata_ble_prevent_sleep_clear()?<a class="headerlink" href="#what-is-the-usage-of-sonata-ble-prevent-sleep-set-sonata-ble-prevent-sleep-clear" title="Link to this heading"></a></h4>
+<p>1. sonata_ble_prevent_sleep_set() is used to set a flag bit to prevent the system from entering sleep state;</p>
+<p>2. sonata_ble_prevent_sleep_clear() is used to clear a flag bit;</p>
+<p>3. The system is allowed to enter sleep mode when all flag bits have been cleared;</p>
+<p>4. The user should define the corresponding prv_slp_bit for determining whether different application logic/modules are allowed to enter sleep mode or not.</p>
+</section>
+<section id="what-is-the-usage-of-the-sonata-get-sys-time-api">
+<h4>4.1.5 What is the usage of the sonata_get_sys_time() API?<a class="headerlink" href="#what-is-the-usage-of-the-sonata-get-sys-time-api" title="Link to this heading"></a></h4>
+<p>1. It is used to get the BLE tick from the system startup to the current moment;</p>
+<p>2. The time unit is 0.3125 ms;</p>
+<p>3. The access to DS4 will not affect the timing of this API;</p>
+<p>4. The maximum value returned is 0xFFF FFFF (28 bits).</p>
+</section>
+<section id="can-sonata-ble-gap-set-white-list-api-be-called-only-once-when-called-multiple-times-will-the-previous-setting-be-replaced">
+<h4>4.1.6 Can sonata_ble_gap_set_white_list() API be called only once? When called multiple times, will the previous setting be replaced?<a class="headerlink" href="#can-sonata-ble-gap-set-white-list-api-be-called-only-once-when-called-multiple-times-will-the-previous-setting-be-replaced" title="Link to this heading"></a></h4>
+<p>1. Users only need to call this API once, and all of white list addresses will be set at this time;</p>
+<p>2. Yes, it will. When called multiple times, it will be available at the last time. All addresses should be set every time since only the last set value will be used in multiple calls.</p>
+</section>
+<section id="what-is-the-default-transmit-power-can-it-be-adjusted">
+<h4>4.1.7 What is the default transmit power? Can it be adjusted?<a class="headerlink" href="#what-is-the-default-transmit-power-can-it-be-adjusted" title="Link to this heading"></a></h4>
+<p>1. The default transmit power is 0 dBm;</p>
+<p>2. The transmit power can be adjusted using the sonata_ll_set_txpwr() API;</p>
+<p>3. The sonata_ll_set_txpwr() API should be called after SONATA_GAP_CMP_BLE_ON.</p>
+</section>
+<section id="what-is-the-process-of-gatt-indication">
+<h4>4.1.8 What is the process of GATT indication?<a class="headerlink" href="#what-is-the-process-of-gatt-indication" title="Link to this heading"></a></h4>
+<p>1. <strong>Central</strong> Enables indication: Use sonata_ble_gatt_write() to write 0x02 to the corresponding handle;</p>
+<p>2. <strong>Peripheral</strong> processing: Enter the ble_gatt_callback-&gt;gatt_write_req() callback function, in which sonata_ble_gatt_send_write_confirm() should be used to send a confirmation. If <strong>Peripheral</strong> does not send a confirmation, <strong>Central</strong> will receive the SONATA_GATT_CMP_WRITE event with status=0x45 (SONATA_GAP_ERR_TIMEOUT) after the timeout;</p>
+<p>3. <strong>Peripheral</strong> sending data via indication: Use the sonata_ble_gatt_send_indicate_event() API and receive SONATA_GATT_CMP_INDICATE event after successful sending or timeout;</p>
+<p>4. <strong>Central</strong> receiving indication data: Enter the ble_gatt_callback-&gt;gatt_event_req() callback function, where the received data will be processed. <strong>Central</strong> should send a confirmation via the sonata_ble_gatt_send_event_confirm() API. If <strong>Central</strong> does not reply to the confirmation after receiving indication, <strong>Peripheral</strong> will receive the SONATA_GATT_CMP_INDICATE event after some time with status=0x45(SONATA_GAP_ERR_TIMEOUT).</p>
+</section>
+<section id="what-is-the-process-of-gatt-notification">
+<h4>4.1.9 What is the process of GATT notification?<a class="headerlink" href="#what-is-the-process-of-gatt-notification" title="Link to this heading"></a></h4>
+<p>1. <strong>Central</strong> enables notification: Use sonata_ble_gatt_write() to write 0x01 to the corresponding handle;</p>
+<p>2. <strong>Peripheral</strong> processing: Enter the ble_gatt_callback-&gt;gatt_write_req() callback function, in which sonata_ble_gatt_send_write_confirm() should be used to send a confirmation. If <strong>Peripheral</strong> does not send a confirmation, <strong>Central</strong> will receive the SONATA_GATT_CMP_WRITE event with status=0x45(SONATA_GAP_ERR_TIMEOUT) after timeout;</p>
+<p>3. <strong>Peripheral</strong> sending data via notification: Use the sonata_ble_gatt_send_notify_event() API and receive the SONATA_GATT_CMP_NOTIFY event after successful sending;</p>
+<p>4. <strong>Central</strong> receiving notification data: Enter the ble_gatt_callback-&gt;gatt_event() callback, where the received data will be processed. <strong>Central</strong> does not need to reply to the confirmation.</p>
+</section>
+<section id="which-callback-function-will-peripheral-enter-when-central-calls-the-sonata-ble-gatt-write-sonata-ble-gatt-write-no-response-api">
+<h4>4.1.10 Which callback function will Peripheral enter when Central calls the sonata_ble_gatt_write()/sonata_ble_gatt_write_no_response() API?<a class="headerlink" href="#which-callback-function-will-peripheral-enter-when-central-calls-the-sonata-ble-gatt-write-sonata-ble-gatt-write-no-response-api" title="Link to this heading"></a></h4>
+<p>1. If the attribute of handle supports write request (PWR_NA):</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>When <strong>Central</strong> calls sonata_ble_gatt_write(), <strong>Peripheral</strong> will enter the ble_gatt_callback-&gt;gatt_write_req() callback.</p></li>
+<li><p>When <strong>Central</strong> calls sonata_ble_gatt_write_no_response(), <strong>Peripheral</strong> will not respond.</p></li>
+</ol>
+</div></blockquote>
+<p>2. If the attribute of handle supports write command (PWC_NA):</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>When <strong>Central</strong> calls sonata_ble_gatt_write(), <strong>Peripheral</strong> will return an error.</p></li>
+<li><p>When <strong>Central</strong> calls sonata_ble_gatt_write_no_response(), <strong>Peripheral</strong> will enter the ble_gatt_callback-&gt;gatt_write_req() callback.</p></li>
+</ol>
+</div></blockquote>
+<p>3. If the attribute of handle supports both write request (PWR_NA) and write command (PWC_NA):</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>When <strong>Central</strong> calls sonata_ble_gatt_write(), <strong>Peripheral</strong> will enter the ble_gatt_callback-&gt;gatt_write_req() callback.</p></li>
+<li><p>When <strong>Central</strong> calls sonata_ble_gatt_write_no_response, <strong>Peripheral</strong> will enter the ble_gatt_callback-&gt;gatt_write_req() callback.</p></li>
+</ol>
+</div></blockquote>
+<p>4. The application layer of peripheral should reply the application processing status to the BLE stack using the sonata_ble_gatt_send_write_confirm() API.</p>
+<p>5. The BLE stack will determine whether a response should be sent based on the processing status and attribute opcode.</p>
+</section>
+<section id="how-does-central-use-sonata-ble-gatt-write-to-write-data-greater-than-att-mtu-size">
+<h4>4.1.11 How does Central use sonata_ble_gatt_write() to write data greater than ATT_MTU size?<a class="headerlink" href="#how-does-central-use-sonata-ble-gatt-write-to-write-data-greater-than-att-mtu-size" title="Link to this heading"></a></h4>
+<p>1. First, <strong>Central</strong> writes data greater than ATT_MTU size by calling sonata_ble_gatt_write(), and <strong>Peripheral</strong> enters the ble_gatt_callback-&gt;gatt_att_info_req() callback;</p>
+<p>2. In the gatt_att_info_req callback, peripheral will send the length of the attribute corresponding to the handle by sonata_ble_gatt_send_att_info_confirm();</p>
+<p>3. When all data is transmitted, <strong>Central</strong> will generate a callback event SONATA_GATT_CMP_WRITE in app_ble_complete_event_handler(), then the user calls sonata_ble_gatt_execute_write(), and the data will be sent successfully.</p>
+</section>
+</section>
+<section id="problems-that-may-be-encountered-in-developing-the-advertising-function">
+<h3>4.2 Problems that May Be Encountered in Developing the Advertising Function<a class="headerlink" href="#problems-that-may-be-encountered-in-developing-the-advertising-function" title="Link to this heading"></a></h3>
+<section id="why-is-there-sonata-gap-err-invalid-param-in-the-sonata-ble-set-advertising-data-api">
+<h4>4.2.1 Why is there SONATA_GAP_ERR_INVALID_PARAM in the sonata_ble_set_advertising_data() API?<a class="headerlink" href="#why-is-there-sonata-gap-err-invalid-param-in-the-sonata-ble-set-advertising-data-api" title="Link to this heading"></a></h4>
+<p>Check whether GAP_AD_TYPE_FLAGS is included in the advertising data. Since the Flags data is automatically added to the BLE stack, there is no need to add more.</p>
+</section>
+<section id="does-the-ble-stack-support-dynamic-adjustment-of-advertising-data">
+<h4>4.2.2 Does the BLE stack support dynamic adjustment of advertising data?<a class="headerlink" href="#does-the-ble-stack-support-dynamic-adjustment-of-advertising-data" title="Link to this heading"></a></h4>
+<p>Yes, it does. After start adv, sonata_ble_set_advertising_data() can be used to adjust the advertising data, which takes effect immediately after setting.</p>
+</section>
+<section id="does-the-ble-stack-support-sending-multiple-advertisings-at-the-same-time-at-different-times">
+<h4>4.2.3 Does the BLE stack support sending multiple advertisings at the same time/at different times?<a class="headerlink" href="#does-the-ble-stack-support-sending-multiple-advertisings-at-the-same-time-at-different-times" title="Link to this heading"></a></h4>
+<p>It supports sending multiple advertisings at the same time, while attention should be paid to the RAM resources consumption. Please refer to <em>ASR560X Series_Memory Layout Configuration Application Manual</em>. The process is as follows:</p>
+<p>1. Configure advertising parameter: sonata_ble_config_legacy_advertising()；</p>
+<p>2. Get the corresponding advertising id: app_ble_complete_event_handler()-&gt;SONATA_GAP_CMP_ADVERTISING_CONFIG-&gt;param；</p>
+<p>3. According to the advertising id (param), set the advertising data: sonata_ble_set_advertising_data_byid();</p>
+<p>4. Start the advertising according to the advertising id (param): sonata_ble_start_advertising_byid();</p>
+<p>5. Execute step 1 after receiving app_ble_complete_event_handler()-&gt;SONATA_GAP_CMP_ADVERTISING_START to start a new advertising.</p>
+</section>
+<section id="what-is-the-info-of-the-sonata-gap-ext-adv-report-ind-t-structure-in-the-scan-result-callback">
+<h4>4.2.4 What is the info of the sonata_gap_ext_adv_report_ind_t structure in the scan result callback?<a class="headerlink" href="#what-is-the-info-of-the-sonata-gap-ext-adv-report-ind-t-structure-in-the-scan-result-callback" title="Link to this heading"></a></h4>
+<p>1. The value of bits 3 to 6 corresponds to sonata_gap_adv_report_info;</p>
+<p>2. The value of bits 0 to 2 corresponds to sonata_gap_adv_report_type.</p>
+</section>
+</section>
+<section id="what-roms-are-available-for-the-mesh-demo">
+<h3>4.3 What ROMs are available for the Mesh demo?<a class="headerlink" href="#what-roms-are-available-for-the-mesh-demo" title="Link to this heading"></a></h3>
+<p>1. Please refer to <em>ASR560X Series_Memory Layout Configuration Application Manual</em> for the number of ACTs, supported connections, supported profiles, and available memory, etc. for each ROM.</p>
+<p>2. The Mesh demo requires at least 4 ACTs: 1 scan, 2 proxy adv, and 1 unconnectable adv.</p>
+</section>
+<section id="is-there-a-limit-to-the-max-len-parameter-ble-stack-when-defining-the-service">
+<h3>4.4 Is there a limit to the max_len parameter BLE stack when defining the service?<a class="headerlink" href="#is-there-a-limit-to-the-max-len-parameter-ble-stack-when-defining-the-service" title="Link to this heading"></a></h3>
+<p>max_len is a number of type uint16_t. The BLE stack only reserves this number and does not allocate space, so there is no length limit.</p>
+</section>
+<section id="what-is-the-main-function-of-the-app-ble-complete-event-handler-callback">
+<h3>4.5 What is the main function of the app_ble_complete_event_handler() callback?<a class="headerlink" href="#what-is-the-main-function-of-the-app-ble-complete-event-handler-callback" title="Link to this heading"></a></h3>
+<p>1. Application layer can get which API has been executed, and the status of these APIs from parameter “opt_id” of this callback function.</p>
+<p>2. The parameter status of “0” indicates that the API is executed successfully.</p>
+<p>3. The reason for the instruction exception status can be found in ble_api:raw-latex:<cite>inc</cite> sonata_error_api.h.</p>
+</section>
+<section id="what-does-sonata-gatt-cmp-notify-mean">
+<h3>4.6 What does SONATA_GATT_CMP_NOTIFY mean?<a class="headerlink" href="#what-does-sonata-gatt-cmp-notify-mean" title="Link to this heading"></a></h3>
+<p>SONATA_GATT_CMP_NOTIFY indicates that the data is in the send queue and RF confirms that it can be sent.</p>
+</section>
+<section id="what-will-the-asr560x-do-when-the-host-sends-att-read-blob-req">
+<h3>4.7 What will the ASR560X do when the host sends ATT_READ_BLOB_REQ?<a class="headerlink" href="#what-will-the-asr560x-do-when-the-host-sends-att-read-blob-req" title="Link to this heading"></a></h3>
+<p>1. The ASR560X BLE stack will enter the gatt_read_req() callback;</p>
+<p>2. The application layer only needs to send the complete value according to handle;</p>
+<p>3. The BLE stack will handle the offset of ATT_READ_BLOB_REQ.</p>
+</section>
+<section id="how-to-use-both-the-advertising-and-scan-functions">
+<h3>4.8 How to use both the advertising and scan functions?<a class="headerlink" href="#how-to-use-both-the-advertising-and-scan-functions" title="Link to this heading"></a></h3>
+<p>One function must be successfully enabled before another function is enabled. For example, the process of enabling advertising and then scanning is as follows:</p>
+<p>1. Call the sonata_ble_config_legacy_advertising() API to configure the advertising in app_ble_complete_event_handler()-&gt;SONATA_GAP_CMP_BLE_ON;</p>
+<p>2. After the sonata_ble_config_legacy_advertising() API is executed successfully, it will enter app_ble_complete_event_handler() -&gt; SONATA_GAP_CMP_ADVERTISING_CONFIG, indicating successful advertising configuration;</p>
+<p>3. Call the sonata_ble_set_advertising_data() API in the SONATA_GAP_CMP_ADVERTISING_CONFIG process to set the advertising data;</p>
+<p>4. After the sonata_ble_set_advertising_data() API is executed successfully, it will enter app_ble_complete_event_handler()-&gt;SONATA_GAP_CMP_SET_ADV_DATA, indicating successful advertising data setting;</p>
+<p>5. Call sonata_ble_start_advertising() in the SONATA_GAP_CMP_SET_ADV_DATA process to enable advertising;</p>
+<p>6. After the sonata_ble_start_advertising() API is executed successfully, it will enter app_ble_complete_event_handler()-&gt;SONATA_GAP_CMP_ADVERTISING_START, indicating successful advertising enabling;</p>
+<p>7. Call sonata_ble_config_scanning() in the SONATA_GAP_CMP_ADVERTISING_START process to configure the scan;</p>
+<p>8. After the sonata_ble_config_scanning() API is executed successfully, it will enter app_ble_complete_event_handler()-&gt;SONATA_GAP_CMP_SCANNING_CONFIG, indicating successful scanning configuration;</p>
+<p>9. Call sonata_ble_start_scanning() in the SONATA_GAP_CMP_SCANNING_CONFIG process to enable scanning;</p>
+<p>10. After the sonata_ble_start_scanning() API is executed successfully, it will enter app_ble_complete_event_handler()-&gt;SONATA_GAP_CMP_SCANNING_START, indicating successful scanning enabling.</p>
+</section>
+</section>
+<section id="low-power-consumption">
+<h2>5. Low-power consumption<a class="headerlink" href="#low-power-consumption" title="Link to this heading"></a></h2>
+<section id="what-is-the-process-of-entering-and-exiting-ds4-mode">
+<h3>5.1 What is the process of entering and exiting DS4 mode?<a class="headerlink" href="#what-is-the-process-of-entering-and-exiting-ds4-mode" title="Link to this heading"></a></h3>
+<p>1. When the system enters sleep mode, it will first turn off the BLE clock;</p>
+<p>2. Then enter the app_before_ds_cb() callback function. <strong>All peripherals used should be de-initialized</strong> and peripheral interrupts should be disabled in the app_before_ds_cb() callback function, because peripheral controllers are powered off after entering DS mode;</p>
+<p>3. After the app_before_ds_cb() callback is executed, the system will enter sleep mode and power off the peripheral power as well as the external high-frequency crystal;</p>
+<p>4. When the system is woken up by the configured wake-up source, first it will execute the wake-up process and initialize the BLE stack, and then enter the app_after_wkup_cb() callback;</p>
+<p>5. The CPU clock speed will first be boosted to 64 MHz in app_after_wkup_cb();</p>
+<p>6. After the CPU clock speed is boosted, <strong>the peripherals used in the system should be initialized again</strong>;</p>
+<p>7. When the BLE stack has been initialized, it enters the app_after_ble_wkup_cb() callback.</p>
+</section>
+<section id="how-to-use-the-slp-duration-backoff-parameter">
+<h3>5.2 How to use the slp_duration_backoff parameter?<a class="headerlink" href="#how-to-use-the-slp-duration-backoff-parameter" title="Link to this heading"></a></h3>
+<p>1. This variable should be configured according to the actual application scenario when the low-power function is enabled.</p>
+<p>2. The BLE communication time is fixed. In the low-power state, SoC need to wake up before the next communication time, and RF RX/TX should be turned on for communication.</p>
+<p>3. To avoid missing the next communication time, users should consider the elapsed time from SoC wake up to SoC initialization.</p>
+<p>4. slp_duration_backoff is used to configure the early wake-up time, the unit is 0.3125 ms.</p>
+<p>5. When slp_duration_backoff=0, it will wake up 6*0.3125 ms earlier by default.</p>
+<p>6. The slp_duration_backoff parameter should be adjusted according to the time consumed by app_cfg_after_wkup().</p>
+<p>7. If slp_duration_backoff is set too large, the active time will be increased and thus affect the power consumption.</p>
+<p>8. If slp_duration_backoff is set too small, it may cause communication abnormalities and affect the stability of BLE communication.</p>
+</section>
+<section id="how-to-configure-low-volt">
+<h3>5.3 How to configure low_volt?<a class="headerlink" href="#how-to-configure-low-volt" title="Link to this heading"></a></h3>
+<p>1. For low-voltage chip applications with a supply range of 1.7-3.6 V, low_volt should be configured as VBAT_VOLT_LOW.</p>
+<p>2. For high-voltage chip applications with a supply range over 3.6 V, low_volt should be configured as VBAT_VOLT_HIGH.</p>
+<p>3. The value of low_volt is VBAT_VOLT_DFT by default. The SDK will decide whether to enable low voltage mode according to the chip model and internal register status.</p>
+<p>4. The value is assigned by acquiring the voltage with ADC VBATINCH channel.</p>
+</section>
+<section id="why-is-there-a-glitch-at-the-gpio-level-when-waking-up-from-sleep-mode">
+<h3>5.4 Why is there a glitch at the GPIO level when waking up from Sleep mode?<a class="headerlink" href="#why-is-there-a-glitch-at-the-gpio-level-when-waking-up-from-sleep-mode" title="Link to this heading"></a></h3>
+<p>In app_cfg_after_wkup, the peripheral should be initialized before calling sonata_sleep_pad_unlatch(), otherwise there will be a glitch at the GPIO level.</p>
+</section>
+<section id="how-to-get-the-wake-up-source">
+<h3>5.5 How to get the wake-up source?<a class="headerlink" href="#how-to-get-the-wake-up-source" title="Link to this heading"></a></h3>
+<p>The WKUP_SRC_GET API can be used at the end of the app_cfg_after_wkup() callback to get the wake-up source.</p>
+</section>
+<section id="how-to-avoid-the-high-power-consumption-when-the-p06-of-qfn32-ic-pulls-up-or-outputs-high-in-low-power-state">
+<h3>5.6 How to avoid the high power consumption when the P06 of QFN32 IC pulls up or outputs high in low-power state?<a class="headerlink" href="#how-to-avoid-the-high-power-consumption-when-the-p06-of-qfn32-ic-pulls-up-or-outputs-high-in-low-power-state" title="Link to this heading"></a></h3>
+<p>P11 should be configured as an internal pull-up/floating.</p>
+</section>
+<section id="how-to-avoid-abnormal-pwm-output-in-low-power-state">
+<h3>5.7 How to avoid abnormal PWM output in low-power state?<a class="headerlink" href="#how-to-avoid-abnormal-pwm-output-in-low-power-state" title="Link to this heading"></a></h3>
+<p>PTC should be enabled when using PWM peripherals. In addition to configuring PWM_PCLK_EN and PWM_SOFT_EN in peri_clk_en[0]/peri_soft_en[0], PTC_CLK_EN and PTC_SOFT_EN should also be configured in peri_clk_en[3]/peri_soft_en[3].</p>
+</section>
+<section id="is-online-simulation-supported-in-low-power-state">
+<h3>5.8 Is online simulation supported in low-power state?<a class="headerlink" href="#is-online-simulation-supported-in-low-power-state" title="Link to this heading"></a></h3>
+<p>No, it is not supported. In low-power state, the clock and power supply of the MCU core and peripherals are turned off, so the online simulation function is unavailable.</p>
+</section>
+<section id="should-the-ble-stack-be-reinitialized-after-waking-up-from-sleep-mode">
+<h3>5.9 Should the BLE stack be reinitialized after waking up from Sleep mode?<a class="headerlink" href="#should-the-ble-stack-be-reinitialized-after-waking-up-from-sleep-mode" title="Link to this heading"></a></h3>
+<p>1. After waking up from DS4 mode, there is no need to reinitialize the BLE stack, and the peripherals used should be initialized.</p>
+<p>2. After waking up from DS1-DS3 mode, the chip will reboot to reinitialize the BLE stack and peripherals.</p>
+</section>
+<section id="will-xo16m-be-completely-powered-down-in-low-power-state">
+<h3>5.10 Will XO16M be completely powered down in low-power state?<a class="headerlink" href="#will-xo16m-be-completely-powered-down-in-low-power-state" title="Link to this heading"></a></h3>
+<p>Yes, it will. The high-frequency crystal will be powered down in low-power state.</p>
+</section>
+<section id="what-are-the-considerations-for-low-power-serial-ports">
+<h3>5.11 What are the considerations for low-power serial ports?<a class="headerlink" href="#what-are-the-considerations-for-low-power-serial-ports" title="Link to this heading"></a></h3>
+<p>1. In sleep initial function, use the variable lpuart_pad, the member of sonata_sleep_cfg_t structure, to configure the LPUART RXD pin. Any pin from P02 to P26 can be used as the LPUART RXD pin.</p>
+<p>2. In sleep initial function, use the lpuart_init() function in the sonata_sleep_cfg_t structure to configure the initialization of LPUART device.</p>
+<p>3. The LPUART TXD PIN is configured as any pin with the multiplexing function according to the PIN MUX table (referring to section 2.4.15 of the <em>ASR560X_Datasheet</em>).</p>
+<p>4. LPUART baudrate supports up to 9600 bps.</p>
+</section>
+<section id="does-the-ble-stack-use-rco32k-or-xo32k-in-low-power-mode-by-default-how-to-switch-the-32k-clock-source">
+<h3>5.12 Does the BLE stack use RCO32K or XO32K in low-power mode by default? How to switch the 32K clock source?<a class="headerlink" href="#does-the-ble-stack-use-rco32k-or-xo32k-in-low-power-mode-by-default-how-to-switch-the-32k-clock-source" title="Link to this heading"></a></h3>
+<p>1. The BLE stack uses RCO32K by default.</p>
+<p>2. In sleep initial function, users can switch the 32K clock source by configuring the variable clk_sel, the member of sonata_sleep_cfg_t struct.</p>
+</section>
+</section>
+<section id="assert">
+<h2>6. Assert<a class="headerlink" href="#assert" title="Link to this heading"></a></h2>
+<section id="why-is-there-assert-error-id-180">
+<h3>6.1 Why is there ASSERT ERROR: id=180?<a class="headerlink" href="#why-is-there-assert-error-id-180" title="Link to this heading"></a></h3>
+<p>The BLE stack is blocked and cannot be scheduled in time.</p>
+</section>
+<section id="why-is-there-assert-error-id-387">
+<h3>6.2 Why is there ASSERT ERROR: id= 387?<a class="headerlink" href="#why-is-there-assert-error-id-387" title="Link to this heading"></a></h3>
+<p>The BLE stack is blocked and cannot process BLE event.</p>
+</section>
+<section id="why-is-there-assert-error-id-3623">
+<h3>6.3 Why is there ASSERT ERROR: id= 3623?<a class="headerlink" href="#why-is-there-assert-error-id-3623" title="Link to this heading"></a></h3>
+<p>The message is sent to a null task.</p>
+</section>
+<section id="why-is-there-assert-error-id-3625">
+<h3>6.4 Why is there ASSERT ERROR: id= 3625?<a class="headerlink" href="#why-is-there-assert-error-id-3625" title="Link to this heading"></a></h3>
+<p>The task message is in the wrong state, out of predefined value, so it cannot be processed by the BLE stack. It is possible that the message queue crashed.</p>
+</section>
+</section>
+<section id="ota">
+<h2>7. OTA<a class="headerlink" href="#ota" title="Link to this heading"></a></h2>
+<section id="how-to-implement-a-custom-gatt-ota-upgrade">
+<h3>7.1 How to implement a custom GATT OTA upgrade?<a class="headerlink" href="#how-to-implement-a-custom-gatt-ota-upgrade" title="Link to this heading"></a></h3>
+<p>The following steps should be followed to implement an OTA upgrade using the custom GATT service:</p>
+<p>1. Generate the OTA firmware by tools in the tools:raw-latex:<cite>ota</cite>_bin_gen:raw-latex:<cite>image</cite>_gen_header;</p>
+<p>2. Call sonata_ota_init() after entering the OTA upgrading process;</p>
+<p>3. Transfer the upgraded firmware to the device side using a custom protocol;</p>
+<p>4. Write the upgraded firmware sequentially to Flash using sonata_ota_write(). The data written includes 128 Bytes of OTA information header and the actual application firmware;</p>
+<p>5. The parameter “off” of sonata_ota_write() is a global variable that records the offset position of the written firmware (excluding the 128-Byte OTA information header). Users can get the writing progress at the upper layer. The initial value of the parameter “off” should be set to 0, which will be self-incrementing according to the written data size in sonata_ota_write(), without user processing;</p>
+<p>6. The data written to the Flash OTA area using sonata_ota_write() does not include the 128-Byte OTA header. The Byte of the off parameter is self-incrementing based on the Bytes of firmware transmitted (excluding the 128-Byte OTA header). The initial off value should be set to 0, which will be self-incrementing without further processing;</p>
+<p>7. After the firmware has been written, the sonata_ota_set_boot() function is called to verify data integrity and set the flag bit;</p>
+<p>8. After sonata_ota_set_boot() has been called, reboot the system, the bootloader will deal with next progress, and application layer won’t have to do anything.</p>
+<p>​ <strong>Notice:</strong> <em>1.</em> <em>The interrupt is already disabled internally when calling the sonata_ota_write() API, so there is no need to disable the interrupt additionally.</em> <em>2.</em> <em>It is recommended that at most 256 Bytes of data be written into the Flash at a time to avoid exceptions caused by the long interruption off.</em></p>
+</section>
+<section id="what-are-requirements-for-the-version-and-break-point-parameters-in-sonata-ota-init">
+<h3>7.2 What are requirements for the version and break_point parameters in sonata_ota_init()?<a class="headerlink" href="#what-are-requirements-for-the-version-and-break-point-parameters-in-sonata-ota-init" title="Link to this heading"></a></h3>
+<p>The version and break_point parameters in sonata_ota_init() are mainly for the version roll back and breakpoint, which are not supported currently.</p>
+</section>
+</section>
+<section id="hardware">
+<h2>8. Hardware<a class="headerlink" href="#hardware" title="Link to this heading"></a></h2>
+<section id="what-is-the-difference-in-power-consumption-between-the-high-voltage-and-low-voltage-ic">
+<h3>8.1 What is the difference in power consumption between the high-voltage and low-voltage IC?<a class="headerlink" href="#what-is-the-difference-in-power-consumption-between-the-high-voltage-and-low-voltage-ic" title="Link to this heading"></a></h3>
+<p>The power consumption of the high-voltage IC is about 10 μA greater than that of the low-voltage one.</p>
+</section>
+<section id="what-are-the-restrictions-on-the-use-of-p27-p28-p29">
+<h3>8.2 What are the restrictions on the use of P27/P28/P29?<a class="headerlink" href="#what-are-the-restrictions-on-the-use-of-p27-p28-p29" title="Link to this heading"></a></h3>
+<p>1. P27, with a test mode alternate judgment function, should not be used as a normal GPIO and should be connected to GND via <strong>an external 10 K pull-down</strong>.</p>
+<p>2. P27/P28/P29 must be configured with the strong internal pull-up.</p>
+<p>3. P27/P28/P29 is connected to GND via an internal 10 K pull-down when configured in the high resistance state.</p>
+<p>4. There will be current leakage from P27/P28/P29 when they are configured as <strong>internal input strong pull-ups</strong> in low-power state.</p>
+<p>5. There will be current leakage from P27/P28/P29 when they are configured to <strong>output high level</strong> in low-power state.</p>
+</section>
+<section id="can-the-dc-dc-inductor-and-capacitor-be-omitted-if-the-system-is-powered-by-the-ldo">
+<h3>8.3 Can the DC-DC inductor and capacitor be omitted if the system is powered by the LDO?<a class="headerlink" href="#can-the-dc-dc-inductor-and-capacitor-be-omitted-if-the-system-is-powered-by-the-ldo" title="Link to this heading"></a></h3>
+<p>The inductor can be omitted, but not the capacitor.</p>
+</section>
+<section id="how-to-switch-the-power-supply-mode">
+<h3>8.4 How to switch the power supply mode?<a class="headerlink" href="#how-to-switch-the-power-supply-mode" title="Link to this heading"></a></h3>
+<p>The power supply (DC-DC or LDO) can be switched by adjusting the variable pwr_supply_mode, the member of sonata_sleep_cfg_t struct in the sleep initial function.</p>
+</section>
+<section id="what-is-the-gpio-port-level-when-ic-starts">
+<h3>8.5 What is the GPIO port level when IC starts?<a class="headerlink" href="#what-is-the-gpio-port-level-when-ic-starts" title="Link to this heading"></a></h3>
+<p>1. When SoC starts up, all IO ports are configured to the internal pull downs by default;</p>
+<p>2. The typical resistance value of the internal pull-up and pull-down resistors is 50 K.</p>
+</section>
+<section id="what-is-the-accuracy-of-the-internal-low-frequency-32k-rc">
+<h3>8.6 What is the accuracy of the internal low-frequency 32K RC?<a class="headerlink" href="#what-is-the-accuracy-of-the-internal-low-frequency-32k-rc" title="Link to this heading"></a></h3>
+<p>Its accuracy can be within ±200 ppm after being calibrated by software.</p>
+</section>
+<section id="does-it-support-the-external-pa-if-so-how-to-configure-it">
+<h3>8.7 Does it support the external PA? If so, how to configure it?<a class="headerlink" href="#does-it-support-the-external-pa-if-so-how-to-configure-it" title="Link to this heading"></a></h3>
+<p>Yes, the ASR560X supports it. For specific hardware design considerations and software configuration, please refer to the <em>ASR560X Series_External PA Application Guide</em>.</p>
+</section>
+<section id="how-to-deal-with-large-deviations-of-the-center-frequency">
+<h3>8.8 How to deal with large deviations of the center frequency?<a class="headerlink" href="#how-to-deal-with-large-deviations-of-the-center-frequency" title="Link to this heading"></a></h3>
+<p>A large deviation of the center frequency may lead to Bluetooth connection interruption or failure. If this happens, use the spectrum analyzer to observe whether the frequency deviation is large to confirm whether it is a hardware problem.</p>
+<p>If the deviation is large, it should be calibrated using the calibration tool provided by ASR. For details, please consult ASR. It is recommended to use a crystal with higher accuracy of 10 ppm.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="ASR560X Series FAQs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../ASR582X/Datasheet/index.html" class="btn btn-neutral float-right" title="ASR582X Datasheet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright ASR Microelectronics Co., Ltd.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

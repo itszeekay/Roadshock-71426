@@ -1,0 +1,902 @@
+                  )
+                  z
+%Y-%m-%d %H-%M-%Sz
+%Y-%m-%d %H:%M:%S:%fr_
+%Y_%m_%d_%H_%M_%Sz
+%s z
+%s_binr]
+%s||%s||%s
+(?<=CT:)0x[0-9a-fA-F]+r
+)zr<
+--mode
+--portz
+./bin_housez
+./config/config.ini)Kr3
+./config/script.iniFz
+./config/script.iniT
+./resource/%s.qmz
+.binr
+.binu
+.binz
+.txtr
+.txtr2
+0x10000000
+0x10040000
+0x80000000z
+1000ro
+2.3.8r2
+3D00Tz
+:   z
+:(.*?)\$r
+<lambda>
+<module>
+>>>z
+@^@z
+ASR(WIFI|COMBO)_NEW-V(\d+\.\d+\.\d+)r
+ASR(_\w{4})*_ATE(_VERSION)*_V(\d+\.\d+\.\d+)s$
+ASRBOOTLOADER-\w{4}-\w{2}(-DEBUG)*-V(\d+\.\d+\.\d+)r
+ASR_582X_ATEz
+AlignLeftr
+All Files (*);)
+AllEvents)
+ApplicationModal
+CT:z
+Checked
+ChipType
+Com_Dictr
+Common.CommFuncr
+Config
+CustomizedNameType
+CycleTimes
+D03r9
+D05z
+DEBUG_ENCru
+DOGO_%s_VP_%srZ
+Down
+DownloadType
+ERROR z
+ERROR z3read config error.
+Errorz(Burning interrupted, please try it again)
+Exception
+Exitz"Burning in progress, sure to exit?)
+ExpandingrS
+FFr9
+File Erroru
+FileExistsError
+Fixed
+Flash?r
+IOError
+Import License
+IndexError
+Intervalr9
+LICENSE (*.lic);r
+Languager
+License
+License.license_managerr
+LicenseManagerc
+LineUnderCursor
+Load file: 
+Loading scriptz
+MIDEA
+MainWindowr
+Message
+Minimum
+MoveAnchorrH
+NFT)
+NFTr
+NFr2
+NTF)
+No ate filer9
+No aup filez
+No binz
+No bootload filez
+No file)
+No image filez
+No rom filez
+No test filez
+OpenFile.__init__c
+OpenFile.showDialogN)
+OpenFilec
+OrderedDict)
+Please add bin):ru
+Please add binFz
+Please test binz
+Port (COM1)r
+Port Errorz
+PortStatus(Closed))
+PortStatus(Opened))
+PyQt5.QtCorer
+PyQt5.QtGuir
+PyQt5.QtWidgetsr
+PyQt5r
+Pyqt5_Serial.__init__c
+Pyqt5_Serial._compare_versionc
+Pyqt5_Serial.addr_changec
+Pyqt5_Serial.ate_tag_erasec
+Pyqt5_Serial.ate_tag_getc
+Pyqt5_Serial.ate_tag_setc
+Pyqt5_Serial.cancel_boxc
+Pyqt5_Serial.check_bin_existc
+Pyqt5_Serial.check_filec
+Pyqt5_Serial.check_fw_versionc
+Pyqt5_Serial.clear_file_pathc
+Pyqt5_Serial.closeEventc
+Pyqt5_Serial.data_receivec
+Pyqt5_Serial.data_send_timerc
+Pyqt5_Serial.data_sendc
+Pyqt5_Serial.delay_msecc
+Pyqt5_Serial.delete_textc
+Pyqt5_Serial.downloadc
+Pyqt5_Serial.erase_allc
+Pyqt5_Serial.file_size_checkc
+Pyqt5_Serial.gen_flash_binc
+Pyqt5_Serial.generate_real_binc
+Pyqt5_Serial.generate_save_binc
+Pyqt5_Serial.get_cfgc
+Pyqt5_Serial.get_chip_idc
+Pyqt5_Serial.get_cmd_cfgc
+Pyqt5_Serial.import_licensec
+Pyqt5_Serial.init_multi_sendc
+Pyqt5_Serial.initc
+Pyqt5_Serial.load_ate_binc
+Pyqt5_Serial.load_bin_filec
+Pyqt5_Serial.load_file_defaultc
+Pyqt5_Serial.mkdir)ir.
+Pyqt5_Serial.multi_send_unitc
+Pyqt5_Serial.multi_sendc
+Pyqt5_Serial.multi_unitc
+Pyqt5_Serial.output_log_filec
+Pyqt5_Serial.parse_versionc
+Pyqt5_Serial.port_checkc
+Pyqt5_Serial.port_closec
+Pyqt5_Serial.port_imfc
+Pyqt5_Serial.port_openc
+Pyqt5_Serial.port_show_configc
+Pyqt5_Serial.receive_data_clearc
+Pyqt5_Serial.recv_flash_imagec
+Pyqt5_Serial.save_cfgc
+Pyqt5_Serial.save_cmd_cfgc
+Pyqt5_Serial.send_bin_to_bc
+Pyqt5_Serial.send_cmdc
+Pyqt5_Serial.send_data_clearc
+Pyqt5_Serial.set_menu_barc
+Pyqt5_Serial.sub_window_showc
+Pyqt5_Serial.test_save_to_filec
+Pyqt5_Serial.translate_languagec
+Pyqt5_Serial.update_bootloaderc
+Pyqt5_Serial.update_chip_typec
+Pyqt5_Serial.update_licensec
+Pyqt5_Serial.update_progressc
+Pyqt5_Serial.update_text_viewc
+Pyqt5_Serial.update_visiblec
+Pyqt5_Serial.upload_binc
+Pyqt5_Serial.write_bin_errorc
+Pyqt5_Serial.write_to_bin_filec
+Pyqt5_Serialz
+QAction
+QApplication
+QCoreApplication
+QCursor)
+QEventLoop
+QFileDialog
+QHBoxLayout
+QIcon
+QIntValidator)
+QLabelra
+QLineEditrN
+QMainWindow)
+QMessageBox
+QPushButtonr[
+QRXWn
+QRXd
+QRXg
+QRXn
+QRXn"
+QRXt
+QRX|
+QSize)
+QSizePolicy
+QSpacerItem
+QTextEdit
+QThread
+QTime
+QTimer
+QTranslator)
+QVBoxLayout
+QWidget
+QtWidgets)
+S);Nr
+SONATAr
+Select Licensez
+Serialr<
+Settingz
+SimpleTime)
+Start
+TFr2
+USER)
+USER_ENC)
+Ui_Dialog)
+Ui_MainWindow)
+Uncheckedr
+ValueErrorr
+WIFI6r
+WindowCloseButtonHint
+You sure to erase Flash?z
+[%H:%M:%S.%f]z
+\$(.+?)\$r
+\\0z
+\bin_house\z
+\recev_data\
+\recev_data\coredump\z
+__class__r(
+__init__
+__main__
+__module__
+__name__
+__qualname__r
+__str__)
+_compare_versionru
+_datar(
+_language
+_translr(
+_transr`
+a2b_hexrr
+abspath
+acceptr
+addActionry
+addItem)
+addItemsru
+addLayout
+addMenur
+addWidgetrM
+addr_change
+addr_edit
+addr_sramr
+addr_startr
+all_chip_names
+append
+argr
+args
+argvr]
+ate bin done
+ate bin not exist
+ate donei
+ate file not found
+ate_bin
+ate_bin_dir not exist
+ate_bin_dirz
+ate_bin_filer
+ate_sram)
+ate_sram_flag
+ate_standard_versionr
+ate_tag_erase
+ate_tag_get
+ate_tag_set
+ate_version
+aup_bin
+aupr
+back_record
+back_record_b
+bar_signal
+baudr
+baudraterB
+bfname_binrP
+bfnamer
+bin file (*.bin);z
+bin file is unselected
+bin_end_flag
+bin_file_namer(
+bin_house
+bin_house_filesr
+bin_list_by_addrrR
+bin_size
+bin_start_flag
+binascii
+boot %s %d 
+boot %s %d r2
+boot_mode_clrz
+boot_mode_getz
+boot_mode_setz
+boot_standard_versionr
+bootload_bin
+bootload_case_listrf
+bootload_flash_sizer
+bootload_update
+bootload_version
+bootloadr]
+bootz
+browser
+burn F
+burn okz
+burn_alert_signal)
+button
+bytearray
+byter(
+bytesizerD
+bytesr
+cancel_box
+case_listrk
+cfgr
+checkBox_highr
+checkBox_read_image
+checkBox_testpramr
+checkBox_timestampr
+checkStater
+check_bin_existi
+check_file
+check_fw_version
+check_state
+checkbox_dict
+checkbox_list_operation
+checkbox_listrl
+checkboxr
+chip
+chip_data
+chip_id
+chip_id_flag
+chip_type
+chiptype
+clear_file_pathQ
+clear_onlyxx_func_selectionr@
+clear_selection_group
+clearrR
+click)
+clicked
+closeEvent
+close_Event
+close_button
+closer
+cmd1
+cmd2
+cmd3
+cmd_content
+cmd_dictr(
+cmd_index
+cmd_queue_datar
+cmd_totalrA
+collectionsr
+com_listr{
+com_port1
+comboBox_ChipType
+completedr(
+comportsr
+config baudrate oki@B
+config_filer
+connect
+content
+continuous_operation_flag
+copyr
+coredump
+coredump-z
+coredump_data
+coredump_data_s
+count
+count_str
+critical
+currentIndexChanged
+currentTextChanged
+currentTextru
+current_chip_name
+customized_name_type
+customized_typer
+cycle_check
+cycle_count_lineedit
+data_br
+data_file_z
+data_num_receivedr
+data_num_sended
+data_receive
+data_send_timer
+data_sendr
+data_trans1
+data_trans2
+datalr
+datar@
+datetimer
+decoder
+delay_msec
+delay_timer
+delete current line)
+delete_text
+deleterP
+detect end @
+detect end @^
+detect end whole
+dictr
+direct_download_image
+dirname
+dogo_3.ico)
+dogo_3.icoz
+down_load_process
+down_progressBar
+download_adr
+download_datar
+download_done
+download_type
+downloadf
+dump_datalist
+dumping done!!!
+effectiver>
+emit
+encoder<
+encodingz
+end_timer(
+enumerater
+erase %s 4096
+erase is finishedz
+erase r
+erase z
+erase_all
+eval
+event
+exec_r(
+existsr
+exit
+explain
+f1r(
+f_imager
+fail to generate bin file!)
+fast_programz
+father_path
+file
+file_bin_name
+file_content
+file_dict
+file_dict_from_subrK
+file_dirr
+file_index
+file_namer
+file_path
+file_path_dict
+file_size_check
+file_total_of_chip
+filenamer(
+findChildr
+find_chip_type_by_namer
+findall
+finishedr9
+flash_datar
+flash_image_bin.bin
+flash_image_bin.binF
+flash_image_data.txtr
+flash_image_data.txtz
+flash_image_fname_bin)
+flash_image_fnamer
+flash_over_erase_test(
+flash_over_ti
+float
+fnamer
+folderr(
+forG
+formGroupBox_2
+format
+fsizer(
+gen_flash_bin
+generate failz
+generate_real_binr
+generate_save_bin
+getOpenFileName)
+get_cfg
+get_chip_idL
+get_chip_type
+get_chip_typez
+get_cmd_cfg
+get_currentrg
+get_file_path_from_subwin
+getattrr
+getcwdr
+getoptr
+getru
+getsizer:
+groupBox_3
+groupBox_path
+handshakeCnt
+handshake_countr
+handshake_flag
+handshaker3
+hasHeightForWidth
+has_aupr
+has_bootloadr
+has_downloadr
+has_flash_for_program)
+has_imager
+has_new_waferr
+has_romr
+hex_receiverO
+hex_sendr
+hider
+horizontalLayout
+horizontalLayout_list
+horizontalLayout_selection_r
+ignore)
+image is receivedz
+image verify successz
+image_bin
+image_standard_versionr
+image_version
+imagerK
+imf_sr(
+import license error,
+import license ok.z0import license error,
+import_lic
+import_license
+import_license_from_file
+inWaitingr
+in_strr
+indexr(
+informationr
+ini_noner@
+init %d
+init 1000000
+init 1000000z
+init uart okz
+init)
+init_multi_send
+input_addr
+input_s
+installTranslator
+invalid data
+isChecked
+isEnabled
+isOpenr=
+isRunningr1
+is_old_ate_ver
+is_old_boot_ver
+is_old_image_ver
+is_old_verison
+iso-8859-1
+itemsra
+joinrN
+jump to atez
+keyc
+keysr
+label_list
+label_selection_z
+labelr
+language
+language_cn
+language_enr(
+lars
+layout_multirl
+len1
+len_c
+license_manager
+line
+lineEdit
+lineEdit_2r1
+lineEdit_3r
+lineEdit_com_port
+lineEdit_inter
+lineEdit_list
+lineEdit_selection_%s)
+lineEdit_selection_r2
+line_delay
+line_editr(
+line_priority
+line_send
+list
+list_data_sr^
+list_datark
+list_ports
+list_unit_datarl
+listdirr
+load
+load_ate_binr
+load_ate_flag
+load_bin_file
+load_file_defaulth
+load_license_from_reg
+load_trans_file2
+localtimerh
+lowerra
+makedirs)
+menuBar)
+menubar
+mini_download_data
+mkdirr
+mode=z
+movePosition
+msec
+msgr
+multi_button_
+multi_delayrx
+multi_edit_
+multi_line_e_
+multi_liner
+multi_priority
+multi_send_b_
+multi_send_unit)
+multi_sendr
+multi_unit
+myshow
+name
+new_data
+now_tr
+nowr
+numr(
+objectNamerN
+offs)
+only_ate
+only_ate_sram
+only_aup
+only_bootloader
+only_downloadr[
+only_image
+only_rom
+open
+open error
+open_button
+opts
+ota_info_flagrU
+ota_tag_addrr
+out_errrl
+out_srB
+output_log_file
+packr
+parityr
+parse_versionr
+partition_name
+path
+path settingz
+pi_index
+playoutrs
+please check .\config\config.ini)
+please check license file.z
+please load bin filez
+please open port
+please open port)
+please open port) r
+please open portz
+popr
+port=z
+port_check
+port_close
+port_imf
+port_list
+port_open
+port_show_config
+port_show_flagr?
+portr(
+print
+priority_listrl
+processEventsr
+process_data
+program_ate_flag
+program_flag
+pushButton_clr
+pushButton_erase_all
+pushButton_flash_over
+pushButton_gen_bin
+pushButton_group
+pushButton_list
+pushButton_selection_
+pushButton_set
+pushButton_tag_erase
+pushButton_tag_get
+pushButton_tag_set
+pushButtonr(
+push_path_Button
+push_up_bot_Button
+pushbuttonr{
+pyqtSignal)
+pyserial_demo.pyr
+qbr-
+question
+ranger@
+re_data_srA
+read
+read_image
+readlinesrw
+rece_binr
+receive_data_clear
+recev_datar9
+record_linerl
+recv flash imageTFz
+recv_datar
+recv_flash_image
+recv_to_file
+remove)
+removeItemrS
+removeSelectedTextr
+removeWidgetrM
+replacer
+replyr(
+reprra
+resize
+retranslateUiru
+rom_bin
+rule
+run8
+s1__box_1r
+s1__box_2
+s1__box_3
+s1__box_4
+s1__box_5
+s1__box_6)
+s2__clear_button
+s2__receive_textrV
+s3__clear_button
+s3__send_button
+s3__send_text
+save_cfg.
+save_cmd_cfg
+script_filer_
+script_namer
+searchr
+select
+select filez
+select_bin_filerP
+self
+send image:)
+send_bin_to_brH
+send_cmdr
+send_data_clear
+send_listr
+send_strr(
+send_timer
+sender
+ser2
+serial
+serial.tools.list_ports
+serial_worker.__init__c
+serial_worker.run)
+serial_workerc
+setAlignmentr
+setCentralWidget
+setCheckStater
+setChecked)
+setCurrentIndexr
+setCurrentText
+setEnabled
+setFocus
+setGeometry
+setHeightForWidth
+setHorizontalStretch
+setMaximumSizer
+setMinimumSizer
+setObjectName
+setPlaceholderText
+setSizePolicy
+setSpacingr
+setStretchFactorr
+setStyleSheetr
+setText
+setTextCursor)
+setTitle)
+setValidatorr
+setValue)
+setVerticalStretch
+setVisible
+setWindowFlags
+setWindowIconr
+setWindowModalityr
+setWindowTitle
+set_enable_tag_operationr
+set_menu_barr
+setattr
+setr
+setting
+setupUi
+setup_namer
+showDialog)
+show_file_path
+showre
+signalrD
+sizeHintr
+sizePolicy
+sortedrz
+spacer_item
+split)
+splitter
+standard_versionr`
+start)
+stateChanged
+state_labelr
+stater(
+staticmethodr
+statusBar
+stopbitsrC
+stopr
+strftime
+stripr
+strrQ
+struct
+styleSheetr
+sub_ui_demor
+sub_window.__init__c
+sub_window.close_Event)
+sub_window.select_bin_filec
+sub_window.show_file_pathc
+sub_window.update_path_groupc
+sub_window.update_pathc
+sub_window_show
+sub_windowc
+subwin
+superr
+support_ate_sramr
+support_high_baudr
+sysr
+tem_ascii_valuer'
+test.binr
+test_pre_program
+test_save_to_file
+text
+textCursor
+textEdit
+this port can not be openedri
+time_inter
+timeoutr\
+timer
+timer_send_cb
+timer_sendr
+tl_file
+tmp_addr_data
+tmpr(
+toPlainTextr
+tools
+translate_language)
+triggeredr\
+truncate
+unit_layoutr(
+universal_dmsec
+update
+update_bootloader
+update_chip_type
+update_download_type
+update_license_to_reg)
+update_licenser
+update_path)
+update_path_groupk
+update_progress
+update_text_view
+update_use_time
+update_visibler@
+upload_bin+
+upload_bin_flag
+utf-8
+utf-8)
+utf-8Tz
+utf-8r
+utf-8r_
+utf-8z
+utf-8z;border-style: outset; border-width: 2px; border-color: red;Fz
+val_signal
+valr(
+valuesrF
+ver_1
+ver_2
+ver_level
+ver_numr(
+version
+version of ate is old!z
+version of bootloader is old!z
+version of image is old!z
+verticalLayout_2)
+w_pathr
+wb+)
+we detectz
+we get)G
+welcome to download
+widget_multi_sendrf
+work_thread
+write
+write_bin_error
+write_bin_poweroff_error[
+write_to_bin_file
+writelinesr
+wrong dataz1Please enter hexadecimal data separated by Spacesz
+wrong dataz1please enter hexadecimal data separated by Spacesz
+z sub_window.clear_selection_groupc
+z!Pyqt5_Serial.update_download_typec
+z"Pyqt5_Serial.flash_over_erase_testc
+z#Burning failed, please try it again)
+z$Pyqt5_Serial.checkbox_list_operationc
+z%Pyqt5_Serial.set_enable_tag_operationc
+z%Pyqt5_Serial.write_bin_poweroff_errorc
+z&Pyqt5_Serial.get_file_path_from_subwinc
+z(Pyqt5_Serial.clear_onlyxx_func_selectionc
+z)Pyqt5_Serial.multi_send.<locals>.<lambda>r
+{0:<8}
+{0} {1}z
+{:02X}
+||r9

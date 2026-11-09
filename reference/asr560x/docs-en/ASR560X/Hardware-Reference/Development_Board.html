@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASR560X Series Development Board User Guide &mdash; ASR IoT Docs latest version documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=fb0ba70a"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ASR560X Series Development Board Schematics" href="Schematics.html" />
+    <link rel="prev" title="ASR560X Series Reference Design" href="reference_design.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="asriot" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/ASR560X/Hardware-Reference/Development_Board.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ASR IoT Docs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../iot.html"> IoT/AIoT Wi-Fi MCU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E9%80%8F%E4%BC%A0.html"> Wi-Fi Interface Transceiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lora.html"> LoRa Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E8%93%9D%E7%89%99.html"> Bluetooth Product</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Language</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/">简体中文</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR550X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Datasheet/index.html">ASR550X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Download-Tool/index.html">ASR550X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Quick-Start/index.html">ASR550X Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR560X</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Datasheet/index.html">ASR560X Series Datasheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ASR560X Hardware Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hardware_design.html"> ASR560X Series Hardware Design Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference_design.html"> ASR560X Series Reference Design</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> ASR560X Series Development Board User Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware">1. Hardware</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#asr560x-32-pin-evb-serial-port">1.1 ASR560X 32-Pin EVB Serial Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#asr560x-48-pin-evb-serial-port">1.2 ASR560X 48-Pin EVB Serial Port</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#firmware-download">2. Firmware Download</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pin-evb-hardware-configuration">2.1 32-Pin EVB Hardware Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pin-evb-hardware-configuration-1">2.2 48-Pin EVB Hardware Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#firmware-download-tool-configuration">2.3 Firmware Download Tool Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#firmware-download-1">2.4 Firmware Download</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#download-completion">2.5 Download Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#firmware-running">3.Firmware Running</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Schematics.html"> ASR560X Series Development Board Schematics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Download-Tool/index.html">ASR560X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Demo-Project/index.html">ASR560X Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Quick-Start/index.html">ASR560X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">ASR560X Series FAQs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR582X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Datasheet/index.html">ASR582X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Download-Tool/index.html">ASR582X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Quick-Start/index.html">ASR582X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Certification/index.html">ASR582X Certifcation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR6601</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Datasheet/index.html">ASR6601 Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Hardware-Reference/index.html">ASR6601 Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Download-Tool/index.html">ASR6601 Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Demo-Project/index.html">ASR6601 Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Quick-Start/index.html">ASR6601 Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/FAQ/index.html">ASR6601 FAQs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Test-Report/index.html">ASR6601 Test Report and Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ASR IoT Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ASR560X Hardware Reference</a></li>
+      <li class="breadcrumb-item active">ASR560X Series Development Board User Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/ASR560X/Hardware-Reference/Development_Board.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="asr560x-series-development-board-user-guide">
+<h1>ASR560X Series Development Board User Guide<a class="headerlink" href="#asr560x-series-development-board-user-guide" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/ASR560X/硬件介绍/开发板用户指南.html">简体中文</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p><strong>About This Document</strong></p>
+<p>This document introduces the hardware function of ASR560X QFN32 and QFN48 development boards and describes how to download and run firmware based on the development boards.</p>
+<p><strong>Intended Readers</strong></p>
+<p>This document is mainly for engineers who use this chip to develop their own platform and products, for instance:</p>
+<ul class="simple">
+<li><p>PCB Hardware Development Engineer</p></li>
+<li><p>Software Engineer</p></li>
+<li><p>Technical Support Engineer</p></li>
+</ul>
+<p><strong>Included Chip Models</strong></p>
+<p>The product models corresponding to this document are as follows.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Core</p></th>
+<th class="head"><p>SiP Flash</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ASR560X</p></td>
+<td><p>BLE 5.1 full feature (compatible with 5.2) SIG MESH V1.0.x IEEE 802.15.4 2.4G Proprietary</p></td>
+<td><p>ARM CM0+</p></td>
+<td><p>1 MB/ 512 KB</p></td>
+<td><p>AOA/AOD/Voice/IRTxRx/ Quadrature Decoder/Keypad/ 5V UART/5V GPIO/ Wi-Fi concurrent</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Copyright Notice</strong></p>
+<p>© 2022 ASR Microelectronics Co., Ltd. All rights reserved. No part of this document can be reproduced, transmitted, transcribed, stored, or translated into any languages in any form or by any means without the written permission of ASR Microelectronics Co., Ltd.</p>
+<p><strong>Trademark Statement</strong></p>
+<p>ASR and ASR Microelectronics Co., Ltd. are trademarks of ASR Microelectronics Co., Ltd.</p>
+<p>Other trade names, trademarks and registered trademarks mentioned in this document are property of their respective owners.</p>
+<p><strong>Electrostatic Discharge (ESD) Warning</strong></p>
+<p>This product can be damaged by Electrostatic Discharge (ESD). When handling with this device, the people should be very careful to conduct the ESD protection to avoid any device damage caused by ESD event.</p>
+<p><strong>Disclaimer</strong></p>
+<p>ASR do not give any warranty of any kind and may make improvements and/or changes in this document or in the product described in this document at any time.</p>
+<p>This document is only used as a guide, and no contents in the document constitute any form of warranty. Information in this document is subject to change without notice.</p>
+<p>All liability, including liability for infringement of any proprietary rights caused by using the information in this document is disclaimed.</p>
+<p><strong>ASR Microelectronics Co., Ltd.</strong></p>
+<p>Address: 9F, Building 10, No. 399 Keyuan Road, Zhangjiang High-tech Park, Pudong New Area, Shanghai, 201203, China</p>
+<p>Homepage: <a class="reference external" href="http://www.asrmicro.com/">http://www.asrmicro.com/</a></p>
+<p><strong>Revision History</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Date</p></th>
+<th class="head"><p>Version</p></th>
+<th class="head"><p>Release Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2022.12</p></td>
+<td><p>V1.1.0</p></td>
+<td><p>Updated Figure 2-2.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hardware">
+<h2>1. Hardware<a class="headerlink" href="#hardware" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>UART0</strong>：</p>
+<p>Function: DTM Interface</p>
+<p>Flow Control: Hardware flow control (RTS/CTS)</p>
+<p>PIN:</p>
+<ul class="simple">
+<li><p>P2 – UART0 TX</p></li>
+<li><p>P3 – UART0 RX</p></li>
+<li><p>P4 – UART0 CTS</p></li>
+<li><p>P5 – UART0 RTS</p></li>
+</ul>
+</li>
+<li><p><strong>UART1</strong>：</p>
+<p>Function: Firmware Download/AT Command/Log Output</p>
+<p>PIN:</p>
+<ul class="simple">
+<li><p>P4 – UART1 TX</p></li>
+<li><p>P5 – UART1 RX</p></li>
+</ul>
+</li>
+</ul>
+<p>The UART1 port (corresponding to P4 and P5) of ASR560X is used for firmware download by default. ASR560X series SoC are available in two packages, QFN32 and QFN48, and thus there are two kinds of development boards. The jumper selection varies according to which development board is used. The following will introduce the two development boards in detail.</p>
+<p>In some parts of this document, the development boards are referred to as EVB.</p>
+<section id="asr560x-32-pin-evb-serial-port">
+<h3>1.1 ASR560X 32-Pin EVB Serial Port<a class="headerlink" href="#asr560x-32-pin-evb-serial-port" title="Link to this heading"></a></h3>
+<p><img alt="image1" src="../../_images/%E5%9B%BE1-13.png" /></p>
+</section>
+<section id="asr560x-48-pin-evb-serial-port">
+<h3>1.2 ASR560X 48-Pin EVB Serial Port<a class="headerlink" href="#asr560x-48-pin-evb-serial-port" title="Link to this heading"></a></h3>
+<p><img alt="image2" src="../../_images/%E5%9B%BE1-2.png" /></p>
+</section>
+</section>
+<section id="firmware-download">
+<h2>2. Firmware Download<a class="headerlink" href="#firmware-download" title="Link to this heading"></a></h2>
+<section id="pin-evb-hardware-configuration">
+<h3>2.1 32-Pin EVB Hardware Configuration<a class="headerlink" href="#pin-evb-hardware-configuration" title="Link to this heading"></a></h3>
+<p>The descriptions for the 5 parts marked in the following Figure are as follows:</p>
+<ul class="simple">
+<li><p>Marking 1: The four jumpers (J12, J11, JP11 and JP14) used to connect the miniUSB to chip’s UART1 for data communication</p></li>
+<li><p>Marking 2: The jumpers used to configure the Download or Run mode</p></li>
+<li><p>Marking 3: The cylindrical antenna</p></li>
+<li><p>Marking 4: The power supply and serial ports for communication</p></li>
+<li><p>Marking 5: The RESET button</p></li>
+</ul>
+<p>Follow the below steps to make 32-Pin EVB enter the firmware download mode with wiring configured as the following Figure:</p>
+<ol class="arabic simple">
+<li><p>The miniUSB port (Part4) is connected to the PC through a USB cable. When the power supply is normal and the power switch is turned on, the red LED will light up.</p></li>
+<li><p>Set the jumpers (Part1) as Figure 2-1 to connect the miniUSB to the chip’s UART1.</p></li>
+<li><p>Set the jumpers (Part2) as Figure 2-1 (SEL1=0, SEL0=1) to configure ASR560X to boot up to the download mode.</p></li>
+<li><p>Connect the antenna (Part3) to the development board, then press the <em>RESET</em> button (Part5), and the chip will enter the download mode.</p></li>
+</ol>
+<p><img alt="image3" src="../../_images/%E5%9B%BE2-11.png" /></p>
+</section>
+<section id="pin-evb-hardware-configuration-1">
+<span id="id2"></span><h3>2.2 48-Pin EVB Hardware Configuration<a class="headerlink" href="#pin-evb-hardware-configuration-1" title="Link to this heading"></a></h3>
+<p>The descriptions for the 5 parts marked in the following Figure are as follows:</p>
+<ul class="simple">
+<li><p>Marking 1: The four jumpers (J12, J11, JP11 and JP14) used to connect the miniUSB to chip’s UART1 for data communication</p></li>
+<li><p>Marking 2: The jumpers used to configure the Download or Run mode</p></li>
+<li><p>Marking 3: The cylindrical antenna</p></li>
+<li><p>Marking 4: The power supply and serial ports for communication</p></li>
+<li><p>Marking 5: The RESET button</p></li>
+</ul>
+<p>Follow the below steps to make 48-Pin EVB enters the firmware download mode with wiring configured as the following Figure:</p>
+<ol class="arabic simple">
+<li><p>The miniUSB port (Part4) is connected to the PC through a USB cable. When the power supply is normal and the power switch is turned on, the red LED will light up.</p></li>
+<li><p>Set the jumpers (Part1) as Figure 2-2 to connect the miniUSB to the chip’s UART1.</p></li>
+<li><p>Set the jumpers (Part2) as Figure 2-2 (SEL1=0, SEL0=1) to configure ASR560X to boot up to the download mode.</p></li>
+<li><p>Connect the antenna (Part3) to the development board, then press the <em>RESET</em> button (Part5), and the chip will enter the download mode.</p></li>
+</ol>
+<p><img alt="image4" src="../../_images/%E5%9B%BE2-21.png" /></p>
+</section>
+<section id="firmware-download-tool-configuration">
+<h3>2.3 Firmware Download Tool Configuration<a class="headerlink" href="#firmware-download-tool-configuration" title="Link to this heading"></a></h3>
+<p>The development board uses the DOGO tool to download firmware. After it is connected to the PC, please proceed as follows.</p>
+<p><strong>Step 1</strong>: Click the button to detect the serial port.</p>
+<p><strong>Step 2</strong>: Select the serial port that is connected to the development board.</p>
+<p><strong>Step 3</strong>: Select the chip type 560X (the default value is 550X).</p>
+<p><strong>Step 4</strong>: Click the button to open the serial port.</p>
+<p>The serial port baud rate and other parameters are shown in the following Figure.</p>
+<p><img alt="image5" src="../../_images/%E5%9B%BE2-31.png" /></p>
+<p><strong>Step 5</strong>: After hardware connections and software configurations are completed, press the <em>RESET</em> button on the EVB, and the DOGO tool will print “1F2E3D00”, indicating that the chip is correctly configured for Download Mode and ready for firmware download.</p>
+<p><img alt="image6" src="../../_images/%E5%9B%BE2-41.png" /></p>
+</section>
+<section id="firmware-download-1">
+<span id="id3"></span><h3>2.4 Firmware Download<a class="headerlink" href="#firmware-download-1" title="Link to this heading"></a></h3>
+<p>The path to the firmware should be set before starting the download. For ASR560X series chips, <strong>three</strong> firmware need to be downloaded. The <em>bootload</em> and <em>rom</em> firmware are provided by the SDK, and the <em>app</em> firmware was generated by the user according to the specific application.</p>
+<p><em>Note: When the bootload and rom are already downloaded and only the app needs to be updated, check the “only image” option after configuring the app firmware path and then start the download procedure.</em></p>
+<p>Follow the below procedure to download the firmware:</p>
+<p><strong>Step 1</strong>: Click the <strong>Path Setting</strong> button to pop up a window for selecting the bin files to be burned.</p>
+<p><strong>Step 2</strong>: Select the mentioned <strong>three</strong> firmware from the file system on the PC.</p>
+<ol class="loweralpha simple">
+<li><p>The path to the <strong>bootload</strong> firmware is SDK tools/bootloader/<a href="#id4"><span class="problematic" id="id5">*</span></a>.bin. SDK only provides the general bootload firmware, and you can contact ASR to obtain those with special functions.</p></li>
+<li><p>The path to the <strong>rom</strong> firmware is SDK symbol/sonata/<em>.bin. The user should select the **rom*</em> firmware configured by the <strong>app</strong> firmware based on the actual usage of the RAM.</p></li>
+<li><p>For the user application <em>(</em><strong>app</strong><em>)</em> firmware, please select the bin file generated by the user’s compilation from the <em>build/out</em> directory.</p></li>
+</ol>
+<p><em>Note: The new version DOGO tool supports the download of the ATE firmware, which need not be downloaded by default.</em></p>
+<p><strong>Step 3</strong>: After selecting, click the <em>OK</em> button.</p>
+<p><strong>Step 4</strong>: The DOGO tool starts to download the three firmware to the chip’s Flash one by one.</p>
+<p><img alt="image7" src="../../_images/%E5%9B%BE2-51.png" /></p>
+</section>
+<section id="download-completion">
+<h3>2.5 Download Completion<a class="headerlink" href="#download-completion" title="Link to this heading"></a></h3>
+<p>When all of the three firmware has been downloaded successfully, the main window of the tool displays “burn ok” three times.</p>
+<p><img alt="image8" src="../../_images/%E5%9B%BE2-61.png" /></p>
+</section>
+</section>
+<section id="firmware-running">
+<h2>3.Firmware Running<a class="headerlink" href="#firmware-running" title="Link to this heading"></a></h2>
+<p>Please follow the steps below to run the firmware:</p>
+<p><strong>Step 1</strong>: Set the jumpers as the following Figures (SEL1=0, SEL0=0) to configure the development board to boot from Flash.</p>
+<p><img alt="image9" src="../../_images/%E5%9B%BE3-11.png" /></p>
+<p><img alt="image10" src="../../_images/%E5%9B%BE3-2.png" /></p>
+<p><strong>Step 2</strong>: Press the <strong>RESET</strong> button on the development board, the downloaded firmware starts to run, and the serial port will print “boot mode: jump to app” log and the running log of the <strong>app</strong> firmware (as shown in the following Figure), indicating that the development board has run successfully.</p>
+<p>If the serial port still prints “1F2E3D00”, you need to check whether the jumpers are set correctly.</p>
+<p><img alt="image11" src="../../_images/%E5%9B%BE3-3.png" /></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference_design.html" class="btn btn-neutral float-left" title="ASR560X Series Reference Design" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Schematics.html" class="btn btn-neutral float-right" title="ASR560X Series Development Board Schematics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright ASR Microelectronics Co., Ltd.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASR560X Series Memory Layout Configuration Application Manual &mdash; ASR IoT Docs latest version documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=fb0ba70a"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ASR560X Series BLE Low-Power Application Guide" href="Low_Power_Application_Guide.html" />
+    <link rel="prev" title="ASR560X Series Developer Guide" href="Developer_Guide.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="asriot" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/ASR560X/Quick-Start/Memory_Layout_Configuration.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ASR IoT Docs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../iot.html"> IoT/AIoT Wi-Fi MCU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E9%80%8F%E4%BC%A0.html"> Wi-Fi Interface Transceiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lora.html"> LoRa Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E8%93%9D%E7%89%99.html"> Bluetooth Product</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Language</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/">简体中文</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR550X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Datasheet/index.html">ASR550X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Download-Tool/index.html">ASR550X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/Quick-Start/index.html">ASR550X Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR560X</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Datasheet/index.html">ASR560X Series Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware-Reference/index.html">ASR560X Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Download-Tool/index.html">ASR560X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Demo-Project/index.html">ASR560X Demo Project/ SDK</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ASR560X Quick Start</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Development_Environment.html"> ASR560X Series Development Environment Setup Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer_Guide.html"> ASR560X Series Developer Guide</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> ASR560X Series Memory Layout Configuration Application Manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overview">1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resource-allocation">2. Resource Allocation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-configuration-schemes">2.1 Basic Configuration Schemes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multi-connection-dynamic-ram-configuration">2.2 Multi-Connection Dynamic RAM Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ble-peripherals-large-ram-space-configuration">2.3 BLE Peripherals (Large RAM Space) Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#switch-ram-configuration-scheme">3. Switch RAM Configuration Scheme</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modify-core-lib">3.1 Modify Core Lib</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-micro-definition">3.2 Modify Micro Definition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-symbol-table">3.3 Modify Symbol Table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-startup-code">3.4 Modify Startup Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-estack-and-ram-size">3.5 Modify _estack and RAM Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#download-the-corresponding-ble-stack-firmware">3.6 Download the Corresponding BLE Stack Firmware</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#switch-ram-configuration-by-tools">4. Switch RAM Configuration by Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Low_Power_Application_Guide.html"> ASR560X Series BLE Low-Power Application Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Low_Temperature.html"> ASR560X Series Low-temperature Application Note</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://drive.google.com/file/d/1Q1-Jnlh8A6GL4dPEv2mGy088NXb1CvkB/view?usp=sharing"> ASR560X Series Peripheral User's Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">ASR560X Series FAQs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR582X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Datasheet/index.html">ASR582X Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Download-Tool/index.html">ASR582X Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Quick-Start/index.html">ASR582X Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR582X/Certification/index.html">ASR582X Certifcation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR6601</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Datasheet/index.html">ASR6601 Datasheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Hardware-Reference/index.html">ASR6601 Hardware Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Download-Tool/index.html">ASR6601 Download Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Demo-Project/index.html">ASR6601 Demo Project/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Quick-Start/index.html">ASR6601 Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/FAQ/index.html">ASR6601 FAQs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/Test-Report/index.html">ASR6601 Test Report and Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ASR IoT Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ASR560X Quick Start</a></li>
+      <li class="breadcrumb-item active">ASR560X Series Memory Layout Configuration Application Manual</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/ASR560X/Quick-Start/Memory_Layout_Configuration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="asr560x-series-memory-layout-configuration-application-manual">
+<h1>ASR560X Series Memory Layout Configuration Application Manual<a class="headerlink" href="#asr560x-series-memory-layout-configuration-application-manual" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://asriot-cn.readthedocs.io/zh/latest/ASR560X/软件快速入门/内存布局配置.html">简体中文</a></p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p><strong>About this Document</strong></p>
+<p>This document mainly introduces how to adjust the ASR560X’s RAM consumption of the BLE stack according to the actual application requirements, so as to maximize the utilization of the chip BLE and RAM resources.</p>
+<p><strong>Intended Readers</strong></p>
+<p>This document is mainly for engineers who use this chip to develop their own platform and products, for instance:</p>
+<ul class="simple">
+<li><p>PCB Hardware Development Engineer</p></li>
+<li><p>Software Engineer</p></li>
+<li><p>Technical Support Engineer</p></li>
+</ul>
+<p><strong>Included Chip Models</strong></p>
+<p>The product models corresponding to this document are as follows.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Core</p></th>
+<th class="head"><p>SiP Flash</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ASR560X</p></td>
+<td><p>BLE 5.1 full feature (compatible with 5.2) BLE SIG Mesh IEEE 802.15.4 2.4G Proprietary</p></td>
+<td><p>ARM CM0+</p></td>
+<td><p>1 MB/ 512 KB</p></td>
+<td><p>AOA/AOD/Voice/IRTxRx/ Quadrature Decoder/Keypad/ 5V UART/5V GPIO/Wi-Fi concurrent</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Copyright Notice</strong></p>
+<p>© 2023 ASR Microelectronics Co., Ltd. All rights reserved. No part of this document can be reproduced, transmitted, transcribed, stored, or translated into any language in any form or by any means without the written permission of ASR Microelectronics Co., Ltd.</p>
+<p><strong>Trademark Statement</strong></p>
+<p>ASR and ASR Microelectronics Co., Ltd. are trademarks of ASR Microelectronics Co., Ltd.</p>
+<p>Other trade names, trademarks, and registered trademarks mentioned in this document are the property of their respective owners and are hereby declared.</p>
+<p><strong>Disclaimer</strong></p>
+<p>ASR does not give any warranty of any kind and may make improvements and/or changes in this document or in the product described in this document at any time.</p>
+<p>This document is only used as a guide, and no contents in the document constitute any form of warranty. Information in this document is subject to change without notice.</p>
+<p>All liability, including liability for infringement of any proprietary rights caused by using the information in this document, is disclaimed.</p>
+<p><strong>ASR Microelectronics Co., Ltd.</strong></p>
+<p>Address: 9F, Building 10, No. 399 Keyuan Road, Zhangjiang High-tech Park, Pudong New Area, Shanghai, 201203, China</p>
+<p>Homepage: <a class="reference external" href="http://www.asrmicro.com/">http://www.asrmicro.com/</a></p>
+<p><strong>Revision History</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Date</p></th>
+<th class="head"><p>Version</p></th>
+<th class="head"><p>Release Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2023.06</p></td>
+<td><p>V1.3.0</p></td>
+<td><p>Updated based on SDK V1.8.0.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="overview">
+<h2>1. Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>The ASR560X has 96 KB system RAM. The RAM of the BLE stack depends on the number of BLE Activities (ACTs) and profiles. The more RAM consumed by the BLE stack, the less RAM is available to the user APP accordingly.</p>
+<p>This document introduces how to adjust the RAM consumption of BLE stack according to the actual application requirements to maximize the utilization of chip BLE and RAM resources.</p>
+</section>
+<section id="resource-allocation">
+<h2>2. Resource Allocation<a class="headerlink" href="#resource-allocation" title="Link to this heading"></a></h2>
+<p>The SDK provides <strong>a basic RAM configuration scheme, a multi-connection dynamic RAM configuration scheme,</strong> and <strong>a BLE peripheral device (large RAM space) configuration scheme</strong>.</p>
+<p>The user needs to choose the appropriate RAM configuration scheme based on the application requirements (the maximum concurrent connections and profiles supported, and application RAM consumption).</p>
+<p>Regarding <strong>the number of BLE ACTs, please note that:</strong></p>
+<ol class="arabic simple">
+<li><p>Connectable advertising will use 2 ACTs in the non-connected state and 1 ACT after successful connection;</p></li>
+<li><p>Entering the scanning state, the system is configured to always accept SCAN, so 1 ACT is reserved until the system reboots.</p></li>
+</ol>
+<p>The above configuration schemes are described below.</p>
+<section id="basic-configuration-schemes">
+<h3>2.1 Basic Configuration Schemes<a class="headerlink" href="#basic-configuration-schemes" title="Link to this heading"></a></h3>
+<p>There are four basic configuration schemes: M, M_CUTDOWN, L2, and L.</p>
+<p>Different demos adopt different RAM configuration schemes. For details, please refer to the <em>ASR560X_SDK Firmware Type and Download Introduction</em>. Different configuration schemes correspond to different resources. Please refer to the following table.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The configuration varies according to the SDK version.</p>
+</div>
+<center><p>Table 2‑1 Resources before SDK 1.6.0</p>
+</center><p><img alt="image1" src="../../_images/%E8%A1%A82-1.png" /></p>
+<center><p>Table 2‑2 Resources for SDK 1.6.0 to 1.7.1</p>
+</center><p><img alt="image2" src="../../_images/%E8%A1%A82-21.png" /></p>
+<center><p>Table 2‑3 Resources after SDK 1.8.0</p>
+</center><p><img alt="image3" src="../../_images/%E8%A1%A82-3.png" /></p>
+<center><p>Table 2‑4 ROM Configuration Information</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>RAM Configuration</strong></p></th>
+<th class="head"><p><strong>Macro Definition</strong></p></th>
+<th class="head"><p><strong>Symbol Configuration</strong></p></th>
+<th class="head"><p><strong>BLE Stack Firmware</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>CFG_BLE_HL_LL_ROM_M</p></td>
+<td><p>sonata_hl_ll_rom_m_symbol.txt</p></td>
+<td><p>sonata_hl_ll_rom.bin</p></td>
+</tr>
+<tr class="row-odd"><td><p>M_CUTDOWN</p></td>
+<td><p>CFG_BLE_HL_LL_ROM_M_CUTDOWN</p></td>
+<td><p>sonata_hl_ll_rom_cutdown_symbol.txt</p></td>
+<td><p>sonata_hl_ll_rom_m_cutdown.bin</p></td>
+</tr>
+<tr class="row-even"><td><p>L2</p></td>
+<td><p>CFG_BLE_HL_LL_ROM_L2</p></td>
+<td><p>sonata_hl_ll_rom_l2_symbol.txt</p></td>
+<td><p>sonata_hl_ll_rom_l2.bin</p></td>
+</tr>
+<tr class="row-odd"><td><p>L</p></td>
+<td><p>CFG_BLE_HL_LL_ROM_L</p></td>
+<td><p>sonata_hl_ll_rom_l_symbol.txt</p></td>
+<td><p>sonata_hl_ll_rom_l.bin</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>Table 2‑5 Library Configuration Information</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>RAM Configuration</strong></p></th>
+<th class="head"><p><strong>Core Lib</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>lib_sonata_ble_core.a</p></td>
+</tr>
+<tr class="row-odd"><td><p>M_CUTDOWN</p></td>
+<td><p>lib_sonata_ble_core_m_cutdown.a</p></td>
+</tr>
+<tr class="row-even"><td><p>L2</p></td>
+<td><p>lib_sonata_ble_core_l2.a</p></td>
+</tr>
+<tr class="row-odd"><td><p>L</p></td>
+<td><p>lib_sonata_ble_core_l.a</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>Table 2‑6 Memory Configuration Information before SDK 1.6.0</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>RAM Configuration</strong></p></th>
+<th class="head"><p>**_estack**</p></th>
+<th class="head"><p><strong>RAM Layout Configuration</strong></p></th>
+<th class="head"><p><strong>RAM Length</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>0x20005000</p></td>
+<td><p>RAM_104K_EM_24K</p></td>
+<td><p>18 KB</p></td>
+</tr>
+<tr class="row-odd"><td><p>M_CUTDOWN</p></td>
+<td><p>0x20008000</p></td>
+<td><p>RAM_104K_EM_24K</p></td>
+<td><p>30 KB</p></td>
+</tr>
+<tr class="row-even"><td><p>L2</p></td>
+<td><p>0x20008C00</p></td>
+<td><p>RAM_112K_EM_16K</p></td>
+<td><p>33 KB</p></td>
+</tr>
+<tr class="row-odd"><td><p>L</p></td>
+<td><p>0x2000A000</p></td>
+<td><p>RAM_112K_EM_16K</p></td>
+<td><p>38 KB</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>Table 2‑7 Memory Configuration Information for SDK 1.6.0 to 1.7.1</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>RAM Configuration</strong></p></th>
+<th class="head"><p>**_estack**</p></th>
+<th class="head"><p><strong>RAM Layout Configuration</strong></p></th>
+<th class="head"><p><strong>RAM Length</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>0x20006000</p></td>
+<td><p>RAM_104K_EM_24K</p></td>
+<td><p>22 KB</p></td>
+</tr>
+<tr class="row-odd"><td><p>M_CUTDOWN</p></td>
+<td><p>0x20008400</p></td>
+<td><p>RAM_104K_EM_24K</p></td>
+<td><p>31 KB</p></td>
+</tr>
+<tr class="row-even"><td><p>L2</p></td>
+<td><p>0x20009000</p></td>
+<td><p>RAM_112K_EM_16K</p></td>
+<td><p>34 KB</p></td>
+</tr>
+<tr class="row-odd"><td><p>L</p></td>
+<td><p>0x2000A400</p></td>
+<td><p>RAM_112K_EM_16K</p></td>
+<td><p>39 KB</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>Table 2‑8 Memory Configuration Information after SDK 1.8.0</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>RAM Configuration</strong></p></th>
+<th class="head"><p>**_estack**</p></th>
+<th class="head"><p><strong>RAM Layout Configuration</strong></p></th>
+<th class="head"><p><strong>RAM Length</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>0x20006000</p></td>
+<td><p>RAM_104K_EM_24K</p></td>
+<td><p>22 KB</p></td>
+</tr>
+<tr class="row-odd"><td><p>M_CUTDOWN</p></td>
+<td><p>0x20008400</p></td>
+<td><p>RAM_104K_EM_24K</p></td>
+<td><p>31 KB</p></td>
+</tr>
+<tr class="row-even"><td><p>L2</p></td>
+<td><p>0x20009000</p></td>
+<td><p>RAM_112K_EM_16K</p></td>
+<td><p>34 KB</p></td>
+</tr>
+<tr class="row-odd"><td><p>L</p></td>
+<td><p>0x2000A000</p></td>
+<td><p>RAM_112K_EM_16K</p></td>
+<td><p>38 KB</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="multi-connection-dynamic-ram-configuration">
+<h3>2.2 Multi-Connection Dynamic RAM Configuration<a class="headerlink" href="#multi-connection-dynamic-ram-configuration" title="Link to this heading"></a></h3>
+<p>The SDK provides a multi-connection dynamic RAM configuration scheme: sonata_dyna_hl_ll_rom, which is used by the sonata_dyna_hl_ll_app_rel demo only by default. This demo will be used as an example for illustration as below:</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>sonata_dyna_hl_ll_app_rel demo already has the basic multi-connection function, which takes up some RAM space.</p>
+</div>
+<p>Users can adjust the concurrent connections supported by the BLE stack in the sonata_stack_user_config.h file, mainly by adjusting the SONATA_CFG_ACT and SONATA_CFG_CON macro, ensuring that SONATA_ CFG_ACT&gt;=(SONATA_CFG_CON+1).</p>
+<p>The default value of SONATA_GAP_MAX_LE_MTU is 2048, if the Pin/OOB pairing function is not used in the project, the value of SONATA_GAP_MAX_LE_MTU macro can be adjusted smaller (not recommended to be lower than 512) to release more available RAM to the application layer. The configuration location can be found in the following figure:</p>
+<p><img alt="image4" src="../../_images/%E5%9B%BE2-19.png" /></p>
+<center><p>Table 2‑9 Multi-connection Dynamic RAM Configuration Resource</p>
+</center><p><img alt="image5" src="../../_images/%E8%A1%A82-9.png" /></p>
+<center><p>Table 2‑10 Multi-connection Dynamic RAM ROM and Library Configuration Information</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Macro Definition</strong></p></th>
+<th class="head"><p><strong>Symbol Configuration</strong></p></th>
+<th class="head"><p><strong>BLE Stack Firmware</strong></p></th>
+<th class="head"><p><strong>Core Lib</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>APP_COMPILE</strong></p></td>
+<td><p>sonata_dyna_hl_ll_rom_symbol.txt</p></td>
+<td><p>sonata_dyna_hl_ll_rom.bin</p></td>
+<td><p>lib_sonata_dyna_hl_ll_core.a</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>Table 2‑11 Multi-connection Dynamic RAM Memory Configuration Information</p>
+</center></section>
+<section id="ble-peripherals-large-ram-space-configuration">
+<h3>2.3 BLE Peripherals (Large RAM Space) Configuration<a class="headerlink" href="#ble-peripherals-large-ram-space-configuration" title="Link to this heading"></a></h3>
+<p>The SDK provides a configuration scheme for BLE peripheral devices (large RAM space): sonata_dyna_hl_ll_peripheral_only_rom. <strong>It can provide large RAM space for the APP to use with the following limitations: The device can only be used as a BLE peripheral device, which supports advertising and being scanned and connected. It does not support Central-related functions, i.e., active scanning or connection.</strong></p>
+<p>This configuration scheme is only used for the sonata_dyna_hl_ll_peripheral_only_app_rel demo by default in the SDK. This demo is used as an example below.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>sonata_dyna_hl_ll_peripheral_only_app_rel demo already has the basic multi-connection function, which takes up some RAM space.</p>
+</div>
+<p>The default value of SONATA_GAP_MAX_LE_MTU is 2048. If the Pin/OOB pairing function is not used in the project, the value of SONATA_GAP_MAX_LE_MTU macro can be adjusted smaller (not recommended to be lower than 512) to release updated available RAM to the application layer.</p>
+<center><p>Table 2‑12 BLE Peripheral Device (Large RAM Space) Configuration Source</p>
+</center><p><img alt="image6" src="../../_images/%E8%A1%A82-12.png" /></p>
+<center><p>Table 2‑13 BLE Peripheral Device (Large RAM Space) Configuration Information</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Macro Definition</strong></p></th>
+<th class="head"><p><strong>Symbol Configuration</strong></p></th>
+<th class="head"><p><strong>BLE Stack Firmware</strong></p></th>
+<th class="head"><p><strong>Core Lib</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>APP_COMPILE</strong>、 CFG_DYNA_HL_LL_PERIPHERAL_ONLY</p></td>
+<td><p>sonata_dyna_hl_ll_peripheral_only_rom_symbol.txt</p></td>
+<td><p>sonata_dyna_hl_ll_peripheral_only_rom.bin</p></td>
+<td><p>lib_sonata_dyna_hl_ll_peripheral_only_core.a</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>Table 2‑14 BLE Peripheral (Large RAM Space) Memory Configuration Information</p>
+</center><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>SONATA_CFG_ACT</strong></p></th>
+<th class="head"><p><strong>SONATA_CFG_CON</strong></p></th>
+<th class="head"><p>**_estack**</p></th>
+<th class="head"><p><strong>RAM Layout Configuration</strong></p></th>
+<th class="head"><p><strong>RAM Length</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>0x2001E000</p></td>
+<td><p>RAM_120K_EM_8K</p></td>
+<td><p>93 KB</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="switch-ram-configuration-scheme">
+<h2>3. Switch RAM Configuration Scheme<a class="headerlink" href="#switch-ram-configuration-scheme" title="Link to this heading"></a></h2>
+<p>The RAM configuration scheme switching involves the following files in the project:</p>
+<ul class="simple">
+<li><p>gcc.ld: Located in the project cfg directory. For example: projects:raw-latex:<cite>sonata</cite>_hl_peripheral_rel:raw-latex:<cite>cfg</cite>.ld</p></li>
+<li><p>config.mk: Located in the project compilation scripts directory. For example: build:raw-latex:<cite>build</cite>_rules:raw-latex:<cite>project</cite>_hl_peripheral_demo:raw-latex:<cite>config</cite>.mk</p></li>
+<li><p>startup_cm0p.S: Located in the project src directory. For example: projects:raw-latex:<cite>sonata</cite>_hl_peripheral_rel:raw-latex:<cite>src</cite>_cm0p.S</p></li>
+</ul>
+<p>The sonata_hl_peripheral_demo is used as an example to show how to switch the RAM configuration scheme from M to L as follows.</p>
+<section id="modify-core-lib">
+<h3>3.1 Modify Core Lib<a class="headerlink" href="#modify-core-lib" title="Link to this heading"></a></h3>
+<p>Referring to Table 2-5, replace lib_sonata_ble_core.a in the config.mk $(NAME)_PRE_LIB entry with lib_sonata_ble_core_l.a, as shown below:</p>
+<p><img alt="image7" src="../../_images/%E5%9B%BE3-16.png" /></p>
+</section>
+<section id="modify-micro-definition">
+<h3>3.2 Modify Micro Definition<a class="headerlink" href="#modify-micro-definition" title="Link to this heading"></a></h3>
+<p>Referring to Table 2-4 change -DCFG_BLE_HL_LL_ROM_M to -DCFG_BLE_HL_LL_ROM_L in config.mk $(NAME)_CFLAGS entry, as shown below:</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If -DCFG_BLE_HL_LL_ROM_M does not exist, -DCFG_BLE_HL_LL_ROM_L should be added.</p>
+</div>
+<p><img alt="image8" src="../../_images/%E5%9B%BE3-25.png" /></p>
+</section>
+<section id="modify-symbol-table">
+<h3>3.3 Modify Symbol Table<a class="headerlink" href="#modify-symbol-table" title="Link to this heading"></a></h3>
+<p>Referring to Table 2-4, change sonata_hl_ll_rom_symbol.txt to sonata_hl_ll_rom_l_symbol.txt in config.mk LINKER_MISC_ROM_ELF_PATH entry, as shown below:</p>
+<p><img alt="image9" src="../../_images/%E5%9B%BE3-34.png" /></p>
+</section>
+<section id="modify-startup-code">
+<h3>3.4 Modify Startup Code<a class="headerlink" href="#modify-startup-code" title="Link to this heading"></a></h3>
+<p>Refer to Table 2-6/2-7/2-8, modify movs r1, #RAM_104K_EM_24K to movs r1, #RAM_112K_EM_16K in startup_cm0p.S:</p>
+<p><img alt="image10" src="../../_images/%E5%9B%BE3-42.png" /></p>
+</section>
+<section id="modify-estack-and-ram-size">
+<h3>3.5 Modify _estack and RAM Size<a class="headerlink" href="#modify-estack-and-ram-size" title="Link to this heading"></a></h3>
+<p>Refer to Table 2-6/2-7/2-8 (Note that different SDK may vary), modify _estack and RAM length, as shown below:</p>
+<p><img alt="image11" src="../../_images/%E5%9B%BE3-51.png" /></p>
+</section>
+<section id="download-the-corresponding-ble-stack-firmware">
+<h3>3.6 Download the Corresponding BLE Stack Firmware<a class="headerlink" href="#download-the-corresponding-ble-stack-firmware" title="Link to this heading"></a></h3>
+<p>Refer to Table 2-4, select the corresponding BLE stack firmware for downloading.</p>
+</section>
+</section>
+<section id="switch-ram-configuration-by-tools">
+<h2>4. Switch RAM Configuration by Tools<a class="headerlink" href="#switch-ram-configuration-by-tools" title="Link to this heading"></a></h2>
+<p>Starting with SDK V1.6.3, the SDK tools directory provides the ChangeRom tool for switching RAM configuration schemes, as shown below:</p>
+<p><img alt="image12" src="../../_images/%E5%9B%BE4-14.png" /></p>
+<p>Users can select the RAM configuration project file to be adjusted and the ROM to be switched in the tool, and then click and modify it.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The general ROM tab in tools is used for switching the basic RAM configuration scheme. The dynamic ROM tab in tools is used for switching the multi-connection dynamic RAM configuration scheme. When the modification has been completed, users need to check whether the values of gcc.ld, config.mk, and startup_cm0p.S have been modified. correctly.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Developer_Guide.html" class="btn btn-neutral float-left" title="ASR560X Series Developer Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Low_Power_Application_Guide.html" class="btn btn-neutral float-right" title="ASR560X Series BLE Low-Power Application Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright ASR Microelectronics Co., Ltd.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
