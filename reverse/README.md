@@ -5,22 +5,26 @@ function indexes.
 
 | File | Contents |
 |---|---|
-| `base_firmware.c` | base STM8S003F3P6, 256/256 functions |
-| `panel_firmware.c` | panel STM8S003K3, 147/147 functions |
-| `base_function_index.md` | address / size / calls / role |
+| `base_firmware.c` | base STM8S003F3P6, 256/256 functions (Roadstm8true) |
+| `panel_firmware.c` | panel STM8S003K3, 147/147 functions (Roadstm8Panel) |
+| `base_function_index.md` | address / name / role |
 | `panel_function_index.md` | same for the panel |
 | `base_symbols.md`, `panel_symbols.md` | symbol notes |
-| `asm/base.lst` | annotated base listing |
-| `asm/panel.lst` | annotated panel listing |
+
+Annotated listings are generated on demand with
+`tools/ghidra/dump_asm.py` (output to `analysis/asm_named_true.txt` /
+`analysis/asm_panel.txt`); the large `.lst` listings are not tracked.
 
 ## Method
 
-- Ghidra 11.3.1 with the community STM8 SLEIGH module for analysis.
-- Ghidra 12.x with Java scripts for the final tree (12.x removed Jython).
+- Ghidra 11.3.1 with the community STM8 SLEIGH module for analysis
+  (projects `Roadstm8true` and `Roadstm8Panel`).
 - Loader: raw binary, base `0x8000`, language `STM8:BE:16`.
-- Pipeline: seed vectors → fill gaps → seed after returns → decompile every
-  function.
-- Scripts are in `tools/ghidra/`.
+- Pipeline: seed vectors -> fill gaps -> seed after returns -> decompile
+  every function with `tools/ghidra/DecompileTree.java`.
+- Annotation layer (`build_project.py`, `build_panel_project.py`) names the
+  verified routines; `tools/build_reconstruction.py` concatenates the
+  per-function output into the single files above.
 
 ## Caveats
 

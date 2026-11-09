@@ -16,6 +16,7 @@ Python helpers for protocol work, dump validation, and Ghidra analysis.
 | `asr5601_dump.py` | read-only ASR560X UART probe, capture and image parser |
 | `asr5601_fake_monitor.py` | socket-backed fake monitor for testing the dump tool without hardware |
 | `extract_pyz.py` | extract Python 3.5 modules from DOGO's `PYZ-00.pyz` |
+| `build_reconstruction.py` | concatenate per-function Ghidra output into `reverse/*_firmware.c` and indexes |
 | `ghidra/` | Java/Python Ghidra scripts used to build the reverse-engineering tree |
 
 ## Protocol self-test

@@ -2,276 +2,289 @@
  * Roadshock 8-Gang switch panel - base board firmware
  * STM8S003F3P6, 8 KB flash @ 0x8000, 1 KB RAM
  *
- * Reconstructed from the dumped flash image with Ghidra 12.2
- * (language STM8:BE:16, base 0x8000).
+ * Reconstructed from the corrected dump (sha256
+ * a730e8b0bd32861a02fdfd75ada5a78f632b85e54de8cb0b6a3d2d85f1dcef62)
+ * with Ghidra 11.3.1 + STM8 SLEIGH (STM8:BE:16, base 0x8000),
+ * project Roadstm8true. 256/256 functions decompiled.
  *
  * This is decompiler output, not original source. Types are
- * approximate; function names are either recovered from call
- * sites or assigned by the analysis (vec*, sub_*, gap_*).
- * Regions marked with WARNING comments contain data bytes that
- * the disassembler could not separate from code.
+ * approximate. Reading order: the function index first, then each
+ * function in address order. Names marked here (uart1_configure,
+ * uart1_init_2400, mode_handler, frame_handler, cmd_0b_handler,
+ * cmd_0d_handler, cmd_19_handler, config_mode_handler, etc.) were
+ * assigned from call sites and confirmed against assembly; see
+ * tools/ghidra/build_project.py and docs/mode_timing.md,
+ * docs/hidden_commands.md. Generic names
+ * (sub_*, FUN_*, gap_*, vec_*) are Ghidra defaults for code that has
+ * not been given a role yet.
+ *
+ * Data consumed directly from the driver regions is in flash at
+ * 0x9E85 (nibble table), 0x9AA8 (pin descriptor table), and the
+ * panel pin table at 0x8AB4. Ghidra 11.3.1 decompilation is the source
+ * of truth; cross-check against asm/base.lst and captures/.
  */
 
-/* ---- function index ----------------------------------------
- * 8000  VEC00_RESET
- * 8080  x_8080
- * 8112  sub_8112
- * 8118  sub_8118
- * 811E  sub_811e
- * 8146  sub_8146
- * 816D  x_816d
- * 81CD  sub_81cd
- * 828D  sub_828d
- * 828E  sub_828e
- * 82A8  sub_82a8
- * 82AA  sub_82aa
- * 82B3  sub_82b3
- * 833B  x_833b
- * 845D  sub_845d
- * 845E  sub_845e
- * 8480  x_833b
- * 8485  sub_8485
- * 848B  sub_848b
- * 8490  sub_8490
- * 8495  sub_8495
- * 84A5  sub_84a5
- * 84B3  sub_84b3
- * 84B9  sub_84b9
- * 84C5  thunk_EXT_FUN_a501
- * 84CC  sub_84cc
- * 84D5  sub_84d5
- * 84E4  sub_84e4
- * 8504  sub_8504
- * 851A  sub_851a
- * 85E6  sub_86a6
- * 860C  sub_860c
- * 8640  sub_8640
- * 8689  sub_8689
- * 86A6  sub_86a6
- * 86AB  sub_86ab
- * 86C2  sub_86c2
- * 86C8  sub_86c8
- * 86CB  sub_86cb
- * 86D1  sub_86d1
- * 86D3  sub_86d3
- * 86D8  sub_86d8
- * 86DF  sub_86df
- * 86E8  sub_86e8
- * 8700  gap_8700
- * 8811  sub_8811
- * 8814  sub_8814
- * 881C  sub_881c
- * 8828  sub_8828
- * 8841  x_8841
- * 8A15  sub_8a15
- * 8A46  sub_8a46
- * 8B5D  sub_8b5d
- * 8B6E  sub_8b6e
- * 8B71  sub_8b71
- * 8B79  sub_8b79
- * 8B8A  sub_8b8a
- * 8B8E  sub_8b8e
- * 8B96  sub_8b96
- * 8C31  x_8c31
- * 8D00  sub_8d00
- * 8D03  sub_8d03
- * 8D16  sub_8d16
- * 8D31  sub_8d31
- * 8DBB  sub_8dbb
- * 8DC0  sub_8dc0
- * 8DC3  sub_8dc3
- * 8E30  sub_8e30
- * 8E40  sub_8e40
- * 8E51  sub_8e51
- * 8E5C  sub_8e5c
- * 8EE6  sub_8ee6
- * 8F7E  x_8f7e
- * 8FB5  x_8fb5
- * 908A  x_908a
- * 908F  sub_908f
- * 9094  sub_9094
- * 9099  FUN_9099
- * 90AC  sub_90ac
- * 90B3  thunk_FUN_9127
- * 90BA  FUN_90ba
- * 90C2  sub_90c2
- * 90C7  sub_90c7
- * 90CC  sub_90cc
- * 90D1  sub_90d1
- * 90D6  FUN_90d6
- * 90F3  sub_90f3
- * 90FE  FUN_90fe
- * 9109  sub_9109
- * 9114  sub_9114
- * 911F  FUN_911f
- * 9127  FUN_9127
- * 912A  thunk_FUN_914d
- * 912E  sub_912e
- * 9135  thunk_FUN_914d
- * 9139  sub_9139
- * 9140  sub_9140
- * 9147  sub_9147
- * 9154  sub_9154
- * 9161  FUN_9161
- * 916E  sub_916e
- * 917B  sub_917b
- * 9223  vec_9223
- * 92C2  gap_92c2
- * 935E  ret_935e
- * 93E5  sub_93e5
- * 9464  clk_set_divider
- * 94D6  sub_94d6
- * 9541  sub_9541
- * 95A5  sub_95a5
- * 95B5  sub_95b5
- * 95C1  sub_95c1
- * 95CD  sub_95cd
- * 95DE  x_95de
- * 95EC  sub_95ec
- * 95FA  sub_95fa
- * 9608  vec_9608
- * 966A  sub_966a
- * 96CB  itc_set_priority
- * 9728  sub_9728
- * 9780  uart1_set_control_bits
- * 97D3  vec_97d3
- * 9823  sub_9823
- * 9872  sub_9872
- * 98B6  sub_98b6
- * 98F1  clk_gate_enable_1
- * 9927  sub_9927
- * 995A  sub_995a
- * 998A  gap_998a
- * 99B6  sub_99b6
- * 99D4  sub_99d4
- * 99DC  sub_99dc
- * 99E1  vec_99e1
- * 9A0B  sub_9a0b
- * 9A34  ret_9a34
- * 9A5C  ret_9a5c
- * 9A84  sub_9a84
- * 9AAA  sub_9aaa
- * 9AB7  sub_9ab7
- * 9AC4  sub_9ac4
- * 9ACF  FUN_9acf
- * 9AF3  sub_9af3
- * 9B17  sub_9b17
- * 9B3A  sub_9b3a
- * 9B72  sub_9b72
- * 9B92  sub_9b92
- * 9BCF  x_9bcf
- * 9BEB  sub_9beb
- * 9C03  sub_9c03
- * 9C1B  sub_9c1b
- * 9C31  x_9c31
- * 9C47  sub_9c47
- * 9C5B  x_9c5b
- * 9C6F  sub_9c6f
- * 9C76  flash_write_key_ae
- * 9C82  flash_write_key_56
- * 9C95  sub_9c95
- * 9CA7  sub_9ca7
- * 9CB8  sub_9cb8
- * 9CC8  sub_9cc8
- * 9CD2  sub_9cd2
- * 9CD8  reset_startup
- * 9CE7  sub_9ce7
- * 9CF6  sub_9cf6
- * 9D05  sub_9d05
- * 9D14  sub_9d14
- * 9D23  sub_9d23
- * 9D32  sub_9d32
- * 9D40  sub_9d40
- * 9D4E  sub_9d4e
- * 9D5C  sub_9d5c
- * 9D69  sub_9d69
- * 9D76  sub_9d76
- * 9D83  sub_9d83
- * 9D90  sub_9d90
- * 9D9D  sub_9d9d
- * 9DAA  clk_gate_enable_2
- * 9DB7  sub_9db7
- * 9DC3  sub_9dc3
- * 9DCF  sub_9dcf
- * 9DDA  sub_9dda
- * 9DE5  sub_9de5
- * 9DEF  tim4_init
- * 9DF9  sub_9df9
- * 9E03  sub_9e03
- * 9E05  sub_9e05
- * 9E0D  sub_9e0d
- * 9E17  sub_9e17
- * 9E21  sub_9e21
- * 9E2B  gap_9e2b
- * 9E34  sub_9e34
- * 9E3D  sub_9e3d
- * 9E40  sub_9e40
- * 9E46  sub_9e46
- * 9E4F  sub_9e4f
- * 9E58  sub_9e58
- * 9E61  sub_9e61
- * 9E6A  sub_9e6a
- * 9E73  sub_9e73
- * 9E7C  sub_9e7c
- * 9E85  gap_9e85
- * 9E8D  sub_9af3
- * 9E95  sub_9e95
- * 9E9D  sub_9e9d
- * 9EA5  sub_9ea5
- * 9EAC  clk_gate_enable_3
- * 9EB3  sub_9eb3
- * 9EBA  sub_9eba
- * 9EC1  tim2_set_ccr1l
- * 9EC8  sub_9ec8
- * 9ECF  tim4_clear_egr
- * 9ED6  sub_9ed6
- * 9EDC  sub_9edc
- * 9EE1  sub_9ee1
- * 9EE6  sub_9ee6
- * 9EEB  sub_9eeb
- * 9EF0  sub_9ef0
- * 9EF5  sub_9ef5
- * 9EFE  sub_9efe
- * 9F02  sub_9f02
- * 9F06  sub_9f06
- * 9F0A  sub_9f0a
- * 9F0E  sub_9f0e
- * 9F12  sub_9f12
- * 9F16  sub_9f16
- * 9F1A  sub_9f1a
- * 9F1E  sub_9f1e
- * 9F22  sub_9f22
- * 9F26  sub_9f26
- * 9F2A  sub_9f2a
- * 9F2D  sub_9f2d
- * 9F30  vec_9f30
- * 9F33  sub_9f33
- * 9F36  iwdg_reload
- * 9F39  FUN_9f39
- * 9F3C  vec_9f3c
- * 9F3D  iwdg_start
- * 9F3E  vec_9f3e
- * 9F3F  vec_9f3f
- * 9F40  vec_9f40
- * 9F41  vec_9f41
- * 9F42  vec_9f42
- * 9F43  vec_9f43
- * 9F44  vec_9f44
- * 9F45  vec_9f45
- * 9F46  vec_9f46
- * 9F47  vec_9f47
- * 9F48  vec_9f48
- * 9F49  vec_9f49
- * 9F4A  vec_9f4a
- * 9F4B  sub_9f4b
- * 9F4C  gap_9f4c
- * 9F5D  gap_9f5d
- * 9F6E  ret_9f6e
- * 9F7F  gap_9f7f
- * 9F90  gap_9f90
- * ----------------------------------------------------------- */
+/* ---- function index -------------------------------
+ *  addr  name
+ *  8000  VEC00_RESET
+ *  8080  x_8080
+ *  8112  sub_8112
+ *  8118  sub_8118
+ *  811E  sub_811e
+ *  8146  sub_8146
+ *  816D  mode_handler
+ *  81CD  sub_81cd
+ *  828D  channel_state_write
+ *  828E  sub_828e
+ *  82A8  sub_82a8
+ *  82AA  sub_82aa
+ *  82B3  button_bitmask_handler
+ *  833B  x_833b
+ *  845D  sub_845d
+ *  845E  sub_845e
+ *  8480  sub_8480
+ *  8485  channel_pair_get
+ *  848B  channel_index_get
+ *  8490  sub_8490
+ *  8495  sub_8495
+ *  84A5  sub_84a5
+ *  84B3  sub_84b3
+ *  84B9  sub_84b9
+ *  84C5  sub_84c5
+ *  84CC  sub_84cc
+ *  84D5  sub_84d5
+ *  84E4  sub_84e4
+ *  8504  channel_advance
+ *  851A  frame_handler
+ *  85E6  sub_86a6
+ *  860C  cmd_19_handler
+ *  8640  cmd_0b_handler
+ *  8689  cmd_0d_handler
+ *  86A6  sub_86a6
+ *  86AB  sub_86ab
+ *  86C2  sub_86c2
+ *  86C8  sub_86c8
+ *  86CB  msg_post
+ *  86D1  msg_next
+ *  86D3  sub_86d3
+ *  86D8  msg_peek
+ *  86DF  sub_86df
+ *  86E8  sub_86e8
+ *  8700  ret_8700
+ *  8811  sub_8811
+ *  8814  sub_8814
+ *  881C  sub_881c
+ *  8828  sub_8828
+ *  8841  x_8841
+ *  8A15  sub_8a15
+ *  8A46  sub_8a46
+ *  8B5D  sub_8b5d
+ *  8B6E  sub_8b6e
+ *  8B71  sub_8b71
+ *  8B79  sub_8b79
+ *  8B8A  sub_8b8a
+ *  8B8E  sub_8b8e
+ *  8B96  sub_8b96
+ *  8C31  x_8c31
+ *  8D00  sub_8d00
+ *  8D03  sub_8d03
+ *  8D16  sub_8d16
+ *  8D31  sub_8d31
+ *  8DBB  sub_8dbb
+ *  8DC0  sub_8dc0
+ *  8DC3  sub_8dc3
+ *  8E30  sub_8e30
+ *  8E40  sub_8e40
+ *  8E51  sub_8e51
+ *  8E5C  sub_8e5c
+ *  8EE6  sub_8ee6
+ *  8F7E  x_8f7e
+ *  8FB5  x_8fb5
+ *  908A  x_908a
+ *  908F  sub_908f
+ *  9094  sub_9094
+ *  9099  FUN_9099
+ *  90AC  sub_90ac
+ *  90B3  sub_90b3
+ *  90BA  FUN_90ba
+ *  90C2  sub_90c2
+ *  90C7  sub_90c7
+ *  90CC  sub_90cc
+ *  90D1  sub_90d1
+ *  90D6  FUN_90d6
+ *  90F3  sub_90f3
+ *  90FE  sub_90fe
+ *  9109  sub_9109
+ *  9114  sub_9114
+ *  911F  FUN_911f
+ *  9127  sub_9127
+ *  912A  sub_912a
+ *  912E  sub_912e
+ *  9135  sub_9135
+ *  9139  sub_9139
+ *  9140  sub_9140
+ *  9147  sub_9147
+ *  9154  sub_9154
+ *  9161  sub_9161
+ *  916E  sub_916e
+ *  917B  sub_917b
+ *  9223  vec_9223
+ *  92C2  gap_92c2
+ *  935E  ret_935e
+ *  93E5  sub_93e5
+ *  9464  clk_set_divider
+ *  94D6  sub_94d6
+ *  9541  sub_9541
+ *  95A5  sub_95a5
+ *  95B5  sub_95b5
+ *  95C1  sub_95c1
+ *  95CD  sub_95cd
+ *  95DE  x_95de
+ *  95EC  sub_95ec
+ *  95FA  sub_95fa
+ *  9608  vec_9608
+ *  966A  sub_966a
+ *  96CB  itc_set_priority
+ *  9728  sub_9728
+ *  9780  uart1_set_control_bits
+ *  97D3  vec_97d3
+ *  9823  sub_9823
+ *  9872  sub_9872
+ *  98B6  sub_98b6
+ *  98F1  clk_gate_enable_1
+ *  9927  eeprom_write
+ *  995A  sub_995a
+ *  998A  gap_998a
+ *  99B6  sub_99b6
+ *  99D4  sub_99d4
+ *  99DC  sub_99dc
+ *  99E1  vec_99e1
+ *  9A0B  sub_9a0b
+ *  9A34  ret_9a34
+ *  9A5C  ret_9a5c
+ *  9A84  sub_9a84
+ *  9AAA  sub_9aaa
+ *  9AB7  sub_9ab7
+ *  9AC4  sub_9ac4
+ *  9ACF  sub_9acf
+ *  9AF3  state_clear
+ *  9B17  sub_9b17
+ *  9B3A  sub_9b3a
+ *  9B72  sub_9b72
+ *  9B92  sub_9b92
+ *  9BCF  x_9bcf
+ *  9BEB  sub_9beb
+ *  9C03  sub_9c03
+ *  9C1B  sub_9c1b
+ *  9C31  x_9c31
+ *  9C47  sub_9c47
+ *  9C5B  x_9c5b
+ *  9C6F  sub_9c6f
+ *  9C76  flash_write_key_ae
+ *  9C82  flash_write_key_56
+ *  9C95  sub_9c95
+ *  9CA7  sub_9ca7
+ *  9CB8  sub_9cb8
+ *  9CC8  sub_9cc8
+ *  9CD2  sub_9cd2
+ *  9CD8  reset_startup
+ *  9CE7  sub_9ce7
+ *  9CF6  sub_9cf6
+ *  9D05  sub_9d05
+ *  9D14  sub_9d14
+ *  9D23  sub_9d23
+ *  9D32  sub_9d32
+ *  9D40  sub_9d40
+ *  9D4E  sub_9d4e
+ *  9D5C  sub_9d5c
+ *  9D69  sub_9d69
+ *  9D76  sub_9d76
+ *  9D83  sub_9d83
+ *  9D90  sub_9d90
+ *  9D9D  sub_9d9d
+ *  9DAA  clk_gate_enable_2
+ *  9DB7  sub_9db7
+ *  9DC3  sub_9dc3
+ *  9DCF  sub_9dcf
+ *  9DDA  sub_9dda
+ *  9DE5  sub_9de5
+ *  9DEF  tim4_init
+ *  9DF9  sub_9df9
+ *  9E03  sub_9e03
+ *  9E05  sub_9e05
+ *  9E0D  sub_9e0d
+ *  9E17  sub_9e17
+ *  9E21  sub_9e21
+ *  9E2B  gap_9e2b
+ *  9E34  sub_9e34
+ *  9E3D  sub_9e3d
+ *  9E40  sub_9e40
+ *  9E46  sub_9e46
+ *  9E4F  sub_9e4f
+ *  9E58  sub_9e58
+ *  9E61  sub_9e61
+ *  9E6A  sub_9e6a
+ *  9E73  sub_9e73
+ *  9E7C  sub_9e7c
+ *  9E85  gap_9e85
+ *  9E8D  sub_9e8d
+ *  9E95  sub_9e95
+ *  9E9D  sub_9e9d
+ *  9EA5  sub_9ea5
+ *  9EAC  clk_gate_enable_3
+ *  9EB3  sub_9eb3
+ *  9EBA  FUN_9eba
+ *  9EC1  tim2_set_ccr1l
+ *  9EC8  sub_9ec8
+ *  9ECF  tim4_clear_egr
+ *  9ED6  sub_9ed6
+ *  9EDC  sub_9edc
+ *  9EE1  sub_9ee1
+ *  9EE6  sub_9ee6
+ *  9EEB  sub_9eeb
+ *  9EF0  sub_9ef0
+ *  9EF5  sub_9ef5
+ *  9EFE  sub_9efe
+ *  9F02  sub_9f02
+ *  9F06  sub_9f06
+ *  9F0A  sub_9f0a
+ *  9F0E  sub_9f0e
+ *  9F12  FUN_9f12
+ *  9F16  sub_9f16
+ *  9F1A  sub_9f1a
+ *  9F1E  sub_9f1e
+ *  9F22  sub_9f22
+ *  9F26  sub_9f26
+ *  9F2A  thunk_FUN_9f12
+ *  9F2D  thunk_FUN_9eba
+ *  9F30  thunk_FUN_9f39
+ *  9F33  sub_9f33
+ *  9F36  iwdg_reload
+ *  9F39  FUN_9f39
+ *  9F3C  vec_9f3c
+ *  9F3D  iwdg_start
+ *  9F3E  vec_9f3e
+ *  9F3F  vec_9f3f
+ *  9F40  vec_9f40
+ *  9F41  vec_9f41
+ *  9F42  vec_9f42
+ *  9F43  vec_9f43
+ *  9F44  vec_9f44
+ *  9F45  vec_9f45
+ *  9F46  vec_9f46
+ *  9F47  vec_9f47
+ *  9F48  vec_9f48
+ *  9F49  vec_9f49
+ *  9F4A  vec_9f4a
+ *  9F4B  sub_9f4b
+ *  9F4C  gap_9f4c
+ *  9F5D  gap_9f5d
+ *  9F6E  gap_9f6e
+ *  9F7F  gap_9f7f
+ *  9F90  gap_9f90
+ */
 
-/* ===== 0x8000  VEC00_RESET ===== */
+// FUNC 0x8000  VEC00_RESET
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
@@ -298,9 +311,7 @@ void VEC00_RESET(void)
   return;
 }
 
-
-
-/* ===== 0x8080  x_8080 ===== */
+// FUNC 0x8080  x_8080
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -324,7 +335,7 @@ void x_8080(void)
   do {
     if (9 < DAT_0007) break;
     _DAT_0006 = _DAT_0006 & 0xff;
-    sub_86cb();
+    msg_post();
     puVar3 = (undefined1 *)flash_write_key_ae(_DAT_0006);
     if ((bool)(extraout_CC >> 1 & 1)) {
       *puVar3 = 1;
@@ -355,9 +366,7 @@ void x_8080(void)
   return;
 }
 
-
-
-/* ===== 0x8112  sub_8112 ===== */
+// FUNC 0x8112  sub_8112
 
 short sub_8112(void)
 
@@ -365,9 +374,7 @@ short sub_8112(void)
   return DAT_0008 + 4;
 }
 
-
-
-/* ===== 0x8118  sub_8118 ===== */
+// FUNC 0x8118  sub_8118
 
 short sub_8118(void)
 
@@ -375,9 +382,7 @@ short sub_8118(void)
   return DAT_0008 + 3;
 }
 
-
-
-/* ===== 0x811E  sub_811e ===== */
+// FUNC 0x811e  sub_811e
 
 char sub_811e(char param_1)
 
@@ -400,9 +405,7 @@ char sub_811e(char param_1)
   return DAT_0000;
 }
 
-
-
-/* ===== 0x8146  sub_8146 ===== */
+// FUNC 0x8146  sub_8146
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -460,49 +463,49 @@ void sub_8146(void)
       sub_828e();
       return;
     }
-    sVar3 = sub_8485();
+    sVar3 = channel_pair_get();
     *(undefined1 *)(sVar3 + sStack_2) = 0;
     sub_828e();
     return;
   }
   if (acStack_e[0] == '\x01') {
     sVar3 = sub_84b9();
-    pbVar4 = (byte *)sub_848b(sVar3 + sStack_2);
+    pbVar4 = (byte *)channel_index_get(sVar3 + sStack_2);
     if ((bool)(extraout_CC_01 >> 1 & 1)) {
-      sub_828d(0x10);
+      channel_state_write(0x10);
       return;
     }
-    sub_828d(*pbVar4 | 1);
+    channel_state_write(*pbVar4 | 1);
     return;
   }
   if (acStack_e[0] == '\x02') {
     sVar3 = sub_84c5();
-    pbVar4 = (byte *)sub_848b(sVar3 + sStack_2);
+    pbVar4 = (byte *)channel_index_get(sVar3 + sStack_2);
     if ((bool)(extraout_CC_02 >> 1 & 1)) {
-      sub_828d(0x20);
+      channel_state_write(0x20);
       return;
     }
-    sub_828d(*pbVar4 | 2);
+    channel_state_write(*pbVar4 | 2);
     return;
   }
   if (acStack_e[0] == '\x03') {
     sVar3 = sub_84b9();
-    pbVar4 = (byte *)sub_848b(sVar3 + sStack_2);
+    pbVar4 = (byte *)channel_index_get(sVar3 + sStack_2);
     if ((bool)(extraout_CC_03 >> 1 & 1)) {
-      sub_828d(0x30);
+      channel_state_write(0x30);
       return;
     }
-    sub_828d(*pbVar4 | 3);
+    channel_state_write(*pbVar4 | 3);
     return;
   }
   if (acStack_e[0] == '\x04') {
     sVar3 = sub_84c5();
-    pbVar4 = (byte *)sub_848b(sVar3 + sStack_2);
+    pbVar4 = (byte *)channel_index_get(sVar3 + sStack_2);
     if ((bool)(extraout_CC_04 >> 1 & 1)) {
-      sub_828d(0x40);
+      channel_state_write(0x40);
       return;
     }
-    sub_828d(*pbVar4 | 4);
+    channel_state_write(*pbVar4 | 4);
     return;
   }
   if (acStack_e[0] == '\x05') {
@@ -510,47 +513,47 @@ void sub_8146(void)
     if (*DAT_0008 == '\0') {
       sub_84e4();
     }
-    sVar3 = sub_8485();
-    pbVar4 = (byte *)sub_848b(sVar3 + sStack_2);
+    sVar3 = channel_pair_get();
+    pbVar4 = (byte *)channel_index_get(sVar3 + sStack_2);
     if ((bool)(extraout_CC_05 >> 1 & 1)) {
-      sub_828d(0x50);
+      channel_state_write(0x50);
       return;
     }
-    sub_828d(*pbVar4 | 5);
+    channel_state_write(*pbVar4 | 5);
     return;
   }
   if (acStack_e[0] == '\x06') {
     sVar3 = sub_84c5();
-    pbVar4 = (byte *)sub_848b(sVar3 + sStack_2);
+    pbVar4 = (byte *)channel_index_get(sVar3 + sStack_2);
     if ((bool)(extraout_CC_06 >> 1 & 1)) {
-      sub_828d(0x60);
+      channel_state_write(0x60);
       return;
     }
-    sub_828d(*pbVar4 | 6);
+    channel_state_write(*pbVar4 | 6);
     return;
   }
   if (acStack_e[0] == '\a') {
     sVar3 = sub_84a5();
-    pbVar4 = (byte *)sub_848b(sVar3 + sStack_2);
+    pbVar4 = (byte *)channel_index_get(sVar3 + sStack_2);
     if ((bool)(extraout_CC_07 >> 1 & 1)) {
-      sub_828d(0x70);
+      channel_state_write(0x70);
       return;
     }
-    sub_828d(*pbVar4 | 7);
+    channel_state_write(*pbVar4 | 7);
     return;
   }
   if (acStack_e[0] == '\b') {
-    sVar3 = sub_8485();
-    pbVar4 = (byte *)sub_848b(sVar3 + sStack_2);
+    sVar3 = channel_pair_get();
+    pbVar4 = (byte *)channel_index_get(sVar3 + sStack_2);
     if ((bool)(extraout_CC_08 >> 1 & 1)) {
-      sub_828d(0x80);
+      channel_state_write(0x80);
       return;
     }
     *pbVar4 = *pbVar4 | 8;
   }
-  sub_8504();
+  channel_advance();
   if (DAT_000e < 0xc) {
-    x_816d();
+    mode_handler();
     return;
   }
   DAT_000e = uVar1;
@@ -558,11 +561,14 @@ void sub_8146(void)
   return;
 }
 
+// FUNC 0x816d  mode_handler
 
+/* Mode handler (Roadstm8true, 2026-11-09).
+   Converts incoming mode byte 1/3/5/7 -> internal 0/2/4/8 (off/toggle/momentary/pulse).
+   Dispatches on internal mode to sub_84b3/sub_84b9/sub_84c5/sub_8485 + sub_848b + sub_828d.
+   See docs/mode_timing.md. Timing constants still need bench measurement. */
 
-/* ===== 0x816D  x_816d ===== */
-
-void x_816d(short param_1,undefined1 param_2)
+void mode_handler(short param_1,undefined1 param_2)
 
 {
   char cVar1;
@@ -606,49 +612,49 @@ void x_816d(short param_1,undefined1 param_2)
       sub_828e();
       return;
     }
-    sVar3 = sub_8485();
+    sVar3 = channel_pair_get();
     *(undefined1 *)(sVar3 + param_1) = 0;
     sub_828e();
     return;
   }
   if (cVar1 == '\x01') {
     sVar3 = sub_84b9();
-    pbVar4 = (byte *)sub_848b(sVar3 + param_1);
+    pbVar4 = (byte *)channel_index_get(sVar3 + param_1);
     if ((bool)(extraout_CC_01 >> 1 & 1)) {
-      sub_828d(0x10);
+      channel_state_write(0x10);
       return;
     }
-    sub_828d(*pbVar4 | 1);
+    channel_state_write(*pbVar4 | 1);
     return;
   }
   if (cVar1 == '\x02') {
     sVar3 = sub_84c5();
-    pbVar4 = (byte *)sub_848b(sVar3 + param_1);
+    pbVar4 = (byte *)channel_index_get(sVar3 + param_1);
     if ((bool)(extraout_CC_02 >> 1 & 1)) {
-      sub_828d(0x20);
+      channel_state_write(0x20);
       return;
     }
-    sub_828d(*pbVar4 | 2);
+    channel_state_write(*pbVar4 | 2);
     return;
   }
   if (cVar1 == '\x03') {
     sVar3 = sub_84b9();
-    pbVar4 = (byte *)sub_848b(sVar3 + param_1);
+    pbVar4 = (byte *)channel_index_get(sVar3 + param_1);
     if ((bool)(extraout_CC_03 >> 1 & 1)) {
-      sub_828d(0x30);
+      channel_state_write(0x30);
       return;
     }
-    sub_828d(*pbVar4 | 3);
+    channel_state_write(*pbVar4 | 3);
     return;
   }
   if (cVar1 == '\x04') {
     sVar3 = sub_84c5();
-    pbVar4 = (byte *)sub_848b(sVar3 + param_1);
+    pbVar4 = (byte *)channel_index_get(sVar3 + param_1);
     if ((bool)(extraout_CC_04 >> 1 & 1)) {
-      sub_828d(0x40);
+      channel_state_write(0x40);
       return;
     }
-    sub_828d(*pbVar4 | 4);
+    channel_state_write(*pbVar4 | 4);
     return;
   }
   if (cVar1 == '\x05') {
@@ -656,47 +662,47 @@ void x_816d(short param_1,undefined1 param_2)
     if (*DAT_0008 == '\0') {
       sub_84e4();
     }
-    sVar3 = sub_8485();
-    pbVar4 = (byte *)sub_848b(sVar3 + param_1);
+    sVar3 = channel_pair_get();
+    pbVar4 = (byte *)channel_index_get(sVar3 + param_1);
     if ((bool)(extraout_CC_05 >> 1 & 1)) {
-      sub_828d(0x50);
+      channel_state_write(0x50);
       return;
     }
-    sub_828d(*pbVar4 | 5);
+    channel_state_write(*pbVar4 | 5);
     return;
   }
   if (cVar1 == '\x06') {
     sVar3 = sub_84c5();
-    pbVar4 = (byte *)sub_848b(sVar3 + param_1);
+    pbVar4 = (byte *)channel_index_get(sVar3 + param_1);
     if ((bool)(extraout_CC_06 >> 1 & 1)) {
-      sub_828d(0x60);
+      channel_state_write(0x60);
       return;
     }
-    sub_828d(*pbVar4 | 6);
+    channel_state_write(*pbVar4 | 6);
     return;
   }
   if (cVar1 == '\a') {
     sVar3 = sub_84a5();
-    pbVar4 = (byte *)sub_848b(sVar3 + param_1);
+    pbVar4 = (byte *)channel_index_get(sVar3 + param_1);
     if ((bool)(extraout_CC_07 >> 1 & 1)) {
-      sub_828d(0x70);
+      channel_state_write(0x70);
       return;
     }
-    sub_828d(*pbVar4 | 7);
+    channel_state_write(*pbVar4 | 7);
     return;
   }
   if (cVar1 == '\b') {
-    sVar3 = sub_8485();
-    pbVar4 = (byte *)sub_848b(sVar3 + param_1);
+    sVar3 = channel_pair_get();
+    pbVar4 = (byte *)channel_index_get(sVar3 + param_1);
     if ((bool)(extraout_CC_08 >> 1 & 1)) {
-      sub_828d(0x80);
+      channel_state_write(0x80);
       return;
     }
     *pbVar4 = *pbVar4 | 8;
   }
-  sub_8504();
+  channel_advance();
   if (DAT_000e < 0xc) {
-    x_816d();
+    mode_handler();
     return;
   }
   DAT_000e = param_2;
@@ -704,28 +710,24 @@ void x_816d(short param_1,undefined1 param_2)
   return;
 }
 
-
-
-/* ===== 0x81CD  sub_81cd ===== */
+// FUNC 0x81cd  sub_81cd
 
 void sub_81cd(void)
 
 {
-  sub_828d(0x10);
+  channel_state_write(0x10);
   return;
 }
 
+// FUNC 0x828d  channel_state_write
 
-
-/* ===== 0x828D  sub_828d ===== */
-
-void sub_828d(undefined1 param_1,undefined1 *param_2,undefined1 param_3)
+void channel_state_write(undefined1 param_1,undefined1 *param_2,undefined1 param_3)
 
 {
   *param_2 = param_1;
-  sub_8504();
+  channel_advance();
   if (DAT_000e < 0xc) {
-    x_816d();
+    mode_handler();
     return;
   }
   DAT_000e = param_3;
@@ -733,16 +735,14 @@ void sub_828d(undefined1 param_1,undefined1 *param_2,undefined1 param_3)
   return;
 }
 
-
-
-/* ===== 0x828E  sub_828e ===== */
+// FUNC 0x828e  sub_828e
 
 void sub_828e(undefined1 param_1)
 
 {
-  sub_8504();
+  channel_advance();
   if (DAT_000e < 0xc) {
-    x_816d();
+    mode_handler();
     return;
   }
   DAT_000e = param_1;
@@ -750,9 +750,7 @@ void sub_828e(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x82A8  sub_82a8 ===== */
+// FUNC 0x82a8  sub_82a8
 
 void sub_82a8(void)
 
@@ -761,9 +759,7 @@ void sub_82a8(void)
   return;
 }
 
-
-
-/* ===== 0x82AA  sub_82aa ===== */
+// FUNC 0x82aa  sub_82aa
 
 void sub_82aa(void)
 
@@ -772,11 +768,9 @@ void sub_82aa(void)
   return;
 }
 
+// FUNC 0x82b3  button_bitmask_handler
 
-
-/* ===== 0x82B3  sub_82b3 ===== */
-
-void sub_82b3(void)
+void button_bitmask_handler(void)
 
 {
   byte bVar1;
@@ -866,14 +860,14 @@ void sub_82b3(void)
       sub_845e();
       return;
     }
-    sVar5 = sub_8485();
+    sVar5 = channel_pair_get();
     *(undefined1 *)(sVar5 + local_2) = 0;
     sub_845e();
     return;
   }
   if (bVar1 == 1) {
     sVar5 = sub_84b9();
-    pbVar6 = (byte *)sub_848b(sVar5 + local_2);
+    pbVar6 = (byte *)channel_index_get(sVar5 + local_2);
     if ((bool)(extraout_CC_02 >> 1 & 1)) {
       sub_845d(0x10);
       return;
@@ -883,7 +877,7 @@ void sub_82b3(void)
   }
   if (bVar1 == 2) {
     sVar5 = sub_84c5();
-    pbVar6 = (byte *)sub_848b(sVar5 + local_2);
+    pbVar6 = (byte *)channel_index_get(sVar5 + local_2);
     if ((bool)(extraout_CC_03 >> 1 & 1)) {
       sub_845d(0x20);
       return;
@@ -893,7 +887,7 @@ void sub_82b3(void)
   }
   if (bVar1 == 3) {
     sVar5 = sub_84b9();
-    pbVar6 = (byte *)sub_848b(sVar5 + local_2);
+    pbVar6 = (byte *)channel_index_get(sVar5 + local_2);
     if ((bool)(extraout_CC_04 >> 1 & 1)) {
       sub_845d(0x30);
       return;
@@ -903,7 +897,7 @@ void sub_82b3(void)
   }
   if (bVar1 == 4) {
     sVar5 = sub_84c5();
-    pbVar6 = (byte *)sub_848b(sVar5 + local_2);
+    pbVar6 = (byte *)channel_index_get(sVar5 + local_2);
     if ((bool)(extraout_CC_05 >> 1 & 1)) {
       sub_845d(0x40);
       return;
@@ -916,8 +910,8 @@ void sub_82b3(void)
     if (*DAT_0008 == 0) {
       sub_84e4();
     }
-    sVar5 = sub_8485();
-    pbVar6 = (byte *)sub_848b(sVar5 + local_2);
+    sVar5 = channel_pair_get();
+    pbVar6 = (byte *)channel_index_get(sVar5 + local_2);
     if ((bool)(extraout_CC_06 >> 1 & 1)) {
       sub_845d(0x50);
       return;
@@ -927,7 +921,7 @@ void sub_82b3(void)
   }
   if (bVar1 == 6) {
     sVar5 = sub_84c5();
-    pbVar6 = (byte *)sub_848b(sVar5 + local_2);
+    pbVar6 = (byte *)channel_index_get(sVar5 + local_2);
     if ((bool)(extraout_CC_07 >> 1 & 1)) {
       sub_845d(0x60);
       return;
@@ -937,7 +931,7 @@ void sub_82b3(void)
   }
   if (bVar1 == 7) {
     sVar5 = sub_84a5();
-    pbVar6 = (byte *)sub_848b(sVar5 + local_2);
+    pbVar6 = (byte *)channel_index_get(sVar5 + local_2);
     if ((bool)(extraout_CC_08 >> 1 & 1)) {
       sub_845d(0x70);
       return;
@@ -946,15 +940,15 @@ void sub_82b3(void)
     return;
   }
   if (bVar1 == 8) {
-    sVar5 = sub_8485();
-    pbVar7 = (byte *)sub_848b(sVar5 + local_2);
+    sVar5 = channel_pair_get();
+    pbVar7 = (byte *)channel_index_get(sVar5 + local_2);
     if ((bool)(extraout_CC_09 >> 1 & 1)) {
       sub_845d(0x80);
       return;
     }
     *pbVar7 = *pbVar7 | 8;
   }
-  sub_8504();
+  channel_advance();
   if (DAT_000e < 0xc) {
     x_833b();
     return;
@@ -965,9 +959,7 @@ void sub_82b3(void)
   return;
 }
 
-
-
-/* ===== 0x833B  x_833b ===== */
+// FUNC 0x833b  x_833b
 
 void x_833b(char *param_1,short param_2,undefined1 param_3)
 
@@ -1011,14 +1003,14 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
       sub_845e();
       return;
     }
-    sVar2 = sub_8485();
+    sVar2 = channel_pair_get();
     *(undefined1 *)(sVar2 + param_2) = 0;
     sub_845e();
     return;
   }
   if (cVar1 == '\x01') {
     sVar2 = sub_84b9();
-    pbVar3 = (byte *)sub_848b(sVar2 + param_2);
+    pbVar3 = (byte *)channel_index_get(sVar2 + param_2);
     if ((bool)(extraout_CC_01 >> 1 & 1)) {
       sub_845d(0x10);
       return;
@@ -1028,7 +1020,7 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
   }
   if (cVar1 == '\x02') {
     sVar2 = sub_84c5();
-    pbVar3 = (byte *)sub_848b(sVar2 + param_2);
+    pbVar3 = (byte *)channel_index_get(sVar2 + param_2);
     if ((bool)(extraout_CC_02 >> 1 & 1)) {
       sub_845d(0x20);
       return;
@@ -1038,7 +1030,7 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
   }
   if (cVar1 == '\x03') {
     sVar2 = sub_84b9();
-    pbVar3 = (byte *)sub_848b(sVar2 + param_2);
+    pbVar3 = (byte *)channel_index_get(sVar2 + param_2);
     if ((bool)(extraout_CC_03 >> 1 & 1)) {
       sub_845d(0x30);
       return;
@@ -1048,7 +1040,7 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
   }
   if (cVar1 == '\x04') {
     sVar2 = sub_84c5();
-    pbVar3 = (byte *)sub_848b(sVar2 + param_2);
+    pbVar3 = (byte *)channel_index_get(sVar2 + param_2);
     if ((bool)(extraout_CC_04 >> 1 & 1)) {
       sub_845d(0x40);
       return;
@@ -1061,8 +1053,8 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
     if (*DAT_0008 == '\0') {
       sub_84e4();
     }
-    sVar2 = sub_8485();
-    pbVar3 = (byte *)sub_848b(sVar2 + param_2);
+    sVar2 = channel_pair_get();
+    pbVar3 = (byte *)channel_index_get(sVar2 + param_2);
     if ((bool)(extraout_CC_05 >> 1 & 1)) {
       sub_845d(0x50);
       return;
@@ -1072,7 +1064,7 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
   }
   if (cVar1 == '\x06') {
     sVar2 = sub_84c5();
-    pbVar3 = (byte *)sub_848b(sVar2 + param_2);
+    pbVar3 = (byte *)channel_index_get(sVar2 + param_2);
     if ((bool)(extraout_CC_06 >> 1 & 1)) {
       sub_845d(0x60);
       return;
@@ -1082,7 +1074,7 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
   }
   if (cVar1 == '\a') {
     sVar2 = sub_84a5();
-    pbVar3 = (byte *)sub_848b(sVar2 + param_2);
+    pbVar3 = (byte *)channel_index_get(sVar2 + param_2);
     if ((bool)(extraout_CC_07 >> 1 & 1)) {
       sub_845d(0x70);
       return;
@@ -1091,15 +1083,15 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
     return;
   }
   if (cVar1 == '\b') {
-    sVar2 = sub_8485();
-    pbVar3 = (byte *)sub_848b(sVar2 + param_2);
+    sVar2 = channel_pair_get();
+    pbVar3 = (byte *)channel_index_get(sVar2 + param_2);
     if ((bool)(extraout_CC_08 >> 1 & 1)) {
       sub_845d(0x80);
       return;
     }
     *pbVar3 = *pbVar3 | 8;
   }
-  sub_8504();
+  channel_advance();
   if (DAT_000e < 0xc) {
     x_833b();
     return;
@@ -1110,15 +1102,13 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
   return;
 }
 
-
-
-/* ===== 0x845D  sub_845d ===== */
+// FUNC 0x845d  sub_845d
 
 void sub_845d(undefined1 param_1,undefined1 *param_2,undefined1 param_3)
 
 {
   *param_2 = param_1;
-  sub_8504();
+  channel_advance();
   if (DAT_000e < 0xc) {
     x_833b();
     return;
@@ -1129,14 +1119,12 @@ void sub_845d(undefined1 param_1,undefined1 *param_2,undefined1 param_3)
   return;
 }
 
-
-
-/* ===== 0x845E  sub_845e ===== */
+// FUNC 0x845e  sub_845e
 
 void sub_845e(undefined1 param_1)
 
 {
-  sub_8504();
+  channel_advance();
   if (DAT_000e < 0xc) {
     x_833b();
     return;
@@ -1147,9 +1135,7 @@ void sub_845e(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x8480  x_833b ===== */
+// FUNC 0x8480  sub_8480
 
 short sub_8480(void)
 
@@ -1157,29 +1143,23 @@ short sub_8480(void)
   return DAT_0008 + 2;
 }
 
+// FUNC 0x8485  channel_pair_get
 
-
-/* ===== 0x8485  sub_8485 ===== */
-
-byte sub_8485(void)
+byte channel_pair_get(void)
 
 {
   return DAT_000e >> 1;
 }
 
+// FUNC 0x848b  channel_index_get
 
-
-/* ===== 0x848B  sub_848b ===== */
-
-undefined1 sub_848b(void)
+undefined1 channel_index_get(void)
 
 {
   return DAT_000e;
 }
 
-
-
-/* ===== 0x8490  sub_8490 ===== */
+// FUNC 0x8490  sub_8490
 
 void sub_8490(void)
 
@@ -1188,9 +1168,7 @@ void sub_8490(void)
   return;
 }
 
-
-
-/* ===== 0x8495  sub_8495 ===== */
+// FUNC 0x8495  sub_8495
 
 void sub_8495(void)
 
@@ -1201,9 +1179,7 @@ void sub_8495(void)
   return;
 }
 
-
-
-/* ===== 0x84A5  sub_84a5 ===== */
+// FUNC 0x84a5  sub_84a5
 
 byte sub_84a5(void)
 
@@ -1213,9 +1189,7 @@ byte sub_84a5(void)
   return DAT_000e >> 1;
 }
 
-
-
-/* ===== 0x84B3  sub_84b3 ===== */
+// FUNC 0x84b3  sub_84b3
 
 void sub_84b3(void)
 
@@ -1224,9 +1198,7 @@ void sub_84b3(void)
   return;
 }
 
-
-
-/* ===== 0x84B9  sub_84b9 ===== */
+// FUNC 0x84b9  sub_84b9
 
 byte sub_84b9(void)
 
@@ -1236,9 +1208,7 @@ byte sub_84b9(void)
   return DAT_000e >> 1;
 }
 
-
-
-/* ===== 0x84C5  thunk_EXT_FUN_a501 ===== */
+// FUNC 0x84c5  sub_84c5
 
 byte sub_84c5(void)
 
@@ -1249,9 +1219,7 @@ byte sub_84c5(void)
   return bVar1 >> 1;
 }
 
-
-
-/* ===== 0x84CC  sub_84cc ===== */
+// FUNC 0x84cc  sub_84cc
 
 undefined1 sub_84cc(void)
 
@@ -1261,9 +1229,7 @@ undefined1 sub_84cc(void)
   return DAT_000e;
 }
 
-
-
-/* ===== 0x84D5  sub_84d5 ===== */
+// FUNC 0x84d5  sub_84d5
 
 undefined2 sub_84d5(void)
 
@@ -1273,9 +1239,7 @@ undefined2 sub_84d5(void)
   return *DAT_000a;
 }
 
-
-
-/* ===== 0x84E4  sub_84e4 ===== */
+// FUNC 0x84e4  sub_84e4
 
 void sub_84e4(void)
 
@@ -1291,11 +1255,9 @@ void sub_84e4(void)
   return;
 }
 
+// FUNC 0x8504  channel_advance
 
-
-/* ===== 0x8504  sub_8504 ===== */
-
-void sub_8504(void)
+void channel_advance(void)
 
 {
   DAT_000e = DAT_000e + '\x01';
@@ -1305,13 +1267,16 @@ void sub_8504(void)
   return;
 }
 
-
-
-/* ===== 0x851A  sub_851a ===== */
+// FUNC 0x851a  frame_handler
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Frame handler. Validates 11-byte checksum, dispatches on DAT_021f (type).
+   Type 7: master power/parameter (6 bytes -> 12 nibbles at 0x9E85, post 0x1700).
+   Type 8: button bitmask (sub_82b3, post 0x1800).
+   Type 0x0B: cmd_0b_handler (sub_8640). Type 0x0D: cmd_0d_handler (sub_8689).
+   Type 0x19: cmd_19_handler (sub_860c). See docs/hidden_commands.md. */
 
-void sub_851a(void)
+void frame_handler(void)
 
 {
   char *pcVar1;
@@ -1367,31 +1332,29 @@ void sub_851a(void)
   }
   if (DAT_021f == '\b') {
     DAT_01f9 = 0;
-    local_13 = sub_82b3(&DAT_0220);
+    local_13 = button_bitmask_handler(&DAT_0220);
     DAT_0002._0_1_ = 7;
     _DAT_0000 = (byte *)0x1800;
     sub_86c2(&local_13);
     return;
   }
   if (DAT_021f == '\v') {
-    sub_8640();
+    cmd_0b_handler();
     return;
   }
   if (DAT_021f == '\r') {
-    sub_8689();
+    cmd_0d_handler();
     return;
   }
   if (DAT_021f == '\x19') {
-    sub_860c();
+    cmd_19_handler();
     return;
   }
   sub_86c8();
   return;
 }
 
-
-
-/* ===== 0x85E6  sub_86a6 ===== */
+// FUNC 0x85e6  sub_86a6
 
 void sub_86a6(void)
 
@@ -1401,11 +1364,11 @@ void sub_86a6(void)
   return;
 }
 
+// FUNC 0x860c  cmd_19_handler
 
+/* Hidden command 0x19 handler. Searches message queue for matching seq, clears it. */
 
-/* ===== 0x860C  sub_860c ===== */
-
-void sub_860c(void)
+void cmd_19_handler(void)
 
 {
   byte extraout_CC;
@@ -1414,10 +1377,10 @@ void sub_860c(void)
   DAT_0002 = 0;
   while( true ) {
     DAT_0002 = DAT_0002 & 0xff;
-    sub_86cb();
-    pcVar1 = (char *)sub_86d8(DAT_0002);
+    msg_post();
+    pcVar1 = (char *)msg_peek(DAT_0002);
     if (((*pcVar1 != '\0') && (pcVar1[6] == '\t')) && (DAT_021d == pcVar1[4])) break;
-    sub_86d1();
+    msg_next();
     if (!(bool)(extraout_CC & 1)) {
       sub_86c8();
       return;
@@ -1428,13 +1391,12 @@ void sub_860c(void)
   return;
 }
 
-
-
-/* ===== 0x8640  sub_8640 ===== */
+// FUNC 0x8640  cmd_0b_handler
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Hidden command 0x0B handler. Updates DAT_0206, writes EEPROM via sub_9927, posts 0x1B. */
 
-void sub_8640(void)
+void cmd_0b_handler(void)
 
 {
   _DAT_0000 = CONCAT11(DAT_0220,DAT_0001);
@@ -1442,7 +1404,7 @@ void sub_8640(void)
     DAT_0206 = DAT_0220;
     DAT_0002 = (ushort)DAT_0220;
     _DAT_0000 = 0;
-    sub_9927(&DAT_01be);
+    eeprom_write(&DAT_01be);
     sub_86e8();
     sub_9f02();
     DAT_0002 = CONCAT11(1,(undefined1)DAT_0002);
@@ -1453,13 +1415,12 @@ void sub_8640(void)
   return;
 }
 
-
-
-/* ===== 0x8689  sub_8689 ===== */
+// FUNC 0x8689  cmd_0d_handler
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Hidden command 0x0D handler. Type 0 -> _DAT_02cb=10000; Type 1 -> reset state, DAT_0206=10. */
 
-void sub_8689(void)
+void cmd_0d_handler(void)
 
 {
   DAT_0000 = DAT_0220;
@@ -1478,9 +1439,7 @@ void sub_8689(void)
   return;
 }
 
-
-
-/* ===== 0x86A6  sub_86a6 ===== */
+// FUNC 0x86a6  sub_86a6
 
 void sub_86a6(void)
 
@@ -1490,9 +1449,7 @@ void sub_86a6(void)
   return;
 }
 
-
-
-/* ===== 0x86AB  sub_86ab ===== */
+// FUNC 0x86ab  sub_86ab
 
 void sub_86ab(char param_1)
 
@@ -1506,9 +1463,7 @@ void sub_86ab(char param_1)
   return;
 }
 
-
-
-/* ===== 0x86C2  sub_86c2 ===== */
+// FUNC 0x86c2  sub_86c2
 
 void sub_86c2(void)
 
@@ -1517,9 +1472,7 @@ void sub_86c2(void)
   x_8080(DAT_021d);
 }
 
-
-
-/* ===== 0x86C8  sub_86c8 ===== */
+// FUNC 0x86c8  sub_86c8
 
 void sub_86c8(void)
 
@@ -1527,33 +1480,27 @@ void sub_86c8(void)
   return;
 }
 
-
-
-/* ===== 0x86CB  sub_86cb ===== */
+// FUNC 0x86cb  msg_post
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void sub_86cb(void)
+void msg_post(void)
 
 {
   _DAT_0000 = 0x25;
   return;
 }
 
+// FUNC 0x86d1  msg_next
 
-
-/* ===== 0x86D1  sub_86d1 ===== */
-
-char sub_86d1(void)
+char msg_next(void)
 
 {
   DAT_0002._1_1_ = (char)DAT_0002 + '\x01';
   return (char)DAT_0002;
 }
 
-
-
-/* ===== 0x86D3  sub_86d3 ===== */
+// FUNC 0x86d3  sub_86d3
 
 undefined1 sub_86d3(void)
 
@@ -1561,11 +1508,9 @@ undefined1 sub_86d3(void)
   return (undefined1)DAT_0002;
 }
 
+// FUNC 0x86d8  msg_peek
 
-
-/* ===== 0x86D8  sub_86d8 ===== */
-
-short sub_86d8(void)
+short msg_peek(void)
 
 {
   short sVar1;
@@ -1574,9 +1519,7 @@ short sub_86d8(void)
   return sVar1 + 0x10;
 }
 
-
-
-/* ===== 0x86DF  sub_86df ===== */
+// FUNC 0x86df  sub_86df
 
 void sub_86df(void)
 
@@ -1586,25 +1529,21 @@ void sub_86df(void)
   return;
 }
 
-
-
-/* ===== 0x86E8  sub_86e8 ===== */
+// FUNC 0x86e8  sub_86e8
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void sub_86e8(void)
 
 {
-  sub_9af3(&UNK_01df);
+  state_clear(&UNK_01df);
   DAT_0002 = &UNK_03e8;
   _DAT_0000 = 0;
-  sub_9927(&UNK_01df);
+  eeprom_write(&UNK_01df);
   return;
 }
 
-
-
-/* ===== 0x8700  gap_8700 ===== */
+// FUNC 0x8700  ret_8700
 
 char ret_8700(void)
 
@@ -1723,9 +1662,7 @@ char ret_8700(void)
   return cVar2;
 }
 
-
-
-/* ===== 0x8811  sub_8811 ===== */
+// FUNC 0x8811  sub_8811
 
 void sub_8811(void)
 
@@ -1733,9 +1670,7 @@ void sub_8811(void)
   return;
 }
 
-
-
-/* ===== 0x8814  sub_8814 ===== */
+// FUNC 0x8814  sub_8814
 
 void sub_8814(void)
 
@@ -1745,9 +1680,7 @@ void sub_8814(void)
   return;
 }
 
-
-
-/* ===== 0x881C  sub_881c ===== */
+// FUNC 0x881c  sub_881c
 
 void sub_881c(short param_1)
 
@@ -1758,9 +1691,7 @@ void sub_881c(short param_1)
   x_8080((undefined1)DAT_0002,param_1 + 1);
 }
 
-
-
-/* ===== 0x8828  sub_8828 ===== */
+// FUNC 0x8828  sub_8828
 
 void sub_8828(void)
 
@@ -1773,9 +1704,7 @@ void sub_8828(void)
   return;
 }
 
-
-
-/* ===== 0x8841  x_8841 ===== */
+// FUNC 0x8841  x_8841
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1967,7 +1896,7 @@ LAB_897e:
       sub_9ea5();
       break;
     }
-    sub_86d1();
+    msg_next();
     if (!(bool)(extraout_CC_11 & 1)) {
       DAT_0002._1_1_ = 0;
     }
@@ -2004,7 +1933,7 @@ LAB_897e:
       sub_9ea5();
       break;
     }
-    sub_86d1();
+    msg_next();
     if (!(bool)(extraout_CC_16 & 1)) {
       DAT_0002._1_1_ = 0;
     }
@@ -2015,9 +1944,7 @@ LAB_897e:
   return;
 }
 
-
-
-/* ===== 0x8A15  sub_8a15 ===== */
+// FUNC 0x8a15  sub_8a15
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2040,7 +1967,7 @@ void sub_8a15(void)
       sub_9ea5();
       break;
     }
-    sub_86d1();
+    msg_next();
     if (!(bool)(extraout_CC_01 & 1)) {
       DAT_0002._1_1_ = 0;
     }
@@ -2051,9 +1978,7 @@ void sub_8a15(void)
   return;
 }
 
-
-
-/* ===== 0x8A46  sub_8a46 ===== */
+// FUNC 0x8a46  sub_8a46
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2122,7 +2047,7 @@ void sub_8a46(void)
       }
       sub_9c6f();
       if ((bool)(extraout_CC_02 >> 1 & 1)) break;
-      sub_86d1();
+      msg_next();
       if (!(bool)(extraout_CC_03 & 1)) {
         DAT_0002._1_1_ = 0;
       }
@@ -2148,7 +2073,7 @@ void sub_8a46(void)
     DAT_0002._0_1_ = DAT_0002._0_1_ + -1;
   } while (DAT_0002._0_1_ != '\0');
   DAT_01f9 = 0;
-  sub_82b3(&stack0x0009);
+  button_bitmask_handler(&stack0x0009);
   sub_9ce7();
   do {
     sub_86d3();
@@ -2170,7 +2095,7 @@ void sub_8a46(void)
       sub_8b6e();
       return;
     }
-    sub_86d1();
+    msg_next();
     if (!(bool)(extraout_CC_07 & 1)) {
       DAT_0002._1_1_ = 0;
     }
@@ -2185,9 +2110,7 @@ void sub_8a46(void)
   return;
 }
 
-
-
-/* ===== 0x8B5D  sub_8b5d ===== */
+// FUNC 0x8b5d  sub_8b5d
 
 void sub_8b5d(void)
 
@@ -2197,9 +2120,7 @@ void sub_8b5d(void)
   return;
 }
 
-
-
-/* ===== 0x8B6E  sub_8b6e ===== */
+// FUNC 0x8b6e  sub_8b6e
 
 void sub_8b6e(void)
 
@@ -2213,9 +2134,7 @@ void sub_8b6e(void)
   return;
 }
 
-
-
-/* ===== 0x8B71  sub_8b71 ===== */
+// FUNC 0x8b71  sub_8b71
 
 void sub_8b71(void)
 
@@ -2228,9 +2147,7 @@ void sub_8b71(void)
   return;
 }
 
-
-
-/* ===== 0x8B79  sub_8b79 ===== */
+// FUNC 0x8b79  sub_8b79
 
 void sub_8b79(void)
 
@@ -2241,9 +2158,7 @@ void sub_8b79(void)
   return;
 }
 
-
-
-/* ===== 0x8B8A  sub_8b8a ===== */
+// FUNC 0x8b8a  sub_8b8a
 
 void sub_8b8a(undefined1 param_1)
 
@@ -2254,9 +2169,7 @@ void sub_8b8a(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x8B8E  sub_8b8e ===== */
+// FUNC 0x8b8e  sub_8b8e
 
 void sub_8b8e(undefined1 param_1)
 
@@ -2266,9 +2179,7 @@ void sub_8b8e(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x8B96  sub_8b96 ===== */
+// FUNC 0x8b96  sub_8b96
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2407,7 +2318,7 @@ LAB_8cd6:
   *pbVar4 = bVar2 | DAT_0001;
   DAT_01f9 = 0;
   uStack_10 = (code *)0x8ce8;
-  sub_82b3(&local_e);
+  button_bitmask_handler(&local_e);
   auStack_7[0] = 0;
   uStack_10 = (code *)0x8ced;
   sub_9f02();
@@ -2419,9 +2330,7 @@ LAB_8cd6:
   x_8080((char)DAT_0002,auStack_7);
 }
 
-
-
-/* ===== 0x8C31  x_8c31 ===== */
+// FUNC 0x8c31  x_8c31
 
 void x_8c31(short param_1,undefined1 param_2)
 
@@ -2506,7 +2415,7 @@ LAB_8cd3:
 LAB_8cd6:
   *pbVar5 = bVar2 | DAT_0001;
   DAT_01f9 = 0;
-  sub_82b3(&stack0x0001);
+  button_bitmask_handler(&stack0x0001);
   param_2 = 0;
   sub_9f02();
   DAT_0002._0_1_ = 7;
@@ -2516,9 +2425,7 @@ LAB_8cd6:
   x_8080((char)DAT_0002,&param_2);
 }
 
-
-
-/* ===== 0x8D00  sub_8d00 ===== */
+// FUNC 0x8d00  sub_8d00
 
 void sub_8d00(void)
 
@@ -2526,9 +2433,7 @@ void sub_8d00(void)
   return;
 }
 
-
-
-/* ===== 0x8D03  sub_8d03 ===== */
+// FUNC 0x8d03  sub_8d03
 
 void sub_8d03(void)
 
@@ -2542,9 +2447,7 @@ void sub_8d03(void)
   return;
 }
 
-
-
-/* ===== 0x8D16  sub_8d16 ===== */
+// FUNC 0x8d16  sub_8d16
 
 void sub_8d16(void)
 
@@ -2556,9 +2459,7 @@ void sub_8d16(void)
   return;
 }
 
-
-
-/* ===== 0x8D31  sub_8d31 ===== */
+// FUNC 0x8d31  sub_8d31
 
 void sub_8d31(void)
 
@@ -2608,9 +2509,7 @@ void sub_8d31(void)
   return;
 }
 
-
-
-/* ===== 0x8DBB  sub_8dbb ===== */
+// FUNC 0x8dbb  sub_8dbb
 
 void sub_8dbb(void)
 
@@ -2620,9 +2519,7 @@ void sub_8dbb(void)
   return;
 }
 
-
-
-/* ===== 0x8DC0  sub_8dc0 ===== */
+// FUNC 0x8dc0  sub_8dc0
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2696,9 +2593,7 @@ void sub_8dc0(void)
   return;
 }
 
-
-
-/* ===== 0x8DC3  sub_8dc3 ===== */
+// FUNC 0x8dc3  sub_8dc3
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2771,9 +2666,7 @@ void sub_8dc3(void)
   return;
 }
 
-
-
-/* ===== 0x8E30  sub_8e30 ===== */
+// FUNC 0x8e30  sub_8e30
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2783,9 +2676,7 @@ void sub_8e30(void)
   return;
 }
 
-
-
-/* ===== 0x8E40  sub_8e40 ===== */
+// FUNC 0x8e40  sub_8e40
 
 void sub_8e40(char param_1)
 
@@ -2808,9 +2699,7 @@ void sub_8e40(char param_1)
   return;
 }
 
-
-
-/* ===== 0x8E51  sub_8e51 ===== */
+// FUNC 0x8e51  sub_8e51
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2825,9 +2714,7 @@ void sub_8e51(short param_1)
   return;
 }
 
-
-
-/* ===== 0x8E5C  sub_8e5c ===== */
+// FUNC 0x8e5c  sub_8e5c
 
 void sub_8e5c(void)
 
@@ -2874,9 +2761,7 @@ void sub_8e5c(void)
   x_8080(cVar1,&DAT_0206);
 }
 
-
-
-/* ===== 0x8EE6  sub_8ee6 ===== */
+// FUNC 0x8ee6  sub_8ee6
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2896,7 +2781,7 @@ void sub_8ee6(void)
       DAT_023d = DAT_0008._0_1_;
       rx_frame_len = 0;
       uart_flag_c = '\0';
-      sub_851a();
+      frame_handler();
       DAT_023d = 0;
     }
     cVar1 = DAT_02d5;
@@ -2933,9 +2818,7 @@ void sub_8ee6(void)
   } while( true );
 }
 
-
-
-/* ===== 0x8F7E  x_8f7e ===== */
+// FUNC 0x8f7e  x_8f7e
 
 void x_8f7e(void)
 
@@ -2999,9 +2882,7 @@ void x_8f7e(void)
   return;
 }
 
-
-
-/* ===== 0x8FB5  x_8fb5 ===== */
+// FUNC 0x8fb5  x_8fb5
 
 void x_8fb5(byte param_1,undefined2 param_2,byte param_3,byte param_4)
 
@@ -3054,9 +2935,7 @@ void x_8fb5(byte param_1,undefined2 param_2,byte param_3,byte param_4)
   return;
 }
 
-
-
-/* ===== 0x908A  x_908a ===== */
+// FUNC 0x908a  x_908a
 
 void x_908a(void)
 
@@ -3065,9 +2944,7 @@ void x_908a(void)
   return;
 }
 
-
-
-/* ===== 0x908F  sub_908f ===== */
+// FUNC 0x908f  sub_908f
 
 void sub_908f(void)
 
@@ -3076,9 +2953,7 @@ void sub_908f(void)
   return;
 }
 
-
-
-/* ===== 0x9094  sub_9094 ===== */
+// FUNC 0x9094  sub_9094
 
 void sub_9094(void)
 
@@ -3087,9 +2962,7 @@ void sub_9094(void)
   return;
 }
 
-
-
-/* ===== 0x9099  FUN_9099 ===== */
+// FUNC 0x9099  FUN_9099
 
 undefined2 FUN_9099(undefined2 param_1)
 
@@ -3097,9 +2970,7 @@ undefined2 FUN_9099(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x90AC  sub_90ac ===== */
+// FUNC 0x90ac  sub_90ac
 
 void sub_90ac(undefined2 param_1)
 
@@ -3109,9 +2980,7 @@ void sub_90ac(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x90B3  thunk_FUN_9127 ===== */
+// FUNC 0x90b3  sub_90b3
 
 void sub_90b3(undefined2 param_1)
 
@@ -3121,9 +2990,7 @@ void sub_90b3(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x90BA  FUN_90ba ===== */
+// FUNC 0x90ba  FUN_90ba
 
 undefined2 FUN_90ba(void)
 
@@ -3133,9 +3000,7 @@ undefined2 FUN_90ba(void)
   return in_stack_00000001;
 }
 
-
-
-/* ===== 0x90C2  sub_90c2 ===== */
+// FUNC 0x90c2  sub_90c2
 
 void sub_90c2(void)
 
@@ -3144,9 +3009,7 @@ void sub_90c2(void)
   return;
 }
 
-
-
-/* ===== 0x90C7  sub_90c7 ===== */
+// FUNC 0x90c7  sub_90c7
 
 void sub_90c7(void)
 
@@ -3155,9 +3018,7 @@ void sub_90c7(void)
   return;
 }
 
-
-
-/* ===== 0x90CC  sub_90cc ===== */
+// FUNC 0x90cc  sub_90cc
 
 void sub_90cc(void)
 
@@ -3166,9 +3027,7 @@ void sub_90cc(void)
   return;
 }
 
-
-
-/* ===== 0x90D1  sub_90d1 ===== */
+// FUNC 0x90d1  sub_90d1
 
 void sub_90d1(void)
 
@@ -3177,9 +3036,7 @@ void sub_90d1(void)
   return;
 }
 
-
-
-/* ===== 0x90D6  FUN_90d6 ===== */
+// FUNC 0x90d6  FUN_90d6
 
 undefined2 FUN_90d6(undefined2 param_1)
 
@@ -3187,9 +3044,7 @@ undefined2 FUN_90d6(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x90F3  sub_90f3 ===== */
+// FUNC 0x90f3  sub_90f3
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3202,9 +3057,7 @@ void sub_90f3(undefined2 param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x90FE  FUN_90fe ===== */
+// FUNC 0x90fe  sub_90fe
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3217,9 +3070,7 @@ void sub_90fe(undefined2 param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x9109  sub_9109 ===== */
+// FUNC 0x9109  sub_9109
 
 void sub_9109(undefined2 param_1,undefined2 param_2)
 
@@ -3230,9 +3081,7 @@ void sub_9109(undefined2 param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x9114  sub_9114 ===== */
+// FUNC 0x9114  sub_9114
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3245,9 +3094,7 @@ void sub_9114(undefined2 param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x911F  FUN_911f ===== */
+// FUNC 0x911f  FUN_911f
 
 undefined2 FUN_911f(void)
 
@@ -3257,9 +3104,7 @@ undefined2 FUN_911f(void)
   return in_stack_00000001;
 }
 
-
-
-/* ===== 0x9127  FUN_9127 ===== */
+// FUNC 0x9127  sub_9127
 
 void sub_9127(void)
 
@@ -3269,9 +3114,7 @@ void sub_9127(void)
   return;
 }
 
-
-
-/* ===== 0x912A  thunk_FUN_914d ===== */
+// FUNC 0x912a  sub_912a
 
 void sub_912a(void)
 
@@ -3280,9 +3123,7 @@ void sub_912a(void)
   return;
 }
 
-
-
-/* ===== 0x912E  sub_912e ===== */
+// FUNC 0x912e  sub_912e
 
 void sub_912e(void)
 
@@ -3292,9 +3133,7 @@ void sub_912e(void)
   return;
 }
 
-
-
-/* ===== 0x9135  thunk_FUN_914d ===== */
+// FUNC 0x9135  sub_9135
 
 void sub_9135(void)
 
@@ -3303,9 +3142,7 @@ void sub_9135(void)
   return;
 }
 
-
-
-/* ===== 0x9139  sub_9139 ===== */
+// FUNC 0x9139  sub_9139
 
 void sub_9139(void)
 
@@ -3315,9 +3152,7 @@ void sub_9139(void)
   return;
 }
 
-
-
-/* ===== 0x9140  sub_9140 ===== */
+// FUNC 0x9140  sub_9140
 
 void sub_9140(void)
 
@@ -3327,9 +3162,7 @@ void sub_9140(void)
   return;
 }
 
-
-
-/* ===== 0x9147  sub_9147 ===== */
+// FUNC 0x9147  sub_9147
 
 void sub_9147(void)
 
@@ -3341,9 +3174,7 @@ void sub_9147(void)
   return;
 }
 
-
-
-/* ===== 0x9154  sub_9154 ===== */
+// FUNC 0x9154  sub_9154
 
 void sub_9154(void)
 
@@ -3355,9 +3186,7 @@ void sub_9154(void)
   return;
 }
 
-
-
-/* ===== 0x9161  FUN_9161 ===== */
+// FUNC 0x9161  sub_9161
 
 void sub_9161(void)
 
@@ -3369,9 +3198,7 @@ void sub_9161(void)
   return;
 }
 
-
-
-/* ===== 0x916E  sub_916e ===== */
+// FUNC 0x916e  sub_916e
 
 void sub_916e(void)
 
@@ -3383,9 +3210,7 @@ void sub_916e(void)
   return;
 }
 
-
-
-/* ===== 0x917B  sub_917b ===== */
+// FUNC 0x917b  sub_917b
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3435,9 +3260,7 @@ void sub_917b(void)
   return;
 }
 
-
-
-/* ===== 0x9223  vec_9223 ===== */
+// FUNC 0x9223  vec_9223
 
 undefined2 vec_9223(undefined2 param_1)
 
@@ -3488,9 +3311,7 @@ undefined2 vec_9223(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x92C2  gap_92c2 ===== */
+// FUNC 0x92c2  gap_92c2
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3568,9 +3389,7 @@ LAB_9348:
   } while( true );
 }
 
-
-
-/* ===== 0x935E  ret_935e ===== */
+// FUNC 0x935e  ret_935e
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3588,8 +3407,8 @@ void ret_935e(void)
   bVar2 = 0;
   do {
     uVar4 = (ushort)bVar2;
-    sub_86cb(bVar2);
-    pcVar3 = (char *)sub_86d8(uVar4);
+    msg_post(bVar2);
+    pcVar3 = (char *)msg_peek(uVar4);
     if (*pcVar3 != '\0') {
       sVar1 = *(short *)(pcVar3 + 1);
       if (sVar1 != 0) {
@@ -3604,7 +3423,7 @@ void ret_935e(void)
       return;
     }
     _DAT_0000 = (char *)0x25;
-    _DAT_0000 = (char *)sub_86d8(DAT_02ce);
+    _DAT_0000 = (char *)msg_peek(DAT_02ce);
     if ((*_DAT_0000 != '\0') && (*(short *)(_DAT_0000 + 1) == 0)) break;
     sub_9df9();
     if (!(bool)(extraout_CC_00 & 1)) {
@@ -3633,9 +3452,7 @@ void ret_935e(void)
   return;
 }
 
-
-
-/* ===== 0x93E5  sub_93e5 ===== */
+// FUNC 0x93e5  sub_93e5
 
 undefined1 sub_93e5(char param_1)
 
@@ -3703,9 +3520,7 @@ undefined1 sub_93e5(char param_1)
   return 1;
 }
 
-
-
-/* ===== 0x9464  clk_set_divider ===== */
+// FUNC 0x9464  clk_set_divider
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3750,9 +3565,7 @@ void clk_set_divider(void)
   return;
 }
 
-
-
-/* ===== 0x94D6  sub_94d6 ===== */
+// FUNC 0x94d6  sub_94d6
 
 void sub_94d6(void)
 
@@ -3783,9 +3596,7 @@ void sub_94d6(void)
   return;
 }
 
-
-
-/* ===== 0x9541  sub_9541 ===== */
+// FUNC 0x9541  sub_9541
 
 void sub_9541(byte param_1,byte *param_2)
 
@@ -3833,9 +3644,7 @@ void sub_9541(byte param_1,byte *param_2)
   return;
 }
 
-
-
-/* ===== 0x95A5  sub_95a5 ===== */
+// FUNC 0x95a5  sub_95a5
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3851,9 +3660,7 @@ undefined2 * sub_95a5(void)
   return puVar1;
 }
 
-
-
-/* ===== 0x95B5  sub_95b5 ===== */
+// FUNC 0x95b5  sub_95b5
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3865,9 +3672,7 @@ undefined2 * sub_95b5(undefined2 *param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x95C1  sub_95c1 ===== */
+// FUNC 0x95c1  sub_95c1
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3879,9 +3684,7 @@ undefined2 * sub_95c1(undefined2 *param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x95CD  sub_95cd ===== */
+// FUNC 0x95cd  sub_95cd
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3897,9 +3700,7 @@ void sub_95cd(void)
   return;
 }
 
-
-
-/* ===== 0x95DE  x_95de ===== */
+// FUNC 0x95de  x_95de
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3911,9 +3712,7 @@ void x_95de(undefined2 *param_1)
   return;
 }
 
-
-
-/* ===== 0x95EC  sub_95ec ===== */
+// FUNC 0x95ec  sub_95ec
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3925,9 +3724,7 @@ void sub_95ec(undefined2 *param_1)
   return;
 }
 
-
-
-/* ===== 0x95FA  sub_95fa ===== */
+// FUNC 0x95fa  sub_95fa
 
 void sub_95fa(undefined2 *param_1)
 
@@ -3937,9 +3734,7 @@ void sub_95fa(undefined2 *param_1)
   return;
 }
 
-
-
-/* ===== 0x9608  vec_9608 ===== */
+// FUNC 0x9608  vec_9608
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -3982,9 +3777,7 @@ undefined2 vec_9608(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x966A  sub_966a ===== */
+// FUNC 0x966a  sub_966a
 
 void sub_966a(char param_1)
 
@@ -4019,9 +3812,7 @@ void sub_966a(char param_1)
   return;
 }
 
-
-
-/* ===== 0x96CB  itc_set_priority ===== */
+// FUNC 0x96cb  itc_set_priority
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Interrupt priority setup via ITC_SPR1/SPR2 (0x50A0/0x50A1). */
@@ -4052,9 +3843,7 @@ undefined2 itc_set_priority(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9728  sub_9728 ===== */
+// FUNC 0x9728  sub_9728
 
 void sub_9728(char param_1,undefined2 param_2)
 
@@ -4088,9 +3877,7 @@ void sub_9728(char param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x9780  uart1_set_control_bits ===== */
+// FUNC 0x9780  uart1_set_control_bits
 
 void uart1_set_control_bits(char param_1)
 
@@ -4115,9 +3902,7 @@ void uart1_set_control_bits(char param_1)
   return;
 }
 
-
-
-/* ===== 0x97D3  vec_97d3 ===== */
+// FUNC 0x97d3  vec_97d3
 
 undefined2 vec_97d3(void)
 
@@ -4161,9 +3946,7 @@ undefined2 vec_97d3(void)
   return *(undefined2 *)((short)register0x0008 + 3);
 }
 
-
-
-/* ===== 0x9823  sub_9823 ===== */
+// FUNC 0x9823  sub_9823
 
 char sub_9823(char param_1)
 
@@ -4198,9 +3981,7 @@ char sub_9823(char param_1)
   return DAT_0000;
 }
 
-
-
-/* ===== 0x9872  sub_9872 ===== */
+// FUNC 0x9872  sub_9872
 
 void sub_9872(void)
 
@@ -4230,9 +4011,7 @@ void sub_9872(void)
   return;
 }
 
-
-
-/* ===== 0x98B6  sub_98b6 ===== */
+// FUNC 0x98b6  sub_98b6
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -4255,9 +4034,7 @@ void sub_98b6(void)
   return;
 }
 
-
-
-/* ===== 0x98F1  clk_gate_enable_1 ===== */
+// FUNC 0x98f1  clk_gate_enable_1
 
 void clk_gate_enable_1(void)
 
@@ -4276,13 +4053,12 @@ void clk_gate_enable_1(void)
   return;
 }
 
-
-
-/* ===== 0x9927  sub_9927 ===== */
+// FUNC 0x9927  eeprom_write
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* EEPROM write helper. Called from sub_86e8 and cmd_0b_handler. */
 
-void sub_9927(void)
+void eeprom_write(void)
 
 {
   undefined2 in_Y;
@@ -4302,9 +4078,7 @@ void sub_9927(void)
   return;
 }
 
-
-
-/* ===== 0x995A  sub_995a ===== */
+// FUNC 0x995a  sub_995a
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -4331,9 +4105,7 @@ undefined2 sub_995a(byte *param_1)
   return 1;
 }
 
-
-
-/* ===== 0x998A  gap_998a ===== */
+// FUNC 0x998a  gap_998a
 
 char gap_998a(void)
 
@@ -4361,9 +4133,7 @@ char gap_998a(void)
   return cVar1;
 }
 
-
-
-/* ===== 0x99B6  sub_99b6 ===== */
+// FUNC 0x99b6  sub_99b6
 
 short sub_99b6(ushort param_1)
 
@@ -4372,9 +4142,7 @@ short sub_99b6(ushort param_1)
          ((param_1 & 0xff) * (ushort)DAT_0000 + (param_1 >> 8) * (ushort)DAT_0001) * 0x100;
 }
 
-
-
-/* ===== 0x99D4  sub_99d4 ===== */
+// FUNC 0x99d4  sub_99d4
 
 void sub_99d4(char param_1)
 
@@ -4387,9 +4155,7 @@ void sub_99d4(char param_1)
   return;
 }
 
-
-
-/* ===== 0x99DC  sub_99dc ===== */
+// FUNC 0x99dc  sub_99dc
 
 ushort sub_99dc(ushort param_1)
 
@@ -4397,9 +4163,7 @@ ushort sub_99dc(ushort param_1)
   return param_1 >> 4;
 }
 
-
-
-/* ===== 0x99E1  vec_99e1 ===== */
+// FUNC 0x99e1  vec_99e1
 
 undefined2 vec_99e1(undefined2 param_1)
 
@@ -4419,9 +4183,7 @@ undefined2 vec_99e1(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9A0B  sub_9a0b ===== */
+// FUNC 0x9a0b  sub_9a0b
 
 void sub_9a0b(void)
 
@@ -4438,9 +4200,7 @@ void sub_9a0b(void)
   return;
 }
 
-
-
-/* ===== 0x9A34  ret_9a34 ===== */
+// FUNC 0x9a34  ret_9a34
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -4464,9 +4224,7 @@ void ret_9a34(short *param_1)
   return;
 }
 
-
-
-/* ===== 0x9A5C  ret_9a5c ===== */
+// FUNC 0x9a5c  ret_9a5c
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -4477,9 +4235,7 @@ void ret_9a5c(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9A84  sub_9a84 ===== */
+// FUNC 0x9a84  sub_9a84
 
 undefined1 sub_9a84(void)
 
@@ -4500,9 +4256,7 @@ undefined1 sub_9a84(void)
   return DAT_0001;
 }
 
-
-
-/* ===== 0x9AAA  sub_9aaa ===== */
+// FUNC 0x9aaa  sub_9aaa
 
 void sub_9aaa(undefined2 param_1)
 
@@ -4511,9 +4265,7 @@ void sub_9aaa(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x9AB7  sub_9ab7 ===== */
+// FUNC 0x9ab7  sub_9ab7
 
 void sub_9ab7(undefined2 param_1)
 
@@ -4522,9 +4274,7 @@ void sub_9ab7(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x9AC4  sub_9ac4 ===== */
+// FUNC 0x9ac4  sub_9ac4
 
 undefined2 sub_9ac4(undefined2 param_1)
 
@@ -4532,9 +4282,7 @@ undefined2 sub_9ac4(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9ACF  FUN_9acf ===== */
+// FUNC 0x9acf  sub_9acf
 
 void sub_9acf(void)
 
@@ -4558,13 +4306,12 @@ void sub_9acf(void)
   return;
 }
 
-
-
-/* ===== 0x9AF3  sub_9af3 ===== */
+// FUNC 0x9af3  state_clear
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* State clear helper. Clears the per-channel state at param_1. */
 
-void sub_9af3(undefined1 *param_1)
+void state_clear(undefined1 *param_1)
 
 {
   _DAT_0000 = param_1;
@@ -4577,9 +4324,7 @@ void sub_9af3(undefined1 *param_1)
   return;
 }
 
-
-
-/* ===== 0x9B17  sub_9b17 ===== */
+// FUNC 0x9b17  sub_9b17
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -4597,9 +4342,7 @@ undefined1 sub_9b17(void)
   return 1;
 }
 
-
-
-/* ===== 0x9B3A  sub_9b3a ===== */
+// FUNC 0x9b3a  sub_9b3a
 
 void sub_9b3a(void)
 
@@ -4623,9 +4366,7 @@ void sub_9b3a(void)
   return;
 }
 
-
-
-/* ===== 0x9B72  sub_9b72 ===== */
+// FUNC 0x9b72  sub_9b72
 
 void sub_9b72(void)
 
@@ -4640,9 +4381,7 @@ void sub_9b72(void)
   return;
 }
 
-
-
-/* ===== 0x9B92  sub_9b92 ===== */
+// FUNC 0x9b92  sub_9b92
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -4661,9 +4400,7 @@ undefined2 sub_9b92(undefined2 param_1)
   return DAT_0002;
 }
 
-
-
-/* ===== 0x9BCF  x_9bcf ===== */
+// FUNC 0x9bcf  x_9bcf
 
 void x_9bcf(void)
 
@@ -4676,9 +4413,7 @@ void x_9bcf(void)
   return;
 }
 
-
-
-/* ===== 0x9BEB  sub_9beb ===== */
+// FUNC 0x9beb  sub_9beb
 
 void sub_9beb(byte param_1)
 
@@ -4694,9 +4429,7 @@ void sub_9beb(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9C03  sub_9c03 ===== */
+// FUNC 0x9c03  sub_9c03
 
 void sub_9c03(byte param_1)
 
@@ -4712,9 +4445,7 @@ void sub_9c03(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9C1B  sub_9c1b ===== */
+// FUNC 0x9c1b  sub_9c1b
 
 void sub_9c1b(char param_1)
 
@@ -4727,9 +4458,7 @@ void sub_9c1b(char param_1)
   return;
 }
 
-
-
-/* ===== 0x9C31  x_9c31 ===== */
+// FUNC 0x9c31  x_9c31
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -4746,9 +4475,7 @@ undefined1 * x_9c31(undefined1 *param_1)
   return DAT_0002;
 }
 
-
-
-/* ===== 0x9C47  sub_9c47 ===== */
+// FUNC 0x9c47  sub_9c47
 
 void sub_9c47(void)
 
@@ -4761,9 +4488,7 @@ void sub_9c47(void)
   return;
 }
 
-
-
-/* ===== 0x9C5B  x_9c5b ===== */
+// FUNC 0x9c5b  x_9c5b
 
 void x_9c5b(void)
 
@@ -4776,9 +4501,7 @@ void x_9c5b(void)
   } while( true );
 }
 
-
-
-/* ===== 0x9C6F  sub_9c6f ===== */
+// FUNC 0x9c6f  sub_9c6f
 
 void sub_9c6f(byte param_1)
 
@@ -4787,15 +4510,13 @@ void sub_9c6f(byte param_1)
   ushort uVar2;
   
   uVar2 = (ushort)param_1;
-  sub_86cb(0);
+  msg_post(0);
   sVar1 = sub_99b6(uVar2);
   DAT_0008 = sVar1 + 0x10;
   return;
 }
 
-
-
-/* ===== 0x9C76  flash_write_key_ae ===== */
+// FUNC 0x9c76  flash_write_key_ae
 
 /* FLASH key 0xAE -> FLASH_KEYREG_A (0x5062), STM8 mass-key idiom. */
 
@@ -4809,9 +4530,7 @@ void flash_write_key_ae(void)
   return;
 }
 
-
-
-/* ===== 0x9C82  flash_write_key_56 ===== */
+// FUNC 0x9c82  flash_write_key_56
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
@@ -4834,9 +4553,7 @@ void flash_write_key_56(void)
   return;
 }
 
-
-
-/* ===== 0x9C95  sub_9c95 ===== */
+// FUNC 0x9c95  sub_9c95
 
 void sub_9c95(void)
 
@@ -4848,9 +4565,7 @@ void sub_9c95(void)
   return;
 }
 
-
-
-/* ===== 0x9CA7  sub_9ca7 ===== */
+// FUNC 0x9ca7  sub_9ca7
 
 void sub_9ca7(void)
 
@@ -4862,9 +4577,7 @@ void sub_9ca7(void)
   return;
 }
 
-
-
-/* ===== 0x9CB8  sub_9cb8 ===== */
+// FUNC 0x9cb8  sub_9cb8
 
 undefined1 sub_9cb8(char param_1)
 
@@ -4881,9 +4594,7 @@ undefined1 sub_9cb8(char param_1)
   return DAT_0001;
 }
 
-
-
-/* ===== 0x9CC8  sub_9cc8 ===== */
+// FUNC 0x9cc8  sub_9cc8
 
 void sub_9cc8(void)
 
@@ -4896,9 +4607,7 @@ void sub_9cc8(void)
   return;
 }
 
-
-
-/* ===== 0x9CD2  sub_9cd2 ===== */
+// FUNC 0x9cd2  sub_9cd2
 
 char sub_9cd2(char param_1)
 
@@ -4906,9 +4615,7 @@ char sub_9cd2(char param_1)
   return param_1 << 6;
 }
 
-
-
-/* ===== 0x9CD8  reset_startup ===== */
+// FUNC 0x9cd8  reset_startup
 
 /* Reset entry: SP = 0x03FF, init calls, then jump to main. */
 
@@ -4921,9 +4628,7 @@ void reset_startup(void)
   return;
 }
 
-
-
-/* ===== 0x9CE7  sub_9ce7 ===== */
+// FUNC 0x9ce7  sub_9ce7
 
 void sub_9ce7(void)
 
@@ -4934,9 +4639,7 @@ void sub_9ce7(void)
   return;
 }
 
-
-
-/* ===== 0x9CF6  sub_9cf6 ===== */
+// FUNC 0x9cf6  sub_9cf6
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -4949,9 +4652,7 @@ void sub_9cf6(void)
   return;
 }
 
-
-
-/* ===== 0x9D05  sub_9d05 ===== */
+// FUNC 0x9d05  sub_9d05
 
 undefined1 sub_9d05(void)
 
@@ -4965,9 +4666,7 @@ undefined1 sub_9d05(void)
   return 0xc;
 }
 
-
-
-/* ===== 0x9D14  sub_9d14 ===== */
+// FUNC 0x9d14  sub_9d14
 
 undefined1 sub_9d14(void)
 
@@ -4981,9 +4680,7 @@ undefined1 sub_9d14(void)
   return 5;
 }
 
-
-
-/* ===== 0x9D23  sub_9d23 ===== */
+// FUNC 0x9d23  sub_9d23
 
 void sub_9d23(byte param_1)
 
@@ -4994,9 +4691,7 @@ void sub_9d23(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9D32  sub_9d32 ===== */
+// FUNC 0x9d32  sub_9d32
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -5007,9 +4702,7 @@ undefined1 sub_9d32(short param_1)
   return DAT_0001;
 }
 
-
-
-/* ===== 0x9D40  sub_9d40 ===== */
+// FUNC 0x9d40  sub_9d40
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -5022,9 +4715,7 @@ void sub_9d40(void)
   return;
 }
 
-
-
-/* ===== 0x9D4E  sub_9d4e ===== */
+// FUNC 0x9d4e  sub_9d4e
 
 void sub_9d4e(byte param_1)
 
@@ -5035,9 +4726,7 @@ void sub_9d4e(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9D5C  sub_9d5c ===== */
+// FUNC 0x9d5c  sub_9d5c
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -5050,9 +4739,7 @@ void sub_9d5c(void)
   return;
 }
 
-
-
-/* ===== 0x9D69  sub_9d69 ===== */
+// FUNC 0x9d69  sub_9d69
 
 void sub_9d69(byte param_1)
 
@@ -5063,9 +4750,7 @@ void sub_9d69(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9D76  sub_9d76 ===== */
+// FUNC 0x9d76  sub_9d76
 
 void sub_9d76(char param_1)
 
@@ -5078,9 +4763,7 @@ void sub_9d76(char param_1)
   return;
 }
 
-
-
-/* ===== 0x9D83  sub_9d83 ===== */
+// FUNC 0x9d83  sub_9d83
 
 void sub_9d83(char param_1)
 
@@ -5093,9 +4776,7 @@ void sub_9d83(char param_1)
   return;
 }
 
-
-
-/* ===== 0x9D90  sub_9d90 ===== */
+// FUNC 0x9d90  sub_9d90
 
 void sub_9d90(char param_1)
 
@@ -5108,9 +4789,7 @@ void sub_9d90(char param_1)
   return;
 }
 
-
-
-/* ===== 0x9D9D  sub_9d9d ===== */
+// FUNC 0x9d9d  sub_9d9d
 
 void sub_9d9d(char param_1)
 
@@ -5123,9 +4802,7 @@ void sub_9d9d(char param_1)
   return;
 }
 
-
-
-/* ===== 0x9DAA  clk_gate_enable_2 ===== */
+// FUNC 0x9daa  clk_gate_enable_2
 
 undefined1 clk_gate_enable_2(char param_1,undefined1 *param_2)
 
@@ -5141,9 +4818,7 @@ undefined1 clk_gate_enable_2(char param_1,undefined1 *param_2)
   return 0;
 }
 
-
-
-/* ===== 0x9DB7  sub_9db7 ===== */
+// FUNC 0x9db7  sub_9db7
 
 char sub_9db7(void)
 
@@ -5153,9 +4828,7 @@ char sub_9db7(void)
   return DAT_000a._0_1_;
 }
 
-
-
-/* ===== 0x9DC3  sub_9dc3 ===== */
+// FUNC 0x9dc3  sub_9dc3
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -5166,9 +4839,7 @@ undefined * sub_9dc3(void)
   return &UNK_02c4;
 }
 
-
-
-/* ===== 0x9DCF  sub_9dcf ===== */
+// FUNC 0x9dcf  sub_9dcf
 
 void sub_9dcf(void)
 
@@ -5178,9 +4849,7 @@ void sub_9dcf(void)
   return;
 }
 
-
-
-/* ===== 0x9DDA  sub_9dda ===== */
+// FUNC 0x9dda  sub_9dda
 
 void sub_9dda(byte param_1)
 
@@ -5190,9 +4859,7 @@ void sub_9dda(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9DE5  sub_9de5 ===== */
+// FUNC 0x9de5  sub_9de5
 
 void sub_9de5(void)
 
@@ -5201,9 +4868,7 @@ void sub_9de5(void)
   return;
 }
 
-
-
-/* ===== 0x9DEF  tim4_init ===== */
+// FUNC 0x9def  tim4_init
 
 undefined * tim4_init(void)
 
@@ -5212,9 +4877,7 @@ undefined * tim4_init(void)
   return &UNK_0277;
 }
 
-
-
-/* ===== 0x9DF9  sub_9df9 ===== */
+// FUNC 0x9df9  sub_9df9
 
 char sub_9df9(void)
 
@@ -5223,9 +4886,7 @@ char sub_9df9(void)
   return DAT_02ce;
 }
 
-
-
-/* ===== 0x9E03  sub_9e03 ===== */
+// FUNC 0x9e03  sub_9e03
 
 void sub_9e03(void)
 
@@ -5234,9 +4895,7 @@ void sub_9e03(void)
   return;
 }
 
-
-
-/* ===== 0x9E05  sub_9e05 ===== */
+// FUNC 0x9e05  sub_9e05
 
 void sub_9e05(void)
 
@@ -5245,9 +4904,7 @@ void sub_9e05(void)
   return;
 }
 
-
-
-/* ===== 0x9E0D  sub_9e0d ===== */
+// FUNC 0x9e0d  sub_9e0d
 
 void sub_9e0d(void)
 
@@ -5257,9 +4914,7 @@ void sub_9e0d(void)
   return;
 }
 
-
-
-/* ===== 0x9E17  sub_9e17 ===== */
+// FUNC 0x9e17  sub_9e17
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -5271,9 +4926,7 @@ void sub_9e17(short param_1)
   return;
 }
 
-
-
-/* ===== 0x9E21  sub_9e21 ===== */
+// FUNC 0x9e21  sub_9e21
 
 void sub_9e21(undefined1 *param_1)
 
@@ -5283,21 +4936,17 @@ void sub_9e21(undefined1 *param_1)
   return;
 }
 
-
-
-/* ===== 0x9E2B  gap_9e2b ===== */
+// FUNC 0x9e2b  gap_9e2b
 
 void gap_9e2b(void)
 
 {
   sub_9acf();
-  sub_9af3(&UNK_01df);
+  state_clear(&UNK_01df);
   return;
 }
 
-
-
-/* ===== 0x9E34  sub_9e34 ===== */
+// FUNC 0x9e34  sub_9e34
 
 undefined2 sub_9e34(void)
 
@@ -5305,9 +4954,7 @@ undefined2 sub_9e34(void)
   return *DAT_000c;
 }
 
-
-
-/* ===== 0x9E3D  sub_9e3d ===== */
+// FUNC 0x9e3d  sub_9e3d
 
 short sub_9e3d(undefined1 param_1,undefined1 *param_2)
 
@@ -5316,9 +4963,7 @@ short sub_9e3d(undefined1 param_1,undefined1 *param_2)
   return DAT_0008 + 5;
 }
 
-
-
-/* ===== 0x9E40  sub_9e40 ===== */
+// FUNC 0x9e40  sub_9e40
 
 short sub_9e40(void)
 
@@ -5326,9 +4971,7 @@ short sub_9e40(void)
   return DAT_0008 + 5;
 }
 
-
-
-/* ===== 0x9E46  sub_9e46 ===== */
+// FUNC 0x9e46  sub_9e46
 
 char * sub_9e46(char *param_1)
 
@@ -5338,9 +4981,7 @@ char * sub_9e46(char *param_1)
   return param_1 + 1;
 }
 
-
-
-/* ===== 0x9E4F  sub_9e4f ===== */
+// FUNC 0x9e4f  sub_9e4f
 
 void sub_9e4f(void)
 
@@ -5349,9 +4990,7 @@ void sub_9e4f(void)
   return;
 }
 
-
-
-/* ===== 0x9E58  sub_9e58 ===== */
+// FUNC 0x9e58  sub_9e58
 
 void sub_9e58(void)
 
@@ -5361,9 +5000,7 @@ void sub_9e58(void)
   return;
 }
 
-
-
-/* ===== 0x9E61  sub_9e61 ===== */
+// FUNC 0x9e61  sub_9e61
 
 void sub_9e61(void)
 
@@ -5376,9 +5013,7 @@ void sub_9e61(void)
   return;
 }
 
-
-
-/* ===== 0x9E6A  sub_9e6a ===== */
+// FUNC 0x9e6a  sub_9e6a
 
 void sub_9e6a(void)
 
@@ -5391,9 +5026,7 @@ void sub_9e6a(void)
   return;
 }
 
-
-
-/* ===== 0x9E73  sub_9e73 ===== */
+// FUNC 0x9e73  sub_9e73
 
 void sub_9e73(undefined1 param_1)
 
@@ -5403,9 +5036,7 @@ void sub_9e73(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9E7C  sub_9e7c ===== */
+// FUNC 0x9e7c  sub_9e7c
 
 undefined1 sub_9e7c(byte param_1)
 
@@ -5416,9 +5047,7 @@ undefined1 sub_9e7c(byte param_1)
   return uVar1;
 }
 
-
-
-/* ===== 0x9E85  gap_9e85 ===== */
+// FUNC 0x9e85  gap_9e85
 
 void gap_9e85(void)
 
@@ -5426,9 +5055,7 @@ void gap_9e85(void)
   return;
 }
 
-
-
-/* ===== 0x9E8D  sub_9af3 ===== */
+// FUNC 0x9e8d  sub_9e8d
 
 void sub_9e8d(void)
 
@@ -5436,9 +5063,7 @@ void sub_9e8d(void)
   return;
 }
 
-
-
-/* ===== 0x9E95  sub_9e95 ===== */
+// FUNC 0x9e95  sub_9e95
 
 undefined2 sub_9e95(void)
 
@@ -5447,9 +5072,7 @@ undefined2 sub_9e95(void)
   return DAT_0008;
 }
 
-
-
-/* ===== 0x9E9D  sub_9e9d ===== */
+// FUNC 0x9e9d  sub_9e9d
 
 void sub_9e9d(void)
 
@@ -5458,9 +5081,7 @@ void sub_9e9d(void)
   return;
 }
 
-
-
-/* ===== 0x9EA5  sub_9ea5 ===== */
+// FUNC 0x9ea5  sub_9ea5
 
 void sub_9ea5(undefined1 param_1)
 
@@ -5469,9 +5090,7 @@ void sub_9ea5(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9EAC  clk_gate_enable_3 ===== */
+// FUNC 0x9eac  clk_gate_enable_3
 
 void clk_gate_enable_3(undefined1 param_1)
 
@@ -5480,9 +5099,7 @@ void clk_gate_enable_3(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9EB3  sub_9eb3 ===== */
+// FUNC 0x9eb3  sub_9eb3
 
 void sub_9eb3(void)
 
@@ -5491,9 +5108,7 @@ void sub_9eb3(void)
   return;
 }
 
-
-
-/* ===== 0x9EBA  sub_9eba ===== */
+// FUNC 0x9eba  FUN_9eba
 
 void FUN_9eba(byte param_1,byte *param_2)
 
@@ -5503,9 +5118,7 @@ void FUN_9eba(byte param_1,byte *param_2)
   return;
 }
 
-
-
-/* ===== 0x9EC1  tim2_set_ccr1l ===== */
+// FUNC 0x9ec1  tim2_set_ccr1l
 
 /* Write TIM2 CCR1 low byte (PWM duty helper). */
 
@@ -5516,9 +5129,7 @@ byte tim2_set_ccr1l(byte param_1,short param_2)
   return *(byte *)(param_2 + 1) & param_1;
 }
 
-
-
-/* ===== 0x9EC8  sub_9ec8 ===== */
+// FUNC 0x9ec8  sub_9ec8
 
 void sub_9ec8(void)
 
@@ -5526,9 +5137,7 @@ void sub_9ec8(void)
   return;
 }
 
-
-
-/* ===== 0x9ECF  tim4_clear_egr ===== */
+// FUNC 0x9ecf  tim4_clear_egr
 
 void tim4_clear_egr(undefined1 param_1)
 
@@ -5538,9 +5147,7 @@ void tim4_clear_egr(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9ED6  sub_9ed6 ===== */
+// FUNC 0x9ed6  sub_9ed6
 
 undefined1 sub_9ed6(void)
 
@@ -5548,9 +5155,7 @@ undefined1 sub_9ed6(void)
   return DAT_02ce;
 }
 
-
-
-/* ===== 0x9EDC  sub_9edc ===== */
+// FUNC 0x9edc  sub_9edc
 
 void sub_9edc(void)
 
@@ -5559,9 +5164,7 @@ void sub_9edc(void)
   return;
 }
 
-
-
-/* ===== 0x9EE1  sub_9ee1 ===== */
+// FUNC 0x9ee1  sub_9ee1
 
 void sub_9ee1(void)
 
@@ -5570,9 +5173,7 @@ void sub_9ee1(void)
   return;
 }
 
-
-
-/* ===== 0x9EE6  sub_9ee6 ===== */
+// FUNC 0x9ee6  sub_9ee6
 
 void sub_9ee6(byte param_1)
 
@@ -5581,9 +5182,7 @@ void sub_9ee6(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9EEB  sub_9eeb ===== */
+// FUNC 0x9eeb  sub_9eeb
 
 void sub_9eeb(byte param_1)
 
@@ -5592,9 +5191,7 @@ void sub_9eeb(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9EF0  sub_9ef0 ===== */
+// FUNC 0x9ef0  sub_9ef0
 
 void sub_9ef0(byte param_1)
 
@@ -5603,9 +5200,7 @@ void sub_9ef0(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x9EF5  sub_9ef5 ===== */
+// FUNC 0x9ef5  sub_9ef5
 
 void sub_9ef5(undefined2 param_1)
 
@@ -5618,9 +5213,7 @@ void sub_9ef5(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x9EFE  sub_9efe ===== */
+// FUNC 0x9efe  sub_9efe
 
 void sub_9efe(void)
 
@@ -5629,9 +5222,7 @@ void sub_9efe(void)
   return;
 }
 
-
-
-/* ===== 0x9F02  sub_9f02 ===== */
+// FUNC 0x9f02  sub_9f02
 
 void sub_9f02(void)
 
@@ -5640,9 +5231,7 @@ void sub_9f02(void)
   return;
 }
 
-
-
-/* ===== 0x9F06  sub_9f06 ===== */
+// FUNC 0x9f06  sub_9f06
 
 void sub_9f06(void)
 
@@ -5651,9 +5240,7 @@ void sub_9f06(void)
   return;
 }
 
-
-
-/* ===== 0x9F0A  sub_9f0a ===== */
+// FUNC 0x9f0a  sub_9f0a
 
 void sub_9f0a(undefined1 param_1)
 
@@ -5662,9 +5249,7 @@ void sub_9f0a(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9F0E  sub_9f0e ===== */
+// FUNC 0x9f0e  sub_9f0e
 
 undefined1 sub_9f0e(void)
 
@@ -5672,9 +5257,7 @@ undefined1 sub_9f0e(void)
   return *DAT_0002;
 }
 
-
-
-/* ===== 0x9F12  sub_9f12 ===== */
+// FUNC 0x9f12  FUN_9f12
 
 void FUN_9f12(byte param_1,byte *param_2)
 
@@ -5683,9 +5266,7 @@ void FUN_9f12(byte param_1,byte *param_2)
   return;
 }
 
-
-
-/* ===== 0x9F16  sub_9f16 ===== */
+// FUNC 0x9f16  sub_9f16
 
 void sub_9f16(undefined1 param_1)
 
@@ -5694,9 +5275,7 @@ void sub_9f16(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9F1A  sub_9f1a ===== */
+// FUNC 0x9f1a  sub_9f1a
 
 void sub_9f1a(undefined1 param_1)
 
@@ -5705,9 +5284,7 @@ void sub_9f1a(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9F1E  sub_9f1e ===== */
+// FUNC 0x9f1e  sub_9f1e
 
 void sub_9f1e(undefined1 param_1)
 
@@ -5716,9 +5293,7 @@ void sub_9f1e(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9F22  sub_9f22 ===== */
+// FUNC 0x9f22  sub_9f22
 
 undefined1 sub_9f22(void)
 
@@ -5726,9 +5301,7 @@ undefined1 sub_9f22(void)
   return UART1_DR;
 }
 
-
-
-/* ===== 0x9F26  sub_9f26 ===== */
+// FUNC 0x9f26  sub_9f26
 
 void sub_9f26(undefined1 param_1)
 
@@ -5737,9 +5310,7 @@ void sub_9f26(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x9F2A  sub_9f2a ===== */
+// FUNC 0x9f2a  thunk_FUN_9f12
 
 void thunk_FUN_9f12(byte param_1,byte *param_2)
 
@@ -5748,9 +5319,7 @@ void thunk_FUN_9f12(byte param_1,byte *param_2)
   return;
 }
 
-
-
-/* ===== 0x9F2D  sub_9f2d ===== */
+// FUNC 0x9f2d  thunk_FUN_9eba
 
 void thunk_FUN_9eba(byte param_1,byte *param_2)
 
@@ -5760,9 +5329,7 @@ void thunk_FUN_9eba(byte param_1,byte *param_2)
   return;
 }
 
-
-
-/* ===== 0x9F30  vec_9f30 ===== */
+// FUNC 0x9f30  thunk_FUN_9f39
 
 void thunk_FUN_9f39(void)
 
@@ -5772,9 +5339,7 @@ void thunk_FUN_9f39(void)
   } while( true );
 }
 
-
-
-/* ===== 0x9F33  sub_9f33 ===== */
+// FUNC 0x9f33  sub_9f33
 
 undefined2 sub_9f33(void)
 
@@ -5782,9 +5347,7 @@ undefined2 sub_9f33(void)
   return 1;
 }
 
-
-
-/* ===== 0x9F36  iwdg_reload ===== */
+// FUNC 0x9f36  iwdg_reload
 
 /* IWDG reload/refresh (writes IWDG_KR). */
 
@@ -5799,9 +5362,7 @@ void iwdg_reload(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x9F39  FUN_9f39 ===== */
+// FUNC 0x9f39  FUN_9f39
 
 void FUN_9f39(void)
 
@@ -5811,9 +5372,7 @@ void FUN_9f39(void)
   } while( true );
 }
 
-
-
-/* ===== 0x9F3C  vec_9f3c ===== */
+// FUNC 0x9f3c  vec_9f3c
 
 undefined2 vec_9f3c(undefined2 param_1)
 
@@ -5821,9 +5380,7 @@ undefined2 vec_9f3c(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F3D  iwdg_start ===== */
+// FUNC 0x9f3d  iwdg_start
 
 /* IWDG start: IWDG_KR = 0xCC. */
 
@@ -5833,9 +5390,7 @@ undefined2 iwdg_start(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F3E  vec_9f3e ===== */
+// FUNC 0x9f3e  vec_9f3e
 
 undefined2 vec_9f3e(undefined2 param_1)
 
@@ -5843,9 +5398,7 @@ undefined2 vec_9f3e(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F3F  vec_9f3f ===== */
+// FUNC 0x9f3f  vec_9f3f
 
 undefined2 vec_9f3f(undefined2 param_1)
 
@@ -5853,9 +5406,7 @@ undefined2 vec_9f3f(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F40  vec_9f40 ===== */
+// FUNC 0x9f40  vec_9f40
 
 undefined2 vec_9f40(undefined2 param_1)
 
@@ -5863,9 +5414,7 @@ undefined2 vec_9f40(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F41  vec_9f41 ===== */
+// FUNC 0x9f41  vec_9f41
 
 undefined2 vec_9f41(undefined2 param_1)
 
@@ -5873,9 +5422,7 @@ undefined2 vec_9f41(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F42  vec_9f42 ===== */
+// FUNC 0x9f42  vec_9f42
 
 undefined2 vec_9f42(undefined2 param_1)
 
@@ -5883,9 +5430,7 @@ undefined2 vec_9f42(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F43  vec_9f43 ===== */
+// FUNC 0x9f43  vec_9f43
 
 undefined2 vec_9f43(undefined2 param_1)
 
@@ -5893,9 +5438,7 @@ undefined2 vec_9f43(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F44  vec_9f44 ===== */
+// FUNC 0x9f44  vec_9f44
 
 undefined2 vec_9f44(undefined2 param_1)
 
@@ -5903,9 +5446,7 @@ undefined2 vec_9f44(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F45  vec_9f45 ===== */
+// FUNC 0x9f45  vec_9f45
 
 undefined2 vec_9f45(undefined2 param_1)
 
@@ -5913,9 +5454,7 @@ undefined2 vec_9f45(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F46  vec_9f46 ===== */
+// FUNC 0x9f46  vec_9f46
 
 undefined2 vec_9f46(undefined2 param_1)
 
@@ -5923,9 +5462,7 @@ undefined2 vec_9f46(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F47  vec_9f47 ===== */
+// FUNC 0x9f47  vec_9f47
 
 undefined2 vec_9f47(undefined2 param_1)
 
@@ -5933,9 +5470,7 @@ undefined2 vec_9f47(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F48  vec_9f48 ===== */
+// FUNC 0x9f48  vec_9f48
 
 undefined2 vec_9f48(undefined2 param_1)
 
@@ -5943,9 +5478,7 @@ undefined2 vec_9f48(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F49  vec_9f49 ===== */
+// FUNC 0x9f49  vec_9f49
 
 undefined2 vec_9f49(undefined2 param_1)
 
@@ -5953,9 +5486,7 @@ undefined2 vec_9f49(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F4A  vec_9f4a ===== */
+// FUNC 0x9f4a  vec_9f4a
 
 undefined2 vec_9f4a(undefined2 param_1)
 
@@ -5963,9 +5494,7 @@ undefined2 vec_9f4a(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x9F4B  sub_9f4b ===== */
+// FUNC 0x9f4b  sub_9f4b
 
 void sub_9f4b(void)
 
@@ -5973,9 +5502,7 @@ void sub_9f4b(void)
   return;
 }
 
-
-
-/* ===== 0x9F4C  gap_9f4c ===== */
+// FUNC 0x9f4c  gap_9f4c
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -6168,9 +5695,7 @@ void gap_9f4c(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9F5D  gap_9f5d ===== */
+// FUNC 0x9f5d  gap_9f5d
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -6346,9 +5871,7 @@ void gap_9f5d(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9F6E  ret_9f6e ===== */
+// FUNC 0x9f6e  gap_9f6e
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -6507,9 +6030,7 @@ void gap_9f6e(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9F7F  gap_9f7f ===== */
+// FUNC 0x9f7f  gap_9f7f
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -6651,9 +6172,7 @@ void gap_9f7f(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9F90  gap_9f90 ===== */
+// FUNC 0x9f90  gap_9f90
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -6777,6 +6296,4 @@ void gap_9f90(undefined2 *param_1)
   *param_1 = in_Y;
   halt_baddata();
 }
-
-
 

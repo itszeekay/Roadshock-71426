@@ -1,168 +1,180 @@
 /*
- * Roadshock 8-Gang switch panel - base board firmware
- * STM8S003F3P6, 8 KB flash @ 0x8000, 1 KB RAM
+ * Roadshock 8-Gang switch panel - button panel firmware
+ * STM8S003K3, 8 KB flash @ 0x8000, 1 KB RAM
  *
- * Reconstructed from the dumped flash image with Ghidra 12.2
- * (language STM8:BE:16, base 0x8000).
+ * Reconstructed from the dump (sha256
+ * 00ea5024bf5dbdf62edcb86bc1158b5ec1f22a7c82eef7e60a5bd2ab26565fe3)
+ * with Ghidra 11.3.1 + STM8 SLEIGH (STM8:BE:16, base 0x8000),
+ * project Roadstm8Panel. 147/147 functions decompiled.
  *
  * This is decompiler output, not original source. Types are
- * approximate; function names are either recovered from call
- * sites or assigned by the analysis (vec*, sub_*, gap_*).
- * Regions marked with WARNING comments contain data bytes that
- * the disassembler could not separate from code.
+ * approximate. Reading order: the function index first, then each
+ * function in address order. Names marked here
+ * (display_frame_handler, pin1_set_low/high, pin2_set_high,
+ * get_pin1/2/3, pin_clear, pin_set, led_gpio_init, gpio_init,
+ * uart1_configure) were assigned from call sites and confirmed
+ * against assembly; see tools/ghidra/build_panel_project.py and
+ * docs/panel_led_map.md. Generic names (sub_*, FUN_*, gap_*, vec_*)
+ * are Ghidra defaults for code that has not been given a role yet.
+ *
+ * The display link runs at 115200 (9-byte 0x5A...0xEE frames).
+ * The 24-record pin table is at flash 0x8AB4 (RAM 0x0010).
+ * Ghidra 11.3.1 decompilation is the source of truth; cross-check
+ * against asm/panel.lst. LEDs are active-low (common-anode).
  */
 
-/* ---- function index ----------------------------------------
- * 8000  VEC00_RESET
- * 8018  VEC06_EXTI1
- * 801C  VEC07_EXTI2
- * 8080  x_8080
- * 816D  x_816d
- * 8237  sub_8237
- * 8252  sub_8252
- * 82DC  sub_82dc
- * 82E1  sub_82e1
- * 82E4  sub_82e4
- * 8351  sub_8351
- * 8362  sub_8362
- * 8367  sub_8367
- * 836C  FUN_836c
- * 837F  sub_837f
- * 838E  sub_838e
- * 8393  sub_8393
- * 8398  sub_8398
- * 839D  sub_839d
- * 83A2  FUN_83a2
- * 83BF  sub_83bf
- * 83CA  sub_83ca
- * 83D5  sub_83d5
- * 83E0  sub_83e0
- * 83EB  FUN_83eb
- * 83F3  sub_83f3
- * 83F6  sub_83f6
- * 83FA  sub_83fa
- * 83FE  sub_83fe
- * 840B  sub_840b
- * 8418  sub_8418
- * 8425  sub_8425
- * 8432  sub_8432
- * 843F  sub_843f
- * 844C  sub_844c
- * 8508  sub_8508
- * 8510  sub_8510
- * 85C1  sub_85c1
- * 8841  x_8841
- * 896D  sub_896d
- * 89EF  sub_89ef
- * 8A52  sub_8a52
- * 8AB4  ret_8ab4
- * 8AC3  ret_8ac3
- * 8AF0  ret_8af0
- * 8B0C  vec_8b0c
- * 8B62  sub_8b62
- * 8B72  sub_8b72
- * 8B7E  sub_8b7e
- * 8B8A  sub_8b8a
- * 8BA9  sub_8ba9
- * 8BE4  sub_8be4
- * 8C1E  sub_8c1e
- * 8C31  x_8c31
- * 8C52  sub_8c52
- * 8C81  sub_8c81
- * 8CAC  sub_8cac
- * 8CD6  sub_8cd6
- * 8D26  sub_8d26
- * 8D4D  vec_8d4d
- * 8D74  sub_8d74
- * 8D81  sub_8d81
- * 8D8E  sub_8d8e
- * 8DA3  sub_8da3
- * 8DBD  sub_8dbd
- * 8DD6  sub_8dd6
- * 8DEF  sub_8def
- * 8E05  sub_8e05
- * 8E1B  sub_8e1b
- * 8E2F  sub_8e2f
- * 8E43  vec_8e43
- * 8E56  sub_8e56
- * 8E65  sub_8e65
- * 8E72  sub_8e72
- * 8E7F  sub_8e7f
- * 8E8C  sub_8e8c
- * 8E99  sub_8e99
- * 8EA1  sub_8ea1
- * 8EA6  sub_8ea6
- * 8EB1  sub_8eb1
- * 8EBC  sub_8ebc
- * 8EC7  sub_8ec7
- * 8ED2  sub_8ed2
- * 8EDD  sub_8edd
- * 8EE8  sub_8ee8
- * 8EF3  sub_8ef3
- * 8EFD  sub_8efd
- * 8F06  sub_8f06
- * 8F0F  sub_8f0f
- * 8F18  sub_8f18
- * 8F21  sub_8f21
- * 8F29  sub_8f29
- * 8F31  sub_8f31
- * 8F38  sub_8f38
- * 8F3E  sub_8f3e
- * 8F44  sub_8f44
- * 8F4A  sub_8f4a
- * 8F50  FUN_8f50
- * 8F59  sub_8f59
- * 8F5D  sub_8f5d
- * 8F61  sub_8f61
- * 8F65  sub_8f65
- * 8F68  sub_8f68
- * 8F6B  sub_8f6b
- * 8F6E  thunk_FUN_8f77
- * 8F71  sub_8f71
- * 8F74  thunk_FUN_8f50
- * 8F77  FUN_8f77
- * 8F7A  sub_8f7a
- * 8F7C  vec_8f7c
- * 8F7D  vec_8f7d
- * 8F7E  x_8f7e
- * 8F7F  vec_8f7f
- * 8F80  vec_8f80
- * 8F81  vec_8f81
- * 8F82  vec_8f82
- * 8F83  vec_8f83
- * 8F84  vec_8f84
- * 8F85  vec_8f85
- * 8F86  vec_8f86
- * 8F87  vec_8f87
- * 8F88  vec_8f88
- * 8F89  vec_8f89
- * 8F8A  vec_8f8a
- * 8F8B  vec_8f8b
- * 8F8C  vec_8f8c
- * 8F8D  vec_8f8d
- * 8F8E  sub_8f8e
- * 8F8F  gap_8f8f
- * 8FA0  gap_8fa0
- * 8FA9  uart1_configure
- * 8FB5  x_8fb5
- * 8FBA  gap_8fba
- * 8FCB  gap_8fcb
- * 8FDC  gap_8fdc
- * 8FED  gap_8fed
- * 8FFE  gap_8ffe
- * 908A  x_908a
- * 9510  x_9510
- * 95DE  x_95de
- * 9780  uart1_set_control_bits
- * 97D3  vec_97d3
- * 9824  x_9824
- * 9BCF  x_9bcf
- * 9C31  x_9c31
- * 9C5B  x_9c5b
- * 9CD8  reset_startup
- * ----------------------------------------------------------- */
+/* ---- function index -------------------------------
+ *  addr  name
+ *  8000  VEC00_RESET
+ *  8018  VEC06_EXTI1
+ *  801C  VEC07_EXTI2
+ *  8080  x_8080
+ *  816D  x_816d
+ *  8237  sub_8237
+ *  8252  sub_8252
+ *  82DC  sub_82dc
+ *  82E1  sub_82e1
+ *  82E4  sub_82e4
+ *  8351  sub_8351
+ *  8362  sub_8362
+ *  8367  sub_8367
+ *  836C  FUN_836c
+ *  837F  sub_837f
+ *  838E  sub_838e
+ *  8393  sub_8393
+ *  8398  sub_8398
+ *  839D  sub_839d
+ *  83A2  FUN_83a2
+ *  83BF  sub_83bf
+ *  83CA  sub_83ca
+ *  83D5  sub_83d5
+ *  83E0  sub_83e0
+ *  83EB  FUN_83eb
+ *  83F3  sub_83f3
+ *  83F6  sub_83f6
+ *  83FA  sub_83fa
+ *  83FE  sub_83fe
+ *  840B  sub_840b
+ *  8418  sub_8418
+ *  8425  sub_8425
+ *  8432  sub_8432
+ *  843F  sub_843f
+ *  844C  display_frame_handler
+ *  8508  sub_8508
+ *  8510  gpio_init
+ *  85C1  sub_85c1
+ *  8841  x_8841
+ *  896D  sub_896d
+ *  89EF  sub_89ef
+ *  8A52  sub_8a52
+ *  8AB4  led_pin_table_flash
+ *  8AC3  ret_8ac3
+ *  8AF0  ret_8af0
+ *  8B0C  vec_8b0c
+ *  8B62  sub_8b62
+ *  8B72  sub_8b72
+ *  8B7E  sub_8b7e
+ *  8B8A  sub_8b8a
+ *  8BA9  sub_8ba9
+ *  8BE4  sub_8be4
+ *  8C1E  sub_8c1e
+ *  8C31  x_8c31
+ *  8C52  led_gpio_init
+ *  8C81  sub_8c81
+ *  8CAC  sub_8cac
+ *  8CD6  sub_8cd6
+ *  8D26  uart1_configure
+ *  8D4D  vec_8d4d
+ *  8D74  sub_8d74
+ *  8D81  sub_8d81
+ *  8D8E  sub_8d8e
+ *  8DA3  sub_8da3
+ *  8DBD  sub_8dbd
+ *  8DD6  sub_8dd6
+ *  8DEF  sub_8def
+ *  8E05  sub_8e05
+ *  8E1B  sub_8e1b
+ *  8E2F  sub_8e2f
+ *  8E43  vec_8e43
+ *  8E56  sub_8e56
+ *  8E65  sub_8e65
+ *  8E72  get_pin3
+ *  8E7F  get_pin2
+ *  8E8C  sub_8e8c
+ *  8E99  sub_8e99
+ *  8EA1  sub_8ea1
+ *  8EA6  sub_8ea6
+ *  8EB1  sub_8eb1
+ *  8EBC  sub_8ebc
+ *  8EC7  sub_8ec7
+ *  8ED2  sub_8ed2
+ *  8EDD  sub_8edd
+ *  8EE8  sub_8ee8
+ *  8EF3  sub_8ef3
+ *  8EFD  get_pin1
+ *  8F06  sub_8f06
+ *  8F0F  sub_8f0f
+ *  8F18  sub_8f18
+ *  8F21  sub_8f21
+ *  8F29  sub_8f29
+ *  8F31  sub_8f31
+ *  8F38  pin1_set_low
+ *  8F3E  pin2_set_high
+ *  8F44  pin1_set_high
+ *  8F4A  sub_8f4a
+ *  8F50  FUN_8f50
+ *  8F59  sub_8f59
+ *  8F5D  sub_8f5d
+ *  8F61  sub_8f61
+ *  8F65  pin_clear
+ *  8F68  pin_set
+ *  8F6B  sub_8f6b
+ *  8F6E  thunk_FUN_8f77
+ *  8F71  sub_8f71
+ *  8F74  thunk_FUN_8f50
+ *  8F77  FUN_8f77
+ *  8F7A  sub_8f7a
+ *  8F7C  vec_8f7c
+ *  8F7D  vec_8f7d
+ *  8F7E  vec_8f7e
+ *  8F7F  vec_8f7f
+ *  8F80  vec_8f80
+ *  8F81  vec_8f81
+ *  8F82  vec_8f82
+ *  8F83  vec_8f83
+ *  8F84  vec_8f84
+ *  8F85  vec_8f85
+ *  8F86  vec_8f86
+ *  8F87  vec_8f87
+ *  8F88  vec_8f88
+ *  8F89  vec_8f89
+ *  8F8A  vec_8f8a
+ *  8F8B  vec_8f8b
+ *  8F8C  vec_8f8c
+ *  8F8D  vec_8f8d
+ *  8F8E  sub_8f8e
+ *  8F8F  gap_8f8f
+ *  8FA0  gap_8fa0
+ *  8FA9  uart1_configure
+ *  8FB5  x_8fb5
+ *  8FBA  gap_8fba
+ *  8FCB  gap_8fcb
+ *  8FDC  gap_8fdc
+ *  8FED  gap_8fed
+ *  8FFE  gap_8ffe
+ *  908A  x_908a
+ *  9510  x_9510
+ *  95DE  x_95de
+ *  9780  uart1_set_control_bits
+ *  97D3  x_97d3
+ *  9824  x_9824
+ *  9BCF  x_9bcf
+ *  9C31  x_9c31
+ *  9C5B  x_9c5b
+ *  9CD8  reset_startup
+ */
 
-/* ===== 0x8000  VEC00_RESET ===== */
+// FUNC 0x8000  VEC00_RESET
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
@@ -189,9 +201,7 @@ void VEC00_RESET(void)
   return;
 }
 
-
-
-/* ===== 0x8018  VEC06_EXTI1 ===== */
+// FUNC 0x8018  VEC06_EXTI1
 
 undefined2 VEC06_EXTI1(undefined2 param_1)
 
@@ -199,9 +209,7 @@ undefined2 VEC06_EXTI1(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x801C  VEC07_EXTI2 ===== */
+// FUNC 0x801c  VEC07_EXTI2
 
 undefined2 VEC07_EXTI2(undefined2 param_1)
 
@@ -209,9 +217,7 @@ undefined2 VEC07_EXTI2(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8080  x_8080 ===== */
+// FUNC 0x8080  x_8080
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -306,9 +312,7 @@ void x_8080(void)
   return;
 }
 
-
-
-/* ===== 0x816D  x_816d ===== */
+// FUNC 0x816d  x_816d
 
 void x_816d(undefined2 param_1,byte param_2,byte param_3)
 
@@ -361,9 +365,7 @@ void x_816d(undefined2 param_1,byte param_2,byte param_3)
   return;
 }
 
-
-
-/* ===== 0x8237  sub_8237 ===== */
+// FUNC 0x8237  sub_8237
 
 void sub_8237(void)
 
@@ -375,9 +377,7 @@ void sub_8237(void)
   return;
 }
 
-
-
-/* ===== 0x8252  sub_8252 ===== */
+// FUNC 0x8252  sub_8252
 
 void sub_8252(void)
 
@@ -426,9 +426,7 @@ void sub_8252(void)
   return;
 }
 
-
-
-/* ===== 0x82DC  sub_82dc ===== */
+// FUNC 0x82dc  sub_82dc
 
 void sub_82dc(void)
 
@@ -438,9 +436,7 @@ void sub_82dc(void)
   return;
 }
 
-
-
-/* ===== 0x82E1  sub_82e1 ===== */
+// FUNC 0x82e1  sub_82e1
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -514,9 +510,7 @@ void sub_82e1(void)
   return;
 }
 
-
-
-/* ===== 0x82E4  sub_82e4 ===== */
+// FUNC 0x82e4  sub_82e4
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -589,9 +583,7 @@ void sub_82e4(void)
   return;
 }
 
-
-
-/* ===== 0x8351  sub_8351 ===== */
+// FUNC 0x8351  sub_8351
 
 void sub_8351(char param_1)
 
@@ -614,9 +606,7 @@ void sub_8351(char param_1)
   return;
 }
 
-
-
-/* ===== 0x8362  sub_8362 ===== */
+// FUNC 0x8362  sub_8362
 
 void sub_8362(void)
 
@@ -625,9 +615,7 @@ void sub_8362(void)
   return;
 }
 
-
-
-/* ===== 0x8367  sub_8367 ===== */
+// FUNC 0x8367  sub_8367
 
 void sub_8367(void)
 
@@ -636,9 +624,7 @@ void sub_8367(void)
   return;
 }
 
-
-
-/* ===== 0x836C  FUN_836c ===== */
+// FUNC 0x836c  FUN_836c
 
 undefined2 FUN_836c(undefined2 param_1)
 
@@ -646,9 +632,7 @@ undefined2 FUN_836c(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x837F  sub_837f ===== */
+// FUNC 0x837f  sub_837f
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -659,9 +643,7 @@ undefined2 sub_837f(undefined2 param_1,undefined2 param_2)
   return param_1;
 }
 
-
-
-/* ===== 0x838E  sub_838e ===== */
+// FUNC 0x838e  sub_838e
 
 void sub_838e(void)
 
@@ -670,9 +652,7 @@ void sub_838e(void)
   return;
 }
 
-
-
-/* ===== 0x8393  sub_8393 ===== */
+// FUNC 0x8393  sub_8393
 
 void sub_8393(void)
 
@@ -681,9 +661,7 @@ void sub_8393(void)
   return;
 }
 
-
-
-/* ===== 0x8398  sub_8398 ===== */
+// FUNC 0x8398  sub_8398
 
 void sub_8398(void)
 
@@ -692,9 +670,7 @@ void sub_8398(void)
   return;
 }
 
-
-
-/* ===== 0x839D  sub_839d ===== */
+// FUNC 0x839d  sub_839d
 
 void sub_839d(void)
 
@@ -703,9 +679,7 @@ void sub_839d(void)
   return;
 }
 
-
-
-/* ===== 0x83A2  FUN_83a2 ===== */
+// FUNC 0x83a2  FUN_83a2
 
 undefined2 FUN_83a2(undefined2 param_1)
 
@@ -713,9 +687,7 @@ undefined2 FUN_83a2(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x83BF  sub_83bf ===== */
+// FUNC 0x83bf  sub_83bf
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -728,9 +700,7 @@ void sub_83bf(undefined2 param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x83CA  sub_83ca ===== */
+// FUNC 0x83ca  sub_83ca
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -743,9 +713,7 @@ void sub_83ca(undefined2 param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x83D5  sub_83d5 ===== */
+// FUNC 0x83d5  sub_83d5
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -758,9 +726,7 @@ void sub_83d5(undefined2 param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x83E0  sub_83e0 ===== */
+// FUNC 0x83e0  sub_83e0
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -773,9 +739,7 @@ void sub_83e0(undefined2 param_1,undefined2 param_2)
   return;
 }
 
-
-
-/* ===== 0x83EB  FUN_83eb ===== */
+// FUNC 0x83eb  FUN_83eb
 
 undefined2 FUN_83eb(void)
 
@@ -785,9 +749,7 @@ undefined2 FUN_83eb(void)
   return in_stack_00000001;
 }
 
-
-
-/* ===== 0x83F3  sub_83f3 ===== */
+// FUNC 0x83f3  sub_83f3
 
 void sub_83f3(void)
 
@@ -797,9 +759,7 @@ void sub_83f3(void)
   return;
 }
 
-
-
-/* ===== 0x83F6  sub_83f6 ===== */
+// FUNC 0x83f6  sub_83f6
 
 void sub_83f6(void)
 
@@ -808,9 +768,7 @@ void sub_83f6(void)
   return;
 }
 
-
-
-/* ===== 0x83FA  sub_83fa ===== */
+// FUNC 0x83fa  sub_83fa
 
 void sub_83fa(void)
 
@@ -819,9 +777,7 @@ void sub_83fa(void)
   return;
 }
 
-
-
-/* ===== 0x83FE  sub_83fe ===== */
+// FUNC 0x83fe  sub_83fe
 
 void sub_83fe(void)
 
@@ -833,9 +789,7 @@ void sub_83fe(void)
   return;
 }
 
-
-
-/* ===== 0x840B  sub_840b ===== */
+// FUNC 0x840b  sub_840b
 
 void sub_840b(void)
 
@@ -847,9 +801,7 @@ void sub_840b(void)
   return;
 }
 
-
-
-/* ===== 0x8418  sub_8418 ===== */
+// FUNC 0x8418  sub_8418
 
 void sub_8418(void)
 
@@ -861,9 +813,7 @@ void sub_8418(void)
   return;
 }
 
-
-
-/* ===== 0x8425  sub_8425 ===== */
+// FUNC 0x8425  sub_8425
 
 void sub_8425(void)
 
@@ -875,9 +825,7 @@ void sub_8425(void)
   return;
 }
 
-
-
-/* ===== 0x8432  sub_8432 ===== */
+// FUNC 0x8432  sub_8432
 
 void sub_8432(void)
 
@@ -889,9 +837,7 @@ void sub_8432(void)
   return;
 }
 
-
-
-/* ===== 0x843F  sub_843f ===== */
+// FUNC 0x843f  sub_843f
 
 void sub_843f(void)
 
@@ -903,13 +849,16 @@ void sub_843f(void)
   return;
 }
 
-
-
-/* ===== 0x844C  sub_844c ===== */
+// FUNC 0x844c  display_frame_handler
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Display frame handler (ASR -> STM8, 115200 8N1).
+   Validates 9-byte frame: [0]=0x5A, [8]=0xEE, len=9.
+   Splits bytes 2-5 into 8 nibbles (abStack_8), then dispatches per channel.
+   Nibble table: 0/2/4/6=off, 1=pin1, 3=pin3, 5=pin2, 7=pin1+pin2, 8-15=unchanged.
+   Active-low: low=lit. See docs/panel_led_map.md. */
 
-void sub_844c(void)
+void display_frame_handler(void)
 
 {
   byte bVar1;
@@ -950,37 +899,37 @@ void sub_844c(void)
     bVar1 = *_DAT_000a;
     if (bVar1 == 0) {
 LAB_84e1:
-      sub_8f44();
+      pin1_set_high();
 LAB_84e4:
-      sub_8f3e();
+      pin2_set_high();
 LAB_84f2:
-      sub_8e72();
-      sub_8f68();
+      get_pin3();
+      pin_set();
     }
     else {
       if (bVar1 == 1) {
-        sub_8f38();
+        pin1_set_low();
         goto LAB_84e4;
       }
       if (bVar1 == 2) goto LAB_84e1;
       if (bVar1 != 3) {
         if (bVar1 == 4) goto LAB_84e1;
         if (bVar1 == 5) {
-          sub_8f44();
+          pin1_set_high();
         }
         else {
           if (bVar1 == 6) goto LAB_84e1;
           if (bVar1 != 7) goto LAB_84f8;
-          sub_8f38();
+          pin1_set_low();
         }
-        sub_8e7f();
-        sub_8f65();
+        get_pin2();
+        pin_clear();
         goto LAB_84f2;
       }
-      sub_8f44();
-      sub_8f3e();
-      sub_8e72();
-      sub_8f65();
+      pin1_set_high();
+      pin2_set_high();
+      get_pin3();
+      pin_clear();
     }
 LAB_84f8:
     _DAT_0008 = _DAT_0008 + 9;
@@ -994,9 +943,7 @@ LAB_84f8:
   } while( true );
 }
 
-
-
-/* ===== 0x8508  sub_8508 ===== */
+// FUNC 0x8508  sub_8508
 
 void sub_8508(undefined1 param_1)
 
@@ -1006,13 +953,12 @@ void sub_8508(undefined1 param_1)
   return;
 }
 
-
-
-/* ===== 0x8510  sub_8510 ===== */
+// FUNC 0x8510  gpio_init
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* GPIO_Init helper (SPL-style). Mode 0xF0 = push-pull output. */
 
-void sub_8510(void)
+void gpio_init(void)
 
 {
   byte extraout_A;
@@ -1070,9 +1016,7 @@ void sub_8510(void)
   return;
 }
 
-
-
-/* ===== 0x85C1  sub_85c1 ===== */
+// FUNC 0x85c1  sub_85c1
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1119,9 +1063,7 @@ void sub_85c1(void)
   return;
 }
 
-
-
-/* ===== 0x8841  x_8841 ===== */
+// FUNC 0x8841  x_8841
 
 /* WARNING: Control flow encountered bad instruction data */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
@@ -1181,9 +1123,7 @@ void x_8841(byte param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x896D  sub_896d ===== */
+// FUNC 0x896d  sub_896d
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1203,9 +1143,9 @@ void sub_896d(void)
   DAT_0000 = 1;
   sub_8c1e();
   sub_8def();
-  sub_8d26();
+  uart1_configure();
   sub_8e8c();
-  sub_8c52();
+  led_gpio_init();
   DAT_0000 = 1;
   sub_8a52();
   DAT_0000 = 3;
@@ -1224,7 +1164,7 @@ void sub_896d(void)
   }
   do {
     if (DAT_0067 != '\0') {
-      sub_844c(DAT_0067,0x5d);
+      display_frame_handler(DAT_0067,0x5d);
       sub_8e65();
       DAT_0067 = '\0';
     }
@@ -1232,9 +1172,7 @@ void sub_896d(void)
   } while( true );
 }
 
-
-
-/* ===== 0x89EF  sub_89ef ===== */
+// FUNC 0x89ef  sub_89ef
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1274,9 +1212,7 @@ joined_r0x8a4b:
   return;
 }
 
-
-
-/* ===== 0x8A52  sub_8a52 ===== */
+// FUNC 0x8a52  sub_8a52
 
 void sub_8a52(void)
 
@@ -1307,22 +1243,18 @@ void sub_8a52(void)
   return;
 }
 
-
-
-/* ===== 0x8AB4  ret_8ab4 ===== */
+// FUNC 0x8ab4  led_pin_table_flash
 
 /* WARNING: Control flow encountered bad instruction data */
 
-void ret_8ab4(void)
+void led_pin_table_flash(void)
 
 {
                     /* WARNING: Bad instruction - Truncating control flow here */
   halt_baddata();
 }
 
-
-
-/* ===== 0x8AC3  ret_8ac3 ===== */
+// FUNC 0x8ac3  ret_8ac3
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -1333,9 +1265,7 @@ void ret_8ac3(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8AF0  ret_8af0 ===== */
+// FUNC 0x8af0  ret_8af0
 
 undefined2 ret_8af0(byte param_1,short param_2)
 
@@ -1385,9 +1315,7 @@ undefined2 ret_8af0(byte param_1,short param_2)
   return *(undefined2 *)((short)register0x0008 + 3);
 }
 
-
-
-/* ===== 0x8B0C  vec_8b0c ===== */
+// FUNC 0x8b0c  vec_8b0c
 
 undefined2 vec_8b0c(void)
 
@@ -1431,9 +1359,7 @@ undefined2 vec_8b0c(void)
   return *(undefined2 *)((short)register0x0008 + 3);
 }
 
-
-
-/* ===== 0x8B62  sub_8b62 ===== */
+// FUNC 0x8b62  sub_8b62
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1449,9 +1375,7 @@ undefined2 * sub_8b62(void)
   return puVar1;
 }
 
-
-
-/* ===== 0x8B72  sub_8b72 ===== */
+// FUNC 0x8b72  sub_8b72
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1463,9 +1387,7 @@ undefined2 * sub_8b72(undefined2 *param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8B7E  sub_8b7e ===== */
+// FUNC 0x8b7e  sub_8b7e
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1477,9 +1399,7 @@ undefined2 * sub_8b7e(undefined2 *param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8B8A  sub_8b8a ===== */
+// FUNC 0x8b8a  sub_8b8a
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1495,9 +1415,7 @@ void sub_8b8a(void)
   return;
 }
 
-
-
-/* ===== 0x8BA9  sub_8ba9 ===== */
+// FUNC 0x8ba9  sub_8ba9
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1520,9 +1438,7 @@ void sub_8ba9(void)
   return;
 }
 
-
-
-/* ===== 0x8BE4  sub_8be4 ===== */
+// FUNC 0x8be4  sub_8be4
 
 void sub_8be4(void)
 
@@ -1540,9 +1456,7 @@ void sub_8be4(void)
   return;
 }
 
-
-
-/* ===== 0x8C1E  sub_8c1e ===== */
+// FUNC 0x8c1e  sub_8c1e
 
 void sub_8c1e(void)
 
@@ -1566,9 +1480,7 @@ void sub_8c1e(void)
   return;
 }
 
-
-
-/* ===== 0x8C31  x_8c31 ===== */
+// FUNC 0x8c31  x_8c31
 
 void x_8c31(void)
 
@@ -1589,24 +1501,24 @@ void x_8c31(void)
   return;
 }
 
-
-
-/* ===== 0x8C52  sub_8c52 ===== */
+// FUNC 0x8c52  led_gpio_init
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* LED GPIO init. Iterates _DAT_0008=0x0010 with DAT_000a=0x18 (24 pins), calls sub_8510 with mode
+   0xF0. */
 
-void sub_8c52(void)
+void led_gpio_init(void)
 
 {
   undefined1 uVar1;
   
   sub_8367();
   uVar1 = DAT_000a;
-  _DAT_0008 = (undefined2 *)&DAT_0010;
+  _DAT_0008 = (undefined2 *)&led_pin_table;
   DAT_000a = '\x18';
   do {
     DAT_0000 = 0xf0;
-    sub_8510(*(undefined1 *)(_DAT_0008 + 1),*_DAT_0008);
+    gpio_init(*(undefined1 *)(_DAT_0008 + 1),*_DAT_0008);
     _DAT_0008 = (undefined2 *)((short)_DAT_0008 + 3);
     DAT_000a = DAT_000a + -1;
   } while (DAT_000a != '\0');
@@ -1615,9 +1527,7 @@ void sub_8c52(void)
   return;
 }
 
-
-
-/* ===== 0x8C81  sub_8c81 ===== */
+// FUNC 0x8c81  sub_8c81
 
 undefined1 sub_8c81(void)
 
@@ -1634,9 +1544,7 @@ undefined1 sub_8c81(void)
   return UART1_DR;
 }
 
-
-
-/* ===== 0x8CAC  sub_8cac ===== */
+// FUNC 0x8cac  sub_8cac
 
 void sub_8cac(void)
 
@@ -1652,9 +1560,7 @@ void sub_8cac(void)
   return;
 }
 
-
-
-/* ===== 0x8CD6  sub_8cd6 ===== */
+// FUNC 0x8cd6  sub_8cd6
 
 void sub_8cd6(byte param_1)
 
@@ -1672,13 +1578,12 @@ void sub_8cd6(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x8D26  sub_8d26 ===== */
+// FUNC 0x8d26  uart1_configure
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* UART1 configure for display link (115200). */
 
-undefined1 sub_8d26(void)
+undefined1 uart1_configure(void)
 
 {
   sub_8c81();
@@ -1693,9 +1598,7 @@ undefined1 sub_8d26(void)
   return 1;
 }
 
-
-
-/* ===== 0x8D4D  vec_8d4d ===== */
+// FUNC 0x8d4d  vec_8d4d
 
 undefined2 vec_8d4d(undefined2 param_1)
 
@@ -1711,9 +1614,7 @@ undefined2 vec_8d4d(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8D74  sub_8d74 ===== */
+// FUNC 0x8d74  sub_8d74
 
 void sub_8d74(undefined2 param_1)
 
@@ -1722,9 +1623,7 @@ void sub_8d74(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8D81  sub_8d81 ===== */
+// FUNC 0x8d81  sub_8d81
 
 void sub_8d81(undefined2 param_1)
 
@@ -1733,9 +1632,7 @@ void sub_8d81(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8D8E  sub_8d8e ===== */
+// FUNC 0x8d8e  sub_8d8e
 
 undefined2 sub_8d8e(undefined2 param_1)
 
@@ -1743,9 +1640,7 @@ undefined2 sub_8d8e(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8DA3  sub_8da3 ===== */
+// FUNC 0x8da3  sub_8da3
 
 void sub_8da3(byte param_1)
 
@@ -1762,9 +1657,7 @@ void sub_8da3(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x8DBD  sub_8dbd ===== */
+// FUNC 0x8dbd  sub_8dbd
 
 void sub_8dbd(byte param_1)
 
@@ -1782,9 +1675,7 @@ void sub_8dbd(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x8DD6  sub_8dd6 ===== */
+// FUNC 0x8dd6  sub_8dd6
 
 void sub_8dd6(byte param_1)
 
@@ -1802,9 +1693,7 @@ void sub_8dd6(byte param_1)
   return;
 }
 
-
-
-/* ===== 0x8DEF  sub_8def ===== */
+// FUNC 0x8def  sub_8def
 
 void sub_8def(char param_1)
 
@@ -1820,9 +1709,7 @@ void sub_8def(char param_1)
   return;
 }
 
-
-
-/* ===== 0x8E05  sub_8e05 ===== */
+// FUNC 0x8e05  sub_8e05
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1839,9 +1726,7 @@ undefined1 * sub_8e05(undefined1 *param_1)
   return _DAT_0002;
 }
 
-
-
-/* ===== 0x8E1B  sub_8e1b ===== */
+// FUNC 0x8e1b  sub_8e1b
 
 void sub_8e1b(void)
 
@@ -1854,9 +1739,7 @@ void sub_8e1b(void)
   return;
 }
 
-
-
-/* ===== 0x8E2F  sub_8e2f ===== */
+// FUNC 0x8e2f  sub_8e2f
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1871,9 +1754,7 @@ void sub_8e2f(void)
   } while( true );
 }
 
-
-
-/* ===== 0x8E43  vec_8e43 ===== */
+// FUNC 0x8e43  vec_8e43
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
@@ -1895,9 +1776,7 @@ void vec_8e43(void)
   return;
 }
 
-
-
-/* ===== 0x8E56  sub_8e56 ===== */
+// FUNC 0x8e56  sub_8e56
 
 void sub_8e56(void)
 
@@ -1908,9 +1787,7 @@ void sub_8e56(void)
   return;
 }
 
-
-
-/* ===== 0x8E65  sub_8e65 ===== */
+// FUNC 0x8e65  sub_8e65
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -1922,33 +1799,27 @@ void sub_8e65(void)
   return;
 }
 
-
-
-/* ===== 0x8E72  sub_8e72 ===== */
+// FUNC 0x8e72  get_pin3
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 sub_8e72(void)
+undefined2 get_pin3(void)
 
 {
   return *(undefined2 *)(_DAT_0008 + 6);
 }
 
-
-
-/* ===== 0x8E7F  sub_8e7f ===== */
+// FUNC 0x8e7f  get_pin2
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 sub_8e7f(void)
+undefined2 get_pin2(void)
 
 {
   return *(undefined2 *)(_DAT_0008 + 3);
 }
 
-
-
-/* ===== 0x8E8C  sub_8e8c ===== */
+// FUNC 0x8e8c  sub_8e8c
 
 void sub_8e8c(char param_1)
 
@@ -1961,9 +1832,7 @@ void sub_8e8c(char param_1)
   return;
 }
 
-
-
-/* ===== 0x8E99  sub_8e99 ===== */
+// FUNC 0x8e99  sub_8e99
 
 void sub_8e99(char param_1)
 
@@ -1976,9 +1845,7 @@ void sub_8e99(char param_1)
   return;
 }
 
-
-
-/* ===== 0x8EA1  sub_8ea1 ===== */
+// FUNC 0x8ea1  sub_8ea1
 
 ushort sub_8ea1(ushort param_1)
 
@@ -1986,9 +1853,7 @@ ushort sub_8ea1(ushort param_1)
   return param_1 >> 4;
 }
 
-
-
-/* ===== 0x8EA6  sub_8ea6 ===== */
+// FUNC 0x8ea6  sub_8ea6
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2000,9 +1865,7 @@ void sub_8ea6(void)
   return;
 }
 
-
-
-/* ===== 0x8EB1  sub_8eb1 ===== */
+// FUNC 0x8eb1  sub_8eb1
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2015,9 +1878,7 @@ void sub_8eb1(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8EBC  sub_8ebc ===== */
+// FUNC 0x8ebc  sub_8ebc
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2030,9 +1891,7 @@ void sub_8ebc(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8EC7  sub_8ec7 ===== */
+// FUNC 0x8ec7  sub_8ec7
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2045,9 +1904,7 @@ void sub_8ec7(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8ED2  sub_8ed2 ===== */
+// FUNC 0x8ed2  sub_8ed2
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2060,9 +1917,7 @@ void sub_8ed2(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8EDD  sub_8edd ===== */
+// FUNC 0x8edd  sub_8edd
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2075,9 +1930,7 @@ void sub_8edd(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8EE8  sub_8ee8 ===== */
+// FUNC 0x8ee8  sub_8ee8
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
@@ -2090,9 +1943,7 @@ void sub_8ee8(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8EF3  sub_8ef3 ===== */
+// FUNC 0x8ef3  sub_8ef3
 
 void sub_8ef3(void)
 
@@ -2105,21 +1956,17 @@ void sub_8ef3(void)
   return;
 }
 
-
-
-/* ===== 0x8EFD  sub_8efd ===== */
+// FUNC 0x8efd  get_pin1
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined2 sub_8efd(void)
+undefined2 get_pin1(void)
 
 {
   return *_DAT_0008;
 }
 
-
-
-/* ===== 0x8F06  sub_8f06 ===== */
+// FUNC 0x8f06  sub_8f06
 
 void sub_8f06(void)
 
@@ -2128,9 +1975,7 @@ void sub_8f06(void)
   return;
 }
 
-
-
-/* ===== 0x8F0F  sub_8f0f ===== */
+// FUNC 0x8f0f  sub_8f0f
 
 void sub_8f0f(void)
 
@@ -2139,9 +1984,7 @@ void sub_8f0f(void)
   return;
 }
 
-
-
-/* ===== 0x8F18  sub_8f18 ===== */
+// FUNC 0x8f18  sub_8f18
 
 undefined1 sub_8f18(byte param_1)
 
@@ -2152,9 +1995,7 @@ undefined1 sub_8f18(byte param_1)
   return uVar1;
 }
 
-
-
-/* ===== 0x8F21  sub_8f21 ===== */
+// FUNC 0x8f21  sub_8f21
 
 void sub_8f21(void)
 
@@ -2163,9 +2004,7 @@ void sub_8f21(void)
   return;
 }
 
-
-
-/* ===== 0x8F29  sub_8f29 ===== */
+// FUNC 0x8f29  sub_8f29
 
 void sub_8f29(void)
 
@@ -2175,9 +2014,7 @@ void sub_8f29(void)
   return;
 }
 
-
-
-/* ===== 0x8F31  sub_8f31 ===== */
+// FUNC 0x8f31  sub_8f31
 
 void sub_8f31(byte param_1,byte *param_2)
 
@@ -2187,45 +2024,37 @@ void sub_8f31(byte param_1,byte *param_2)
   return;
 }
 
+// FUNC 0x8f38  pin1_set_low
 
-
-/* ===== 0x8F38  sub_8f38 ===== */
-
-void sub_8f38(void)
+void pin1_set_low(void)
 
 {
-  sub_8efd();
-  sub_8f65();
+  get_pin1();
+  pin_clear();
   return;
 }
 
+// FUNC 0x8f3e  pin2_set_high
 
-
-/* ===== 0x8F3E  sub_8f3e ===== */
-
-void sub_8f3e(void)
+void pin2_set_high(void)
 
 {
-  sub_8e7f();
-  sub_8f68();
+  get_pin2();
+  pin_set();
   return;
 }
 
+// FUNC 0x8f44  pin1_set_high
 
-
-/* ===== 0x8F44  sub_8f44 ===== */
-
-void sub_8f44(void)
+void pin1_set_high(void)
 
 {
-  sub_8efd();
-  sub_8f68();
+  get_pin1();
+  pin_set();
   return;
 }
 
-
-
-/* ===== 0x8F4A  sub_8f4a ===== */
+// FUNC 0x8f4a  sub_8f4a
 
 void sub_8f4a(void)
 
@@ -2234,9 +2063,7 @@ void sub_8f4a(void)
   return;
 }
 
-
-
-/* ===== 0x8F50  FUN_8f50 ===== */
+// FUNC 0x8f50  FUN_8f50
 
 void FUN_8f50(undefined2 param_1)
 
@@ -2249,9 +2076,7 @@ void FUN_8f50(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8F59  sub_8f59 ===== */
+// FUNC 0x8f59  sub_8f59
 
 void sub_8f59(byte param_1,byte *param_2)
 
@@ -2260,9 +2085,7 @@ void sub_8f59(byte param_1,byte *param_2)
   return;
 }
 
-
-
-/* ===== 0x8F5D  sub_8f5d ===== */
+// FUNC 0x8f5d  sub_8f5d
 
 undefined1 sub_8f5d(void)
 
@@ -2270,9 +2093,7 @@ undefined1 sub_8f5d(void)
   return UART1_DR;
 }
 
-
-
-/* ===== 0x8F61  sub_8f61 ===== */
+// FUNC 0x8f61  sub_8f61
 
 void sub_8f61(undefined1 param_1)
 
@@ -2281,22 +2102,18 @@ void sub_8f61(undefined1 param_1)
   return;
 }
 
+// FUNC 0x8f65  pin_clear
 
-
-/* ===== 0x8F65  sub_8f65 ===== */
-
-void sub_8f65(byte param_1,byte *param_2)
+void pin_clear(byte param_1,byte *param_2)
 
 {
   *param_2 = ~param_1 & *param_2;
   return;
 }
 
+// FUNC 0x8f68  pin_set
 
-
-/* ===== 0x8F68  sub_8f68 ===== */
-
-void sub_8f68(byte param_1,byte *param_2)
+void pin_set(byte param_1,byte *param_2)
 
 {
   DAT_0000 = param_1;
@@ -2304,9 +2121,7 @@ void sub_8f68(byte param_1,byte *param_2)
   return;
 }
 
-
-
-/* ===== 0x8F6B  sub_8f6b ===== */
+// FUNC 0x8f6b  sub_8f6b
 
 undefined1 sub_8f6b(void)
 
@@ -2316,9 +2131,7 @@ undefined1 sub_8f6b(void)
   return in_CC;
 }
 
-
-
-/* ===== 0x8F6E  thunk_FUN_8f77 ===== */
+// FUNC 0x8f6e  thunk_FUN_8f77
 
 void thunk_FUN_8f77(void)
 
@@ -2328,9 +2141,7 @@ void thunk_FUN_8f77(void)
   } while( true );
 }
 
-
-
-/* ===== 0x8F71  sub_8f71 ===== */
+// FUNC 0x8f71  sub_8f71
 
 undefined2 sub_8f71(void)
 
@@ -2338,9 +2149,7 @@ undefined2 sub_8f71(void)
   return 1;
 }
 
-
-
-/* ===== 0x8F74  thunk_FUN_8f50 ===== */
+// FUNC 0x8f74  thunk_FUN_8f50
 
 void thunk_FUN_8f50(undefined2 param_1)
 
@@ -2353,9 +2162,7 @@ void thunk_FUN_8f50(undefined2 param_1)
   return;
 }
 
-
-
-/* ===== 0x8F77  FUN_8f77 ===== */
+// FUNC 0x8f77  FUN_8f77
 
 void FUN_8f77(void)
 
@@ -2365,9 +2172,7 @@ void FUN_8f77(void)
   } while( true );
 }
 
-
-
-/* ===== 0x8F7A  sub_8f7a ===== */
+// FUNC 0x8f7a  sub_8f7a
 
 void sub_8f7a(void)
 
@@ -2377,9 +2182,7 @@ void sub_8f7a(void)
   } while( true );
 }
 
-
-
-/* ===== 0x8F7C  vec_8f7c ===== */
+// FUNC 0x8f7c  vec_8f7c
 
 undefined2 vec_8f7c(undefined2 param_1)
 
@@ -2387,9 +2190,7 @@ undefined2 vec_8f7c(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F7D  vec_8f7d ===== */
+// FUNC 0x8f7d  vec_8f7d
 
 undefined2 vec_8f7d(undefined2 param_1)
 
@@ -2397,9 +2198,7 @@ undefined2 vec_8f7d(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F7E  x_8f7e ===== */
+// FUNC 0x8f7e  vec_8f7e
 
 undefined2 vec_8f7e(undefined2 param_1)
 
@@ -2407,9 +2206,7 @@ undefined2 vec_8f7e(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F7F  vec_8f7f ===== */
+// FUNC 0x8f7f  vec_8f7f
 
 undefined2 vec_8f7f(undefined2 param_1)
 
@@ -2417,9 +2214,7 @@ undefined2 vec_8f7f(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F80  vec_8f80 ===== */
+// FUNC 0x8f80  vec_8f80
 
 undefined2 vec_8f80(undefined2 param_1)
 
@@ -2427,9 +2222,7 @@ undefined2 vec_8f80(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F81  vec_8f81 ===== */
+// FUNC 0x8f81  vec_8f81
 
 undefined2 vec_8f81(undefined2 param_1)
 
@@ -2437,9 +2230,7 @@ undefined2 vec_8f81(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F82  vec_8f82 ===== */
+// FUNC 0x8f82  vec_8f82
 
 undefined2 vec_8f82(undefined2 param_1)
 
@@ -2447,9 +2238,7 @@ undefined2 vec_8f82(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F83  vec_8f83 ===== */
+// FUNC 0x8f83  vec_8f83
 
 undefined2 vec_8f83(undefined2 param_1)
 
@@ -2457,9 +2246,7 @@ undefined2 vec_8f83(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F84  vec_8f84 ===== */
+// FUNC 0x8f84  vec_8f84
 
 undefined2 vec_8f84(undefined2 param_1)
 
@@ -2467,9 +2254,7 @@ undefined2 vec_8f84(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F85  vec_8f85 ===== */
+// FUNC 0x8f85  vec_8f85
 
 undefined2 vec_8f85(undefined2 param_1)
 
@@ -2477,9 +2262,7 @@ undefined2 vec_8f85(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F86  vec_8f86 ===== */
+// FUNC 0x8f86  vec_8f86
 
 undefined2 vec_8f86(undefined2 param_1)
 
@@ -2487,9 +2270,7 @@ undefined2 vec_8f86(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F87  vec_8f87 ===== */
+// FUNC 0x8f87  vec_8f87
 
 undefined2 vec_8f87(undefined2 param_1)
 
@@ -2497,9 +2278,7 @@ undefined2 vec_8f87(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F88  vec_8f88 ===== */
+// FUNC 0x8f88  vec_8f88
 
 undefined2 vec_8f88(undefined2 param_1)
 
@@ -2507,9 +2286,7 @@ undefined2 vec_8f88(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F89  vec_8f89 ===== */
+// FUNC 0x8f89  vec_8f89
 
 undefined2 vec_8f89(undefined2 param_1)
 
@@ -2517,9 +2294,7 @@ undefined2 vec_8f89(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F8A  vec_8f8a ===== */
+// FUNC 0x8f8a  vec_8f8a
 
 undefined2 vec_8f8a(undefined2 param_1)
 
@@ -2527,9 +2302,7 @@ undefined2 vec_8f8a(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F8B  vec_8f8b ===== */
+// FUNC 0x8f8b  vec_8f8b
 
 undefined2 vec_8f8b(undefined2 param_1)
 
@@ -2537,9 +2310,7 @@ undefined2 vec_8f8b(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F8C  vec_8f8c ===== */
+// FUNC 0x8f8c  vec_8f8c
 
 undefined2 vec_8f8c(undefined2 param_1)
 
@@ -2547,9 +2318,7 @@ undefined2 vec_8f8c(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F8D  vec_8f8d ===== */
+// FUNC 0x8f8d  vec_8f8d
 
 undefined2 vec_8f8d(undefined2 param_1)
 
@@ -2557,9 +2326,7 @@ undefined2 vec_8f8d(undefined2 param_1)
   return param_1;
 }
 
-
-
-/* ===== 0x8F8E  sub_8f8e ===== */
+// FUNC 0x8f8e  sub_8f8e
 
 void sub_8f8e(void)
 
@@ -2567,9 +2334,7 @@ void sub_8f8e(void)
   return;
 }
 
-
-
-/* ===== 0x8F8F  gap_8f8f ===== */
+// FUNC 0x8f8f  gap_8f8f
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -2695,9 +2460,7 @@ void gap_8f8f(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8FA0  gap_8fa0 ===== */
+// FUNC 0x8fa0  gap_8fa0
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -2806,9 +2569,7 @@ void gap_8fa0(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8FA9  uart1_configure ===== */
+// FUNC 0x8fa9  uart1_configure
 
 /* WARNING: Control flow encountered bad instruction data */
 /* UART1 configuration routine.
@@ -2915,9 +2676,7 @@ void uart1_configure(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8FB5  x_8fb5 ===== */
+// FUNC 0x8fb5  x_8fb5
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3005,9 +2764,7 @@ void x_8fb5(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8FBA  gap_8fba ===== */
+// FUNC 0x8fba  gap_8fba
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3090,9 +2847,7 @@ void gap_8fba(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8FCB  gap_8fcb ===== */
+// FUNC 0x8fcb  gap_8fcb
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3158,9 +2913,7 @@ void gap_8fcb(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8FDC  gap_8fdc ===== */
+// FUNC 0x8fdc  gap_8fdc
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3209,9 +2962,7 @@ void gap_8fdc(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8FED  gap_8fed ===== */
+// FUNC 0x8fed  gap_8fed
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3243,9 +2994,7 @@ void gap_8fed(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x8FFE  gap_8ffe ===== */
+// FUNC 0x8ffe  gap_8ffe
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3260,9 +3009,7 @@ void gap_8ffe(undefined2 *param_1)
   halt_baddata();
 }
 
-
-
-/* ===== 0x908A  x_908a ===== */
+// FUNC 0x908a  x_908a
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3273,9 +3020,7 @@ void x_908a(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9510  x_9510 ===== */
+// FUNC 0x9510  x_9510
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3286,9 +3031,7 @@ void x_9510(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x95DE  x_95de ===== */
+// FUNC 0x95de  x_95de
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3299,9 +3042,7 @@ void x_95de(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9780  uart1_set_control_bits ===== */
+// FUNC 0x9780  uart1_set_control_bits
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3312,9 +3053,7 @@ void uart1_set_control_bits(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x97D3  vec_97d3 ===== */
+// FUNC 0x97d3  x_97d3
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3325,9 +3064,7 @@ void x_97d3(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9824  x_9824 ===== */
+// FUNC 0x9824  x_9824
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3338,9 +3075,7 @@ void x_9824(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9BCF  x_9bcf ===== */
+// FUNC 0x9bcf  x_9bcf
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3351,9 +3086,7 @@ void x_9bcf(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9C31  x_9c31 ===== */
+// FUNC 0x9c31  x_9c31
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3364,9 +3097,7 @@ void x_9c31(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9C5B  x_9c5b ===== */
+// FUNC 0x9c5b  x_9c5b
 
 /* WARNING: Control flow encountered bad instruction data */
 
@@ -3377,9 +3108,7 @@ void x_9c5b(void)
   halt_baddata();
 }
 
-
-
-/* ===== 0x9CD8  reset_startup ===== */
+// FUNC 0x9cd8  reset_startup
 
 /* WARNING: Control flow encountered bad instruction data */
 /* Reset entry: SP = 0x03FF, init calls, then jump to main. */
@@ -3390,6 +3119,4 @@ void reset_startup(void)
                     /* WARNING: Bad instruction - Truncating control flow here */
   halt_baddata();
 }
-
-
 
