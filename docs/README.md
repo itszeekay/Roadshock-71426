@@ -15,8 +15,6 @@
 | [bench-results.md](bench-results.md) | Everything verified on hardware, plus the dump text-mode trap |
 | [reproduce.md](reproduce.md) | Dump, build, flash, restore, capture, inject |
 | [roadmap.md](roadmap.md) | CAN gateway and PDU plan |
-| [STATUS.md](STATUS.md) | Project status: verified items, open issues, next steps |
-| [REMAINING_ISSUES.md](REMAINING_ISSUES.md) | Comprehensive inventory of unknowns, holes, incomplete items |
 | [mode_timing.md](mode_timing.md) | Stock channel mode dispatch; timing and EEPROM open items |
 | [hidden_commands.md](hidden_commands.md) | Hidden protocol commands 0x0B/0x0D/0x19 and frame handler |
 | [panel_led_map.md](panel_led_map.md) | Display frame, pin table, nibble-to-pin patterns |

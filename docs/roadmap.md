@@ -2,40 +2,49 @@
 
 ## The target
 
-Both products use the **same middle MCU** between the panel and the base:
+Both products use the **same middle MCU** on the J2 cable between the panel
+and the base. J2 carries the 2400-baud bus only (two signal wires plus power
+and ground). The bridge therefore sees only the 2400-baud link:
 
 ```
  button panel (ASR + STM8 LED driver)        base board (power stage)
-        |            |                              |
-   2400 bus    115200 display link              2400 bus
-        \            |                            /
-         \           v                           /
-          +------ middle MCU (RP2040/ESP32) -----+
-                          |
-                         CAN
+              |                                    |
+         2400 bus              2400 bus            |
+              \                                    /
+               +------ middle MCU (RP2040/ESP32) ---+
+                               |
+                              CAN
 ```
 
-The middle MCU is a **bridge with three serial ports plus CAN**:
+The 115200 display link between the ASR and the STM8 is internal to the panel
+PCB. It is not on J2. The panel LEDs are driven by the ASR over that internal
+link, and there is no J2 path to intercept or inject display frames.
+
+LED override would require hardware modification: wiring to the STM8 PD5/PD6
+pins and the ASR display UART, or replacing the ASR. That is out of scope for
+the gateway and PDU work. The bridge scope is the 2400-baud bus: button
+events in, channel commands out, and output state back to CAN.
+
+The middle MCU is a **bridge with two serial ports plus CAN**:
 
 | Port | Link | Direction |
 |---|---|---|
-| 1 | 2400 bus, panel → base | RX + TX (MITM) |
-| 2 | 2400 bus, base → panel | RX + TX (MITM) |
-| 3 | 115200 display, ASR → STM8 | RX + TX (override) |
-| 4 | CAN | MCP2515 / CAN2040 / ESP32 TWAI |
+| 1 | 2400 bus, panel to base | RX + TX (MITM) |
+| 2 | 2400 bus, base to panel | RX + TX (MITM) |
+| 3 | CAN | MCP2515 / CAN2040 / ESP32 TWAI |
 
 Portability:
 
-- **Feather RP2040**: two hardware UARTs + PIO for the third; CAN via MCP2515
-  (SPI) or CAN2040 (PIO).
-- **ESP32**: three hardware UARTs + TWAI. Easier for the CAN variant.
+- **Feather RP2040**: two hardware UARTs; CAN via MCP2515 (SPI) or CAN2040
+  (PIO).
+- **ESP32**: two hardware UARTs + TWAI. Easier for the CAN variant.
 
 Keep the protocol/state logic portable; only the port layer is board-specific.
 
 ## Two firmware roles
 
 - **Gateway**: pass-through/translate the stock link, read buttons, drive the
-  base, optionally override the panel LEDs.
+  base. LED state is not part of the gateway; the LEDs remain under the ASR UI.
 - **PDU**: same bridge, but the base runs our firmware and reports real output
   state; the bridge is the CAN authority.
 
@@ -48,53 +57,49 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
      hardware; they are implemented in the source.
    - Add a factual status frame (actual duty, ACC gating, faults).
 
-2. **Prove full panel control**
-   - Identify the ASR display UART pins by continuity from STM8 PD5/PD6. The
-     datasheet pin mux narrows this to UART2 on P00/P01, P08/P09, P19/P20, P27,
-     P29 or UART3 on P06/P07, P10, P13/P14, P25/P26. See
-     [asr5601_datasheet.md](asr5601_datasheet.md).
-   - Send 9-byte `0x5A` frames; map nibble → color.
-   - Identify the ASR button scan pins from the firmware dump: KEYPAD at
-     `0x4001_5000`, or GPIO at `0x4003_0000`.
-   - Ship a host tool + Feather injector.
+2. **Prove the J2 gateway**
+   - Three-port MITM is not needed; a two-port pass-through is sufficient
+     (panel to base, base to panel).
+   - Button frames to host/CAN; CAN to `08 0C` / `07` / `09`.
+   - No display-link wiring is involved in this phase.
 
-3. **Gateway prototype**
-   - Three-port MITM, pass-through first.
-   - Button frames → host/CAN; CAN → `08 0C` / `07` / `09`.
-   - LED override via the display link.
-
-4. **CAN**
+3. **CAN**
    - Add MCP2515 or CAN2040; test with a USB-CAN adapter or a second Feather.
    - Bench note: early testing used an Adafruit RP2040 CAN Bus Feather
      (MCP25625). It is not part of the current design.
-   - Implement the CAN ID map.
+   - Implement the CAN ID map (below, without the LED entry).
 
-5. **PDU variant**
+4. **PDU variant**
    - Custom base firmware as the output authority.
    - Decide current sensing (stock board has none).
    - Same bridge, no pass-through.
 
-6. **Publish**
+5. **Publish**
    - Clean repo, dumps, decompilation, protocol, tools, wiring, safety.
 
 ## Proposed CAN IDs
 
 | ID | Direction | Payload |
 |---|---|---|
-| `0x100` | panel/ECU → gateway | 8-button bitmask (mirrors `08 0C`) |
-| `0x101` | panel/ECU → gateway | master power (mirrors `07 00/01`) |
-| `0x110 + n` | ECU → PDU | channel n: mode, duty |
-| `0x120` | ECU → PDU | status request |
-| `0x121 + n` | PDU → ECU | channel n: actual state, duty, fault |
-| `0x130` | ECU → gateway | panel LED state (maps to `0x5A` display frames) |
+| `0x100` | panel/ECU to gateway | 8-button bitmask (mirrors `08 0C`) |
+| `0x101` | panel/ECU to gateway | master power (mirrors `07 00/01`) |
+| `0x110 + n` | ECU to PDU | channel n: mode, duty |
+| `0x120` | ECU to PDU | status request |
+| `0x121 + n` | PDU to ECU | channel n: actual state, duty, fault |
 
 Keep the mapping in one table so a different ECU protocol is a config change,
 not a firmware rewrite.
 
 ## Open decisions
 
-1. ASR display UART pins.
-2. Display-nibble color map.
-3. Exact stock mode timing rules.
-4. CAN controller for the PDU (MCP2515 vs CAN2040 vs ESP32 TWAI).
-5. Current sensing for the PDU (v1 or later).
+1. Exact stock mode timing rules.
+2. CAN controller for the PDU (MCP2515 vs CAN2040 vs ESP32 TWAI).
+3. Current sensing for the PDU (v1 or later).
+4. ASR firmware dump (J3) for button/UI understanding; not required for the
+   J2 gateway.
+
+## Out of scope
+
+- Panel LED override via the internal 115200 display link. That would require
+  hardware modification (panel-internal wiring or ASR replacement) and is not
+  part of the gateway or PDU.
