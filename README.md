@@ -1,4 +1,9 @@
-# Harbor Freight 71426 8-Gang Switch Panel — Reverse Engineering
+# ROADSHOCK Universal LED 8-Gang Switch Panel — Reverse Engineering
+
+**Harbor Freight SKU 71426** ·
+[product page](https://www.harborfreight.com/universal-led-8-gang-switch-panel-71426.html) ·
+[owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf)
+(PDF link, not redistributed here)
 
 Firmware analysis, pinouts, wire protocol, and a practical path to a
 CAN-controlled power distribution unit (PDU) built on the stock hardware.
@@ -22,6 +27,7 @@ No vendor source code is included.
 
 | Item | Finding |
 |---|---|
+| Product | **ROADSHOCK Universal LED 8 Gang Switch Panel**, Harbor Freight **SKU 71426** |
 | Base MCU | **STM8S003F3P6**, TSSOP-20, 8 KB flash, ROP **open** |
 | Button-panel MCU | **STM8S003K3**, LQFP-32, 8 KB flash, ROP **open** |
 | Panel BLE SoC | **ASR5601S**, QFN-48 (main panel controller; BLE does not advertise in this variant) |
