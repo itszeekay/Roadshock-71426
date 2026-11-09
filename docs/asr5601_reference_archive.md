@@ -12,7 +12,7 @@ A curated subset of ASR's public ASR560X material, chosen for the dump work:
 | `reference/asr560x/docs-en/ASR560X/` | Hardware reference, schematics, reference design, hardware design, developer guide, memory layout, DOGO manual, FAQ |
 | `reference/asr560x/docs-en/_sources/ASR560X/` | The clean reStructuredText twins |
 | `reference/asr560x/docs-zh/ASR560X/软件快速入门/` | AT command list and SDK firmware types |
-| `reference/asr560x/drive/` | QFN48 EVB schematic, Peripheral User's Guide, Development Board guide, Security notes, DOGO tool, extracted entry module and chip database, ASR560X test image |
+| `reference/asr560x/drive/` | QFN48 EVB schematic, Peripheral User's Guide, Development Board guide, Security notes, DOGO tool, extracted entry module and chip database, ASR560X test image, image layout notes |
 | `reference/asr560x/drive/DOGO_extract/` | Python 3.5 modules, readable chip table, annotated dump-path disassembly |
 | `reference/asr560x/notes/ASR582X_FAQ_coredump/` | The ASR582X FAQ page that names `coredump flash all` |
 | `reference/asr560x/SOURCES.md` | Source URL or Drive ID for each file |

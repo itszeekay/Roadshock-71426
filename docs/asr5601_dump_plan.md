@@ -198,7 +198,9 @@ and have identical SHA-256, covering the full part.
 1. Compare the two reads. Any difference means retry; do not rationalise it.
 2. Check the vector table at `0x10000000` and carve the partitions using
    `docs/asr5601_reference_archive.md` and the Memory Layout page. The offsets
-   have not been confirmed on hardware yet.
+   have not been confirmed on hardware yet. The ASR560X test image confirms the
+   same boundaries on a known-good build; see
+   `reference/asr560x/drive/ASR560X_test_image_layout.md`.
 3. Run a string scan for BLE names and UUIDs to confirm this is real code and
    not `0xFF` padding.
 4. Commit `dumps/asr/flash.bin`, `.hex`, `SHA256SUMS` and a short
@@ -254,6 +256,8 @@ not, Phase 5 is a short detour only when PZ20 reaches the SWD pads.
   time and read the echo. The host tool refuses anything containing erase, burn,
   boot, write or program.
 - `coredump flash all` is documented for the 582X family. Treat it as a strong
-  candidate for the 5601S, not as a confirmed command.
+  candidate for the 5601S, not as a confirmed command. It is described as a
+  capture, not an erase. If the monitor prints an erase or write message, stop
+  and power down.
 - The ASR560X datasheet is still gated, so the memory map comes from the
   Peripheral User's Guide, the Memory Layout page and the binary constants.

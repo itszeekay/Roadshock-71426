@@ -25,6 +25,7 @@ command.
 | `drive/DOGO_extract/` | Entry module, embedded chip database, string table, and annotated disassembly of the dump path |
 | `drive/sonata_hl_data_trans_demo.bin` | Full ASR560X flash image: bootloader, BLE ROM and demo app |
 | `drive/ASR560X_Transparent_Transmission_readme.txt` | ASR's note for that image |
+| `drive/ASR560X_test_image_layout.md` | Partition offsets and signatures confirmed from that image |
 | `notes/ASR582X_FAQ_coredump/` | The one ASR page that names `coredump flash all` |
 
 ## Datasheet status
@@ -58,7 +59,8 @@ The `analysis/asr6601.pdf` file sometimes mistaken for this datasheet is the
   `config.ini`.
 - The transparent-transmission image is a known-good 560X flash layout. Its
   bootloader identifies itself as `ASRBOOTLOADER-560X-MX-V2.0.3` and its
-  partition table includes `COREDUMP`.
+  partition table includes `COREDUMP`. The offsets and signatures are in
+  `drive/ASR560X_test_image_layout.md`.
 - The selected EN pages cover the boot, memory layout, download tool and FAQ.
 - The two ZH pages cover the AT command list and the SDK firmware types.
 

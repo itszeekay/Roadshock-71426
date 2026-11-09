@@ -24,6 +24,7 @@
 | `drive/DOGO_extract/dump_path.dis.txt` | Annotated disassembly produced from `pyserial_demo.pyc` |
 | `drive/sonata_hl_data_trans_demo.bin` | https://drive.google.com/file/d/15PWqvktRdqpaRSQ3lrGuPQahQKwdiC1G/view?usp=sharing |
 | `drive/ASR560X_Transparent_Transmission_readme.txt` | Shipped with the image above |
+| `drive/ASR560X_test_image_layout.md` | Derived from the image above |
 
 The `coredump flash all` procedure is quoted from ASR's ASR582X FAQ:
 https://asriot-cn.readthedocs.io/zh/latest/ASR582X/常见问题/582X_开发常见问题.html
