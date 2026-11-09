@@ -1,0 +1,37 @@
+ASR DOGO chip database
+Extracted from data.pyc inside PYZ-00.pyz of DOGO_VP2.3.8.exe.
+Addresses are the values DOGO uses for each image slot.
+
+chip     handshake      baud    bootload   rom        app        ate        ota        bootKB
+----------------------------------------------------------------------------------------------------
+530X     AsrIot5305     1000000 -          -          0x10000000 -          0x10010000 32    
+550X     AsrIot550x     1000000 0x10000000 -          0x10040000 0x10100000 0x10010000 64    
+553X     AsrIot553x     1000000 -          -          -          -          -          -     
+5601S    AsrIot560x     921600  0x10000000 0x1000d000 0x10048000 0x100f0000 0x10008000 32    
+560X     AsrIot560x     921600  0x10000000 0x1000d000 0x10048000 0x10070000 0x10008000 32    
+561X     AsrIot561x     921600  0x10000000 -          0x10012000 0x101c8000 0x10010000 64    
+582X     AsrIot582x     1000000 0x10000000 -          0x10012000 0x10178000 0x10010000 64    
+582X_MT  AsrIot582x     1000000 0x10000000 -          0x10012000 0x101D0000 0x10010000 64    
+595X     AsrIot595x     1000000 0x80000000 -          0x80012000 0x801d0000 0x80010000 64    
+
+5601S image slots used by DOGO:
+  download_type            <DownloadType.USER: 1>
+  customized_name_type     <CustomizedNameType.DEFAULT: 0>
+  download                 '0x20000000'
+  bootload                 '0x10000000'
+  rom                      '0x1000d000'
+  app                      '0x10048000'
+  ate                      '0x100f0000'
+  aup                      None
+  ota_tag_addr             '0x10008000'
+  handshake                'AsrIot560x'
+  handshake_count          1
+  baud                     921600
+  bootload_flash_size      32768
+  bin_list_by_addr         ['BOOTLOAD', 'ROM', 'APP', 'ATE']
+  has_flash_for_program    True
+  has_bootload             True
+  has_rom                  True
+  has_image                True
+  has_ate                  True
+  has_aup                  False

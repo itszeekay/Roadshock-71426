@@ -5,8 +5,9 @@ tools. It exists because ASR's original links are disappearing and the ASR5601S
 dump work depends on a few of them.
 
 Only the files used by the Roadshock work are included. The full site mirror,
-unrelated ASR product families, the SDK, and the datasheet (credit/form gated)
-are not.
+the SDK, and the datasheet (credit or form gated) are not. One ASR582X page is
+kept in `notes/` because it is the only ASR document found that names the read
+command.
 
 ## Contents
 
@@ -21,7 +22,10 @@ are not.
 | `drive/ASR560X_Development_Board_User_Guide_V1.1.0.pdf` | Boot straps, `1F2E3D00`, EVB serial wiring |
 | `drive/ASR_IoT_Security_Application_Notes_V1.0.0_EN.pdf` | Readout, secure boot, eFuse |
 | `drive/DOGO_VP2.3.8.exe` | ASR's flash tool, PyInstaller build |
-| `drive/DOGO_extract/` | Entry module, string table, and annotated disassembly of the dump path |
+| `drive/DOGO_extract/` | Entry module, embedded chip database, string table, and annotated disassembly of the dump path |
+| `drive/sonata_hl_data_trans_demo.bin` | Full ASR560X flash image: bootloader, BLE ROM and demo app |
+| `drive/ASR560X_Transparent_Transmission_readme.txt` | ASR's note for that image |
+| `notes/ASR582X_FAQ_coredump/` | The one ASR page that names `coredump flash all` |
 
 ## Datasheet status
 
@@ -49,8 +53,33 @@ The `analysis/asr6601.pdf` file sometimes mistaken for this datasheet is the
 - The Security notes cover readout and secure boot.
 - The DOGO tool contains the undocumented read path (`read_image`,
   `recv_flash_image`, `dumping done!!!`).
+- The embedded `data.pyc` chip table gives the 5601S image addresses, the ASCII
+  handshake `AsrIot560x` and the 921600 high-speed baud without needing
+  `config.ini`.
+- The transparent-transmission image is a known-good 560X flash layout. Its
+  bootloader identifies itself as `ASRBOOTLOADER-560X-MX-V2.0.3` and its
+  partition table includes `COREDUMP`.
 - The selected EN pages cover the boot, memory layout, download tool and FAQ.
 - The two ZH pages cover the AT command list and the SDK firmware types.
+
+## The read command
+
+ASR's ASR582X FAQ documents the same DOGO tool's read path:
+
+1. Create `recev_data/coredump` beside the tool.
+2. Open the UART1 port.
+3. Check `Coredump` and `ReceiveFile`.
+4. Enter `coredump flash all`.
+5. Collect the `.bin` files from `recev_data/coredump`.
+
+DOGO parses the reply as `:<ten-character label><hex>$` and writes one file per
+label. The Read Image checkbox uses a separate `$<hex>$` capture and the
+Generate Bin button. Neither path needs a licence, because the command is typed
+into the ordinary send box.
+
+The command is documented for the 582X family and has not yet been proven on
+the 5601S. The probe order and fallbacks are in
+[docs/asr5601_dump_plan.md](../../docs/asr5601_dump_plan.md).
 
 ## Provenance
 

@@ -19,7 +19,21 @@
 | `drive/ASR_IoT_Security_Application_Notes_V1.0.0_EN.pdf` | https://drive.google.com/file/d/1UYQFE1LQbBFFVinsHPXCAljKA4VLE6F_/view |
 | `drive/DOGO_VP2.3.8.exe` | https://drive.google.com/file/d/1wWtGCSKRu0-ehqY-_R00N9Rb6gdeiZ0G/view |
 | `drive/DOGO_extract/pyserial_demo.pyc` | Extracted from that executable |
+| `drive/DOGO_extract/data.pyc` | Extracted from `PYZ-00.pyz` inside that executable |
+| `drive/DOGO_extract/chip_table.txt` | Generated from `data.pyc` |
 | `drive/DOGO_extract/dump_path.dis.txt` | Annotated disassembly produced from `pyserial_demo.pyc` |
+| `drive/sonata_hl_data_trans_demo.bin` | https://drive.google.com/file/d/15PWqvktRdqpaRSQ3lrGuPQahQKwdiC1G/view?usp=sharing |
+| `drive/ASR560X_Transparent_Transmission_readme.txt` | Shipped with the image above |
+
+The `coredump flash all` procedure is quoted from ASR's ASR582X FAQ:
+https://asriot-cn.readthedocs.io/zh/latest/ASR582X/常见问题/582X_开发常见问题.html
+
+That page and its rst twin are kept under `notes/ASR582X_FAQ_coredump/` because
+it is the only ASR document found that names the read command.
+
+The test image is a full flash image for the ASR560X transparent-transmission
+demo. ASR's readme says it contains bootloader, BLE ROM and app, and is written
+at `0x10000000`. Its bootloader string is `ASRBOOTLOADER-560X-MX-V2.0.3`.
 
 The PDFs were re-saved with author and creator metadata removed. Their visible
 content is unchanged.

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASR582X 系列开发常见问题 &mdash; ASR IoT Docs latest version 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8eed9ff9"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" />
+    <link rel="next" title="ASR582X 认证" href="../%E8%AE%A4%E8%AF%81/index.html" />
+    <link rel="prev" title="ASR582X 常见问题" href="index.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="asriot-cn" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/ASR582X/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/582X_%E5%BC%80%E5%8F%91%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ASR IoT Docs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../iot.html"> IoT/AIoT Wi-Fi MCU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E9%80%8F%E4%BC%A0.html"> Wi-Fi Interface Transceiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lora.html"> LoRa Product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../%E8%93%9D%E7%89%99.html"> Bluetooth Product</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">语言</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://asriot.readthedocs.io/en/latest/">English</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR550X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E8%8A%AF%E7%89%87%E8%A7%84%E6%A0%BC/index.html">ASR550X 芯片规格</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E7%A1%AC%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">ASR550X 硬件介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E7%83%A7%E5%BD%95%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/index.html">ASR550X 烧录工具介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E6%BC%94%E7%A4%BA%E5%B7%A5%E7%A8%8B/index.html">ASR550X 演示工程/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E8%BD%AF%E4%BB%B6%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">ASR550X 软件快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">ASR550X 常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E8%AE%A4%E8%AF%81/index.html">ASR550X 认证</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR550X/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A/index.html">ASR550X 测试报告及指南</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR560X</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR560X/%E8%8A%AF%E7%89%87%E8%A7%84%E6%A0%BC/index.html">ASR560X 芯片规格</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR560X/%E7%A1%AC%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">ASR560X 硬件介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR560X/%E7%83%A7%E5%BD%95%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/index.html">ASR560X 烧录工具介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR560X/%E6%BC%94%E7%A4%BA%E5%B7%A5%E7%A8%8B/index.html">ASR560X 演示工程/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR560X/%E8%BD%AF%E4%BB%B6%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">ASR560X 软件快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR560X/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">ASR560X 常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR560X/%E8%AE%A4%E8%AF%81/index.html">ASR560X 认证</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR560X/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A/index.html">ASR560X 测试报告</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR582X</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../%E8%8A%AF%E7%89%87%E8%A7%84%E6%A0%BC/index.html">ASR582X 芯片规格</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%A1%AC%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">ASR582X 硬件介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%83%A7%E5%BD%95%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/index.html">ASR582X 烧录工具介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E6%BC%94%E7%A4%BA%E5%B7%A5%E7%A8%8B/index.html">ASR582X 演示工程/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E8%BD%AF%E4%BB%B6%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">ASR582X 软件快速入门</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ASR582X 常见问题</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> ASR582X 系列开发常见问题</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">前言</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sdk">1. SDK</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">1.1 SDK 支持哪些嵌入式系统？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">1.2 SDK 包含哪些内容？</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">2. 开发环境</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">2.1 开发支持哪些集成开发环境？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">2.2 交叉工具链用哪版？</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">3. 工具</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">3.1 如何下载镜像到开发板？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#f2e3d81">3.2 下载时出现“1F2E3D81”是什么原因？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ate">3.3 是否需要烧录 ATE 固件？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app-app">3.4 如果只更新了 APP 固件，是否可以单独更新烧录 APP 固件？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#waiting-command-10s-jump-to-app">3.5 waiting command… 打印，需等 10s 后才 jump to app，是否可以跳过？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app-ate">3.6 上电后直接进入到 app，如果想进入 ate 怎么操作？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flash">3.7 如何整片擦除芯片内部的 Flash？</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">4. 平台</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#asr582x-flash">4.1 ASR582X 内存、Flash 等资源大小如何？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flash-layout">4.2 芯片内置的 Flash Layout 是怎样划分的？可以修改吗？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#m-flash-ate-ate">4.3 2 M Flash 芯片，曾烧录过 ATE，为何一段时间后无法再进入 ATE？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ram">4.4 系统预留给用户使用的 RAM 有多少字节？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">4.5 是否可更改固件的烧录口？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log">4.6 系统的 log 输出口是哪个？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">4.7 系统的 log 是否可以动态关闭和打开？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">4.8 软件有哪些调试手段？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">4.9 系统重启了，如何简单分析重启原因？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kv">4.10 KV 设置时返回错误码，错误码哪里可以查定义？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cpu">4.11 如何进行CPU使用占有率统计？</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#wi-fi">5. Wi-Fi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#demo">5.1 按照 demo 调用，为什么还是连接不上路由器?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">5.2 支持的模式有哪几种？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">5.3 传输的最大速率多少，以及最大吞吐量？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">5.4 支持的模式有哪些？是否支持多模式同时工作？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tcp-udp">5.5 TCP/UDP 单包的最大数据长度是多少？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#softap-beacon">5.6 SoftAP 状态下的 beacon 是间隔多久？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">5.7 当前 SDK 支持哪些国家码？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#softap-sta">5.8 SoftAP 支持最多几个 STA 设备同时连接？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#socket">5.9 怎么修改 socket 连接上限数量？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#iperf">5.10 如何查看 Iperf 测试示例？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wi-fi-log-txu-retrymax">5.11 Wi-Fi 速率低，log 出现 txu retrymax 的解决方案是什么？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#http-s-mqtt-s">5.12 如何查看 HTTP (S) 及 MQTT (S) 使用参考示例？</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ble">6. BLE</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id18">6.1 怎么确认 BLE 广播开启成功？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19">6.2 BLE 配置广播、扫描等动作失败时的错误码是什么意思？</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">7. 其他</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rf">7.1 RF 性能指标多少?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id21">7.2 如何确认模组已经经过 RF 校准?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id22">7.3 低功耗有哪几种，其值多少？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mac">7.4 MAC 是什么？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id23">7.5 为什么要设置 MAC，不设置会怎样？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wi-fi-mac-ble-mac">7.6 怎么设置固定 Wi-Fi MAC 或 BLE MAC？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id24">7.7 获取的 MAC 地址和设置的不是同一个，是什么原因？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id25">7.8 如何确认当前使用到第几块 MAC 地址？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spi">7.9 SPI 的使用速率是多少？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spi-dma">7.10 SPI DMA 的注意事项有哪些？</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../%E8%AE%A4%E8%AF%81/index.html">ASR582X 认证</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A/index.html">ASR582X 测试报告及指南</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">ASR6601</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E8%8A%AF%E7%89%87%E8%A7%84%E6%A0%BC/index.html">ASR6601 芯片规格</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E7%A1%AC%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">ASR6601 硬件介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E7%83%A7%E5%BD%95%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/index.html">ASR6601 烧录工具介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E6%BC%94%E7%A4%BA%E5%B7%A5%E7%A8%8B/index.html">ASR6601 演示工程/ SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E8%BD%AF%E4%BB%B6%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">ASR6601 软件快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">ASR6601 常见问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ASR6601/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A/index.html">ASR6601 测试报告及指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ASR IoT Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">ASR582X 常见问题</a></li>
+      <li class="breadcrumb-item active">ASR582X 系列开发常见问题</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/ASR582X/常见问题/582X_开发常见问题.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="asr582x">
+<h1>ASR582X 系列开发常见问题<a class="headerlink" href="#asr582x" title="Link to this heading"></a></h1>
+<section id="id1">
+<h2>前言<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p><strong>关于本文档</strong></p>
+<p>本文档旨在介绍 ASR582X 系列 Wi-Fi+BLE Combo SoC 芯片在开发中可能碰到的问题以及对应解答。</p>
+<p><strong>读者对象</strong></p>
+<p>本文档主要适用于以下工程师：</p>
+<ul class="simple">
+<li><p>单板硬件开发工程师</p></li>
+<li><p>软件工程师</p></li>
+<li><p>技术支持工程师</p></li>
+</ul>
+<p><strong>产品型号</strong></p>
+<p>本文档适用于 ASR582X 系列 Wi-Fi+BLE Combo SoC 芯片。</p>
+<p><strong>版权公告</strong></p>
+<p>版权归 © 2024 翱捷科技股份有限公司所有。保留一切权利。未经翱捷科技股份有限公司的书面许可，不得以任何形式或手段复制、传播、转录、存储或翻译本文档的部分或所有内容。</p>
+<p><strong>商标声明</strong></p>
+<p>ASR、翱捷和其他翱捷商标均为翱捷科技股份有限公司的商标。</p>
+<p>本文档提及的其他所有商标名称、商标和注册商标均属其各自所有人的财产，特此声明。</p>
+<p><strong>免责声明</strong></p>
+<p>翱捷科技股份有限公司对本文档内容不做任何形式的保证，并会对本文档内容或本文中介绍的产品进行不定期更新。</p>
+<p>本文档仅作为使用指导，本文的所有内容不构成任何形式的担保。本文档中的信息如有变更，恕不另行通知。</p>
+<p>本文档不负任何责任，包括使用本文档中的信息所产生的侵犯任何专有权行为的责任。</p>
+<p><strong>防静电警告</strong></p>
+<p>静电放电（ESD）可能会损坏本产品。使用本产品进行操作时，须小心进行静电防护，避免静电损坏产品。</p>
+<p><strong>翱捷科技股份有限公司</strong></p>
+<p>地址：上海市浦东新区科苑路 399 号张江创新园 10 号楼 9 楼 邮编：201203</p>
+<p>官网： <a class="reference external" href="http://www.asrmicro.com/">http://www.asrmicro.com/</a></p>
+<p><strong>文档修订历史</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>日期</strong></p></th>
+<th class="head"><p><strong>版本号</strong></p></th>
+<th class="head"><p><strong>发布说明</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>2024.01</p></td>
+<td><p>V1.0.1</p></td>
+<td><p>增加常见项。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sdk">
+<h2>1. SDK<a class="headerlink" href="#sdk" title="Link to this heading"></a></h2>
+<section id="id2">
+<h3>1.1 SDK 支持哪些嵌入式系统？<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p>支持：FreeRTOS、AliOS、HarmonyOS 等 RTOS。</p>
+</section>
+<section id="id3">
+<h3>1.2 SDK 包含哪些内容？<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>详细的介绍，请参见文档《ASR582X 系列_开发环境搭建指南》1.1/2.1/3.1 章节。</p>
+<p>以 FreeRTOS 举例（以实际 OS 为准）：</p>
+<ol class="arabic simple">
+<li><p>开发相关文档，一般在 doc 目录下。</p></li>
+<li><p>DEMO 示例工程，包含 Wi-Fi/部分外设/安全等示例工程，放在 demo 目录下。</p></li>
+<li><p>头文件以及 Wi-Fi 库，放在 lib 目录。</p></li>
+<li><p>部分开源代码，包括但不限于 freertos/peripheral/lwip 等。</p></li>
+<li><p>部分开发&amp;生产工具，放在 tools 目录下，包括 bootloader 和 ate 固件。</p></li>
+<li><p>调试使用的烧录工具，放在 tools/ASR_IOT_Programmer 目录下。</p></li>
+</ol>
+<p><img alt="image1" src="../../_images/%E5%9B%BE1-129.png" /></p>
+</section>
+</section>
+<section id="id4">
+<h2>2. 开发环境<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<section id="id5">
+<h3>2.1 开发支持哪些集成开发环境？<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<section id="freertos-sdk">
+<h4>2.1.1 FreeRTOS 版本 SDK<a class="headerlink" href="#freertos-sdk" title="Link to this heading"></a></h4>
+<p>FreeRTOS 支持在 Linux 和 Windows 环境下开发，支持 Docker 开发编译，也支持 Keil 集成开发环境。</p>
+<p>详细的开发环境搭建，请参见文档《ASR582X 系列_开发环境搭建》第一章节。</p>
+</section>
+<section id="alios-thingssdk">
+<h4>2.1.2 AliOS-Things版本SDK<a class="headerlink" href="#alios-thingssdk" title="Link to this heading"></a></h4>
+<p>AliOS-Things 支持在 Linux 和 Windows 环境下开发，支持 Docker 开发编译。</p>
+<p>详细的开发环境搭建，请参见文档《ASR582X 系列_开发环境搭建》第二章节。</p>
+</section>
+<section id="harmonyos-sdk">
+<h4>2.1.3 HarmonyOS 版本 SDK<a class="headerlink" href="#harmonyos-sdk" title="Link to this heading"></a></h4>
+<p>HarmonyOS 支持在 Linux 和 Windows 环境下开发，支持 Docker 开发编译。</p>
+<p>详细的开发环境搭建，请参见文档《ASR582X 系列_开发环境搭建》第三章节。</p>
+</section>
+</section>
+<section id="id6">
+<h3>2.2 交叉工具链用哪版？<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>使用 GCC 编译器：</p>
+<ul class="simple">
+<li><p>Windows 下交叉工具链使用 gcc-arm-none-eabi-5_4-2016q3-20160926-win32。</p></li>
+<li><p>Linux 下交叉工具链使用 gcc-arm-none-eabi-5_4-2016q3-20160926-linux。</p></li>
+</ul>
+<p>ASR 基于此工具链深度定制 SDK，建议使用如上两个指定版本。</p>
+</section>
+</section>
+<section id="id7">
+<h2>3. 工具<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<section id="id8">
+<h3>3.1 如何下载镜像到开发板？<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>使用开发板时：请参考《ASR582X_开发板使用指南》。</p></li>
+<li><p>研发开发时：使用 DOGO 工具，请参见文档《ASR IoT 芯片_DOGO 烧录调试工具》。</p></li>
+<li><p>工厂生产时：使用 MP_Pro 工具，请参见文档《ASR IoT 芯片_MP_Pro 量产烧录工具使用说明》。</p></li>
+</ol>
+<p>MP_Pro 和 DOGO 的区别在于，MP 支持一拖多同时烧录且单次烧录时间短，而 DOGO 工具仅支持单个芯片烧录，此外 DOGO 工具还支持一些调试功能。</p>
+</section>
+<section id="f2e3d81">
+<h3>3.2 下载时出现“1F2E3D81”是什么原因？<a class="headerlink" href="#f2e3d81" title="Link to this heading"></a></h3>
+<p>该字符串表示通讯异常，需要检查串口硬件连接，确认串口电压是否正常，uart1 RX 是否一直有信号输入。</p>
+</section>
+<section id="ate">
+<h3>3.3 是否需要烧录 ATE 固件？<a class="headerlink" href="#ate" title="Link to this heading"></a></h3>
+<p>正常只需要烧录 BOOTLOAD/ROM/APP 固件即可，不需要烧录 ATE 固件。ATE 固件是用于非信令测试及 RF 测试校准。</p>
+</section>
+<section id="app-app">
+<h3>3.4 如果只更新了 APP 固件，是否可以单独更新烧录 APP 固件？<a class="headerlink" href="#app-app" title="Link to this heading"></a></h3>
+<p>可以的。此情况可以在 DOGO 工具上勾选 only image 单选框，然后执行烧录。这样可以单独更新烧录 APP 固件。</p>
+</section>
+<section id="waiting-command-10s-jump-to-app">
+<h3>3.5 waiting command… 打印，需等 10s 后才 jump to app，是否可以跳过？<a class="headerlink" href="#waiting-command-10s-jump-to-app" title="Link to this heading"></a></h3>
+<p>这是因为 TAG 未置位，需要先将 TAG 置位，则可以直接进入 app，操作指南请参考《ASR IoT 芯片_DOGO 烧录调试工具》中第 2.2 章节：TAG 设置功能。</p>
+<p>这也意味着该模组未做 RF 校准，不建议拿来做射频相关测试。</p>
+</section>
+<section id="app-ate">
+<h3>3.6 上电后直接进入到 app，如果想进入 ate 怎么操作？<a class="headerlink" href="#app-ate" title="Link to this heading"></a></h3>
+<p>需先将 TAG 擦除，则上电后会看到 waiting command… 打印，10s 内输入 mode1 则可以进入 ate，TAG 擦除操作指南请参考《ASR IoT 芯片_DOGO 烧录调试工具》中第 2.2 章节：TAG 设置功能。</p>
+</section>
+<section id="flash">
+<h3>3.7 如何整片擦除芯片内部的 Flash？<a class="headerlink" href="#flash" title="Link to this heading"></a></h3>
+<p>可以使用 DOGO 工具进行 Flash 擦除，步骤参考下图说明：</p>
+<p><img alt="image2" src="../../_images/%E5%9B%BE3-119.png" /></p>
+</section>
+</section>
+<section id="id9">
+<h2>4. 平台<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<section id="asr582x-flash">
+<h3>4.1 ASR582X 内存、Flash 等资源大小如何？<a class="headerlink" href="#asr582x-flash" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>芯片型号</strong></p></th>
+<th class="head"><p><strong>RAM</strong></p></th>
+<th class="head"><p><strong>FLASH</strong></p></th>
+<th class="head"><p><strong>OTP</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ASR5822N</p></td>
+<td><p>256 KB</p></td>
+<td><p>2 MB</p></td>
+<td><p>512 Bytes</p></td>
+</tr>
+<tr class="row-odd"><td><p>ASR5822C</p></td>
+<td><p>256 KB</p></td>
+<td><p>2 MB</p></td>
+<td><p>512 Bytes</p></td>
+</tr>
+<tr class="row-even"><td><p>ASR5822S</p></td>
+<td><p>352 KB</p></td>
+<td><p>2 MB</p></td>
+<td><p>512 Bytes</p></td>
+</tr>
+<tr class="row-odd"><td><p>ASR5822T</p></td>
+<td><p>352 KB</p></td>
+<td><p>4 MB</p></td>
+<td><p>512 Bytes</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="flash-layout">
+<h3>4.2 芯片内置的 Flash Layout 是怎样划分的？可以修改吗？<a class="headerlink" href="#flash-layout" title="Link to this heading"></a></h3>
+<p>Flash Layout 相关的说明请参考《ASR582X 系列_开发入门指南》3.2 章节。实际的分区请参考 SDK 中&lt; duet_board.c &gt;文件中的定义。</p>
+<p>分区修改原则：</p>
+<ol class="arabic">
+<li><p>Bootloader/Info/APP/OTA/ATE 这几个分区的开始位置不能变：</p>
+<p>BOOTLOADER_FLASH_START_ADDR</p>
+<p>INFO_FLASH_START_ADDR</p>
+<p>APP_FLASH_START_ADDR 0x10012000</p>
+<p>OTA_FLASH_START_ADDR</p>
+<p>ATE_FLASH_START_ADDR 0x10178000</p>
+</li>
+<li><p>APP 和 OTA 分区的大小应该保持一致。</p></li>
+<li><p>改动或新增分区时，需要保证各分区之间没有重叠（特殊：2 M Flash 时，OTA 和 ATE 可能共用）。</p></li>
+<li><p>改动或新增分区时，需要保证不能超过 Flash 总大小。</p></li>
+<li><p>改动或新增分区时，分区地址和分区大小都需要以 4 KB 对齐。</p></li>
+<li><p>特殊：当使用 4 M Flash 时，ATE 开始位置 0x10178000，APP 起始位置 为0x10012000，也就意味着 APP 分区上限为 1432 KB。</p></li>
+</ol>
+</section>
+<section id="m-flash-ate-ate">
+<h3>4.3 2 M Flash 芯片，曾烧录过 ATE，为何一段时间后无法再进入 ATE？<a class="headerlink" href="#m-flash-ate-ate" title="Link to this heading"></a></h3>
+<p>如 4.2 章节描述，ATE 的分区起始位置是 0x10178000，当使用 2 M Flash 时，此区域可能也会是 OTA区域，存在 ATE 与 OTA 复用情况。</p>
+<p>ATE 一般使用在生产时，生产时不会用到 OTA 功能，所以 ate.bin 文件暂会烧录到此区。</p>
+<p>OTA 一般使用在生产后，OTA 后若需要使用 ATE，则需要重新烧录 ate.bin。</p>
+</section>
+<section id="ram">
+<h3>4.4 系统预留给用户使用的 RAM 有多少字节？<a class="headerlink" href="#ram" title="Link to this heading"></a></h3>
+<p>Free RAM 的大小即为用户可使用的 RAM 大小，其值与系统及集成的功能相关。</p>
+<p><strong>实际情况下，用户可以根据系统提供 API 或串口命令来获取其值：</strong></p>
+<ul class="simple">
+<li><p>FreeRTOS：</p>
+<ul>
+<li><p>命令：vtasklist</p></li>
+<li><p>接口：xPortGetFreeHeapSize()</p></li>
+</ul>
+</li>
+<li><p>AliOS：</p>
+<ul>
+<li><p>命令：dumpsys mm_info</p></li>
+<li><p>接口：dumpsys_mm_info_func()</p></li>
+</ul>
+</li>
+</ul>
+<p>开启宏 LINKKITAPP_CONFIG_PRINT_HEAP 可周期性打印剩余内存</p>
+<ul>
+<li><p>HarmonyOS：</p>
+<ul>
+<li><p>接口： LOS_PoolHeadFreeSize() //总内存的 free size</p>
+<p>​ LOS_MemPoolList() //系统每个内存 pool 的信息</p>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id10">
+<h3>4.5 是否可更改固件的烧录口？<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>不可以，只能是 PAD2 和 PAD3 对应的 uart1。</p>
+</section>
+<section id="log">
+<h3>4.6 系统的 log 输出口是哪个？<a class="headerlink" href="#log" title="Link to this heading"></a></h3>
+<p>系统 log 输出包括几个部分的 log，bootload/image/ate 通常情况下默认都是 uart1，但都可以通过软件来修改。</p>
+<div class="admonition attention">
+<p class="admonition-title">注意</p>
+<p>bootload/ATE 由 ASR 提供，用户不可修改。</p>
+</div>
+</section>
+<section id="id11">
+<h3>4.7 系统的 log 是否可以动态关闭和打开？<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<p>系统 log 可以通过 duet_log_disable 关闭，通过 duet_log_enable 打开。</p>
+</section>
+<section id="id12">
+<h3>4.8 软件有哪些调试手段？<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>依靠 UART 打印，加 log，加断言等。</p></li>
+<li><p>连接 JLINK 调试。</p></li>
+<li><p>使用 OS 自带的一些调试手段。</p></li>
+<li><p>使用 ASR 提供的内嵌 coredump 功能，可借助工具抓取芯片及内存信息，详细操作如下：</p>
+<ol class="arabic simple">
+<li><p>在DOGO 工具根目录中进入 recev_data 文件夹，在文件夹中创建 coredump 文件夹；</p></li>
+<li><p>模组 uart1 日志口接好 PC 串口，打开 DOGO 工具，打开对应串口；</p></li>
+<li><p>勾选上&lt;Coredump&gt;和&lt;接收到文件&gt;;</p></li>
+<li><p>输入 &lt;coredump flash all&gt;，等待完成；</p></li>
+<li><p>将&lt;recev_data&gt;文件夹下的日志，和&lt;coredump&gt;文件夹所有 bin 文件提供给我们。</p></li>
+</ol>
+</li>
+</ol>
+<p><img alt="image3" src="../../_images/%E5%9B%BE4-113.png" /></p>
+</section>
+<section id="id13">
+<h3>4.9 系统重启了，如何简单分析重启原因？<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p>可以通过 bootloader 打印查看上次重启原因：</p>
+<p>welcome to bootload: ASRBOOTLOADER-MX-VX.X.X</p>
+<p>hardware pin rst</p>
+</li>
+<li><p>或者通过 API 获取：duet_get_boot_type()</p></li>
+<li><p>获取前两步获取的重启类型做简单分析</p></li>
+</ol>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>重启类型</strong></p></th>
+<th class="head"><p><strong>可能原因</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PWR_ON_RST</p></td>
+<td><p>跟电源相关的重启，若反复刷此打印，应检查供电是否不足。</p></td>
+</tr>
+<tr class="row-odd"><td><p>HARDWARE_PIN_RST</p></td>
+<td><p>硬件重启，reset pin重启，若反复刷此打印，可以检查reset pin的电压，也需要检查供电是否不足。</p></td>
+</tr>
+<tr class="row-even"><td><p>SOFTWARE_RST</p></td>
+<td><p>软件重启，调用系统reboot，watchdog重启等。</p></td>
+</tr>
+<tr class="row-odd"><td><p>DEEP_SLEEP_RST</p></td>
+<td><p>Deep sleep唤起使用。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="kv">
+<h3>4.10 KV 设置时返回错误码，错误码哪里可以查定义？<a class="headerlink" href="#kv" title="Link to this heading"></a></h3>
+<p>/* Key-value function return code description */</p>
+<p>#define KV_OK 0 /* Success */</p>
+<p>#define KV_LOOP_CONTINUE 10000 /* Loop Continue */</p>
+<p>#define KV_ERR_NO_SPACE -10001 /* The space is out of range */</p>
+<p>#define KV_ERR_INVALID_PARAM -10002 /* The parameter is invalid */</p>
+<p>#define KV_ERR_MALLOC_FAILED -10003 /* The OS memory malloc error */</p>
+<p>#define KV_ERR_NOT_FOUND -2 /* Could not found the item */</p>
+<p>#define KV_ERR_FLASH_READ -10005 /* The flash read operation error */</p>
+<p>#define KV_ERR_FLASH_WRITE -10006 /* The flash write operation error */</p>
+<p>#define KV_ERR_FLASH_ERASE -10007 /* The flash erase operation error */</p>
+<p>#define KV_ERR_OS_LOCK -10008 /* The error related to OS lock */</p>
+<p>#define KV_ERR_OS_SEM -10009 /* The error related to OS semaphore */</p>
+<p>#define KV_ERR_ENCRYPT -10010 /* Data encryption error */</p>
+<p>#define KV_ERR_DECRYPT -10011 /* Data decryption error */</p>
+<p>#define KV_ERR_NOT_SUPPORT -10012 /* The function is not support yet */</p>
+</section>
+<section id="cpu">
+<h3>4.11 如何进行CPU使用占有率统计？<a class="headerlink" href="#cpu" title="Link to this heading"></a></h3>
+<p>SDK 编译添加选项 cpu_usage=1，例：make TARGET=duet_demo ic_type=5822t cpu_usage=1，上电后可通过 AT 指令 vtasktime 查看，该功能在 SDK 版本 V1.9.0 以上支持。</p>
+<p><img alt="image4" src="../../_images/%E5%9B%BE4-28.png" /></p>
+</section>
+</section>
+<section id="wi-fi">
+<h2>5. Wi-Fi<a class="headerlink" href="#wi-fi" title="Link to this heading"></a></h2>
+<section id="demo">
+<h3>5.1 按照 demo 调用，为什么还是连接不上路由器?<a class="headerlink" href="#demo" title="Link to this heading"></a></h3>
+<p>SDK 连接路由器支持动态获取 IP 地址以及静态配置 IP 地址，连接配置的参数也不一样，如下：</p>
+<ul class="simple">
+<li><p>动态获取 IP 地址，入参 lega_wlan_init_type_t.dhcp_mode 必须要配置成 WLAN_DHCP_CLIENT。</p></li>
+<li><p>静态配置 IP 地址，入参 lega_wlan_init_type_t.dhcp_mode 必须要配置成 WLAN_DHCP_DISABLE，并且传入需要配置的静态 IP/NET MASK/GW/DNS 地址所。</p></li>
+</ul>
+<p>所以没有配置 lega_wlan_init_type_t.dhcp_mode 而且没有传入 IP/NET MASK/GW/DNS 地址是无法连接路由器的。</p>
+<p><img alt="image5" src="../../_images/%E5%9B%BE5-14.png" /></p>
+</section>
+<section id="id14">
+<h3>5.2 支持的模式有哪几种？<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<p>支持11 b/g/n，单天线。</p>
+</section>
+<section id="id15">
+<h3>5.3 传输的最大速率多少，以及最大吞吐量？<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<p>理论最大传输速率 72.2 Mbps &#64; 20 MHz，TCP 吞吐量 8 Mbps（bit per second）左右。</p>
+</section>
+<section id="id16">
+<h3>5.4 支持的模式有哪些？是否支持多模式同时工作？<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<p>Wi-Fi 协议栈现支持 3 种工作模式：STATION 模式、SOFTAP 模式、SNIFFER 模式，但暂不支持多模式共存，即在关闭一种模式前，无法开启另一种工作模式。</p>
+</section>
+<section id="tcp-udp">
+<h3>5.5 TCP/UDP 单包的最大数据长度是多少？<a class="headerlink" href="#tcp-udp" title="Link to this heading"></a></h3>
+<p>TCP 1460 字节，UDP 1472 字节。</p>
+</section>
+<section id="softap-beacon">
+<h3>5.6 SoftAP 状态下的 beacon 是间隔多久？<a class="headerlink" href="#softap-beacon" title="Link to this heading"></a></h3>
+<p>默认 beacon 间隔 100 ms，开启 SoftAP 模式时，可以通过配置 interval 参数改变其 beacon 发送间隔，单位为 ms。一般的路由器默认 interval 也是 100 ms，无特殊需求不建议改动。</p>
+<p>int lega_wlan_open(lega_wlan_init_type_t* init_info);</p>
+<p>Int interval; /* used in softap mode to config beacon listen interval */</p>
+</section>
+<section id="id17">
+<h3>5.7 当前 SDK 支持哪些国家码？<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<p>配置国家码，Wi-Fi 协议栈会根据配置的国家码在规定信道工作。</p>
+<p>当前 SDK 中支持：“CN” “EU” “JP” “US”可选，可以通过 int lega_wlan_set_country_code(char <em>country); 设置，可以通过 char</em>lega_wlan_get_country_code(void); 获取当前国家码。</p>
+<p>如果没有配置国家码，默认工作国家码为“CN”，信道为 1-13 信道。</p>
+</section>
+<section id="softap-sta">
+<h3>5.8 SoftAP 支持最多几个 STA 设备同时连接？<a class="headerlink" href="#softap-sta" title="Link to this heading"></a></h3>
+<p>默认最多支持 4 个设备同时连接，可通过软件配置。</p>
+</section>
+<section id="socket">
+<h3>5.9 怎么修改 socket 连接上限数量？<a class="headerlink" href="#socket" title="Link to this heading"></a></h3>
+<p>可以修改 lwipopts.h 中宏 MEMP_NUM_NETCONN 对应的值。</p>
+</section>
+<section id="iperf">
+<h3>5.10 如何查看 Iperf 测试示例？<a class="headerlink" href="#iperf" title="Link to this heading"></a></h3>
+<p>Iperf 是一款网络性能测试工具，它可以用来测量网络带宽和网络质量。详细的测试示例，请参见文档《ASR Wi-Fi 吞吐量测试的说明》。</p>
+</section>
+<section id="wi-fi-log-txu-retrymax">
+<h3>5.11 Wi-Fi 速率低，log 出现 txu retrymax 的解决方案是什么？<a class="headerlink" href="#wi-fi-log-txu-retrymax" title="Link to this heading"></a></h3>
+<p>该 log 来自 Wi-Fi 库，TX 重传多次后会打印 txu retrymax，可按照如下顺序进行排查。</p>
+<p>1、 检查板子的射频电路设计或是否进行过 RF 校准，参见第 7.2 节。RF 校准需要用到综测仪，具体可咨询 FAE。</p>
+<p>2、 环境干扰较大导致，检查连接上 Wi-Fi 后打印的 diagno1，如 diagno1:-31 -86，其中 -31 表示 RSSI，-86 表示噪声，可通过判断信噪比确认环境干扰或者换个环境进行对比测试。</p>
+<p>3、 部分路由性能较差，可尝试更换路由或抓空口包来分析具体原因。</p>
+</section>
+<section id="http-s-mqtt-s">
+<h3>5.12 如何查看 HTTP (S) 及 MQTT (S) 使用参考示例？<a class="headerlink" href="#http-s-mqtt-s" title="Link to this heading"></a></h3>
+<p>SDK 默认支持部分公有云及私有云的配置，详见文档《ASR582X 系列_FreeRTOS 平台_公有云用户手册》《ASR582X 系列_FreeRTOS 平台_私有云用户手册》， 使用 MQTT (S) 或 HTTP (S) 的方式与云端通信、云端下发控制、芯片端上报状态及相关 HTTP 及 MQTT 的 code 可以参考 cloud 目录下面的 src，例：HTTP 使用可参考 cloud.c，MQTT 使用可参考 jd_mqtt_func.c。</p>
+</section>
+</section>
+<section id="ble">
+<h2>6. BLE<a class="headerlink" href="#ble" title="Link to this heading"></a></h2>
+<section id="id18">
+<h3>6.1 怎么确认 BLE 广播开启成功？<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<p>详细的介绍，请参见文档《ASR582X 系列_BLE 示例》的第 2.3 章节。</p>
+</section>
+<section id="id19">
+<h3>6.2 BLE 配置广播、扫描等动作失败时的错误码是什么意思？<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<p>BLE 相关错误码可以通过 sonata_error_api.h 文件查看相关定义。</p>
+</section>
+</section>
+<section id="id20">
+<h2>7. 其他<a class="headerlink" href="#id20" title="Link to this heading"></a></h2>
+<section id="rf">
+<h3>7.1 RF 性能指标多少?<a class="headerlink" href="#rf" title="Link to this heading"></a></h3>
+<p>TX 及 RX 性能指标请参见<em>ASR582X Datasheet</em>。</p>
+</section>
+<section id="id21">
+<h3>7.2 如何确认模组已经经过 RF 校准?<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<p>先进入 ATE 模式（进入 ATE 步骤请参考 3.6 章节问题），再输入 wifi_rftest。</p>
+<p>如下图红框部分，则为未校准过，此时射频能力可能不好；如下图绿框部分，则为校准过。</p>
+<p><img alt="image6" src="../../_images/%E5%9B%BE7-13.png" /></p>
+</section>
+<section id="id22">
+<h3>7.3 低功耗有哪几种，其值多少？<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<p>目前支持 active mode/modem sleep/deep sleep 三种功耗模式。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>功耗模式</strong></p></th>
+<th class="head"><p><strong>功耗</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Active mode</p></td>
+<td><p>12 mA</p></td>
+</tr>
+<tr class="row-odd"><td><p>Modem sleep</p></td>
+<td><p>6 mA</p></td>
+</tr>
+<tr class="row-even"><td><p>Deep sleep</p></td>
+<td><p>40 uA</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mac">
+<h3>7.4 MAC 是什么？<a class="headerlink" href="#mac" title="Link to this heading"></a></h3>
+<p>MAC 地址也叫物理地址、硬件地址，由制造商生产时烧录，理论上来说 MAC 地址在世界是唯一的，形象地说，MAC 地址就如同身份证上的身份证号码，具有唯一性。</p>
+</section>
+<section id="id23">
+<h3>7.5 为什么要设置 MAC，不设置会怎样？<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<p>MAC 能让设备获得唯一性，通常情况下，在出厂时已将 MAC 地址固化到 efuse 中。但如果手上的模组并未经过固化 MAC，模组又使用到 Wi-Fi 功能，则 Wi-Fi 协议栈会随机生成一个 MAC，并存储在 Flash 中使用（因存储在 Flash 中，可能会被烧录等行为擦除，被擦除后，会再生成一个新的随机 Wi-Fi MAC）。</p>
+</section>
+<section id="wi-fi-mac-ble-mac">
+<h3>7.6 怎么设置固定 Wi-Fi MAC 或 BLE MAC？<a class="headerlink" href="#wi-fi-mac-ble-mac" title="Link to this heading"></a></h3>
+<p>若用户需要设置固定的 Wi-Fi MAC，可以使用接口 lega_wlan_set_mac_address()。此接口会更新 Flash 中存储的 Wi-Fi MAC 地址。BLE MAC 不会单独设置，会采用 Wi-Fi MAC+1 的方式使用。</p>
+</section>
+<section id="id24">
+<h3>7.7 获取的 MAC 地址和设置的不是同一个，是什么原因？<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<p>set mac 接口只会写到 flash 中保存。get mac 原理是先从 efuse 中读取 MAC 地址，若 efuse 中没有，则再从 flash 中读取 MAC 地址。这种情况是由于 MAC 地址在 efuse 中已存在，通常情况下，出厂时已将 MAC 地址固化到 efuse 中，请检查 efuse 中是否已存在 MAC 地址。</p>
+</section>
+<section id="id25">
+<h3>7.8 如何确认当前使用到第几块 MAC 地址？<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<p>ASR582X 芯片一共 3 块 MAC 地址区域，分布如下：</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>MAC区域</strong></p></th>
+<th class="head"><p><strong>Efuse位置</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>MAC 0</p></td>
+<td><p>0x90~0x95</p></td>
+</tr>
+<tr class="row-odd"><td><p>MAC 1</p></td>
+<td><p>0xC0~0xC5</p></td>
+</tr>
+<tr class="row-even"><td><p>MAC 2</p></td>
+<td><p>0xC6~0xCB</p></td>
+</tr>
+</tbody>
+</table>
+<p>可以通过 API 分别读出 3 块 MAC 地址区域：uint8_t duet_efuse_byte_read(uint16_t addr)；</p>
+<p>使用 MAC 原理是：先使用 MAC2，MAC2 没有值用 MAC1，MAC1 没有值用 MAC0，MAC0 没有值用 Flash 中存储的 MAC 值。</p>
+</section>
+<section id="spi">
+<h3>7.9 SPI 的使用速率是多少？<a class="headerlink" href="#spi" title="Link to this heading"></a></h3>
+<p>SPI master mode 最大 clock 为 10 MHZ，建议使用 8.3 MHZ；slave mode 最大 clock 为 6.6 MHZ。</p>
+</section>
+<section id="spi-dma">
+<h3>7.10 SPI DMA 的注意事项有哪些？<a class="headerlink" href="#spi-dma" title="Link to this heading"></a></h3>
+<p>​ 使用 SPI DMA 用作 master 时，出现数据中断或 RX 接收不完整情况，可参考如下：</p>
+<ol class="arabic simple">
+<li><p>当需要使用 BLE 功能时，建议先开启 BLE 后再初始化 DMA，或者直接关闭宏 SONATA_CFG_BLE_TRANSPORT，在文件 sonata_stack_user_config.h 中。SONATA_CFG_BLE_TRANSPORT 使用了 DMA mode 用作 BLE 信令测试，用户打开 BLE 会中断 SPI DMA 的数据传输。BLE 信令测试可使用专有固件，具体咨询 FAE。</p></li>
+<li><p>SPI 初始化设置 duet_spi.priv 为 NULL，以避免 SPI RX DMA 在被 block 住的情况下进入 SPI RX 中断处理，导致 DMA 接收不完整的情况，具体 demo 请参考 SDK 中:raw-latex:<cite>demo</cite>_demo:raw-latex:<cite>peripheral</cite>.c。</p></li>
+<li><p>在第 2 点基础上设置 dma rx 的 R_pow 为 2，dma tx 的 R_pow 为 0，即提高 RX 的优先级，降低 TX 的优先级，使 RX 比 TX 优先获得 DMA 使用权，具体的 patch 可咨询 FAE。</p></li>
+</ol>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="index.html" class="btn btn-neutral float-left" title="ASR582X 常见问题" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="../%E8%AE%A4%E8%AF%81/index.html" class="btn btn-neutral float-right" title="ASR582X 认证" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 ASR Microelectronics Co., Ltd。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

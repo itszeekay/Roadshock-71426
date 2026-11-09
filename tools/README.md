@@ -10,6 +10,8 @@ Python helpers for protocol work, dump validation, and Ghidra analysis.
 | `duty_sweep.py` | duty sweep only |
 | `read_serial.py` | read a serial console for N seconds |
 | `parse_tap.py` | parse an older `FRAME A/B len=…` capture |
+| `asr5601_dump.py` | read-only ASR560X UART probe, capture and image parser |
+| `extract_pyz.py` | extract Python 3.5 modules from DOGO's `PYZ-00.pyz` |
 | `ghidra/` | Java/Python Ghidra scripts used to build the reverse-engineering tree |
 
 ## Protocol self-test
@@ -41,6 +43,36 @@ python3 tools/duty_sweep.py --port COM5
 ```
 
 Set `ROADSHOCK_PORT` instead of passing `--port` if you prefer.
+
+## ASR5601S read-only probe and dump
+
+This tool speaks only the text monitor on the ASR's UART1. It refuses any
+command containing `erase`, `burn`, `boot`, `write` or `program`.
+
+```bash
+python3 tools/asr5601_dump.py --selftest
+python3 tools/asr5601_dump.py --port COM7 --probe
+python3 tools/asr5601_dump.py --port COM7 --dump dumps/asr
+python3 tools/asr5601_dump.py --parse dumps/asr/capture-20261109-120000.txt
+```
+
+The board must already be in download mode: `SEL0 = 1`, `SEL1 = 0`, reset.
+Start at 115200; use `--baud 921600` for high-speed mode. See
+[`docs/asr5601_dump_plan.md`](../docs/asr5601_dump_plan.md) for the wiring and
+the exact command order.
+
+## DOGO PYZ extraction
+
+`data.pyc` and the other application modules were extracted from the PYZ inside
+`DOGO_VP2.3.8.exe`. The helper is reproducible:
+
+```bash
+python3 tools/extract_pyz.py PYZ-00.pyz out --list
+python3 tools/extract_pyz.py PYZ-00.pyz out data "License.license"
+```
+
+The output files use the Python 3.5 twelve-byte header. A 3.5 interpreter is
+required to load them; 3.12 rejects the bytecode.
 
 ## Ghidra
 

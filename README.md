@@ -184,8 +184,10 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 ## What is still open
 
 - The **ASR5601S firmware** has not been dumped. Its button/UI logic is the one
-  remaining black box. SWD (P06/P07) is the reliable dump route; the J3 UART is
-  the ROM download interface and is documented as write/erase only.
+  remaining black box. SWD (P06/P07) is the reliable dump route. The J3 UART
+  monitor also has a documented read candidate, `coredump flash all`, which is
+  read-only and needs no licence. See
+  [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
 - Direct control of the panel LEDs without touching the private 115200 link.
   Over J2 alone, the LEDs remain under the ASR's UI control.
 - The final CAN gateway/PDU hardware (CAN controller choice, current sensing).

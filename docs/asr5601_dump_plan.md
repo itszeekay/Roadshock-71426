@@ -1,50 +1,90 @@
 # ASR5601S dump plan
 
-Status: the read path exists in DOGO's code, but nothing has been read from the
-ASR yet. Two unknowns remain:
+Status: Phase 0 is complete. The protocol is known well enough to run on the
+bench, but nothing has been read from the ASR yet. The remaining unknowns are
+behavioural, not structural:
 
-1. Does the ROM bootloader expose a read/stream command at all?
-2. What is the command framing, and does it need `config.ini` or a licence?
+1. Does the ASR5601S download monitor accept `coredump flash all`?
+2. Does the stream use the `:<label><hex>$` framing that DOGO parses?
 
-Both can be answered at a desk and on a non-destructive bench session before
-any write.
+Both are answered with read-only traffic.
 
-## What the DOGO decompile changed
+## What Phase 0 established
 
-`read_image` is **not** a command. It is a checkbox flag plus two host files:
+The DOGO tool is a Python 3.5 PyInstaller build. Its entry module is
+`pyserial_demo.pyc`; its chip database is `data.pyc` inside `PYZ-00.pyz`.
+The database contains an explicit `5601S` entry, so `config/config.ini` is
+**not** required for the ASR part. The tool's default `config.ini` only stores
+language and last-used file paths; missing it produces a dialog, not a missing
+chip table.
 
-- `checkBox_read_image` sets `self.read_image = True`.
-- `data_receive` appends incoming payload to `flash_image_fname` when the flag is
-  set.
-- `rece_bin` then calls `write_to_bin_file` and `generate_real_bin`.
-- `generate_real_bin` runs the regex `:(.*?)\$` over the text capture, converts
-  each match with `int(m, 16)` and `struct.pack("B", ...)`, writes the `.bin` to
-  `./recev_data/coredump/`, and prints `dumping done!!!`.
+Key values from the embedded `5601S` entry:
 
-So the bootloader sends **text lines** containing `:hex$`, and the host builds
-the binary. The protocol is a text CLI, not binary framing:
+| Item | Value |
+|---|---|
+| Handshake string | `AsrIot560x` (ASCII, sent with a trailing space, no CRLF) |
+| Bench default baud | 115200 (manual) |
+| Entry high-speed baud | 921600 (chip table) |
+| Bootloader base | `0x10000000` |
+| BLE ROM base | `0x1000D000` |
+| App base | `0x10048000` |
+| ATE base | `0x100F0000` |
+| OTA info | `0x10008000` |
+| Bootloader size | 32768 bytes |
 
-- prompt: `welcome to download\r\n>>>`
-- commands are ASCII, CRLF-terminated
-- examples seen in the binary: `get_chip_type`, `erase  0`,
-  `boot <type> <addr>`, `init <baud>`
-- `1F2E3D00` is the handshake; `1F2E3D81` is a communication error
-- `CT:` plus a regex is the chip-ID exchange
-- `1048576` and `2097152` are the 1 MB and 2 MB part sizes
+What the code actually does:
 
-Two config files matter, and they are not the same:
+- `update_bootloader` sends `b"AsrIot560x "` once and waits for `3D00` in the
+  reply.
+- `data_receive` treats any reply containing `3D00` as "download mode ready".
+- The prompt string in the binary is `welcome to download\r\n>>>`.
+- Commands are ASCII with CRLF. The host builds `get_chip_type`,
+  `init <baud>`, `erase <addr> <size>`, `burn <addr> <size>` and
+  `boot <type> <size>`.
+- `get_chip_type` is answered with `CT:` followed by a hex chip ID.
+- `read_image` is a host capture flag, not a device command. `data_receive`
+  appends everything to `flash_image_data.txt`, and `gen_flash_bin` parses
+  `$<hex>$` blocks into `flash_image_bin.bin`.
+- The separate coredump capture parses `:<10-char label><hex>$` lines and writes
+  one `.bin` per label under `recev_data/coredump/`.
 
-| File | Role | Needed for a dump? |
+The read command itself is documented by ASR, not hardcoded in DOGO. The
+ASR582X FAQ says:
+
+> create `recev_data/coredump`, check Coredump and ReceiveFile, enter
+> `coredump flash all`, wait for completion, then collect the bin files.
+
+That is the command this plan uses. It is documented for the same DOGO tool and
+the same UART1 monitor, but it has not been proven on the 5601S.
+
+The 560X transparent-transmission test image in the archive confirms the flash
+bootloader is `ASRBOOTLOADER-560X-MX-V2.0.3` and that `COREDUMP` is a partition
+name. It contains no CLI command strings, which suggests the `>>>` monitor and
+its commands live in mask ROM, not in the flash bootloader. If the ROM monitor
+does not implement `coredump flash all`, the fallback is the same command to the
+running app on UART1.
+
+## Exact traffic
+
+Bench bring-up, download mode:
+
+| Direction | Bytes | Notes |
 |---|---|---|
-| `config/config.ini` | chip database: addresses, image slots, verbs per chip | **Yes for DOGO**. Without it `chip_data` is empty and `upload_bin` has nothing to send |
-| `config/script.ini` | multi-send macro tab | No, unrelated to burn/read |
+| chip to host | `1F2E3D00` | printed after reset when SEL0 is high |
+| host to chip | `\r\n` | optional, asks for the prompt |
+| chip to host | `welcome to download\r\n>>>` | text monitor is ready |
+| host to chip | `get_chip_type\r\n` | identity check |
+| chip to host | `CT:0x...` | chip ID |
+| host to chip | `coredump flash all\r\n` | the read request |
+| chip to host | `:<label><hex>$` lines | one line per block |
 
-Neither ships inside the exe. A clean machine has neither, and the tool is
-licence-gated (`LicenseManager`, registry-backed, XOR-obfuscated), so some
-controls may stay hidden.
+The host does not need to send the `AsrIot560x ` handshake if the banner already
+arrived. The handshake exists to wake the monitor when the host missed the
+banner or when DOGO is about to burn.
 
-The cheap route is therefore **not DOGO**. It is the `>>>` prompt over J3, which
-needs no ASR files and answers whether a read verb exists.
+The label is ten characters in DOGO's parser. `0x10000000` is ten characters,
+so the likely shape is `:0x10000000<hex>$`. The parser accepts any ten-character
+alphanumeric label and groups by label, so a partition name works too.
 
 ## Hardware
 
@@ -69,28 +109,22 @@ Still needed:
 
 No level shifting. The ASR is a 3.3 V part here. No flash clip, socket or decap.
 
-## Phase 0: static work, no hardware
+## Phase 0: static work (done)
 
-1. Set up a Python 3.5 environment. The payload magic is `170d`. A Windows 3.5.4
-   install in a throwaway directory, or a `python:3.5` container, is enough.
-2. Extract `PYZ-00.pyz` properly. `pyinstxtractor` skipped it on the version
-   mismatch, so the tool's config and protocol modules are still packed.
-3. Decompile `pyserial_demo.pyc` and the PYZ modules. Targets, in order:
-   `get_cmd_cfg`, `cmd_dict`, `send_cmd`, `read_image`, `recv_flash_image`,
-   `coredump_data`.
-4. Recover the command opcodes, payload layout, checksum or CRC, the read
-   request's address and length fields, and the handshake after `1F2E3D00`.
-5. Check what the licence gate actually guards. If it guards `read_image`, a
-   licence is not needed; about 30 lines of Python speaking the same frames is
-   enough.
+Deliverables:
 
-The annotated disassembly in
-`reference/asr560x/drive/DOGO_extract/dump_path.dis.txt` already covers
-`recv_flash_image`, `generate_real_bin`, `get_cmd_cfg`, `send_cmd` and
-`data_receive`.
+| File | Contents |
+|---|---|
+| `reference/asr560x/drive/DOGO_extract/dump_path.dis.txt` | annotated disassembly of the receive and bin-generation path |
+| `reference/asr560x/drive/DOGO_extract/pyserial_demo.pyc` | entry module |
+| `reference/asr560x/drive/DOGO_extract/data.pyc` | embedded chip database, added with this phase |
+| `reference/asr560x/drive/DOGO_extract/chip_table.txt` | readable dump of the chip entries |
+| `tools/asr5601_dump.py` | read-only probe, capture and parser |
+| `tools/extract_pyz.py` | reproducible PYZ extraction helper |
 
-Exit criterion: you can write down the exact byte sequence for "read N bytes at
-`0x10000000`".
+The parser handles both stream shapes: `:<label><hex>$` and `$<hex>$`. It
+rebuilds a flat `flash.bin` when every label is an eight-digit address, filling
+gaps with `0xFF`, and writes a SHA-256 next to it.
 
 ## Phase 1: handshake on the bench, non-destructive
 
@@ -98,44 +132,56 @@ Exit criterion: you can write down the exact byte sequence for "read N bytes at
 2. Wire J3: `TX` to bridge RX, `RX` to bridge TX, `GND` to GND, `RST` and
    `SEL0` to two free GPIOs. Do not connect +3.3.
 3. Check the idle level on J3 TX, about 3.3 V, before connecting anything.
-4. Assert `SEL0 = 1`, pulse `RST` low, release. At 115200 8N1 you should see
-   `1F2E3D00`. `1F2E3D81` means a communication error: check wiring and baud.
-5. Stop if you only get silence. Do not open any burn or erase screen.
+4. Start at **115200 8N1**. Assert `SEL0 = 1`, pulse `RST` low, release.
+5. Run `python tools/asr5601_dump.py --port COM7 --probe`.
+6. If there is no banner, try **921600 8N1** and repeat.
+7. Stop if the only reply is silence. Do not send anything but the probe
+   commands.
 
-Exit criterion: `1F2E3D00` received. This proves the whole electrical path
-without writing a byte.
+`1F2E3D00` proves the electrical path and the monitor. `1F2E3D81` means a
+communication error: check wiring, then baud.
+
+Exit criterion: `1F2E3D00` and the `>>>` prompt received.
 
 ## Phase 2: probe the text prompt
 
-1. After `1F2E3D00`, send a bare CRLF and read the reply. Expect
-   `welcome to download` and a `>>>` prompt.
-2. Send `help`, then `?`, then `get_chip_type`, one at a time, and capture the
-   replies. Do not paste a script.
-3. Do not send anything containing `erase` or `burn`. Some `script.ini` macros
-   contain erase steps; this is why they are not replayed blindly.
-4. Record the command vocabulary. The question is whether it includes a read or
-   upload verb.
+1. Send a bare CRLF. Expect `welcome to download\r\n>>>`.
+2. Send `get_chip_type`, then `help`, then `?`, one at a time.
+3. Capture the replies verbatim. Do not paste a script.
+4. Do not send anything containing `erase`, `burn`, `boot` or `write`.
+5. Record whether the monitor lists a read or dump verb.
 
-Exit criterion: a command list, or clear evidence that no read verb is exposed.
+Exit criterion: the command vocabulary, or clear evidence that the monitor has
+no help text.
 
 ## Phase 3: first read
 
-Choose one route:
+Run:
 
-**A. The CLI has a read verb.** Request a small block first, for example 256
-bytes at `0x10000000`. Inspect the reply shape. If it is text `:hex$` lines,
-capture them and run the same `generate_real_bin` logic. Then try
-`0x10040000`, the app base used by DOGO's default.
+```
+python tools/asr5601_dump.py --port COM7 --baud 115200 --dump dumps/asr
+```
 
-**B. DOGO with `config.ini` and a licence.** Tick `read_image`, run the session,
-then press generate bin. The capture plumbing is already in the tool.
+The tool sends only `coredump flash all\r\n`. It captures until the line has
+been idle for ten seconds, retries once if nothing arrives, writes the raw text,
+then parses it.
 
-If the first block looks plausible, read the full 1 MB. A sensible first block
-has a stack pointer around `0x2000xxxx` and a reset vector into flash.
+Order of attempts:
 
-Read the full 1 MB **twice**, in separate power cycles, to two files.
+1. Downloads monitor at 115200, `coredump flash all`.
+2. If rejected or silent, the same at 921600.
+3. If the monitor has no such command, boot the app (`SEL0 = 0`), open UART1 at
+   115200 (or the app's log baud), and send `coredump flash all` again.
 
-Exit criterion: two 1,048,576-byte files with identical SHA-256.
+A plausible first block has a stack pointer around `0x2000xxxx` and a reset
+vector into flash. A block of all `0xFF` means the wrong region or a protected
+region.
+
+If the first block looks right, read the full 1 MB twice, in separate power
+cycles, to two directories.
+
+Exit criterion: two captures whose parsed `flash.bin` files are 1,048,576 bytes
+and have identical SHA-256.
 
 ## Phase 4: verify and archive
 
@@ -143,7 +189,7 @@ Exit criterion: two 1,048,576-byte files with identical SHA-256.
 2. Check the vector table at `0x10000000` and carve the partitions using
    `docs/asr5601_reference_archive.md` and the Memory Layout page. The offsets
    have not been confirmed on hardware yet.
-3. Run `strings -a` for BLE names and UUIDs to confirm this is real code and
+3. Run a string scan for BLE names and UUIDs to confirm this is real code and
    not `0xFF` padding.
 4. Commit `dumps/asr/flash.bin`, `.hex`, `SHA256SUMS` and a short
    `dumps/asr/README.md`. Exclude the ASR BLE stack ROM range if the dump is
@@ -169,9 +215,13 @@ Only if Phases 2 and 3 fail.
 
 | Situation | Call |
 |---|---|
-| `read_image` is licence-gated | write your own sender from the decompile; do not hunt for a cracked licence |
-| No `1F2E3D00` at 115200 | check baud and swap TX/RX before suspecting the chip; try 9600 |
-| Read returns all `0xFF` | wrong base address or an erase-protected region; try `0x10040000`, the app base from the binary |
+| No banner at 115200 | try 921600, then swap TX/RX, then check SEL0 and reset |
+| Banner but no prompt | send CRLF; if still silent, send `AsrIot560x ` and read again |
+| `coredump flash all` echoes but no data | wait longer; the dump may be slow, then retry at 921600 |
+| Monitor rejects `coredump` | boot the app and send the same command on UART1 |
+| Capture has `:<label><hex>$` | normal; the tool rebuilds `flash.bin` |
+| Capture has only `$<hex>$` | normal for the ReadImage path; the tool writes `readimage.bin` |
+| Read returns all `0xFF` | wrong base address or a protected region; try the app base `0x10048000` |
 | Only one clean read, second differs | treat it as no dump; the ASR has no restore image |
 | SWD locked, UART has no read | stop and reassess; no cheap path left |
 | CLI help lists erase but no read | do not experiment with erase; the restore image does not exist |
@@ -182,16 +232,17 @@ Two byte-identical 1 MB images, their SHA-256, a carved partition map, and a
 note in `docs/` describing exactly how they were read. That matches the standard
 used for the STM8 dumps.
 
-Realistic effort: Phase 0 is the long pole, a few hours of decompiler work.
-Phases 1 to 3 are an afternoon if the protocol is clean.
+Phases 1 to 3 are an afternoon if the monitor accepts the command. If it does
+not, Phase 5 is a short detour only when PZ20 reaches the SWD pads.
 
 ## Risks
 
 - There is no factory restore image for the ASR. Do not run `Flash Erase` or
   `Burn` before a verified dump exists.
-- The text CLI commands are destructive by nature. Type one command at a time
-  and read the echo.
-- The tool is licence-gated; the read checkbox may be hidden or inert in a stock
-  install.
+- The text monitor commands are destructive by nature. Type one command at a
+  time and read the echo. The host tool refuses anything containing erase, burn,
+  boot, write or program.
+- `coredump flash all` is documented for the 582X family. Treat it as a strong
+  candidate for the 5601S, not as a confirmed command.
 - The ASR560X datasheet is still gated, so the memory map comes from the
   Peripheral User's Guide, the Memory Layout page and the binary constants.
