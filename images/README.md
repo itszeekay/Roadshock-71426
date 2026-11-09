@@ -5,6 +5,7 @@ and resized to at most 1600 px on the long edge. The originals are not included.
 
 | File | Shows |
 |---|---|
+| `hero.jpg` | Base/output unit with the lid off; terminal/fuse map visible |
 | `panel-pcb.jpg` | Button panel PCB (bottom): ASR5601S (U1), STM8S003K3 (U2), J3, J2 cable |
 | `panel-front.jpg` | Button panel top side: 8 tactile buttons (K1–K8), RGB LEDs, case marking |
 | `panel-connectors.jpg` | Panel PCB with the J3 programming header and cable |

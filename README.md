@@ -8,8 +8,8 @@
 Firmware analysis, pinouts, wire protocol, and a practical path to a
 CAN-controlled power distribution unit (PDU) built on the stock hardware.
 
-![Button panel PCB, bottom side](images/panel-pcb.jpg)
-*Button panel PCB (bottom side). The base/output unit is shown in the table below.*
+![ROADSHOCK 71426 base/output unit with the lid off](images/hero.jpg)
+*ROADSHOCK 71426 base/output unit, lid removed. The terminal/fuse map is printed inside.*
 
 This is a community reverse-engineering project for the **Harbor Freight 71426**
 8-gang switch panel system (also sold under related brand names). It covers both
