@@ -60,7 +60,11 @@ static void channel_set(uint8_t n, uint8_t on)
     board_output(n, on ? 1 : 0);
 }
 
-/* 100 ms blink, 250 ms pulse */
+/* Blink/pulse timing, calculated from the 2 ms TIM4 tick (see board_timer_init:
+ * 16 MHz / 128 prescaler = 125 kHz, ARR 250 -> ~2.008 ms per tick).
+ * - Blink half period 100 ms = 100/2 = 50 ticks. A full blink cycle is a
+ *   100 ms ON phase plus a 100 ms OFF phase = 200 ms = 5 Hz.
+ * - Pulse on-time 250 ms = 250/2 = 125 ticks = 250 ms. */
 #define BLINK_HALF_TICKS ticks_from_ms(100)
 #define PULSE_TICKS      ticks_from_ms(250)
 
@@ -101,7 +105,7 @@ static void channel_release(uint8_t n)
     }
 }
 
-/* called every 5 ms */
+/* called every 2 ms TIM4 tick; see board_timer_init */
 static void channel_tick(void)
 {
     for (uint8_t n = 0; n < 8; n++) {

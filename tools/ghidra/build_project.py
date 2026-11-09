@@ -62,6 +62,52 @@ RAMS = {
     0x02D3: "uart_flag_c",
     0x02D8: "pin_state_d3",
     0x0303: "pin_state_d4",
+    # --- register-bank temporaries (compiler spill, not app state) ---
+    0x0000: "tmp_b0", 0x0001: "tmp_b1", 0x0002: "tmp_w0",
+    0x0004: "tmp_b4", 0x0005: "tmp_b5", 0x0006: "tmp_b6",
+    0x0007: "tmp_b7", 0x0008: "tmp_ptr", 0x000A: "tmp_ptr2",
+    0x000C: "tmp_ptr3", 0x000E: "ch_edit",
+    # --- application RAM state (Roadstm8true, 2026-11-09) ---
+    0x0182: "ch_state",
+    0x01BE: "eeprom_tx",
+    0x01C3: "sched_block",
+    0x01C9: "sched_cb_a",
+    0x01D4: "sched_cb_b",
+    0x01F4: "acc_block",
+    0x01F9: "master_off",
+    0x01FA: "ch_state_base",
+    0x01FE: "ch_state_2",
+    0x0205: "state_0205",
+    0x0206: "cfg_value",
+    0x0207: "acc_calc",
+    0x021C: "frame_sum",
+    0x021D: "frame_base",
+    0x021E: "frame_dir",
+    0x021F: "frame_type",
+    0x0220: "frame_flag",
+    0x023D: "frame_len",
+    0x025F: "acc_count",
+    0x0260: "acc_buf",
+    0x02B8: "pin_state_2b8",
+    0x02CD: "queue_saved",
+    0x02CE: "queue_head",
+    0x02CF: "seq_counter",
+    0x02D1: "tick_flag",
+    0x02D4: "sched_flag",
+    0x02D5: "frame_ready",
+    0x02D6: "block_count",
+    0x02D7: "mode_div",
+    0x02D9: "acc_index",
+    0x02DA: "acc_data",
+    0x02DB: "sampler_on",
+    0x02DC: "sched_2dc",
+    0x02DD: "sched_2dd",
+    0x02DE: "sched_2de",
+    0x02DF: "pin_table",
+    0x505A: "FLASH_C2",
+    0x505F: "FLASH_C5F",
+    0x50CC: "FLASH_CC",
+    0x50CD: "FLASH_CD",
 }
 
 
@@ -455,10 +501,10 @@ plate(0x8E5C,
       "sub_9b72 (output init), enables interrupts, posts message 0x1B.")
 plate(0x8EE6,
       "Link service loop. When uart_flag_c is set, copies the RX frame and calls frame_handler.\n"
-      "Also services DAT_02d5/DAT_025f and the pin-table block at UNK_01bf.")
+      "Also services frame_ready/acc_count and the pin-table block at sched_block.")
 plate(0x9223,
-      "ACC sense sample. Reads PA_IDR bit1 (PA1), debounce 8 samples into DAT_02da,\n"
-      "stores to DAT_0260. DT/DAT_02d4 selects the sample vs reset path.")
+      "ACC sense sample. Reads PA_IDR bit1 (PA1), debounce 8 samples into acc_data,\n"
+      "stores to acc_buf. sched_flag selects the sample vs reset path.")
 plate(0x8700,
       "Mode tick. DAT_02d7 divider (every 3rd pass), toggles pin_state_d3/d4 via\n"
       "sub_8811/8814/881c. Blink/pulse state advance.")
@@ -496,10 +542,10 @@ plate(0x8146,
 plate(0x851A,
       "Frame handler. Validates 11-byte checksum, dispatches on DAT_021f (type).\n"
       "Type 7: master power/parameter (6 bytes -> 12 nibbles at 0x9E85, post 0x1700).\n"
-      "Type 8: button bitmask (sub_82b3, post 0x1800).\n"
-      "Type 0x0B: cmd_0b_handler (sub_8640). Type 0x0D: cmd_0d_handler (sub_8689).\n"
-      "Type 0x19: cmd_19_handler (sub_860c). See docs/hidden_commands.md.")
-plate(0x8640, "Hidden command 0x0B handler. Updates DAT_0206, writes EEPROM via sub_9927, posts 0x1B.")
+      "Type 8: button bitmask (button_bitmask_handler, post 0x1800).\n"
+      "Type 0x0B: cmd_0b_handler. Type 0x0D: cmd_0d_handler.\n"
+      "Type 0x19: cmd_19_handler. See docs/hidden_commands.md.")
+plate(0x8640, "Hidden command 0x0B handler. Updates cfg_value, writes EEPROM via eeprom_write, posts 0x1B.")
 plate(0x8689, "Hidden command 0x0D handler. Type 0 -> _DAT_02cb=10000; Type 1 -> reset state, DAT_0206=10.")
 plate(0x860C, "Hidden command 0x19 handler. Searches message queue for matching seq, clears it.")
 plate(0x9927, "EEPROM write helper. Called from sub_86e8 and cmd_0b_handler.")

@@ -169,6 +169,9 @@ What it implements:
 - ACC/ignition gating.
 - UART 2400 8N1 with the stock frame format and replies.
 - **Hardware PWM** on TIM1 (channel 6 = PC4 = TIM1_CH4).
+- Blink/pulse timing from the 2 ms TIM4 tick: blink half period 100 ms
+  (50 ticks, 200 ms full cycle, 5 Hz); pulse on-time 250 ms (125 ticks).
+  See `firmware/src/main.c` for the calculation.
 - Custom type `0x09` for off / on / PWM with duty and frequency.
 
 Settings are RAM-only for now. The stock base stores per-channel settings in
