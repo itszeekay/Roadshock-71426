@@ -33,6 +33,12 @@ The eight buttons cannot fit on the STM8: apart from the 24 LED pins, only PD7
 would be free. The live capture with the panel connected to the base shows
 button frames, so something scans them. The ASR is the only other IC that can.
 
+The ASR datasheet says the chip has a hardware keypad controller with up to 112
+keys and `KEY_ROW0..13` / `KEY_COL0..7` alternate functions. The panel's eight
+buttons may use that matrix rather than eight plain GPIO inputs. The exact row
+and column pins are not confirmed; when the ASR firmware is dumped, check
+accesses to the KEYPAD block at `0x4001_5000`.
+
 ## Why the status LEDs stay dark without the base
 
 With the panel powered and the base disconnected, the backlight comes on but
@@ -85,7 +91,9 @@ LEDs.
 - Whether a hidden 2400-baud command can influence the LEDs (possible, but no
   evidence yet).
 - The exact color mapping of the eight display nibbles (needs a bench test).
-- Whether the ASR's display UART is UART2 or UART3 (identify by continuity
-  from STM8 PD5/PD6).
+- Which UART2/UART3 pin pair carries the display link. The datasheet pin mux
+  narrows the candidates to P00/P01, P08/P09, P19/P20, P27, P29 (UART2) or
+  P06/P07, P10, P13/P14, P25/P26 (UART3); identify by continuity from STM8
+  PD5/PD6.
 
 See [asr5601.md](asr5601.md) for the ASR pinout, boot mode, and dump options.

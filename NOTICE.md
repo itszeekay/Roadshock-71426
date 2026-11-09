@@ -21,9 +21,10 @@ open an issue.
 `reference/asr560x/` contains a curated set of ASR-published documentation and
 the DOGO tool, included for preservation and interoperability research because
 ASR's original links are disappearing. It also contains Python modules extracted
-from that tool for protocol analysis. Copyright remains with ASR
-Microelectronics; no license is granted. PDF author and creator metadata was
-stripped. If ASR or a rights holder asks for removal, the files will be removed.
+from that tool for protocol analysis, and an OCR text and 150 dpi print of the
+ASR560X V1.4.0 datasheet. Copyright remains with ASR Microelectronics; no license
+is granted. PDF author and creator metadata was stripped. If ASR or a rights
+holder asks for removal, the files will be removed.
 
 The rest of the repository contains no vendor source code. In particular it does
 not include the ASR SDK, the ASR BLE stack or ROM, the ST Standard Peripheral

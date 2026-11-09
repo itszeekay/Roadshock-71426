@@ -1,5 +1,5 @@
-600fbce232aaa11d6b15e0919f81bbef48092b1cf19aeeca012945eff7fe398a *./README.md
-b1a660e89c0a56425bc8257ac407a3b7e1f8e8175ffa194f38742f4e5bb25d99 *./SOURCES.md
+91254c12d7d96c6693dea00bb1638136961f3ab0cb0fe0062c4432fb9e20de54 *./README.md
+47500b7a4ba2ca454838eb6108a128ea4a9a61deb73387bce81ee9aea849c902 *./SOURCES.md
 67a430bcf033ba4dece1c54879e2549d7a48ba10b423fb333d693979702c86cd *./docs-en/ASR560X/Download-Tool/560X_Programming.html
 64e0da826b6bde1273ed10042742e31f820d501ff1c98c766b522c2c7f2eff55 *./docs-en/ASR560X/FAQ/FAQs.html
 9e491bf9aee596c7bb045fea7035651d464ec4fb25f0cafceb4206f90872dd09 *./docs-en/ASR560X/Hardware-Reference/Development_Board.html
@@ -21,6 +21,8 @@ f161dd467e8f813f3f28ef1941e56bd96619f8b1801808446516c56d8704093b *./docs-zh/ASR5
 4e6388d9580da84fb82aab86423122fb9ad8a9965cb89f48916998ee975ccf84 *./docs-zh/_sources/ASR560X/软件快速入门/SDK固件类型.rst.txt
 36893713df2a8e9998e32d00dfd33aa9cd5a9d05b6fa0413b5f380d1eef7d709 *./docs-zh/_sources/ASR560X/软件快速入门/命令说明.rst.txt
 511fc5c1e18ddd1905d57a5df8bc07673c425e6d835ba3531d69d5e31ece0e08 *./drive/ASR5601T3_QFN48_EVB_LITE_SCH.pdf
+4b9616a71ab1f98bdccd5fb146494bb08cc44e19e7bb3c0325e33c98860e5fda *./drive/ASR560X_Datasheet_V1.4.0_EN.ocr.txt
+655e07b0128b31185b3d7f263552a1f6d25c50995572414e79e9ebb4acf0806d *./drive/ASR560X_Datasheet_V1.4.0_EN.print_150dpi.pdf
 8d645583828e046a3d2e515bffd1c135be283e06366971ff7cf65b8dfd1da633 *./drive/ASR560X_Development_Board_User_Guide_V1.1.0.pdf
 3a33d65a182c3898cd7bd0f95a3b042763bffd82607ca8e3ae139b33d0509d41 *./drive/ASR560X_Peripheral_Users_Guide_V1.2.0_EN.pdf
 ecbd11b24adc4cdb4a713b452fd93aba6953b3532ebebd582a76eea93490ac53 *./drive/ASR560X_test_image_layout.md
@@ -32,6 +34,7 @@ a7288365d4c7c9bdf18d436ebab813b809340018004a47d736341f9c51104756 *./drive/DOGO_e
 d5937d6f09aaa9dc3d55f1c25a29d71bfcb97488f13a6ecbfd995af717927a06 *./drive/DOGO_extract/dump_path.dis.txt
 6f994f6f7f0bfa07aa5e60ed52ffd8c2772c95bf9cad9857a2bfabebee555c9f *./drive/DOGO_extract/pyserial_demo.pyc
 6776cba8d0fa94628d26aef826db79271fce61e3cfdc9ed31ce6a3064894753e *./drive/DOGO_extract/pyserial_demo.strings.txt
+417f3d7f004495aeca7326e38ef4b5d3581a7d68c107640d5df5e5d0eddf917e *./meta/ASR560X_datasheet_provenance.md
 6e14545c36882771446ef3219a820c47e6b3b5915d167df472f7f3b17e0da678 *./notes/ASR582X_FAQ_coredump/582X_开发常见问题.html
 6ac3a7674d3b2af0653151721855dd205a4c1770e8707f09debc28f2d7e38e23 *./notes/ASR582X_FAQ_coredump/582X_开发常见问题.rst.txt
 88f5c17a3b5ea6d99780572840649fefe15778d9263e3a3df8a21e8180f39cba *./notes/ASR582X_FAQ_coredump/README.md

@@ -111,6 +111,29 @@ LEDs. The panel works when connected to the base, but its status LEDs stay dark
 when the base is absent, which suggests the ASR is waiting for the base's
 start-up handshake.
 
+### ASR5601S power and clock
+
+The datasheet gives these reference connections. The panel's actual passives are
+not all confirmed.
+
+| Pin | Signal | Reference connection |
+|---:|---|---|
+| 12 | VBATA | 1 uF decoupling |
+| 19 | VDDAO | 1 uF decoupling |
+| 21 | VDDDIG | 1 uF decoupling |
+| 22 | VBATB | 1 uF decoupling |
+| 23 | VDCSW | 4.7 uH to pin 24 |
+| 24 | VDCOUT | 2.2 uF to ground |
+| 26/27 | CX2/CX1 | 100 nF flying capacitor |
+| 28 | VDDFLSH | 1 uF decoupling |
+| 33 | VCCBB | Analog baseband supply |
+| 46/47 | XO16MI/XO16MO | 16 MHz crystal |
+| 20 | XO32KI | 32.768 kHz crystal input |
+| 48 | VCCRFA | RF supply |
+
+The reset pin has an internal 25K pull-up and an 8 ms startup delay after VBATB
+reaches 1.7 V.
+
 ---
 
 ## Identified silicon
@@ -119,7 +142,7 @@ start-up handshake.
 |---|---|---|
 | STM8S003F3P6 | TSSOP-20 | Base MCU |
 | STM8S003K3 | LQFP-32 | Panel RGB LED driver |
-| ASR5601S | QFN-48 | Panel controller / BLE SoC |
+| ASR5601S | QFN-48, 6 x 6 mm, 0.4 mm pitch | Panel controller / BLE SoC; Cortex-M0+, 96 KB SRAM, 1 MB or 512 KB SiP flash |
 | 16 MHz crystal | n/a | ASR clock |
 | 32.768 kHz crystal | n/a | Optional RTC (reference design) |
 

@@ -1,0 +1,3321 @@
+# ASR560X Series Datasheet V1.4.0
+
+OCR text, page-marked. Table rows stay in reading order. OCR errors remain;
+verify table cells against the print PDF.
+
+===== page 1 =====
+~
+~flj
+,,~
+ASR560X Series
+~"'
+~v
+Datasheet 0<::-
+0
+Version 1.4.0 ~
+Issue Date 2
+3-
+-
+-
+SIG BQB 0 Bluetooth®
+
+===== page 2 =====
+About This Document
+This document introduces the specifications of ASR560X: single-chip Bluetooth Low Energy 5.1
+full feature (compatible with 5.2)/IEEE 802.15.4/2.4G Proprietary multi-protocol Soc solution, and
+it also supports BLE Mesh network.
+Intended Readers
+This document is mainly for engineers who use this chip to develop their 0wn platform and
+products, for instance:
+•
+PCB Hardware Development Engineer
+•
+Software Engineer
+•
+Technical Support Engineer
+Included Chip Models
+Model
+ASR560X
+Copyright Notic
+Protocol
+BLE 5.1 full feature
+(compatible with 5.2)
+BLE SIG Mesh
+IEEE 802.1 .4
+2.4G
+Core
+SiP Flash
+1 MB/
+512 KB
+Function
+AOA/ AODNoice/1 RTxRx/
+Quadrature Decoder/Keypad/
+5V UART/5V GPIO/
+Wi-Fi concurrent
+© 2023 ASR Microelectronics Co., Ltd. All rights reserved. No part of this document can be
+reproduced, transmitted, transcribed, stored, or translated into any language in any form or by
+any means without the written permission of ASR Microelectronics Co., Ltd.
+Trademark Statement
+/\Sli! ASR and ASR Microelectronics Co., Ltd. are trademarks of ASR Microelectronics Co.,
+Ltd.
+Other trade names, trademarks, and registered trademarks mentioned in this document are the
+
+===== page 3 =====
+property of their respective owners and are hereby declared.
+Electrostatic Discharge (ESD) Warning
+This product can be damaged by Electrostatic Discharge (ESD). When handling with this device,
+the people should be very careful to conduct the ESD protection to avoid any device damage
+caused by ESD event.
+Disclaimer
+ASR does not give any warranty of any kind and may make improvements and/or changes in this
+document or in the product described in this document at any time.
+This document is only used as a guide, and no contents in the docume t co s it te any form of
+warranty. Information in this document is subject to change without notice~
+All liability, including liability for infringement of any proprietary Fi.g • ts
+sed by using the
+information in this document, is disclaimed.
+ASR Microelectronics Co., Ltd.
+~
+Address: 9F, Building 10, No. 399 Keyuan Roa
+ng High-tech Park, Pudong New Area,
+Shanghai, 201203, China
+Homepage: http://www.asrmicro.com
+Revision History
+Date
+Version
+Release Notes
+2020.10
+2020.12
+2021.03
+V1.2.0
+2021 .04
+V1.2.1
+2023.02
+V1.3.0
+2023.07
+V1 .3.1
+2023.09
+V1.4.0
+Release.
+Updated Section 1.3 and Section 3.6.1.
+Added Section 3.5 and Section 4.3.
+•
+Added part number clarifications in Section 1.1.
+•
+Refined some descriptions.
+•
+Updated the retention RAM address in Table 2-1 .
+•
+Updated some descriptions in Section 2.4.6.
+•
+Updated Section 2.4.3, Section 2.4.15 and Table 2-2.
+•
+Added and Section 2.4.4.
+•
+Refined some descriptions.
+Updated Section 2.4.10 and Table 2-2.
+Updated Table 1-1 and Chapter 5.
+
+===== page 4 =====
+Table of Contents
+1.
+Overview .............................................................................................................................................. 1
+1.1
+General ............................................................................................................................................. 1
+1.2
+Key Features and Performance ........................................................................................................ 3
+1.3
+System Power Modes ....................................................................................................................... 6
+1.4
+Applications ..................................................................................................................... ....... .......... 7
+2.
+MCU System ....................................................................................................................................... 8
+2.1
+System Clocks ................................................................................................................................. 8
+2.2
+MCU Functions ........................................................................................... .... .... . .. . . ................ 8
+2.2.1
+Introduction ......................................................................................... . ............................ 8
+2.2.2
+Features .................................................................................... ..................................... 8
+2.3
+Memory ........................................................................................................ ................................. 9
+2.3.1
+ROM .................................................................................... .. ........................................... 9
+2.3.2
+SRAM ....................................................................... _ .. ................................................... 9
+2.3.3
+FLASH ........................................................... . ..... ........ ................................................. 9
+2.3.4
+OTP ..................................................................................................................................... 9
+2.3.5
+Memory Mapping .....................................
+. ...... ............................................. ............... 1 0
+2.4
+Peripherals .......................................................... ......................................................................... 10
+2.4.1
+OMA ...................................................... . ........................................................................ 12
+2.4.2
+GPIO ................. ................. . ........... ............................................................................. 12
+2.4.3
+UART ................................ . ........... . ................................................................................ 13
+2.4.4
+LP UART .................................. .. , ....................................................................................... 13
+2.4.5
+IR ..................................................................................................................... ............... 13
+2.4.6
+SPI ...... ....... ....... ... . . ......................................................................................................... 13
+2.4.7
+I2C .................... -..... ....................................................................................... ............... 14
+2.4.8
+I2S/A
+..................................................................................................... 14
+2.4.9
+USB.
+. ......................... ............................................................... ............... 14
+2.4.10 PWM ............................................................................................................................... 15
+2.4. 11 Timer/Wat hdog ................................................................................................................. 15
+2.4.12 Keypad ............................................................................................................................... 15
+2.4.13 Quadrature Decoder .......................................................................................................... 16
+2.4.14 Temperature Sensor and VBAT Detector .......................................................................... 16
+2.4.15 PIN MUX ............................................................................................................................ 17
+3.
+Sub-Blocks ........................................................................................................................................ 19
+3.1
+BLE Link Layer ............................................................................................................................... 19
+3.2
+BLE PHY ......................................................................................................................................... 19
+3.3
+IEEE 802.15.4/Zigbee MAC ........................................................................................................... 20
+3.4
+IEEE 802.15.4/Zigbee PHY ............................................................................................................ 20
+3.5
+2.4G Proprietary ............................................................................................................................. 20
+
+===== page 5 =====
+3.6
+RF and Analog ................................................................................................................................ 21
+3.6.1
+RF Transceiver .................................................................................................................. 22
+3.6.2
+PMU ................................................................................................................................... 27
+3.6.3
+AUDIO-IN Path .................................................. ....... ......................................................... 28
+3.6.4
+Miscellaneous Analog ........................................................................................................ 29
+4.
+Software Package Specification ...................................................................................................... 30
+4.1
+BLE Mode .......................................................................................................... .............. ............... 30
+4.2
+IEEE 802.15.4/Zigbee Mode .......................................................................................................... 31
+4.3
+2.4G Proprietary Mode ................................................................................................................... 32
+5.
+Electrical Characteristics ................................................................................................................. 33
+5.1
+5.2
+5.3
+Absolute Maximum Rating ........................................................................... ........ .
+... ............. 33
+Recommended Operating Conditions .............. ....................................... . .. . ... .. . ................. 33
+Power Consumption in Sleep Mode ........................................................ .. .. . ............................. 33
+6.
+Package Specifications .......................................................................... ........................................ 34
+6.1
+QFN32 . . . . .. . . .. . .. . . .. . . .. . .. .. . .. .. . . . . . . .. . . .. .. . . .. . . . . . . . . .. .. . . . . . . . .. . . .. .. .. . . . .. . ... .. . .. . ........................................ 34
+6.1.1
+QFN32 Pin Map ..................................................... ........................................................ 34
+6.1.2
+QFN32 Pin Description ........................ ....... , . ... . ..... .. ............................................... 35
+6.1.3
+QFN32 Mechanical Parameters ................... .. ...... ........................................................ 36
+6.2
+QFN48 ..................................................................... ·-···· ............................................................ 37
+6.2.1
+QFN48 Pin Map ................................... . .. ........................................................................ 37
+6.2.2
+QFN48 Pin Description .................. ......... ........................................................................ 38
+6.2.3
+QFN48 Mechanical Pa ram
+...................................................................... 39
+
+===== page 6 =====
+List of Tables
+Table 1-1 ASR560X Part Number Information ..................................................................................................... 1
+Table 2-1 Memory Mapping Table ..................................................................................................................... 10
+Table 2-2 Peripherals Summary ......................................................................................................................... 11
+Table 2-3 Digital Pin Mux Table -I ...................................................................................................................... 17
+Table 2-4 Digital Pin Mux Table -11 ..................................................................................................................... 18
+Table 3-1 BLE Transmitter Specification ............................. .............................................................................. 22
+Table 3-2 BLE Receiver Specification - I ...................................... ............................................ .. .................... 23
+Table 3-3 BLE Receiver Specifications -II ......................................................................................................... 24
+Table 3-4 IEEE 802.15.4 (250 Kbps) RX Performance (±500 KHz deviation) ............... .... . ... .... ................. 24
+Table 3-5 IEEE 802.15.4 (250 Kbps) TX performance (±500 KHz deviation) ..................... ........ . .................. 24
+Table 3-6 Performance Summary of BUCK ..................................................................... ...... ................ ........ 27
+Table 3-7 AUDIO-IN Path Performance Summary ............................................... ~ ......... ................................ 28
+Table 3-8 AUX_ADC Performance Summary...................... ........................... _ . ... . ..................................... 29
+Table 5-1 Absolute Maximum Rating ...................................................... ...... .. ...... ........................................ 33
+Table 5-2 Recommended Operating Conditions ................................... .....
+.. ............................................... 33
+Table 5-3 Power Consumption of ASR560X QFN48 SoC under OS -D 4 - ................................................... 33
+Table 6-1 Pin Description of QFN32 ............................................. ·- · ............................................................... 35
+Table 6-2 Pin Description of QFN48 .................................... ... . .... . ................................................................. 38
+
+===== page 7 =====
+List of Figures
+Figure 1-1 ASR560X Part Number ...................................................................................................................... 1
+Figure 1-2 ASR560X Blocks Diagram ................................................................................................................. 2
+Figure 1-3 ASR560X Power Mode FSM .............................................................................................................. 6
+Figure 3-1 ASR560X RF and Analog Sub-Blocks ............................................................................................. 21
+Figure 3-2 Sensitivity vs channel ID at BLE 1 Mbps ......................................................................................... 25
+Figure 3-3 Sensitivity vs channel ID at BLE 125 Kbps ........ .............................................................................. 25
+Figure 3-4 Sensitivity vs channel frequency at Zig bee 250 Kbps ........................................ .... . ..................... 26
+Figure 3-5 Adjacent channel selectivity at different data rate at BLE mode ...................................................... 26
+Figure 3-6 AUDIO-IN Path Diagram ............................................................................... .... . ....... ................. 28
+Figure 4-1 ASR560X BLE Software Architecture ................ ................................................ ........ . .................. 30
+Figure 4-2 ASR560X Zigbee Software Architecture ...................................................................................... 31
+Figure 4-3 ASR560X 2.4G Proprietary Software Architecture .............................. ~ ......................................... 32
+Figure 6-1 Pin Mapping of QFN32..................................................... ............. _ .... ...................................... 34
+Figure 6-2 Package Outline Drawing of QFN32 .................. ................... . .... .. . ..... ........................................ 36
+Figure 6-3 Pin Mapping of QFN48......................................................... .....
+. ................................................ 37
+Figure 6-4 Package Outline Drawing of QFN48 ........................... !
+... . ·- ................................................... 39
+
+===== page 8 =====
+.I\Sfii 1. Overview
+ASR560X Series Datasheet
+1.
+Overview
+1.1
+General
+ASR560X is a family of highly integrated single-chip Bluetooth Low Energy 5.1 full feature
+(compatible with 5.2)/IEEE 802.15.4/2.4G Proprietary multi-protocol SoC solutions. Some
+models also support BLE Mesh Network (Relay/Proxy/Low power/Friend features). Detailed
+part number illustration is provided in Figure 1-1 and Table 1-1.
+Model
+ASR560X
+ASR5601S
+ASR5601A
+ASR5601A
+ASR5601B
+ASR5601 S - _ F
+Sub
+Code
+-F
+-NH
+-CL
+-CL
+None: Full-featured
+C: BLE+2.4G+AUDIO-IN+IR
+N: BLE+Mesh+2.4G
+Package:
+S: QFN48 6*6mm
+A: QFN32 4*4mm
+B: QFN48 6*6mm
+Fgur-e -1 ASR560X Part Number
+~
+ASR560X Part Number Information
+Protocol
+AOAJ
+AUDIN/
+Supply
+Package Flash
+MCU
+BLE Mesh IEEE15.4 2.4G AOD
+IR
+(V)
+✓ '
+I) ✓
+✓
+✓
+✓
+✓
+1.7-5.0
+QFN48
+1MB
+✓
+✓
+✓
+2.8-5.0
+QFN32
+64MHz
+✓
+✓
+✓
+✓
+1.7-3.6
+QFN32
+512KB
+✓
+✓
+✓
+✓
+1.7-3.6
+QFN48
+RAM
+96KB
+
+===== page 9 =====
+.I\S fii 1. Overview
+ASR560X Series Datasheet
+Please note that all the following contents are mainly based on the full-featured model
+(ASR5601 S-F). Some comments are added for differences of other models.
+As illustrated below, ASR560X integrates all related blocks including the RF, the analog and
+the digital part. Additionally, the complete software package is available, which makes the
+development of user's own application software much easier.
+PMU
+{DCDC/LDOs)
+ULP
+32KCLK
+XO
+16M/
+32M
+Analog AUDIO-IN
+(
+Analog PLL
+Multi-protocol
+RF Transceiver
+Multi-
+protocol
+Modem
+Dig IOs and MUX Logic
+Peripherals
+BLE DBB
+SRAM
+ROM
+OTP
+IEEE 802.15.4/2.4G DBB
+I
+Security
+'
+ASR560X has a multi-protocol RF tFansce v.er a d modem featuring high performance and low
+power consumption. It delivers a maximurrn of +10 dBm output RF power and achieves -98
+dBm/-103.5 dBm sensitivity at B~~ -
+[!," ps/15.4 250 Kbps mode without off-chip power
+amplifier (PA) and TX/RX s it
+(TRSW). Moreover, an AUDIO-IN path supports both audio-in
+signals from analog and igiia m· ,ophones (AMIC/DMIC). The analog audio-in path includes
+audio PGA, sig
+-ADC) as well as MIC bias voltage generation circuits
+(MICVB). This audiod patfl enables flexible configuration to acquire audio signals for speech
+recognition in ili'Gice contr ling application. The battery voltage range is extended from 1.7-3.6V,
+2.8-5.0 V or 1.7'-5. V with a flexible power management unit (PMU). The DCDC in PMU boosts
+the power efficiency of the entire chip. The ARM® Cortex™ MO+ MCU processes the multi-
+protocol's software stacks and user's application software. The Cortex™-M0+ core ensures
+high efficiency and low power. With multi-protocol RF and modem, this Soc supports data rates
+as 125K/500K/1 M/2M bps in BLE mode and 250 Kbps in IEEE 802.15.4/Zigbee mode.
+ASR560X is designed to meet various kinds of loT applications such as the data transmission,
+the remote controller, the wearable devices, the speech recognition and AOA/AOD. OTP is
+integrated in order to enhance the system's security. A true random number generator (TRNG)
+is also integrated. Encryption of flash image file with key generated by TRNG protects user's
+software from illegal copying and ensures the safety of this SoC for loT applications.
+
+===== page 10 =====
+.I\S fii 1. Overview
+ASR560X Series Datasheet
+1.2
+Key Features and Performance
+•
+Certification
+SIG BQB BLE 5.2 certified, Qualified Design ID (QDID): 174605
+•
+RF Transceiver and Modem
+•
+•
+•
+•
+•
+♦
+♦
+•
+♦
+•
+•
+•
+•
+•
+Integrated PA and TRSW, single-ended RF Pin, simple interface to antenna
+Two-point modulation transmitter with robust calibration algorithm
+Low power receiver with configurable analog BB for 1 MHz and 2 MHz bandwidth
+Multi-protocol RF transceiver and modem supporting Bluetooth Lo
+Energy 5.1 full
+feature (compatible with 5.2), IEEE 802.15.4/Zigbee and 2.4G Proprntary
+Support External PA
+-95 dBm sensitivity at BLE 2 Mbps GFSK
+-98 dBm sensitivity at BLE 1 Mbps GFSK
+-103 dBm sensitivity at BLE 500 Kbps GFSK
+-107 dBm sensitivity at BLE 125 Kbps GFS
+-103.5 dBm sensitivity at Zigbee OQ
+-30 dBm to +10 dBm output RF po
+~fl,
+~
+Current under RX mode, 5.2 mA
+-98 dBm sensitivity 1 Mbps BLE
+•
+Various system sleep
+than 200 nA at $3.3 V VBAT in deep-sleep
+current will add about 10 uA due to HVLDO turning
+on.
+~
+Note:
+For detailed information regarding external PA and sleep modes setting, please refer to
+ASR560X Application Notes.
+•
+Bluetooth
+, w Energy 5.1 full feature (compatible with 5.2)
+•
+Bluetooth version 5.1 full feature (compatible with 5.2) specifications compliant,
+targeting BLE features only
+•
+BLE SIG Mesh: Relay/Proxy/Low power/Friend features
+•
+Support all packets types
+•
+Support all AOA/AOD features
+•
+Support WLAN coexistence mechanism (PTA)
+•
+Support all device roles (broadcaster, central, observer, peripheral)
+•
+Support encryption/decryption (AES-CCM) and bit stream processing (CRC,
+
+===== page 11 =====
+.I\S fii 1. Overview
+ASR560X Series Datasheet
+whitening)
+•
+Support frequency hopping calculation (scheme #1 and scheme #2)
+•
+Support FDMA/TDMA/events formatting and synchronization
+•
+Support AHB slave interface for registers access and exchange memory of the CPU
+access via BLE core
+•
+Support 16 MHz and 8 MHz operating clock
+•
+Support power down BLE core during protocol's idle periods and runs at either 32.0
+KHz or 32.768 KHz clock
+•
+IEEE 802.15.4/Zigbee
+•
+IEEE 802.15.4 MAC specification 2011 version compliant
+•
+Support for both full function device (FFD) and reduced function dev, e (RFD)
+•
+Support for both device and coordinator roles
+•
+Support non-beacon enabled mode, beacon enabled mo
+•
+Support all packets type (beacon/data/acknowledgme
+•
+Support FRAME encryption/decryption and authenti
+•
+Support promiscuous mode
+•
+2.4G Proprietary
+•
+•
+Support a star network topology •
+ode and up to 8 Slave nodes
+•
+Bidirectional data transfer with a
+CRC verification
+•
+•
+Master node RX on idl
+node open RX when needed, which can save
+power
+•
+Slave node
+•
+•
+•
+Su
+•
+Support single supply input pin, range from 1.7-3.6 V, 2.8-5.0 V or 1.7-5.0 V
+•
+Integrated DCDC (BUCK) and LDOs, no need for off-chip PMU
+•
+Integrated single-pin ultra-low power (ULP) 32.768 KHz XTAL circuit (XO32K)
+•
+ULP 32 KHz RC-Oscillator (RCO32K) with high accuracy and stability with auto-
+calibration
+•
+Finite status machine (FSM) under always-on power domain controls chip power
+status
+
+===== page 12 =====
+.I\S fii 1. Overview
+ASR560X Series Datasheet
+•
+MCU System
+•
+ARM Cortex™-M0+ MCU featuring low power and high efficiency
+•
+ARM Cortex™-M0+ with hardware multiplier
+•
+MCU can run at 16/64 MHz clock frequency configured by software
+•
+Boot ROM and 1 K-bit OTP is integrated
+•
+2x2K-Byte dedicated retention RAM in always-on domain
+•
+96 KB system RAM configurable for Instruction or data
+•
+System RAM can be partially configured to retention/shut-down/sleep at low power
+mode
+•
+•
+1 MB or 512 KB on-system flash
+•
+Support execute-in-place (XiP) mode with on-system flash
+~
+•
+Support external SPI NOR Flash
+♦ ~
+•
+Support OTA (conditional)
+~
+V
+Peripherals
+•
+Support 5 V UART (UART0/UART1) and 5 V GPI
+/05)
+•
+Integrate PWM/TIMER/WATCHDOG/RTC
+•
+Integrate UART/SPl/I2C/DMA
+•
+Integrate GPIOs/KEYPAD/QUAD
+~ ODER
+♦
+♦
+•
+interfaces
+•
+Integrate temperature
+AT voltage detector
+•
+_ADC) with a maximum of 8 channels
+•
+Security
+•
+lntegrat
+•
+lnte ra
+-
+ey data storage and verification
+♦
+s
+•
+hardware dynamic encryption/decryption for customer data (AES-CCM)
+
+===== page 13 =====
+.I\S fii 1. Overview
+ASR560X Series Datasheet
+1.3
+System Power Modes
+There are five typical power modes in ASR560X, the ACTIVE, TX, RX, IDLE and deep sleep
+(DS-X). The SoC boots up and enters into the ACTIVE mode when it is powered on. The
+ACTIVE mode is the basic mode of this Soc. All other modes can only start from the ACTIVE
+mode and switch back to the ACTIVE mode. During the communication process, the soft stack
+requires the SoC to enter into the receiver (RX) or transmitter (TX) mode from the ACTIVE
+mode. If there is no TX or RX activity in a relatively short time, the chip will go to the IDLE mode
+to save power, in which the CPU enters into WFI mode and all the peripherals are suspended.
+If the spare time is long enough, the SoC will jump from the ACTIVE to the deep sleep (DS-X)
+mode to extremely save power consumption. It may be waked up by the GPIO events, internal
+time alarms or BLE anchor point requirement and then returns back to the AC · VE mode.
+DS-X
+TX
+IDLE
+Detailed sleep
+•
+D51
+DS1 mode supports GPIO wakeup. This mode cannot maintain BLE connection.
+•
+D52
+DS2 mode supports GPIO, RTC Timer, LPUART and BLE Timer wakeup. This mode
+cannot maintain BLE connection.
+•
+D53
+DS3 mode supports GPIO, RTC Timer, LPUART and BLE Timer wakeup, as well as
+beacon signal. This mode cannot maintain BLE connection.
+
+===== page 14 =====
+.I\S fii 1. Overview
+ASR560X Series Datasheet
+1.4
+•
+D54
+DS4 mode supports GPIO, RTC Timer, LPUART and BLE Timer wakeup. This mode can
+maintain multiple BLE connections.
+~
+Note:
+For detailed information regarding sleep modes setting, please refer to ASR560X Application
+Notes.
+Applications
+•
+•
+•
+•
+•
+•
+•
+•
+•
+Data Transmission
+BLE Voice Remote Controller
+Wearable Electronics
+Smart Plug and Lighting
+Smart Home
+BLE Keyboard and Mouse
+Positioning and Tag
+BLE Mesh Network
+Sensor Network
+
+===== page 15 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+2.
+MCU System
+2.1
+System Clocks
+2.2
+2.2.1
+2.2.2
+ASR560X supports 16M or 32M XTALs to generate the high-performance reference clock for
+RF/Analog PLLs. Two ULP 32.768 KHz clock sources are the one-pin ULP XO and the RC
+oscillator (RCO). They both work under the always-on power domain and the RCO features
+high stability and accuracy after auto-calibration. The low frequency clock for sleep mode can
+come either from RCO32K or XO32K. There are two analog PLLs. One generates the clocks
+for MCU and the peripherals. The other generates the clocks for the audio r
+• cuits such
+as the audio-in sigma-delta ADC and the I2S interface. Both PLLs are ref
+the 16M/
+~MW.
+♦
+MCU Functions
+~
+Introduction
+ASR560X integrates the ARM Cortex™-M0+ proce so
+performance ARM Cortex-MO+ processor provides--a I w-cost platform which meets the needs
+of minimal memory implementation and lo
+nsumption. It delivers outstanding
+computational performance and exceptio
+sponse to interrupts.
+Features
+•
+•
+•
+•
+peripherals reduces area and development costs
+n set combines high code density with 32-bit performance
+•
+Integrate sleep modes for low power consumption
+•
+Fast code execution enables running the processor with a slower clock or increasing
+sleep mode time
+•
+Optimized code fetching for reducing flash and ROM power consumption
+•
+Hardware multiplier
+•
+Deterministic, high-performance interrupt handling for time-critical applications
+•
+Deterministic instruction cycle timing
+•
+Support for system level debug authentication
+
+===== page 16 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+•
+Serial wire debug (SWD) reduces the number of pins required for debugging
+•
+Support optional instruction trace
+2.3
+Memory
+2.3.1
+ROM
+The internal ROM stores the boot image and is mainly used to program the flash image, perform
+secure boot or non-secure boot function according to the configuration of external mode
+selection pins.
+2.3.2
+SRAM
+2.3.3
+ASR560X family provides up to 96 KB on-chip SRAM. The internal
+the code and data memory but also BLE packet buffers and cache e
+by software remap register. Internal RAM is capable of selective
+mode.
+FLASH
+ASR560X provides on-system QSPI flash dev·oos
+ith system-in-package (SiP) form. The
+hardware encryption and flash remapping fu
+tion protect developers' programs and data
+stored in on-system flash. The QSPI flash con oll tr supports execute-in-place (XiP) mode with
+on-system flash.
+2.3.4
+OTP
+Hardware configuration
+parameters such a fie flash-encryption parameters and customer-specific parameters such
+as the data encryp 10n e scan be stored in OTP. These parameters are available immediately
+after the devi ..
+
+===== page 17 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+2.3.5
+Memory Mapping
+The following table describes various MCU peripherals and how they are mapped to the
+processor memory.
+Table 2-1 Memory Mapping Table
+Modules
+Start Address
+End Address
+FLASH
+Ox1000_0000
+Ox1 OFF _FFFF
+SYS RAM
+Ox2000_0000
+Ox2001_7FFF
+RET RAMO
+Ox2003_0000
+Ox2003_07FF
+RET RAM1
+Ox2003_0800
+Ox2003_0FFF
+UARTO
+Ox4000 0000
+Ox4000 OFFF\..
+UART1
+Ox4000_1000
+Ox4000_1Fjj~
+'
+UART2
+Ox4000_2000
+Ox400fJ_fP::Fft p
+SPIO
+Ox4000 3000
+Ox4~:..3~tF
+I2CO
+Ox4000_4000
+q#0'Q,93"6F F
+OMA CFG
+Ox4000 5000
+~ _gx).ooo'""sFFF
+Watchdog
+Ox4000 8000
+"" ( / d'~OOO 8FFF
+I2S
+Ox4000 9000
+~
+~of4000 9FFF
+TIMER
+Ox4001 1000 1..., ... \...____.r Ox4001 1FFF
+AUDIO ADC
+Ox4001 3000 ''
+Ox4001 3FFF
+QUADRATURE DECODER
+Ox4001 400~
+~
+Ox4001 4FFF
+KEYPAD
+Ox4001_§.92._c1',.....,.
+Ox4001 - 5FFF
+SPl1
+OX1_001 _f"{OOO]
+~
+Ox4001 _7FFF
+UART3
+f 4001 _~00!5'
+Ox4001 _8FFF
+I2C1
+o~,901Jgooo
+Ox4001 9FFF
+AUX_ADC
+Ox4001 _ AOOO
+Ox4001_AFFF
+UART4
+:;,_Gl(4001 B000
+Ox4001 BFFF
+PWMO
+Ox4002_0000
+Ox4002_0FFF
+GPIO
+Ox4003 0000
+Ox4003 OFFF
+OTP
+Ox4003_2000
+Ox4003_2FFF
+BLE/15.4/2.4G
+Ox4010_0000
+Ox4010 FFFF
+SYS_CON
+Ox4011 _0000
+Ox4011 _FFFF
+2.4
+Peripherals
+The following table gives a summary of all peripherals of ASR560X.
+The details of each peripheral will be presented next.
+
+===== page 18 =====
+.I\S fii 2. MCU System
+ASR560X Series Datasheet
+Table 2-2 Peripherals Summary
+Peripherals
+Num.
+Feature
+AHB peripheral
+GPIO
+30 (48-Pin)/
+Input/output configurable
+14 (32 Pin)
+Rising/falling edge detection and interruption
+APB peripheral
+UART
+4
+UART0 supports FIFO/DMNCTS/RTS
+UART1 and 2 support FIFO/OMA
+UART3 supports base TX/RX
+LPUART
+1
+LPUART supports 8 Bytes buffer
+APB peripheral
+....
+IR
+1
+2 channels
+"
+Support NEC and user-defi!Jfd pffei0>JS... ~
+APB peripheral
+.. ,.~ I.I
+SPI
+2
+SPI + Tl SSP + NS micr.p...._:tr~
+~
+Master or slave modd" '
+-
+APB peripheral ~'
+I2C
+2
+Master or ~~~~
+100 ~~ ps i
+d ~
+Kbps mode
+AP~ p,efi"pJ:iJr-at,
+I2S
+1
+fl(lasl e~
+slave mode
+~ ull ~
+ex, support TX and RX
+r ~ .Jiill:I!> data resolutions of 32 bits
+()~
+_JHB peripheral
+USB
+1
+USB 2.0 full speed device mode
+3 endpoints (except EP0)
+L.
+APB peripheral
+Support 135.6 MHz charging mode
+~ 2
+16-bit timer
+PWM
+Capture mode (only 6 channels can be configured as
+input capture function)
+Support 0%-100% PWM
+4 hardware timers in PWM
+TIMERS
+8
+4 independent general hardware timers (supporting
+free-run mode and user-defined mode)
+KEYPAD
+1
+APB peripheral
+Maximum 112 keys
+QUADRATURE DECODER
+1
+APB peripheral
+3 independent timers for (X Y Z)
+APB peripheral
+AUX_ADC
+1
+Software triggering mode or hardware auto mode
+Maximum 8 channels
+
+===== page 19 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+2.4.1
+DMA
+2.4.2
+Direct memory access (OMA) provides high-speed data transfer between peripherals and
+memory or within the memory without the CPU participation. There are two OMA channels and
+sixteen handshakes with peripherals. The main features of OMA are as following.
+•
+•
+Compatible with AHB-Lite for the OMA transfers
+Compatible with APB for programming the registers
+• A single AHB-Lite master for transferring data using a 32-bit address and a 32-bit data
+bus
+• Configurable number of OMA channels, dedicated handshake/ programmable priority
+•
+•
+•
+•
+•
+•
+•
+•
+•
+•
+GPIO
+level for each channel
+Using fixed priority determined by the OMA channel number for eac
+level arbitrate
+♦
+Support three types of transferring: memory-to-memory,
+peripheral-to-memory
+Support multiple OMA cycle types and multiple OMA tr
+Each OMA channel can access a primary, and alfe nat
+All the channel control data is stored in
+Performs all OMA transfers using the s·
+rst type
+Destination data width is equal to t
+th
+Transferring address incre
+A single output to indicate when a ERROR condition occurs on the AHB bus
+and
+General purpose i
+u
+t ut GPIO) pins are fully configurable. They are multiplexed with
+other interfaces, sue as 2C, SPI, UART and etc. The GPIO pins support the below features.
+•
+t'P02/P03/P04/P05 follows VBATA, the other GPIOs follow VBATB (please
+ben VBATA<3.3 V, all 10 voltage follows VBATA)
+•
+Fast GPIOs support single-CPU-cycle 1/0 operation
+•
+Common GPIOs support two-CPU-cycle 1/0 operation
+•
+Input mode: the input value can be read through register
+•
+Output mode: the output value can be set through register
+•
+Interrupt: the input can be set to edge-trigger or level-trigger to generate CPU interrupt
+•
+Support 4 types of trigger: Low level, high level, falling edge and rising edge
+•
+Internal pull-up or pull-down configurable
+
+===== page 20 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+2.4.3
+UART
+ASR560X provides four universal asynchronous receiver transmitter (UART) controllers. One
+of them supports auto-flow control. Features of UART are as following.
+•
+TX/RX FIFO depth is 16 Bytes
+•
+Programmable frame properties: number of data bits/frame (5-8), optional parity bit
+(odd/even), number of stop bits (1 , 1.5, 2)
+•
+Include additional FIFO status registers and shadow registers, which can be accessed
+by software
+•
+Loopback mode for test
+•
+Support OMA mode
+2AA
+LPUART
+♦
+ASR560X provides one low power UART (LPUART). LPUART
+to 9600 bps rate
+and can be used to wake up the chip from sleep mode.
+2.4.5
+IR
+Two sets of completed analog IR transceivers
+easily with the IR diode without external extra
+transmission and receiving. By programming
+eform, the chip supports NEC and
+user-defined protocols.
+2.4.6
+SPI
+c;
+full-duplex Motorola serial peripheral interface (SPI) protocol.
+There are two SPI, bott:1 ca
+,e configured as master or slave. They support two options of
+clock polarity (CPOIJ~d Gieck phase (CPHA). The main features of SPI are as following .
+•
+•
+•
+Programmable choice of interface operation, SPI, micro-wire or Tl synchronous serial
+•
+Programmable data frame sized from 4 to 16 bits
+•
+Independent masking of transmit FIFO, receive FIFO and receive overrun interrupt
+•
+Support direct memory access (OMA)
+•
+Master SPI support up to 32 MHz, and the slave SPI supports up to 5 MHz
+
+===== page 21 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+2.4.7
+12C
+The inter-integrated circuits (I2C) bus has two wires, the serial data (SDA) and the serial clock
+(SCL). It carries information between the devices connected to the bus. Each device is
+recognized by a unique address and can operate as either a transmitter or receiver, depending
+on the function of the device. The main features of I2C are as following.
+•
+I2C unit is compliant to TWSI bus specification version 2.1 with the exception of support
+for the hardware general call, 10-bit slave address
+•
+Multi-master and arbitration support
+•
+Support standard-mode operation up to 100 Kbps
+•
+Support fast-mode operation up to 400 Kbps
+2.4.8
+12$/AUDIO-IN Path
+2.4.9
+The audio signal sources can be the analog microphone (AMIC) or t e • igital microphone
+(DMIC). The AMIC's signal is digitized with integrated analog al!laio-I
+Section 3.6.3AUDIO-/N Path. The DMIC's signal is sent to 12
+• e ace .
+•
+•
+•
+Full duplex communication due to the inde
+•
+•
+•
+USB
+Master or slave mode of operation
+Audio data resolutions of 32 bits
+Support OMA mode
+CJ
+The USB full spe
+ler support USB 2.0 specification. The controller supports
+the full-speed ( 12
+w-speed ( 1. 5 Mbps) transfer.
+•
+Suppo
+•
+•
+Recover clock and data from USB
+•
+Support 3 endpoints except EP0:
+•
+3 unidirectional EPs
+•
+1 unidirectional EP + 1 bidirectional EP
+•
+4 TX buffers each sized 32 Bytes, 1 RX buffer sized 32 Bytes
+
+===== page 22 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+2.4.10 PWM
+Pulse width modulation (PWM) generates pulse sequences with programmable frequency and
+duty cycle for LCD, vibrators and other devices. The PWM provides totally 12 PWM channels
+and 6 of them can be configured as input capture function. The main features of PWM are as
+following.
+•
+12 PWM generators with 16-bit counter
+•
+Pre-scaling divider by 1 /2/4/8/16/32/64/128
+•
+Up or down mode for PWM output
+•
+Dead-band generator which can be bypassed
+•
+16-bit input capture (edge/time) mode
+•
+16-bit timer mode
+2.4.11 Timer/Watchdog
+Besides 4 timers in PWM, ASR560X has another 4 independent
+rs. Each timer has a
+32-bit counter. The initial value of the counter ranging
+Oto OxFFFFFFFF is set
+by software before the counter starts. The counter h
+•
+Free-running mode (default):
+The timer loads the initial value and starts to
+. nt clown. When the value reaches OxO,
+it sends an interrupt to the CPU. Afterwards the counter restarts to count down from
+reprogrammed.
+•
+User-defined mode:
+s to count down. When the value reaches OxO, it
+sends an interruR o tb CPU. Unlike the free-running mode, it then stops.
+Additionally, ther
+the watch d
+When a syst
+2.4.12 Keypad
+d timer for the watch dog. When the system functions correctly,
+ene ates an interrupt to inform the CPU to reset the watch dog timer.
+The Keypad controller supports:
+•
+Upto112keys
+•
+Manual or automatic scan
+•
+Simultaneous operation of matrix keypad
+•
+Continuous keypad polling
+•
+Key de-bounce logic for the matrix keypad
+
+===== page 23 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+2.4.13 Quadrature Decoder
+The quadrature decoder provides buffered decoding of quadrature-encoded sensor signals:
+•
+Decoding of digital waveform from off-chip quadrature encoder
+•
+Optional input de-bounce filters
+•
+3 independent hardware timers for (X, Y, Z)
+2.4.14 Temperature Sensor and VBAT Detector
+A temperature sensor has been integrated for monitoring the temperature inside the chip and
+its output voltage is digitized by the 12-bit AUX_ADC. The resolution of the temperature sensor
+is around ±5 °C. A battery voltage detector is available for detecting the voltage o battery supply.
+Its output is also digitized by the 12-bit AUX_ADC. Details of the AUX_AD€
+Part AUX_ADC of Section 3.6.4 Miscellaneous Analog.
+~
+0~
+~~
+Vo~
+0~
+~
+
+===== page 24 =====
+.I\Sfii 2. MCU System
+ASR560X Series Datasheet
+2.4.15 PIN MUX
+All digital IOs can be reconfigured via software. The Pin Mux table is shown as follows. Note
+that 48-pin ASR560X has all 30 IOs, while 32-pin ASR560X has P00-P10 and P27-P29 IOs,
+of which P27, P28 and P29 can be used as GPIO or analog IOs for audio input.
+Table 2-3 Digital Pin Mux Table -I
+Num.
+Pin Name
+Func=O
+Func=1
+Func=2
+Func=3
+Func=4
+1
+P00
+NA
+UART2_TXD
+I2C0 SCL
+I2C1 SCL
+PWM10
+2
+P01
+NA
+UART2_RXD
+I2C0_SDA
+I2C1_SDA
+PWM11
+3
+P02
+GPIO2
+UART0_TXD
+SPIO_CS
+I2C0_SCL
+PWM0
+4
+P03
+GPIO3
+UART0_RXD
+SPI0_CLK
+I2C0_SGI~
+PWM1
+5
+P04
+GPIO4
+UART1 TXD
+SPI0 TXD
+I2C1 S..Ch.'
+PWM2
+6
+P05
+GPIO5
+UART1_RXD
+SPI0_RXD
+12§: 1 _§'qfo~
+""'PWM3
+7
+P06
+swc
+UART3 TXD
+SPl1 cs
+tt2S~G~K,
+PWM4
+8
+P07
+SWD
+UART3 RXD
+SPl1 CLK
+..-:i~~8~K
+PWM5
+9
+P08
+GPIO8
+UART2 TXD
+SPl1 TXD ~ 125 DI
+PWM6
+10
+P09
+GPIO9
+UART2 RXD
+SP~ _R~ :7411 \ I S MCLK
+PWM7
+11
+P10
+GPIO10
+UART3 TXD
+IR1~"=1 I2S DO
+PWM8
+12
+P11
+GPlO11
+UART1 TXD ~◄ ~~ Pf o_ c ~
+I2C1 SCL
+PWM9
+13
+P12
+GPIO12
+UART1 RXD,i •sRt_O""CLK
+I2C1 SDA
+PWM10
+14
+P13
+GPIO13
+UART3 TXJ>~ s&io""' rxD
+I2C0 SCL
+PWM11
+15
+P14
+GPIO14
+UART3~RXR
+'SPI0 RXD
+I2C0 SDA
+PWM0
+16
+P15
+GPIO15
+UARtp_T5<D "9 SPl1_CS
+I2S_SCLK
+PWM1
+17
+P16
+GPIO16
+J~UART ~iD
+SPl1 CLK
+I2S_LRCK
+PWM2
+18
+P17
+GPIO17
+~ ... UAR] 9-crs
+SPl1 TXD
+I2S DI
+PWM3
+19
+P18
+GPIQrn ..
+D ARTO_RTS
+SPl1 RXD
+I2S MCLK
+PWM4
+20
+P19
+Q~K>1JL
+UART2_TXD
+SPI0_CS
+I2C0_SCL
+PWM5
+21
+P20
+..,,.-:._GPIQ~0 -
+UART2 RXD
+SPI0 CLK
+I2C0 SDA
+PWM6
+22
+P21
+C ..,@F-!r~zi>
+UART0 TXD
+SPI0 TXD
+I2C1 SCL
+PWM7
+23
+P22 ....... - ~
+22
+UART0 RXD
+SPIO RXD
+I2C1 SDA
+PWM8
+24
+P23,~
+~ PIO23
+UART1_TXD
+SPl1_CS
+I2C0_SCL
+PWM9
+25
+P24 '
+GPIO24
+UART1 RXD
+SPl1 CLK
+I2C0 SDA
+PWM10
+26
+P25
+y
+GPlO25
+UART3_TXD
+SPl1_TXD
+I2C1_SCL
+PWM11
+27
+P26
+GPIO26
+UART3 RXD
+SPl1 RXD
+I2C1 SDA
+PWM0
+28
+P27
+GPIO27
+UART1_TXD
+UART2_RXD
+I2C0_SCL
+PWM1
+29
+P28
+GPIO28
+UART1_RXD
+KEY_ROW4
+I2C0_SDA
+PWM2
+30
+P29
+GPIO29
+UART2_TXD
+KEY_ROW5
+I2S_DO
+PWM3
+
+===== page 25 =====
+.I\S fii 2. MCU System
+ASR560X Series Datasheet
+Table 2-4 Digital Pin Mux Table -II
+Num.
+Pin Name
+Func=5
+Func=6
+Func=7
+Func=S
+1
+P00
+GPIO0
+KEY_COL4
+AXIS 2 P
+NA
+2
+P01
+GPIO1
+KEY_COL5
+AXIS 2 N
+NA
+3
+P02
+AXIS_0_P
+KEY_ROW0
+I2S DI
+swc
+4
+P03
+AXIS_0_N
+KEY_ROW1
+I2S_MCLK
+SWD
+5
+P04
+UART0 CTS
+KEY ROW2
+LPUART TXD8
+I2C0 SCL
+6
+P05
+UART0_RTS
+KEY_ROW3
+LPUART _ TXD8
+I2C0_SDA
+7
+P06
+AXIS 1 P
+KEY COLO
+LPUART _ TXD8
+GPIO6
+8
+PO?
+AXIS_1_N
+KEY_COL 1
+LPUART _ TXD8
+GPIO7
+9
+P08
+AXIS 2 P
+KEY COL2
+USB DP
+◄t:~A
+10
+P09
+AXIS 2 N
+KEY COL3
+USB DM
+-
+1\1~
+~
+-~ .. ~-
+11
+P10
+UART0_CTS
+KEY ROW4
+NA
+• ... ·~
+~ft)
+12
+P11
+AXIS 1 N
+KEY_ROW4
+swc
+~~
+; NA
+13
+P12
+I2S_DO
+KEY_ROW5
+SWD ,,...,.
+NA
+14
+P13
+AXIS 0 P
+KEY COL4
+LPLJ.8.R~ TXB
+NA
+15
+P14
+AXIS 0 N
+KEY COL5
+.... LfiU.b"RfL T XD
+NA
+16
+P15
+AXIS 1 P
+KEY ROW6 , ~ a~ 1>
+NA
+17
+P16
+IR0
+KEY RQ'fi?._ \
+U~ B DM
+NA
+18
+P17
+AXIS 2 P
+KEY COt""Q:i.. ~ swc
+NA
+19
+P18
+AXIS 2 N
+KEY _QO~7-..'
+SWD
+NA
+20
+P19
+AXIS 0 P
+K~Y.J ~~W8'
+LPUART TXD
+NA
+21
+P20
+AXIS_0_N -
+@.!=Y_:~ow 9
+LPUART_TXD
+NA
+22
+P21
+AXIS_1_P £
+~F¥!ROW10
+NA
+NA
+23
+P22
+AXIS 1 N \..._
+.l5EY ROW11
+NA
+NA
+24
+P23
+AX~~~p -- KEY_ROW12
+LPUART_TXD
+NA
+25
+P24
+~ s :IJtL--.
+KEY ROW13
+LPUART TXD
+NA
+26
+P25
+"'
+Ft,IA"-.
+KEY ROW2
+NA
+NA
+27
+P26
+{( i..-l~
+E>O'"
+KEY ROW3
+NA
+NA
+28
+p27....__
+l'-'S&_ COLO
+KEY ROW0
+NA
+NA
+29
+P28,~
+;::KEY COL 1
+KEY ROW1
+NA
+NA
+30
+P29 '
+KEY_COL2
+KEY_ROW4
+NA
+NA
+a If you need to use LPUART RXD, select one pad from P02-P26 through the configuration register, and
+configure the pad as GPIO (no input and no output mode). For more details, please refer to 2.4.3 UART
+section.
+
+===== page 26 =====
+.I\S fii 3. Sub-Blocks
+ASR560X Series Datasheet
+3.
+Sub-Blocks
+ASR560X supports Bluetooth Low Energy 5.1 full feature (compatible with 5.2)/IEEE 802.15.4/
+2.4G Proprietary multi-protocol operation. It integrates a complete multi-mode RF transceiver
+and modem as well as PHY and MAC. An audio-in sub-system is also integrated which includes
+audio PGA and sigma-delta ADC for amplifying and digitizing signals from analog microphone
+(AMIC). Besides, digital microphone (DMIC) can be connected by I2S interface.
+3.1
+BLE Link Layer
+•
+Bluetooth version 5.1 full feature (compatible with 5.2) specifications
+BLE features only
+♦
+•
+•
+•
+•
+BLE SIG Mesh: Relay/Proxy/Low p
+Support all packets types
+Support all AOA/AOD features
+Support WLAN coexistence mechanism (PTA)
+•
+Support all device roles (broadcaster, centra , o
+•
+•
+~
+ripheral)
+•
+Support FDMA/TDMA/event
+hronization
+•
+Support AHB slave interfac
+ccess and exchange memory of the CPU
+access via BLE core
+•
+•
+Support power
+o~e~during protocol's idle periods and runs at either 32.0 KHz
+or 32.768 KHz
+3.2
+BLEPHY ~
+•
+-95 dBm sensitivity at BLE 2 Mbps GFSK
+•
+-98 dBm sensitivity at BLE 1 Mbps GFSK
+•
+-103 dBm sensitivity at BLE 500 Kbps GFSK
+•
+-107 dBm sensitivity at BLE 125 Kbps GFSK
+•
+-30 dBm to +10 dBm output RF power with low harmonic emissions
+•
+Slight receiver performance degradation with both large frequency offset and frequency
+drift impairments
+□
+.... L-..,, ........ ,...,,.,....,.......,,....4, ~-. .. 01 C: ,tt')C:I.//C:f'\f'\1//-1 ft.Al'lft.A 1,.,..,...,... ................. ,.,: ... L-. 1 .................................. 1 ............................... ....
+
+===== page 27 =====
+•
+n.uuu::;1 ::.u1-11-1u1 l IUI DLC 1£.JN.JUUN I IVl/£1VI u1-1::. ldlt:::::. WIii i ldl8t::: vi y::.1d1 1-'I-'''' t:::11u1::;
+.I\S fii 3. Sub-Blocks
+ASR560X Series Datasheet
+3.3
+IEEE 802.15.4/Zigbee MAC
+•
+IEEE 802.15.4 MAC specification 2011 version compliant
+•
+Support for both full function device (FFD) and reduced function device (RFD)
+•
+Support for both device and coordinator roles
+•
+Support non-beacon enabled mode, beacon enabled mode is not supported
+•
+Support all packets type (beacon/data/acknowledgment/MAC command)
+•
+Support FRAME encryption/decryption and authentication/authentication checking
+•
+Support promiscuous mode
+3.4
+IEEE 802.15.4/Zigbee PHY
+•
+-103.5 dBm sensitivity at IEEE 802.15.4/Zigbee 250 Kbps 0
+3.5
+2.4G Proprietary
+~
+•
+Support a star network topology with 1
+and up to 8 Slave nodes
+•
+nt, retransmission and hardware CRC
+verification
+•
+Support CSMA-CA algorithm
+•
+Master node RX on idle, while
+v node open RX when needed, which can save power
+•
+•
+•
+•
+Support
+
+===== page 28 =====
+.I\S fii 3. Sub-Blocks
+ASR560X Series Datasheet
+3.6
+RF and Analog
+Besides the digital sub-systems, ASR560X integrates all necessary RF and analog sub-blocks
+to support the functions of the SoC as illustrated in Figure 3-1 . The main RF and analog sub-
+blocks include a RF receiver, a RF transmitter, a RF PLL with two-point modulation, a power
+management unit (PMU) with always-on FSM, clock generation circuits (XO16M/32M,
+XO/RCO32K and APLL), a true random numbers generation (TRNG), a temperature sensor,
+an auxiliary ADC (AUX_ADC) and an analog micro-phone interface (AUDIO-IN).
+'
+I
+I
+I
+I
+I
+I
+I
+RFTRX
+I -------------------------
+I
+: DATA_I
+BLE 5.1 full feature
+(compatible with 5.2)/
+IEEE 802.15.4/2.4G
+Modem
+BB
+CMO+
+Peripherals
+GPIOs
+
+===== page 29 =====
+.I\S fii 3. Sub-Blocks
+ASR560X Series Datasheet
+J_6.1
+RF Transceiver
+The RF transceiver includes the receiver and transmitter as well as the RFPLL which generates
+the LO signals in receiver mode and modulate the BB signal in transmitter mode. With
+reconfiguration, the transceiver works well in BLE/IEEE 802.15.4/2.4G Proprietary mode. The
+TR switch (TRSW) and the differential to single-ended RF signal conversion transformer are
+integrated. The off-chip matching network can be very simple. The receiver features high
+sensitivity (-98dBm at 1 Mbps BLE mode) and low power (5.2 mAat 3V VBATA). The transmitter
+can deliver a maximum of +10 dBm and a minimum of -30 dBm RF output power at antenna
+port. The RFPLL includes a two-point modulation path for digital BB signals. With dedicated
+calibration for RFPLL, the transmitter modulation accuracy and stability are ensured. Following
+tables show the transmitter and receiver specifications respectively.
+Table 3-1 BLE Transmitter Specification
+(~
+♦
+.,,.
+Specification
+Min.
+Typ.
+Max.
+Unit
+Maximum RF transmit power
+8.5
++10A
+~
+v
+dBm
+Peak power - Average power
+0.34
+0.3!t,. 'o.38
+dB
+-3 MHz
+-4~
+j Ji.~ -40
+dBm
+-2 MHz
+-4~
+~o1'
+-36
+dBm
+In-band emissions
+1~3\.- ~ 40
++2 MHz
+-36
+dBm
++3 MHz
+..._4~~
+-42
+-40
+dBm
+F1(avg)
+2lt5
+~
+255
+260
+KHz
+Modulation characteristics
+F2(max) 99.9%
+100
+100
+100
+%
+F2(avg)/F1 (avg)
+0.85
+0.88
+0.9
+Center freq. deviation, Fn (n = 0,1,2, ... k)
+-1
+10
+15
+KHz
+Freq. drift, IFo-Fnl (n = 2,3, 4, ... k)
+6
+KHz
+Initial freq. drift, IF1-Foi
+3
+KHz
+Max. freq. drift rate, IFn-Fn-5I (n = 6,7, 8, ... k)
+5
+KHz/50µs
+Harmonics (cable mode)
+-40
+-45
+-50
+dBm
+
+===== page 30 =====
+.I\S fii 3. Sub-Blocks
+ASR560X Series Datasheet
+Table 3-2 BLE Receiver Specification - I
+Parameter
+Description
+Min.
+Typ.
+Max.
+Unit
+Frequency Range
+2402
+2480
+MHz
+Sensitivity with dirty off
+-98.5
+-98
+-96.5
+dBm
+Sensitivity with dirty on
+-96.5
+-96
+-95
+dBm
+Maximum input level
+0
+10
+11
+dBm
+C/I Co-channel
+4
+4.5
+5
+dB
+BLE 1 Mbps Rate
+C/I1 MHz
+-13
+-11
+-10
+dB
+C/I2 MHz
+-36
+-35
+-33
+dB
+C/I >2 MHz
+-52
+-46
+-37
+dB
+C/I Image
+-37
+-36
+-36':.,.
+dB
+C/I Image 1 MHz
+-52
+-49 ~, dB
+Sensitivity with dirty off
+-95.5
+-95 •
+.... e9J '5p
+dBm
+Sensitivity with dirty on
+-93.5
+-93 ~
+, e..2~
+dBm
+Maximum input level
+0
+1~
+"1111 r::'!'1
+dBm
+C/I Co-channel
+4
+~~ ~ 5
+dB
+BLE 2 Mbps Rate
+C/I2 MHz
+-1~ r Ji~ ,.
+-11
+dB
+C/I4 MHz
+-4~
+~ ~?
+-36
+dB
+C/I >4 MHz
+#~ 1 ... \... J' -52
+dB
+C/I Image
+'JI 111.-3~
+-
+-35
+-30
+dB
+C/I Image 2 MHz ~"' '
+-52
+dB
+Sensitivity with dirj,'. ciif\.,_ ~ 103.5
+-103
+-102
+dBm
+Sensitivity '!tit!;! dW o~
+....
+-102.5
+-102
+-101
+dBm
+Maximur(rrnput l~y'eF""
+0
+10
+11
+dBm
+C/I Co-ctf~Rpel ~
+3
+3.5
+5
+dB
+BLE 500 Kbps Rate
+~
+-:~Hz
+-17
+-16
+-14
+dB
+C/l 'J. MMz_
+-37
+-36
+-34
+dB
+c l&_2MHz
+-52
+-51
+-41
+dB
+►e1~
+I~age
+-41
+-40
+-36
+dB
+'-C/1 Image 1 MHz
+-52
+-51
+-50
+dB
+Sensitivity with dirty off
+-107.5
+-107
+-105
+dBm
+Sensitivity with dirty on
+-106
+-105.5
+-103.5
+dBm
+Maximum input level
+0
+10
+11
+dBm
+C/I Co-channel
+0.5
+1
+5
+dB
+BLE 125 Kbps Rate
+C/I1 MHz
+-20
+-19
+-18
+dB
+C/I2 MHz
+-39
+-38
+-36
+dB
+C/I >2 MHz
+-52
+-51
+-41
+dB
+C/I Image
+-41
+-40
+-36
+dB
+C/I Image 1 MHz
+-52
+-51
+-50
+dB
+
+===== page 31 =====
+.I\Sfii 3. Sub-Blocks
+ASR560X Series Datasheet
+Table 3-3 BLE Receiver Specifications -II
+Parameter
+Description
+Min.
+Typ.
+Max.
+Unit
+30 MHz-2000 MHz
+-5
+dBm
+2000 MHz-2400 MHz
+-5
+dBm
+Out-of-band Blocking
+2484 MHz-2999 MHz
+-5
+dBm
+3000 MHz-6000 MHz*
+-5
+dBm
+Inter-modulation
+Psignal = -64 dBm
+~,~ -22.5
+dBm
+(Pblocker)
+Fblocker= +3 MHz/+6 MH~ • .J P.~
+Input match S11
+~~,-
+,-.n·
+-15
+-12
+-8
+dB
+PER report integrity
+.. c..~-
+100
+100
+100
+%
+r
+~ Notes:
+1.
+Dirty on or dirty off controls whether adding fixed frequency offset, frequency drift over
+time, modulation index inaccuracy and a low frequency modulation which is sinusoidal
+with deviation of 50 KHz and a modulation frequency of 1250 Hz to the ideal Bluetooth
+le signal.
+2.
+Out-of-band blocking power from 3000 MHz-6000 MHz is -5 dBm with an exception of
+-31 dBm at 2xfchannel.
+Specification
+Unit
+Comments
+Sensitivity
+dBm
+Frequency Offset Tolerance
+KHz
+Adjacent channel rejection (-1/+1 ch)
+26/55
+dB
+Pwanted= -82 dBm
+Adjacent channel rejection (-2/+2 ch)
+49/64
+dB
+Pwanted= -82 dBm
+Error vector magnitude (EVM)
+2%
+E--8-02.15.4 (250 Kbps) TX performance {±500 KHz deviation)
+Specification
+Min.
+Max.
+Unit
+Comments
+Output power, maximum setting
++10
+dBm
+-27
+dBm
+Programmable outputs~
++4 dBm~ +10 dBm
+2 dB/step
+0
++10
+dB
+-30 dBm ~ +3 dBm
+6 dB/step
+
+===== page 32 =====
+.I\Sfii 3. Sub-Blocks
+-94.5
+-95
+-95.5
+E
+co
+-96
+~
+> -96.5
+...,
+">
+:~
+VI
+-97
+C
+QJ
+Vl -97.5
+-98
+-98.5
+-103
+-103.5
+-104
+E -104.5
+~ -105
+-~ -105.5
+>
+:p
+·.,;
+-106
+C
+~ -106.5
+-107
+-107.5
+-108
+0
+ASR560X Series Datasheet
+Sensitivity vs Channel ID
+--6--- Psen@lMbps dirty off
+-+- Psen@lMbps dirty on
+2
+4
+6
+8
+10
+12
+14
+16
+18
+20
+22
+Channel ID
+Figure 3-2 Sensitivity vs channel ID at BLE 1
+Sensitivity vs Cha
+♦
+-+- Psen@125Kbps dirty on
+18
+20
+22
+24
+26
+28
+30
+32
+34
+36
+38 40
+Channel ID
+
+===== page 33 =====
+.I\S fii 3. Sub-Blocks
+-103
+~ -103.5
+~
+~
+·5
+:;::;
+-~
+-104
+QJ
+V")
+-104.5
+■
+■
+2400
+2410
+ASR560X Series Datasheet
+Sensitivity vs channel frequency
+-
+Zigbee Sensitivity
+.;,.,,~ I\ I
+■ ■ ~0~ ■
+■
+■
+■
+vo
+~~
+2420
+2430
+2440
+2450
+2460
+2470
+2480
+2490
+Channel Frequency {MHz)
+Figure 3-4 Sensitivity vs channel frequency at Zigbe
+-6
+-50
+--6
+-2
+0
+Offset frequency (MHz)
+2
+~
+ACS_lMbps
+~
+ACS_2Mbps
+~ACS_500Kbps
+ACS_125Kbps
+4
+Figure ~ 5 Adjacent channel selectivity at different data rate at BLE mode
+6
+
+===== page 34 =====
+.I\S fii 3. Sub-Blocks
+ASR560X Series Datasheet
+J_6.2
+PMU
+According to the part number details illustrated in Table 1-1 , ASR560X can operate under 1. 7-
+3.6 V, 2.8-5.0 V or 1.7-5.0 V supply voltage with single supply PIN. The PMU consists of a high
+voltage LOO, a OCOC (BUCK), a system LOO, a ULP self-regulated LOO, a ULP 32K (RCO
+and XO), a charger pump (CP), various LOOs for signal path and a system level always-on
+finite status machine (FSM). The high voltage LOO's outputs connected an off-chip capacitor
+at pin VBATB. The BUCK, which is paralleled with the system LOO. For low cost configuration
+the BUCK can be disabled while the system LOO powers the chip to save one bulky inductor.
+The CP is used to power the flash memory. Various LOOs with high PSRR and low noise are
+used to shield the noise-sensitive RF and analog circuits from the ripples of BUCK. The ULP
+self-regulated LOO powers the always-on FSM and the ULP 32K clock SY.Stems when the
+system enters into the deep sleep mode. The 32K clock system includes an
+CO featuring
+high stability and accuracy after calibration and a nA-level XO 32K circuit.
+is-on FSM
+controls the entire PMU to enter into various power modes accordi f t0
+ction from
+MCU to realize system level low power operation.
+The BUCK consists of an LOO, a BGR, a soft-start blo
+rent switching (ZCS)
+controller, a maximum current detection (MCO) controller, a ogI co troller, a driver, a power
+stage with 2 large MOSFETs and some off-chip passive clevices. he key specification of the
+BUCK is shown in the table below.
+Specification
+Min.
+Typ.
+Max.
+Unit
+Comments
+VOUT
+1.2
+V
+Load Current
+0
+mA
+Efficiency
+%
+
+===== page 35 =====
+.I\S fii 3. Sub-Blocks
+ASR560X Series Datasheet
+J_6.3
+AUDIO-IN Path
+The audio-in path is a high-performance analog to digital converter for differential microphone
+or line-in input. It consists of a programmable front-end filter (FE filter), a programmable gain
+amplifier (PGA), a continuous-time sigma-delta AID converter and a microphone bias. The
+audio-in source can be either a microphone signal with a full-scale level as low as 16 mVppd
+or a line-in signal with up to 2 Vppd signal swing with different external ac-coupled capacitors
+(4.7 nF for MIC-in mode or470 nF for LINE-in mode). The microphone bias provides the voltage
+varying from 1.5 V to 2.2 V (VBAT must 0.3 V higher than the output voltage) for the external
+microphone with at least 80 dB PSRR over the audio band (20 Hz to 22 KHz).
+M CVB
+AMIC
+LINE-IN
+Specification
+Filter Corner Frequency
+PGA Gain Range
+Dynamic Range
+SNR
+THD+N
+Input Referred Noise
+Data Rate
+MIC BIAS
+FE Filter
+Max.
+1000
+42
+21
+97
+98
+91 .2
+93.3
+94.6
+-96.7
+-96.3
+-95.3
+14
+16
+20
+8/12/16/24/32/48/64/96/
+192/11 .025/22.05/44.1/88.2
+r-----------------
+To dig
+To dig
+Unit
+Comments
+Hz
+100Hz/step
+dB
+MIC-in, 3dB/step
+dB
+LINE-in, 3dB/step
+dB
+0dB PGA gain, 22KHz BW
+dB
+0dB PGA gain, 0dBFS input
+dBA
+0dB PGA gain, 0dBFS input,
+A-weight
+µV
+MIC-in, 42dB PGA gain,
+22KHz BW
+KHz
+
+===== page 36 =====
+.I\S fii 3. Sub-Blocks
+ASR560X Series Datasheet
+J_6.4
+Miscellaneous Analog
+•
+AUX_ADC:
+There are many other analog blocks to extend the usage of this SoC. The auxiliary ADC
+(AUX_ADC) is used to digitize low frequency analog signals with relative high-resolution
+requirements such as the output of on-chip temperature sensor and other external sensor,
+the battery voltage et al. It is based on SAR architecture with low cost, low power, flexibility
+and ease of use. It has a 12-bit simultaneous output with a maximum speed of 1 MS/s.
+The single-ended input voltage is buffered by a programmable gain amplifier (PGA) which
+has a gain range of 1 x/1 .5x/2x/2.5x/3x/4x/8x. The input range is from O V to 1.2 V. The
+AUX_ADC supports continuous and single-trigged conversion modes. Specially, it has a
+round-robin mode to automatically digitize all the channels specified
+ith the orders
+configured in software. There are maximum 8 channels for external voltag digitization.
+The specification of the AUX_ADC is as following table.
+♦ (lj,
+Table 3-8 AUX_ADC Performance Summary ~
+Specification
+Min.
+Typ.
+Max.
+Unit
+Comments
+Resolution
+12
+ENOB
+10
+10.5
+Input Signal Bandwidth
+DC
+Conversion Speed
+0.125
+Configurable
+No. of Channels
+Operation Mode
+•
+TRNG:
+True random number generator: FFRNG) generating random numbers is essential in
+security application
+e RNG uses random variation of the thermal noise voltage to
+obtain the 32-bit ran a
+ata stream. It provides high-quality randomness because the
+chaotic system e eAds nly on its initial condition rather than the statistics of the entropy
+suiting in a long-term unpredictability and insensitivity to the presence of
+
+===== page 37 =====
+./\S f;! 4. Software Package Specification
+ASR560X Series Datasheet
+4.
+Software Package Specification
+ASR560X software supports three modes, which are BLE 5.1 full feature (compatible with 5.2)
+mode, IEEE 802.15.4/Zigbee mode and 2.4G Proprietary mode. The software package
+provides bootloader, OTA and all peripheral drivers. It has a middleware APls Layer, so that it
+can match different OSs, such as AliOS, FreeRTOS or Non OS.
+4.1
+BLE Mode
+The BLE software provides BLE controller stack, host stack as well as mes
+operation, the software supports the PB-ADV, PB-GATT, provisioner and s
+h models.
+On the other hand, customers can also use the 3rd party's mesh
+their own
+models based on BLE mesh interface. In BLE mode, the software
+profiles as well as the stack. Also, customers can use the 3rd part
+own profiles.
+User Application
+ATCMD
+BLE Profiles
+Mesh Models
+OTA {conditional)
+BLE Host Stack
+BLE Mesh
+Bootloader
+HCI ITF
+Peripherial Drivers
+BLE Controller Stack
+ASR Middleware APls
+~--Fr_e_eR_T_o_s __ ~I ~I ___
+A_li_o_s __ ~I
+l~---No_n_o_s __ ~
+i:==J
+i:==J
+i:==J
+ASR SW
+ASR or 3rd party SW
+Customer SW
+Figure 4-1 ASR560X BLE Software Architecture
+
+===== page 38 =====
+./\S f;! 4. Software Package Specification
+ASR560X Series Datasheet
+4.2
+IEEE 802.15.4/Zigbee Mode
+In Zigbee mode, the software package provides 802.15.4 stack and Zigbee stack. The OS/
+Middleware APls/peripheral drivers and OTA functions are the same as those in BLE mode.
+The Zigbee software package supports all roles, including coordinator, router and end-device.
+User Appli cation
+Zigbee NWK/APL Stack
+802.15.4 MAC Stack
+ASR MiddleWare A Pis
+.__ ___
+F_r_ee_R_r_o_s __ _.l
+.__I __ --,.,A-liO, s:-r-"'"7"'---'
+[===::J
+[===::J
+[===::J
+OTA (conditional)
+Peripherial Drivers
+NonOS
+ASRSW
+ASR or 3rd party SW
+Customer SW
+igbee Software Architecture
+
+===== page 39 =====
+./\S f;! 4. Software Package Specification
+ASR560X Series Datasheet
+4.3
+2.4G Proprietary Mode
+The 2.4G proprietary software providers MACL stack and MAC stack. The MACL layer supports
+basic function, such as TX, RX, ACC, channel select etc. Customers can use this infrastructure
+to build protocol with more freedom. The MAC layer which based on MACL layer provider more
+function, such as pair, channel hopping, command control retransmission and security, more
+convenient to application.
+Proprietary MAC
+Proprietary MACL
+User Application
+OTA (conditional)
+Bootloader
+Peripherial Drivers
+ASR Middleware APls
+FreeRTOS
+c===:::J
+c===:::J
+c===:::J
+ASR SW
+ASR or 3rd party SW
+Customer SW
+ASR560X 2.4G Proprietary Software Architecture
+
+===== page 40 =====
+./\S f;! 5. Electrical Characteristics
+ASR560X Series Datasheet
+5.
+Electrical Characteristics
+5.1
+Absolute Maximum Rating
+5.2
+Table 5-1 Absolute Maximum Rating
+Specification
+Symbol
+Min.
+Typ.
+Max.
+Unit
+-0.3
+3.6
+Power Supply
+VBATA
+-0.3
+5.5
+V
+-0.3
+~2
+Storage Temperature Range
+TSTR
+-40
+.Jt5~
+oc
+Operating Temperature Range
+TOPR
+-20
+♦ j Ii~
+..... oc
+Recommended Operating Conditions
+Table 5-2 Recommended OperatI
+Specification
+Max.
+Unit
+3.3
+3.6
+Power Supply
+4.2
+5.5
+V
+5
+5.5
+Operating Temperature Range
+85
+oc
+~
+Notes:
+1. ASR provides 560X SoC customization services which can support -20 to 105 °C or -20
+to 125 °C operating temperature.
+2. Power supply ranges are distinguished by different product name suffixes, please refer
+to Table 1-1 for more details.
+5.3
+Power Cons mption in Sleep Mode
+Table 5-3 Power Consumption of ASR560X QFN48 SoC under DS1-DS4
+Sleep Mode
+Current Device
+Note
+OS1 -A
+0.2 uA
+Tektronix DMM7510
+TA=25°C, VsAT=3.3 V, Package: QFN48
+DS1-B
+1.5 uA
+Tektronix DMM7510
+DS2
+1.7 uA
+Tektronix DMM7510
+Due to the very low current in Sleep mode, the
+DS3
+4.9 uA
+Tektronix DMM7510
+data measured by different devices will vary
+DS4
+15.7 uA
+Tektronix DMM7510
+slightly.
+
+===== page 41 =====
+~
+ii! 6. Package Specifications
+ASR560X Series Datasheet
+6.
+Package Specifications
+With different numbers of digital 10 available, there are two different packages for ASR560X,
+the 4 mm x 4 mm QFN package 32 pin and 6 mm x 6 mm QFN package 48 pin.
+Both package forms are with 0.4 mm pitch.
+6.1
+QFN32
+6.1.1
+QFN32 Pin Map
+♦
+P07
+VCCBB
+VMICTM/P27
+P09
+P08
+VDDFLSH
+CX1
+CX2
+VSSD
+<:t
+LI)
+0
+~
+t9
+co
+s
+t-
+0
+0
+<1'.
+N
+i5
+t-
+::::>
+a..
+a..
+<1'.
+Vl
+0
+m
+0
+co
+u
+0
+0
+0
+0
+>
+0
+u
+>
+X
+>
+>
+0 >
+Figure 6-1 Pin Mapping of QFN32
+
+===== page 42 =====
+~
+ii! 6. Package Specifications
+ASR560X Series Datasheet
+6.1.2
+QFN32 Pin Description
+Table 6-1 Pin Description of QFN32
+Num.
+Name
+Property
+Pin Description
+1
+RF0
+RF
+RF input and output
+2
+VCCRFB
+Power
+RF power supply input B
+3
+VMICTM/P27
+Analog
+Microphone bias voltage
+4
+MICIP/P28
+Analog
+Microphone/line input positive terminal
+5
+MICIN/P29
+Analog
+Microphone/line input negative terminal
+6
+P02
+Digital 1/0
+See PIN MUX table
+7
+P03
+Digital 1/0
+See PIN MUX table
+...
+8
+VBATA
+Power
+System power supply, decap 1 µF to gnd '
+9
+P04
+Digital 1/0
+See PIN MUX table
+• r7'.~
+10
+P05
+Digital 1/0
+See PIN MUX table
+.. ,., I.I
+11
+VDDAO
+Power
+Internal LDO output, decap 1 b!J~fS"---.g~
+12
+XO32KI
+Analog
+XO 32K input
+J' '
+-
+13
+VDDDIG
+Power
+Internal LDO output, dei aP:il> µP...,_to gnd
+14
+VBATB
+Power
+Decap 1 µF to gn~
+VJ
+15
+VDCSW
+Analog
+DCDC switcha,4. 7 ijTH l'ngl!.ctor to DCDCOUT
+16
+VDCOUT
+Power
+DCDC outp~ ,~~·n{iuctor to VDCSW, 2.2 µF to gnd
+17
+VSSD
+Gnd
+Digital gro~un~
+-,.
+18
+CX2
+Analog
+CP flying'bp'f~minal 2, 100 nF to CX1
+19
+CX1
+Analog
+CP J:j,yii-)g_fa"J} terminal 1, 100 nF to CX2
+20
+VDDFLSH
+Power
+~ P•q_utpu]J(Flash power supply), decap 1 µF to gnd
+Digital 1/<Ql
+-
+21
+P08
+See,plN MUX table
+22
+P09
+Digital 1/0~ ~s ~,.,.PIN MUX table
+23
+VCCBB
+ffew~
+Analog BB power input
+24
+PO?
+~
+i_gftaH!O
+See PIN MUX table
+25
+P06
+r
+DJgit.aJ 1/0
+See PIN MUX table
+26
+P00
+~
+Digital 1/0
+See PIN MUX table
+27
+P01 .........
+~Eligital 1/0
+See PIN MUX table
+28
+RSTt-!V ...._. Analog
+Chip reset, reset low, active floating
+29
+P10
+~
+Digital 1/0
+See PIN MUX table
+30
+XO16MI
+Analog
+XO 16M/32M input
+31
+XO16MO
+Analog
+XO 16M/32M output
+32
+VCCRFA
+Power
+RF power supply input A
+
+===== page 43 =====
+.I\S ;i! 6. Package Specifications
+ASR560X Series Datasheet
+6.1.3
+QFN32 Mechanical Parameters
+I
+"
+PIN llD
+I
+I
+---+---
+'
+I
+TOP VI EW
+.32Xb
+~
+BOTTOM VIEW
+EkPOSfD DIE
+ATT"CH PAO
+i 1~
+FNCPLAN£
+TOlAL lHICk,.,ESS
+STAAD OfF
+MOLD 'll-llOO.ESS
+L/F lKCKt.ESS
+LfAO WDlH
+800'1' SIZE
+I
+LEAD PITCH
+EP •ZE
+I
+LEAD LENGTH
+LtAO TIP TO EXPOSED PAO EDGE
+PACKAGE EDGE TOLERAflCE
+MOLD FLA TNESS
+COPI.ANAAITY
+l[AO OFFSET
+EXPOSW PAO Of'f"SET
+SIDE VI EW
+~\~
+·oe~
+""'1,.\V.
+NOTES
+SYllDOL
+A2
+AJ
+02
+"
+bbb
+NOM
+Yil
+0.8
+I
+oes
+I
+o.9
+o
+I
+002
+I
+oos
+I
+o.65
+I
+0.20J REF
+0.15
+I
+02
+I
+0.25
+, asc
+• BSC
+o., BSC
+2.7
+I ,. I ,.,
+2.7
+,. ..
+0.2
+I "
+I
+o.•
+O.JREF
+0 1
+01
+0.08
+0.07
+0 1
+0~, •
+1 REFER TO .£DEC M0-220;
+r _
+1
+2.COf'LANARITY APPLIES TO LEADS. COffNER LEADS ANO DIE ATTACH PAO;
+~
+V
+JBAN TO USE THE L.£\6. t ENVIRONMENT-RELA1£0 S!JBSTANCES,
+lit..~
+4 FINISH.Cu/EP · Sn&-20s
+~':,
+DESIGN
+PRo..ECTION
+nru:.
+PACKAGE OUTLINE DRA'MNG
+(~&~""°
+f--D"'R'-'A-."-S"'O-'N"'D----,f-'R"'-EV'-l i ~~~
+I
+.__ ___
+1_ .. _. _,._._" ~-->--------,>---1 . >---+-------I
+SIZE
+PAGt
+I.NIT
+IMDISION AND TOltRANCE SCAL.£
+PROCESS >-------I
+STAP,.O
+APPROVE
+
+===== page 44 =====
+~
+ii! 6. Package Specifications
+ASR560X Series Datasheet
+6.2
+QFN48
+6.2.1
+QFN48 Pin Map
+<(
+0
+u..
+~
+er:
+I.O
+u
+....
+u
+0
+>
+X
+RFO
+0
+VCCRFB
+VMICTM/P27
+MICIP/P28
+MICIN/P29
+P23
+P24
+PlS
+P16
+P02
+P03
+VBATA
+~
+~
+I.O
+z
+....
+0
+I-
+0
+a,
+....
+0
+0
+....
+<ll
+N
+....
+0
+0
+X
+c..
+er:
+c..
+c..
+c..
+c..
+QFN48-6x6-
+~
+~
+<(
+0
+0 >
+X
+>
+Figure 6-3 Pin Mapping of QFN48
+N
+....
+I.O
+....
+....
+0
+c..
+c..
+c..
+
+===== page 45 =====
+~
+ii! 6. Package Specifications
+ASR560X Series Datasheet
+6.2.2
+QFN48 Pin Description
+Table 6-2 Pin Description of QFN48
+Num.
+Name
+Property
+Pin Description
+1
+RF0
+RF
+RF input and output
+2
+VCCRFB
+Power
+RF power supply input B
+3
+VMICTM/P27
+Analog
+Microphone bias voltage
+4
+MICIP/P28
+Analog
+Microphone/line input positive terminal
+5
+MICIN/P29
+Analog
+Microphone/line input negative terminal
+6
+P23
+Digital 1/0
+See PIN MUX table
+7
+P24
+Digital 1/0
+See PIN MUX table
+....
+8
+P15
+Digital 1/0
+See PIN MUX table
+'
+9
+P16
+Digital 1/0
+See PIN MUX table
+.... rA..'
+10
+P02
+Digital 1/0
+See PIN MUX table
+a..~"-.~U
+11
+P03
+Digital 1/0
+See PIN MUX table
+-'~
+12
+VBATA
+Power
+System power supply, deca~'tf µ~
+g nd
+13
+P04
+Digital 1/0
+See PIN MUX table ~,
+14
+P05
+Digital 1/0
+See PIN MUX tabl' VJ
+15
+P17
+Digital 1/0
+See PIN MU~ abl,f" '
+-
+16
+P18
+Digital 1/0
+.I!': ~~I~
+See PIN Ml!!,
+17
+P25
+Digital 1/0
+See PIN 10U ~' trlbJe--.
+18
+P26
+Digital 1/0
+See Pl~ijux~bT"e
+19
+VDDAO
+Power
+lnte~
+I
+, DQ)output, 1 µF-decap to gnd
+20
+XO32KI
+Analog
+~
+::XO 2K . put
+21
+VDDDIG
+Power (l
+lntew al LDO output, 1 µF-decap to gnd
+22
+VBATB
+Power
+'lii;l =:_9_.e,~ p 1 µF to gnd
+23
+VDCSW
+,b'riat~
+DCDC switch, 4.7 µH inductor to DCDCOUT
+24
+VDCOUT
+("~of e~
+DCDC output, 4.7 µH inductor to VDCSW, 2.2 µF to gnd
+25
+VSSD r .,q~
+Digital ground
+26
+CX2
+~
+Afi'lalog
+CP flying cap terminal 2, 100 nF to CX1
+li
+27
+CX1 ~
+~•Analog
+CP flying cap terminal 1, 100 nF to CX2
+28
+VDDFlt51!\'
+~
+Power
+CP output (Flash power supply), 1 µF-decap to gnd
+29
+P08
+~
+Digital 1/0
+See PIN MUX table
+30
+P09
+Digital 1/0
+See PIN MUX table
+31
+P13
+Digital 1/0
+See PIN MUX table
+32
+P14
+Digital 1/0
+See PIN MUX table
+33
+VCCBB
+Power
+Analog BB power input
+34
+P21
+Digital 1/0
+See PIN MUX table
+35
+P22
+Digital 1/0
+See PIN MUX table
+36
+PO?
+Digital 1/0
+See PIN MUX table
+37
+P06
+Digital 1/0
+See PIN MUX table
+38
+P11
+Diqital 1/0
+See PIN MUX table
+
+===== page 46 =====
+~
+ii! 6. Package Specifications
+ASR560X Series Datasheet
+6.2.3
+Num.
+Name
+Property
+Pin Description
+39
+P12
+Digital 1/0
+See PIN MUX table
+40
+P00
+Digital 1/0
+See PIN MUX table
+41
+P01
+Digital 1/0
+See PIN MUX table
+42
+P19
+Digital 1/0
+See PIN MUX table
+43
+P20
+Digital 1/0
+See PIN MUX table
+44
+RSTN
+Analog
+Chip reset, reset low, active floating
+45
+P10
+Digital 1/0
+See PIN MUX table
+46
+XO16MI
+Analog
+XO 16M/32M input
+47
+XO16MO
+Analog
+XO 16M/32M output
+48
+VCCRFA
+Power
+RF power supply input A
+QFN48 Mechanical Parameters
+..
+\,i,:,1 00,1c1
+TOP VIEW
+BOTTOM VIEW
+SIDE VIEW
+TOTAL THICKNESS
+STANO (FF
+MOLD THICICNCSS
+L/r THICl(NESS
+LDO \'IOTH
+SOOY SIZE
+I
+LE.A,O PITCH
+EP SIZ(
+I
+1.£,1,0 LEHC:ll-1
+l.£AO TIP TO EJCPOS£0 PAO EOG£
+PACKACE EOC[ TCUJU.NCE
+MOLD FlATNESS
+C~LANARITY
+I..EA,0 OHSET
+EXPOSED PI.D OFFSET
+~~
+·oe~
+""'"
+NOTES
+SYMBOL
+Al
+A2
+"
+D2
+[2
+bbb
+fff
+lallN
+I •••
+D.8
+I
+0.85
+0
+I
+0.02
+'
+0.65
+0.20J REF'
+0. 15
+'
+02
+6 BSC
+6 BSC
+04 BSC
+I .,
+.,
+42
+D3
+I ..
+0.5 Rff
+o,
+0.1
+D08
+0-07
+Dl
+0~, •
+1.REf"!R TO .£DEC tr.10-220;
+r
+~
+2,COP\.A'I-.RtT'r APPUES TO LEADS. CORt.[R LEADS ANO DIE ATTACH PAO;
+~ v
+.3.BAN TO USE lHE LE\'tl.. 1 [N\IIRO,,,t~ ENT-RELATED SUBSTANCES;
+4.A"'1Sl·tC../EP •Sn8--20s
+~
+41:Ul{IC)~
+PRO-;ECTION
+OEStGN
+Cl-ECK
+I
+MAX
+I
+0.9
+I
+005
+'
+'
+025
+I
+4J .,
+I
+05
+QR,4,'111"10 NO.
+REV.
+DESK;~
+I--~~~--+--! f"Ac,PPR:,eO;,c<l:'-j----------1
+PO-BQFX660C0~
+PROCESS f------j
+gz,
+PAC:[
+UNIT
+IMO.SJON ANO TOLERANCES SCALt
+STANO
+l---+--------1
+APPROVE
+Figure 6-4 Package Outline Drawing of QFN48
+
+===== page 47 =====
+Version 1.4.0
+Copyright © ASR Microelectronics Co., Ltd.
+39 / 39
+

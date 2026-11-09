@@ -12,15 +12,17 @@ A curated subset of ASR's public ASR560X material, chosen for the dump work:
 | `reference/asr560x/docs-en/ASR560X/` | Hardware reference, schematics, reference design, hardware design, developer guide, memory layout, DOGO manual, FAQ |
 | `reference/asr560x/docs-en/_sources/ASR560X/` | The clean reStructuredText twins |
 | `reference/asr560x/docs-zh/ASR560X/软件快速入门/` | AT command list and SDK firmware types |
-| `reference/asr560x/drive/` | QFN48 EVB schematic, Peripheral User's Guide, Development Board guide, Security notes, DOGO tool, extracted entry module and chip database, image layout notes |
+| `reference/asr560x/drive/` | QFN48 EVB schematic, Peripheral User's Guide, Development Board guide, Security notes, datasheet OCR and 150 dpi print, DOGO tool, extracted entry module and chip database, image layout notes |
 | `reference/asr560x/drive/DOGO_extract/` | Python 3.5 modules, readable chip table, annotated dump-path disassembly |
+| `reference/asr560x/meta/ASR560X_datasheet_provenance.md` | Datasheet source, original size, OCR method and limitations |
 | `reference/asr560x/notes/ASR582X_FAQ_coredump/` | The ASR582X FAQ page that names `coredump flash all` |
-| `reference/asr560x/SOURCES.md` | Source URL or Drive ID for each file |
+| `reference/asr560x/SOURCES.md` | Source URL, Drive ID or Baidu share for each file |
 | `reference/asr560x/MANIFEST.sha256` | Hashes of the published files |
 
-Not included: the full site mirror, other ASR product families, the ASR SDK, and
-the datasheet (credit or form gated). The one ASR582X page above is kept because
-it documents the read command. ASR's 560X demo flash image is not redistributed
+The original 2 MB vector datasheet is not included. The archive has a page-marked
+OCR text and a 150 dpi print. Not included: the full site mirror, other ASR
+product families, and the ASR SDK. The one ASR582X page above is kept because it
+documents the read command. ASR's 560X demo flash image is not redistributed
 because it contains the ASR BLE ROM; its partition layout is in
 `reference/asr560x/drive/ASR560X_test_image_layout.md`. PDF author and creator
 metadata was stripped before publication.

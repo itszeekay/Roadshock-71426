@@ -177,6 +177,8 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 - **Hardware PWM** on channel 6 at 200–2000 Hz, 10–100 % duty
   (TIM1, verified on a scope).
 - **Build custom base firmware** with SDCC 4.5.
+- **ASR datasheet reference**: V1.4.0 OCR text plus a compressed print, with the
+  QFN48 pin map, UART mux, keypad and peripheral map reviewed.
 - **Restore the STM8 stock firmware** from verified images at any time.
 
 ---
@@ -271,9 +273,10 @@ liability for damage or injury.
 Original code and documentation in this repository are released under the MIT
 license (see [`LICENSE`](LICENSE)). Stock firmware dumps are provided for
 interoperability and research on hardware owned by the author; vendor firmware
-remains the property of its respective owners. No vendor source code, ASR BLE
-stack or ROM, or third-party datasheet is redistributed here. See
-[`NOTICE.md`](NOTICE.md).
+remains the property of its respective owners. No vendor source code or ASR BLE
+stack/ROM is redistributed here. The ASR reference archive includes ASR-published
+documentation, the DOGO tool, and a derived OCR/print of the ASR560X datasheet;
+those remain ASR's property. See [`NOTICE.md`](NOTICE.md).
 
 Harbor Freight and the product names are trademarks of their owners. This
 project is not affiliated with or endorsed by Harbor Freight, the OEM, or ASR

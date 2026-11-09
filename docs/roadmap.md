@@ -49,8 +49,13 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
    - Add a factual status frame (actual duty, ACC gating, faults).
 
 2. **Prove full panel control**
-   - Identify the ASR display UART pins by continuity from STM8 PD5/PD6.
+   - Identify the ASR display UART pins by continuity from STM8 PD5/PD6. The
+     datasheet pin mux narrows this to UART2 on P00/P01, P08/P09, P19/P20, P27,
+     P29 or UART3 on P06/P07, P10, P13/P14, P25/P26. See
+     [asr5601_datasheet.md](asr5601_datasheet.md).
    - Send 9-byte `0x5A` frames; map nibble → color.
+   - Identify the ASR button scan pins from the firmware dump: KEYPAD at
+     `0x4001_5000`, or GPIO at `0x4003_0000`.
    - Ship a host tool + Feather injector.
 
 3. **Gateway prototype**

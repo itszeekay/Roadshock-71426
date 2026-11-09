@@ -25,6 +25,9 @@
 | `drive/DOGO_extract/dump_path.dis.txt` | Annotated disassembly produced from `pyserial_demo.pyc` |
 | `drive/DOGO_extract/README.md` | Notes on the extraction and protocol |
 | `drive/ASR560X_test_image_layout.md` | Derived from ASR's public 560X demo image, which is not redistributed |
+| `drive/ASR560X_Datasheet_V1.4.0_EN.ocr.txt` | OCR text of ASR's V1.4.0 datasheet |
+| `drive/ASR560X_Datasheet_V1.4.0_EN.print_150dpi.pdf` | 150 dpi print of the datasheet |
+| `meta/ASR560X_datasheet_provenance.md` | Source, original size, OCR method and limitations |
 
 The `coredump flash all` procedure is quoted from ASR's ASR582X FAQ:
 https://asriot-cn.readthedocs.io/zh/latest/ASR582X/常见问题/582X_开发常见问题.html
@@ -44,7 +47,8 @@ partition layout note is included.
 The PDFs were re-saved with author and creator metadata removed. Their visible
 content is unchanged.
 
-The ASR560X datasheet is not listed because it could not be obtained:
-V1.4.0 is form-gated on asrmicro.com and V1.2.1 is credit-gated on CSDN. The
-public CSDN preview pages are blank cover pages. If you obtain the PDF, add it
-here with its source URL and update `MANIFEST.sha256`.
+The ASR560X datasheet source is ASR's Baidu Pan share:
+https://pan.baidu.com/s/19k-GYoEX1FZoNk6SNfoOrw (code `brif`). The original
+2,045,676-byte, 46-page vector PDF is not included. The OCR text and 150 dpi
+print are derived from ASR's published copy. See
+`meta/ASR560X_datasheet_provenance.md`.

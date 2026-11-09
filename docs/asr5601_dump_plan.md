@@ -143,7 +143,8 @@ about the real chip.
 3. Check the idle level on J3 TX, about 3.3 V, before connecting anything.
 4. Start at **115200 8N1**. Assert `SEL0 = 1` (pad P00), pulse `RST` low,
    release. `SEL1` (P01) has no pad and its internal pull-down holds it at 0,
-   which is the required download strap.
+   which is the required download strap. Allow for the datasheet's 8 ms startup
+   delay after VBATB reaches 1.7 V; the probe already waits longer.
 5. Run `python tools/asr5601_dump.py --port COM7 --probe`.
 6. If there is no banner, rerun with `--baud 921600` and repeat.
 7. Stop if the only reply is silence. Do not send anything but the probe
@@ -201,12 +202,15 @@ and have identical SHA-256, covering the full part.
 
 1. Compare the two reads. Any difference means retry; do not rationalize it.
 2. Check the vector table at `0x10000000` and carve the partitions using
-   `docs/asr5601_reference_archive.md` and the Memory Layout page. The offsets
-   have not been confirmed on hardware yet. The layout note from ASR's public
-   test image confirms the same boundaries on a known-good build; see
+   `docs/asr5601_reference_archive.md`, the Memory Layout page, and the
+   peripheral map in `docs/asr5601_datasheet.md`. The offsets have not been
+   confirmed on hardware yet. The layout note from ASR's public test image
+   confirms the same boundaries on a known-good build; see
    `reference/asr560x/drive/ASR560X_test_image_layout.md`.
 3. Run a string scan for BLE names and UUIDs to confirm this is real code and
-   not `0xFF` padding.
+   not `0xFF` padding. Then scan for accesses to UART2 (`0x4000_2000`), UART3
+   (`0x4001_8000`), KEYPAD (`0x4001_5000`) and GPIO (`0x4003_0000`) to identify
+   the display link and button scan pins.
 4. Commit `dumps/asr/flash.bin`, `.hex`, `SHA256SUMS` and a short
    `dumps/asr/README.md`. Exclude the ASR BLE stack ROM range if the dump is
    published.
