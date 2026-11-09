@@ -27,11 +27,11 @@
 /* ---- function index -------------------------------
  *  addr  name
  *  8000  VEC00_RESET
- *  8080  x_8080
+ *  8080  message_post_loop
  *  8112  sub_8112
  *  8118  sub_8118
  *  811E  sub_811e
- *  8146  sub_8146
+ *  8146  config_mode_handler
  *  816D  mode_handler
  *  81CD  sub_81cd
  *  828D  channel_state_write
@@ -39,7 +39,7 @@
  *  82A8  sub_82a8
  *  82AA  sub_82aa
  *  82B3  button_bitmask_handler
- *  833B  x_833b
+ *  833B  mode_apply_block
  *  845D  sub_845d
  *  845E  sub_845e
  *  8480  sub_8480
@@ -70,36 +70,36 @@
  *  86D8  msg_peek
  *  86DF  sub_86df
  *  86E8  sub_86e8
- *  8700  ret_8700
+ *  8700  mode_tick
  *  8811  sub_8811
  *  8814  sub_8814
  *  881C  sub_881c
  *  8828  sub_8828
  *  8841  x_8841
  *  8A15  sub_8a15
- *  8A46  sub_8a46
+ *  8A46  param_block_apply
  *  8B5D  sub_8b5d
  *  8B6E  sub_8b6e
  *  8B71  sub_8b71
  *  8B79  sub_8b79
  *  8B8A  sub_8b8a
  *  8B8E  sub_8b8e
- *  8B96  sub_8b96
- *  8C31  x_8c31
+ *  8B96  button_frame_builder
+ *  8C31  idle_reply_builder
  *  8D00  sub_8d00
  *  8D03  sub_8d03
  *  8D16  sub_8d16
- *  8D31  sub_8d31
+ *  8D31  mul_wide
  *  8DBB  sub_8dbb
  *  8DC0  sub_8dc0
- *  8DC3  sub_8dc3
+ *  8DC3  div_helper
  *  8E30  sub_8e30
  *  8E40  sub_8e40
  *  8E51  sub_8e51
- *  8E5C  sub_8e5c
- *  8EE6  sub_8ee6
- *  8F7E  x_8f7e
- *  8FB5  x_8fb5
+ *  8E5C  system_init
+ *  8EE6  link_service_loop
+ *  8F7E  uart1_configure
+ *  8FB5  uart1_configure_ex
  *  908A  x_908a
  *  908F  sub_908f
  *  9094  sub_9094
@@ -127,14 +127,14 @@
  *  9154  sub_9154
  *  9161  sub_9161
  *  916E  sub_916e
- *  917B  sub_917b
- *  9223  vec_9223
- *  92C2  gap_92c2
- *  935E  ret_935e
- *  93E5  sub_93e5
+ *  917B  state_table_init
+ *  9223  acc_sense_sample
+ *  92C2  channels_apply
+ *  935E  tx_queue_drain
+ *  93E5  clk_switch
  *  9464  clk_set_divider
- *  94D6  sub_94d6
- *  9541  sub_9541
+ *  94D6  outputs_init
+ *  9541  gpio_init
  *  95A5  sub_95a5
  *  95B5  sub_95b5
  *  95C1  sub_95c1
@@ -143,24 +143,24 @@
  *  95EC  sub_95ec
  *  95FA  sub_95fa
  *  9608  vec_9608
- *  966A  sub_966a
+ *  966A  itc_spr_write
  *  96CB  itc_set_priority
- *  9728  sub_9728
+ *  9728  uart1_cr_write
  *  9780  uart1_set_control_bits
  *  97D3  vec_97d3
- *  9823  sub_9823
- *  9872  sub_9872
- *  98B6  sub_98b6
+ *  9823  mode_remap
+ *  9872  pin_table_apply
+ *  98B6  baud_lookup
  *  98F1  clk_gate_enable_1
  *  9927  eeprom_write
- *  995A  sub_995a
+ *  995A  mem_compare
  *  998A  gap_998a
- *  99B6  sub_99b6
+ *  99B6  mul_small
  *  99D4  sub_99d4
  *  99DC  sub_99dc
  *  99E1  vec_99e1
  *  9A0B  sub_9a0b
- *  9A34  ret_9a34
+ *  9A34  block_move
  *  9A5C  ret_9a5c
  *  9A84  sub_9a84
  *  9AAA  sub_9aaa
@@ -168,14 +168,14 @@
  *  9AC4  sub_9ac4
  *  9ACF  sub_9acf
  *  9AF3  state_clear
- *  9B17  sub_9b17
+ *  9B17  uart1_init_2400
  *  9B3A  sub_9b3a
  *  9B72  sub_9b72
  *  9B92  sub_9b92
  *  9BCF  x_9bcf
  *  9BEB  sub_9beb
  *  9C03  sub_9c03
- *  9C1B  sub_9c1b
+ *  9C1B  flash_key_dispatch
  *  9C31  x_9c31
  *  9C47  sub_9c47
  *  9C5B  x_9c5b
@@ -306,16 +306,16 @@ void VEC00_RESET(void)
     sub_9c47();
   }
   _DAT_03fe = 0x9c92;
-  sub_8e5c();
+  system_init();
   iwdg_reload();
   return;
 }
 
-// FUNC 0x8080  x_8080
+// FUNC 0x8080  message_post_loop
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void x_8080(void)
+void message_post_loop(void)
 
 {
   undefined1 uVar1;
@@ -405,11 +405,15 @@ char sub_811e(char param_1)
   return DAT_0000;
 }
 
-// FUNC 0x8146  sub_8146
+// FUNC 0x8146  config_mode_handler
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Type-7 config mode handler (Roadstm8true, 2026-11-09).
+   Called from frame_handler with 12 nibbles (abStack_b) expanded from the 6-byte payload.
+   Copies the block via sub_9b92, then loops calling mode_handler logic per channel.
+   See docs/hidden_commands.md. */
 
-void sub_8146(void)
+void config_mode_handler(void)
 
 {
   undefined1 uVar1;
@@ -950,7 +954,7 @@ void button_bitmask_handler(void)
   }
   channel_advance();
   if (DAT_000e < 0xc) {
-    x_833b();
+    mode_apply_block();
     return;
   }
   sub_86e8(pbVar6 + 1,pbVar8 + 1);
@@ -959,9 +963,9 @@ void button_bitmask_handler(void)
   return;
 }
 
-// FUNC 0x833b  x_833b
+// FUNC 0x833b  mode_apply_block
 
-void x_833b(char *param_1,short param_2,undefined1 param_3)
+void mode_apply_block(char *param_1,short param_2,undefined1 param_3)
 
 {
   char cVar1;
@@ -1093,7 +1097,7 @@ void x_833b(char *param_1,short param_2,undefined1 param_3)
   }
   channel_advance();
   if (DAT_000e < 0xc) {
-    x_833b();
+    mode_apply_block();
     return;
   }
   sub_86e8();
@@ -1110,7 +1114,7 @@ void sub_845d(undefined1 param_1,undefined1 *param_2,undefined1 param_3)
   *param_2 = param_1;
   channel_advance();
   if (DAT_000e < 0xc) {
-    x_833b();
+    mode_apply_block();
     return;
   }
   sub_86e8();
@@ -1126,7 +1130,7 @@ void sub_845e(undefined1 param_1)
 {
   channel_advance();
   if (DAT_000e < 0xc) {
-    x_833b();
+    mode_apply_block();
     return;
   }
   sub_86e8();
@@ -1324,11 +1328,11 @@ void frame_handler(void)
       _DAT_0000 = _DAT_0000 + 1;
       DAT_0002._0_1_ = DAT_0002._0_1_ + -1;
     } while (DAT_0002._0_1_ != '\0');
-    local_13 = sub_8146(abStack_b);
+    local_13 = config_mode_handler(abStack_b);
     DAT_0002._0_1_ = 8;
     _DAT_0000 = (byte *)0x1700;
                     /* WARNING: Subroutine does not return */
-    x_8080(DAT_021d,&local_13);
+    message_post_loop(DAT_021d,&local_13);
   }
   if (DAT_021f == '\b') {
     DAT_01f9 = 0;
@@ -1410,7 +1414,7 @@ void cmd_0b_handler(void)
     DAT_0002 = CONCAT11(1,(undefined1)DAT_0002);
     _DAT_0000 = 0x1b02;
                     /* WARNING: Subroutine does not return */
-    x_8080((undefined1)DAT_0002,&stack0x0001);
+    message_post_loop((undefined1)DAT_0002,&stack0x0001);
   }
   return;
 }
@@ -1458,7 +1462,7 @@ void sub_86ab(char param_1)
     DAT_0002._0_1_ = DAT_0001 + -4;
     DAT_0001 = 0;
                     /* WARNING: Subroutine does not return */
-    x_8080(DAT_021d,&DAT_0220);
+    message_post_loop(DAT_021d,&DAT_0220);
   }
   return;
 }
@@ -1469,7 +1473,7 @@ void sub_86c2(void)
 
 {
                     /* WARNING: Subroutine does not return */
-  x_8080(DAT_021d);
+  message_post_loop(DAT_021d);
 }
 
 // FUNC 0x86c8  sub_86c8
@@ -1515,7 +1519,7 @@ short msg_peek(void)
 {
   short sVar1;
   
-  sVar1 = sub_99b6();
+  sVar1 = mul_small();
   return sVar1 + 0x10;
 }
 
@@ -1543,9 +1547,12 @@ void sub_86e8(void)
   return;
 }
 
-// FUNC 0x8700  ret_8700
+// FUNC 0x8700  mode_tick
 
-char ret_8700(void)
+/* Mode tick. DAT_02d7 divider (every 3rd pass), toggles pin_state_d3/d4 via
+   sub_8811/8814/881c. Blink/pulse state advance. */
+
+char mode_tick(void)
 
 {
   byte extraout_CC;
@@ -1658,7 +1665,7 @@ char ret_8700(void)
     local_f = sub_811e(DAT_01fe);
   }
   uStack_1a = sub_8811;
-  cVar2 = sub_8146(local_13);
+  cVar2 = config_mode_handler(local_13);
   return cVar2;
 }
 
@@ -1688,7 +1695,7 @@ void sub_881c(short param_1)
   DAT_0001 = 0;
   DAT_0000 = 9;
                     /* WARNING: Subroutine does not return */
-  x_8080((undefined1)DAT_0002,param_1 + 1);
+  message_post_loop((undefined1)DAT_0002,param_1 + 1);
 }
 
 // FUNC 0x8828  sub_8828
@@ -1750,7 +1757,7 @@ void x_8841(void)
       } while (!(bool)(extraout_CC >> 1 & 1));
       if (DAT_0008[6] == DAT_0001) {
         sub_9dc3();
-        sVar2 = sub_995a();
+        sVar2 = mem_compare();
         if (sVar2 == 0) {
           sub_8b79();
           return;
@@ -1855,7 +1862,7 @@ void x_8841(void)
           return;
         }
         if (_DAT_02cb == 0) {
-          sub_8a46();
+          param_block_apply();
           return;
         }
         DAT_0001 = DAT_021c;
@@ -1921,7 +1928,7 @@ LAB_897e:
     sub_9cf6();
   } while (!(bool)(extraout_CC_13 >> 1 & 1));
   DAT_01f9 = 1;
-  sub_8146(&stack0x0010);
+  config_mode_handler(&stack0x0010);
   sub_9dcf();
   do {
     sub_86d3();
@@ -1978,11 +1985,11 @@ void sub_8a15(void)
   return;
 }
 
-// FUNC 0x8a46  sub_8a46
+// FUNC 0x8a46  param_block_apply
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void sub_8a46(void)
+void param_block_apply(void)
 
 {
   byte extraout_CC;
@@ -2037,7 +2044,7 @@ void sub_8a46(void)
       sub_9cf6();
     } while (!(bool)(extraout_CC_00 >> 1 & 1));
     DAT_01f9 = 1;
-    sub_8146(&stack0x0010);
+    config_mode_handler(&stack0x0010);
     sub_9dcf();
     while( true ) {
       sub_86d3();
@@ -2103,7 +2110,7 @@ void sub_8a46(void)
   } while (!(bool)(extraout_CC_08 >> 1 & 1));
   sub_86e8();
   _DAT_0000 = (char *)CONCAT11((undefined1)DAT_000a,DAT_0001);
-  sub_8b96(DAT_000a._0_1_);
+  button_frame_builder(DAT_000a._0_1_);
   DAT_000e = DAT_000e + '\a';
   DAT_02d6 = DAT_02d6 + -7;
   x_8841();
@@ -2127,7 +2134,7 @@ void sub_8b6e(void)
 {
   sub_86e8();
   DAT_0000 = (undefined1)DAT_000a;
-  sub_8b96(DAT_000a._0_1_);
+  button_frame_builder(DAT_000a._0_1_);
   DAT_000e = DAT_000e + '\a';
   DAT_02d6 = DAT_02d6 + -7;
   x_8841();
@@ -2140,7 +2147,7 @@ void sub_8b71(void)
 
 {
   DAT_0000 = (undefined1)DAT_000a;
-  sub_8b96(DAT_000a._0_1_);
+  button_frame_builder(DAT_000a._0_1_);
   DAT_000e = DAT_000e + '\a';
   DAT_02d6 = DAT_02d6 + -7;
   x_8841();
@@ -2179,11 +2186,11 @@ void sub_8b8e(undefined1 param_1)
   return;
 }
 
-// FUNC 0x8b96  sub_8b96
+// FUNC 0x8b96  button_frame_builder
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void sub_8b96(byte param_1)
+void button_frame_builder(byte param_1)
 
 {
   byte extraout_CC;
@@ -2209,7 +2216,7 @@ void sub_8b96(byte param_1)
   local_e = 0xc;
   DAT_0002._0_1_ = DAT_01f9;
   if (DAT_01f9 != '\x01') {
-    x_8c31();
+    idle_reply_builder();
     return;
   }
   pbVar4 = abStack_d;
@@ -2297,7 +2304,7 @@ LAB_8cc9:
         cVar1 = sub_811e(cVar1);
       }
       uStack_10 = (code *)0x8cd3;
-      pbVar4 = (byte *)sub_9823(cVar1);
+      pbVar4 = (byte *)mode_remap(cVar1);
       cVar1 = extraout_A_02;
 LAB_8cd3:
       bVar2 = cVar1 << 4;
@@ -2312,7 +2319,7 @@ LAB_8cd3:
     }
   }
   uStack_10 = (code *)0x8cb9;
-  pbVar4 = (byte *)sub_9823(cVar1);
+  pbVar4 = (byte *)mode_remap(cVar1);
   bVar2 = extraout_A_01;
 LAB_8cd6:
   *pbVar4 = bVar2 | DAT_0001;
@@ -2327,12 +2334,12 @@ LAB_8cd6:
   DAT_0000 = 0x18;
                     /* WARNING: Subroutine does not return */
   uStack_10 = sub_8d00;
-  x_8080((char)DAT_0002,auStack_7);
+  message_post_loop((char)DAT_0002,auStack_7);
 }
 
-// FUNC 0x8c31  x_8c31
+// FUNC 0x8c31  idle_reply_builder
 
-void x_8c31(short param_1,undefined1 param_2)
+void idle_reply_builder(short param_1,undefined1 param_2)
 
 {
   byte extraout_CC;
@@ -2396,7 +2403,7 @@ LAB_8caf:
 LAB_8cc9:
         cVar1 = sub_811e(cVar1);
       }
-      pbVar5 = (byte *)sub_9823(cVar1);
+      pbVar5 = (byte *)mode_remap(cVar1);
       cVar1 = extraout_A_02;
 LAB_8cd3:
       bVar2 = cVar1 << 4;
@@ -2410,7 +2417,7 @@ LAB_8cd3:
       goto LAB_8caf;
     }
   }
-  pbVar5 = (byte *)sub_9823(cVar1);
+  pbVar5 = (byte *)mode_remap(cVar1);
   bVar2 = extraout_A_01;
 LAB_8cd6:
   *pbVar5 = bVar2 | DAT_0001;
@@ -2422,7 +2429,7 @@ LAB_8cd6:
   DAT_0001 = 0;
   DAT_0000 = 0x18;
                     /* WARNING: Subroutine does not return */
-  x_8080((char)DAT_0002,&param_2);
+  message_post_loop((char)DAT_0002,&param_2);
 }
 
 // FUNC 0x8d00  sub_8d00
@@ -2459,9 +2466,11 @@ void sub_8d16(void)
   return;
 }
 
-// FUNC 0x8d31  sub_8d31
+// FUNC 0x8d31  mul_wide
 
-void sub_8d31(void)
+/* Wide multiply helper (MUL with carry). */
+
+void mul_wide(void)
 
 {
   ushort *puVar1;
@@ -2515,7 +2524,7 @@ void sub_8dbb(void)
 
 {
   sub_9aaa();
-  sub_8dc3();
+  div_helper();
   return;
 }
 
@@ -2593,11 +2602,12 @@ void sub_8dc0(void)
   return;
 }
 
-// FUNC 0x8dc3  sub_8dc3
+// FUNC 0x8dc3  div_helper
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* 32-bit division/modulo helper (compiler library). */
 
-void sub_8dc3(void)
+void div_helper(void)
 
 {
   ushort uVar1;
@@ -2714,9 +2724,12 @@ void sub_8e51(short param_1)
   return;
 }
 
-// FUNC 0x8e5c  sub_8e5c
+// FUNC 0x8e5c  system_init
 
-void sub_8e5c(void)
+/* System init. Calls uart1_init_2400, clk_set_divider, uart1_set_control_bits,
+   sub_9b72 (output init), enables interrupts, posts message 0x1B. */
+
+void system_init(void)
 
 {
   char cVar1;
@@ -2728,7 +2741,7 @@ void sub_8e5c(void)
   DAT_0002._0_1_ = 0;
   DAT_0001 = 0;
   DAT_0000 = 0xe1;
-  sub_93e5();
+  clk_switch();
   sub_9c95();
   sub_9edc();
   DAT_0000 = 0x7c;
@@ -2737,9 +2750,9 @@ void sub_8e5c(void)
   DAT_0000 = 1;
   sub_9c03();
   sub_9d90();
-  sub_9b17();
+  uart1_init_2400();
   sub_9d9d();
-  sub_94d6();
+  outputs_init();
   clk_set_divider();
   DAT_0000 = 1;
   uart1_set_control_bits();
@@ -2750,7 +2763,7 @@ void sub_8e5c(void)
   DAT_025f = 0;
   sub_9b72();
   __EnableInterrupt();
-  sub_917b();
+  state_table_init();
   cVar1 = DAT_02cf;
   DAT_0002._1_1_ = DAT_02cf;
   DAT_02cf = DAT_02cf + '\x01';
@@ -2758,14 +2771,16 @@ void sub_8e5c(void)
   DAT_0001 = 2;
   DAT_0000 = 0x1b;
                     /* WARNING: Subroutine does not return */
-  x_8080(cVar1,&DAT_0206);
+  message_post_loop(cVar1,&DAT_0206);
 }
 
-// FUNC 0x8ee6  sub_8ee6
+// FUNC 0x8ee6  link_service_loop
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Link service loop. When uart_flag_c is set, copies the RX frame and calls frame_handler.
+   Also services DAT_02d5/DAT_025f and the pin-table block at UNK_01bf. */
 
-void sub_8ee6(void)
+void link_service_loop(void)
 
 {
   byte extraout_CC;
@@ -2818,9 +2833,14 @@ void sub_8ee6(void)
   } while( true );
 }
 
-// FUNC 0x8f7e  x_8f7e
+// FUNC 0x8f7e  uart1_configure
 
-void x_8f7e(void)
+/* UART1 configure (Roadstm8true, 2026-11-09). Caller is uart1_init_2400 at 0x9B17.
+   Caller sets DAT_0007=0x0C, DAT_0006=0x80, DAT_0005=0, DAT_0004=0, DAT_0002=0x960 (2400)
+   then CALLs this function. BRR1/BRR2 split via sub_99dc (>>4). Live value: 2400 baud
+   (BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/mode_timing.md. */
+
+void uart1_configure(void)
 
 {
   byte bVar1;
@@ -2844,11 +2864,11 @@ void x_8f7e(void)
   DAT_0006 = bVar3;
   sub_8e40();
   sub_9161();
-  sub_98b6();
+  baud_lookup();
   sub_9154();
-  sub_8dc3();
+  div_helper();
   uVar4 = sub_95cd();
-  sub_98b6((char)uVar4,(ushort)extraout_A << 8 | uVar4 >> 8);
+  baud_lookup((char)uVar4,(ushort)extraout_A << 8 | uVar4 >> 8);
   sub_916e();
   uVar4 = sub_95a5();
   sub_9e9d((char)uVar4,(ushort)extraout_A_00 << 8 | uVar4 >> 8);
@@ -2856,7 +2876,7 @@ void x_8f7e(void)
   sub_9147();
   sub_9e9d();
   sub_9154();
-  sub_8dc3();
+  div_helper();
   sub_90fe();
   sub_8d16();
   sub_8e40();
@@ -2882,9 +2902,11 @@ void x_8f7e(void)
   return;
 }
 
-// FUNC 0x8fb5  x_8fb5
+// FUNC 0x8fb5  uart1_configure_ex
 
-void x_8fb5(byte param_1,undefined2 param_2,byte param_3,byte param_4)
+/* UART1 configure with explicit params (CR1/BRR/CR2/CR3 from args). */
+
+void uart1_configure_ex(byte param_1,undefined2 param_2,byte param_3,byte param_4)
 
 {
   byte extraout_A;
@@ -2897,11 +2919,11 @@ void x_8fb5(byte param_1,undefined2 param_2,byte param_3,byte param_4)
   UART1_BRR2 = 0;
   sub_8e40();
   sub_9161();
-  sub_98b6();
+  baud_lookup();
   sub_9154();
-  sub_8dc3();
+  div_helper();
   uVar1 = sub_95cd();
-  sub_98b6((char)uVar1,(ushort)extraout_A << 8 | uVar1 >> 8);
+  baud_lookup((char)uVar1,(ushort)extraout_A << 8 | uVar1 >> 8);
   sub_916e();
   uVar1 = sub_95a5();
   sub_9e9d((char)uVar1,(ushort)extraout_A_00 << 8 | uVar1 >> 8);
@@ -2909,7 +2931,7 @@ void x_8fb5(byte param_1,undefined2 param_2,byte param_3,byte param_4)
   sub_9147();
   sub_9e9d();
   sub_9154();
-  sub_8dc3();
+  div_helper();
   sub_90fe();
   sub_8d16();
   sub_8e40();
@@ -3210,11 +3232,11 @@ void sub_916e(void)
   return;
 }
 
-// FUNC 0x917b  sub_917b
+// FUNC 0x917b  state_table_init
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void sub_917b(void)
+void state_table_init(void)
 
 {
   char cVar1;
@@ -3237,20 +3259,20 @@ void sub_917b(void)
   _DAT_01d7 = 0x4b;
   _DAT_01d9 = 0;
   _DAT_01db = 0;
-  _DAT_01dd = ret_935e;
+  _DAT_01dd = tx_queue_drain;
   DAT_01c9 = 1;
   _DAT_01ca = 0;
   _DAT_01cc = 0x32;
   _DAT_01ce = 0;
   _DAT_01d0 = 0;
-  _DAT_01d2 = ret_8700;
+  _DAT_01d2 = mode_tick;
   DAT_0002 = (ushort)DAT_0206;
   _DAT_0000 = (undefined *)0x0;
   DAT_01be = DAT_0206 != 0;
   x_95de(&UNK_01bf);
   _DAT_01c3 = 0;
   _DAT_01c5 = 0;
-  _DAT_01c7 = gap_92c2;
+  _DAT_01c7 = channels_apply;
   DAT_01ea = 1;
   _DAT_01eb = 0;
   _DAT_01ed = 10;
@@ -3260,9 +3282,12 @@ void sub_917b(void)
   return;
 }
 
-// FUNC 0x9223  vec_9223
+// FUNC 0x9223  acc_sense_sample
 
-undefined2 vec_9223(undefined2 param_1)
+/* ACC sense sample. Reads PA_IDR bit1 (PA1), debounce 8 samples into DAT_02da,
+   stores to DAT_0260. DT/DAT_02d4 selects the sample vs reset path. */
+
+undefined2 acc_sense_sample(undefined2 param_1)
 
 {
   undefined1 uVar1;
@@ -3311,11 +3336,11 @@ undefined2 vec_9223(undefined2 param_1)
   return param_1;
 }
 
-// FUNC 0x92c2  gap_92c2
+// FUNC 0x92c2  channels_apply
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-void gap_92c2(void)
+void channels_apply(void)
 
 {
   undefined1 uVar1;
@@ -3389,11 +3414,13 @@ LAB_9348:
   } while( true );
 }
 
-// FUNC 0x935e  ret_935e
+// FUNC 0x935e  tx_queue_drain
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* TX queue drain. Loops msg_post/msg_peek over 0..9, decrements counts,
+   then scans DAT_02ce queue for zero-count messages. */
 
-void ret_935e(void)
+void tx_queue_drain(void)
 
 {
   short sVar1;
@@ -3443,7 +3470,7 @@ void ret_935e(void)
   }
   uart_state_a = DAT_02ce;
   tim4_init();
-  sub_9728();
+  uart1_cr_write();
   sub_9df9();
   if ((bool)(extraout_CC & 1)) {
     return;
@@ -3452,9 +3479,9 @@ void ret_935e(void)
   return;
 }
 
-// FUNC 0x93e5  sub_93e5
+// FUNC 0x93e5  clk_switch
 
-undefined1 sub_93e5(char param_1)
+undefined1 clk_switch(char param_1)
 
 {
   short sVar1;
@@ -3565,9 +3592,12 @@ void clk_set_divider(void)
   return;
 }
 
-// FUNC 0x94d6  sub_94d6
+// FUNC 0x94d6  outputs_init
 
-void sub_94d6(void)
+/* Outputs init. GPIO_Init on PD (0x40), tim2_set_ccr1l twice, then iterates the
+   12-entry pin table at DAT_02df calling sub_9541 + FUN_9f12 per channel. */
+
+void outputs_init(void)
 
 {
   undefined1 uVar1;
@@ -3575,9 +3605,9 @@ void sub_94d6(void)
   sub_90cc();
   uVar1 = DAT_000c._0_1_;
   DAT_0000 = 0x40;
-  sub_9541(&PD_ODR);
+  gpio_init(&PD_ODR);
   DAT_0000 = 0x40;
-  sub_9541(0x10,&PD_ODR);
+  gpio_init(0x10,&PD_ODR);
   pin_state_d3 = tim2_set_ccr1l(8,&PD_ODR);
   pin_state_d4 = tim2_set_ccr1l(0x10,&PD_ODR);
   DAT_0008 = (undefined2 *)&DAT_02df;
@@ -3586,7 +3616,7 @@ void sub_94d6(void)
     sub_9140();
     DAT_000a = DAT_000a + 2;
     DAT_0000 = 0xc0;
-    sub_9541(*DAT_000a,*DAT_0008);
+    gpio_init(*DAT_000a,*DAT_0008);
     FUN_9f12(*DAT_000a,*DAT_0008);
     DAT_0008 = (undefined2 *)((short)DAT_0008 + 3);
     DAT_000c._0_1_ = DAT_000c._0_1_ + -1;
@@ -3596,9 +3626,12 @@ void sub_94d6(void)
   return;
 }
 
-// FUNC 0x9541  sub_9541
+// FUNC 0x9541  gpio_init
 
-void sub_9541(byte param_1,byte *param_2)
+/* GPIO_Init helper (SPL-style). Mode bits 0x80/0x10 in DAT_0000 select
+   ODR/DDR/CR1/CR2 read-modify-write via the port pointer. */
+
+void gpio_init(byte param_1,byte *param_2)
 
 {
   byte bVar1;
@@ -3777,9 +3810,9 @@ undefined2 vec_9608(undefined2 param_1)
   return param_1;
 }
 
-// FUNC 0x966a  sub_966a
+// FUNC 0x966a  itc_spr_write
 
-void sub_966a(char param_1)
+void itc_spr_write(char param_1)
 
 {
   byte bVar1;
@@ -3831,21 +3864,21 @@ undefined2 itc_set_priority(undefined2 param_1)
   sVar2 = uVar1 + 0x14;
   DAT_0002 = (ushort)uart_state_a;
   _DAT_0000 = 0x25;
-  _DAT_0000 = sub_99b6(DAT_0002);
+  _DAT_0000 = mul_small(DAT_0002);
   sub_9f26(*(undefined1 *)(sVar2 + _DAT_0000));
   _DAT_0000 = 0x25;
-  sVar2 = sub_99b6(uart_state_a);
+  sVar2 = mul_small(uart_state_a);
   if (*(char *)(sVar2 + 0x34) == DAT_02d1) {
-    sub_9728(0,&UNK_0277);
+    uart1_cr_write(0,&UNK_0277);
   }
   sub_90fe();
   sub_90f3();
   return param_1;
 }
 
-// FUNC 0x9728  sub_9728
+// FUNC 0x9728  uart1_cr_write
 
-void sub_9728(char param_1,undefined2 param_2)
+void uart1_cr_write(char param_1,undefined2 param_2)
 
 {
   DAT_0000 = (char)((ushort)param_2 >> 8);
@@ -3946,9 +3979,9 @@ undefined2 vec_97d3(void)
   return *(undefined2 *)((short)register0x0008 + 3);
 }
 
-// FUNC 0x9823  sub_9823
+// FUNC 0x9823  mode_remap
 
-char sub_9823(char param_1)
+char mode_remap(char param_1)
 
 {
   if (param_1 == '\x01') {
@@ -3981,9 +4014,9 @@ char sub_9823(char param_1)
   return DAT_0000;
 }
 
-// FUNC 0x9872  sub_9872
+// FUNC 0x9872  pin_table_apply
 
-void sub_9872(void)
+void pin_table_apply(void)
 
 {
   undefined1 *puVar1;
@@ -4011,11 +4044,13 @@ void sub_9872(void)
   return;
 }
 
-// FUNC 0x98b6  sub_98b6
+// FUNC 0x98b6  baud_lookup
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Clock/baud lookup. Reads CLK_CMSR, looks up sub_9ef5 table by CKDIVR.
+   Returns DAT_0002=0x2400 (2400 baud) for the default clock, 0xF400 otherwise. */
 
-void sub_98b6(void)
+void baud_lookup(void)
 
 {
   if (CLK_CMSR == -0x1f) {
@@ -4078,11 +4113,12 @@ void eeprom_write(void)
   return;
 }
 
-// FUNC 0x995a  sub_995a
+// FUNC 0x995a  mem_compare
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Memory compare (returns 0/-1/1). */
 
-undefined2 sub_995a(byte *param_1)
+undefined2 mem_compare(byte *param_1)
 
 {
   byte *in_Y;
@@ -4116,7 +4152,7 @@ char gap_998a(void)
   if (DAT_02dc == '\0') {
     DAT_02de = DAT_02de + -1;
     if (DAT_02de == '\0') {
-      cVar1 = sub_9872(1);
+      cVar1 = pin_table_apply(1);
       DAT_02dc = '\x01';
       DAT_02dd = '\x1e';
     }
@@ -4124,7 +4160,7 @@ char gap_998a(void)
   else {
     DAT_02dd = DAT_02dd + -1;
     if (DAT_02dd == '\0') {
-      cVar1 = sub_9872(0);
+      cVar1 = pin_table_apply(0);
       DAT_02dc = 0;
       DAT_02de = 0x46;
       return cVar1;
@@ -4133,9 +4169,11 @@ char gap_998a(void)
   return cVar1;
 }
 
-// FUNC 0x99b6  sub_99b6
+// FUNC 0x99b6  mul_small
 
-short sub_99b6(ushort param_1)
+/* Small multiply helper (MUL X,A). */
+
+short mul_small(ushort param_1)
 
 {
   return (param_1 & 0xff) * (ushort)DAT_0001 +
@@ -4200,11 +4238,12 @@ void sub_9a0b(void)
   return;
 }
 
-// FUNC 0x9a34  ret_9a34
+// FUNC 0x9a34  block_move
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Block move (backward copy). */
 
-void ret_9a34(short *param_1)
+void block_move(short *param_1)
 
 {
   short sVar1;
@@ -4324,11 +4363,14 @@ void state_clear(undefined1 *param_1)
   return;
 }
 
-// FUNC 0x9b17  sub_9b17
+// FUNC 0x9b17  uart1_init_2400
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* UART init for 2400 baud (Roadstm8true, 2026-11-09).
+   Sets the UART control masks and DAT_0002=0x960, then CALLs uart1_configure (0x8F7E).
+   Called from 0x8E9B. This resolves the formerly open static-caller question. */
 
-undefined1 sub_9b17(void)
+undefined1 uart1_init_2400(void)
 
 {
   DAT_0007 = 0xc;
@@ -4337,8 +4379,8 @@ undefined1 sub_9b17(void)
   DAT_0004 = 0;
   DAT_0002 = 0x960;
   _DAT_0000 = 0;
-  x_8f7e(0);
-  sub_9728(1,&UNK_0205);
+  uart1_configure(0);
+  uart1_cr_write(1,&UNK_0205);
   return 1;
 }
 
@@ -4373,9 +4415,9 @@ void sub_9b72(void)
 {
   sub_9e58();
   DAT_0000 = 0x60;
-  sub_9541(&PA_ODR);
+  gpio_init(&PA_ODR);
   DAT_0000 = 2;
-  sub_966a(0);
+  itc_spr_write(0);
   DAT_0000 = 3;
   uart1_set_control_bits(6);
   return;
@@ -4445,9 +4487,14 @@ void sub_9c03(byte param_1)
   return;
 }
 
-// FUNC 0x9c1b  sub_9c1b
+// FUNC 0x9c1b  flash_key_dispatch
 
-void sub_9c1b(char param_1)
+/* Flash key dispatch (Roadstm8true, 2026-11-09).
+   If A==0xFD, FLASH_KEYREG_A (0x5062) unlock sequence (0x56 then 0xAE).
+   Otherwise FLASH_KEYREG_B (0x5064) unlock sequence (0xAE then 0x56).
+   Confirms 0x5062/0x5064 are the flash unlock registers for this part. */
+
+void flash_key_dispatch(char param_1)
 
 {
   if (param_1 == -3) {
@@ -4511,7 +4558,7 @@ void sub_9c6f(byte param_1)
   
   uVar2 = (ushort)param_1;
   msg_post(0);
-  sVar1 = sub_99b6(uVar2);
+  sVar1 = mul_small(uVar2);
   DAT_0008 = sVar1 + 0x10;
   return;
 }
@@ -4525,7 +4572,7 @@ void flash_write_key_ae(void)
 {
   short sVar1;
   
-  sVar1 = sub_99b6();
+  sVar1 = mul_small();
   DAT_0008 = sVar1 + 0x10;
   return;
 }
@@ -4548,7 +4595,7 @@ void flash_write_key_56(void)
     sub_9c47();
   }
   _DAT_03fe = 0x9c92;
-  sub_8e5c();
+  system_init();
   iwdg_reload();
   return;
 }
@@ -4571,7 +4618,7 @@ void sub_9ca7(void)
 
 {
   sub_9d23(0);
-  sub_9c1b();
+  flash_key_dispatch();
   DAT_000a._0_1_ = 0;
   DAT_0008 = &DAT_01f5;
   return;
@@ -4624,7 +4671,7 @@ void reset_startup(void)
 {
   sub_9e58();
   DAT_0000 = 0x40;
-  sub_9541(&PA_ODR);
+  gpio_init(&PA_ODR);
   return;
 }
 
@@ -5077,7 +5124,7 @@ undefined2 sub_9e95(void)
 void sub_9e9d(void)
 
 {
-  sub_8d31();
+  mul_wide();
   return;
 }
 

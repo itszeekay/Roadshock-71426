@@ -28,10 +28,10 @@
  *  8000  VEC00_RESET
  *  8018  VEC06_EXTI1
  *  801C  VEC07_EXTI2
- *  8080  x_8080
+ *  8080  uart1_param_check
  *  816D  x_816d
  *  8237  sub_8237
- *  8252  sub_8252
+ *  8252  mul_wide
  *  82DC  sub_82dc
  *  82E1  sub_82e1
  *  82E4  sub_82e4
@@ -64,7 +64,7 @@
  *  8510  gpio_init
  *  85C1  sub_85c1
  *  8841  x_8841
- *  896D  sub_896d
+ *  896D  panel_main_loop
  *  89EF  sub_89ef
  *  8A52  sub_8a52
  *  8AB4  led_pin_table_flash
@@ -83,7 +83,7 @@
  *  8C81  sub_8c81
  *  8CAC  sub_8cac
  *  8CD6  sub_8cd6
- *  8D26  uart1_configure
+ *  8D26  uart1_init_115200
  *  8D4D  vec_8d4d
  *  8D74  sub_8d74
  *  8D81  sub_8d81
@@ -196,7 +196,7 @@ void VEC00_RESET(void)
     sub_8e1b();
   }
   _DAT_03fe = 0x8e53;
-  sub_896d();
+  panel_main_loop();
   thunk_FUN_8f50();
   return;
 }
@@ -217,11 +217,13 @@ undefined2 VEC07_EXTI2(undefined2 param_1)
   return param_1;
 }
 
-// FUNC 0x8080  x_8080
+// FUNC 0x8080  uart1_param_check
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* UART1 parameter check/checker. Validates DAT_000e/DAT_000c/DAT_000d and
+   mask args against valid sets; calls sub_8edd on failure. */
 
-void x_8080(void)
+void uart1_param_check(void)
 
 {
   byte bVar1;
@@ -377,9 +379,11 @@ void sub_8237(void)
   return;
 }
 
-// FUNC 0x8252  sub_8252
+// FUNC 0x8252  mul_wide
 
-void sub_8252(void)
+/* Wide multiply helper (MUL with carry), panel twin of base mul_wide. */
+
+void mul_wide(void)
 
 {
   ushort *puVar1;
@@ -1123,11 +1127,14 @@ void x_8841(byte param_1)
   halt_baddata();
 }
 
-// FUNC 0x896d  sub_896d
+// FUNC 0x896d  panel_main_loop
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Panel main loop. Calls uart1_init_115200, led_gpio_init, sub_8a52 twice,
+   enables interrupts, prints the DAT_005b buffer, then loops calling
+   display_frame_handler (sub_844c) + sub_8e65. */
 
-void sub_896d(void)
+void panel_main_loop(void)
 
 {
   byte extraout_CC;
@@ -1143,7 +1150,7 @@ void sub_896d(void)
   DAT_0000 = 1;
   sub_8c1e();
   sub_8def();
-  uart1_configure();
+  uart1_init_115200();
   sub_8e8c();
   led_gpio_init();
   DAT_0000 = 1;
@@ -1578,12 +1585,14 @@ void sub_8cd6(byte param_1)
   return;
 }
 
-// FUNC 0x8d26  uart1_configure
+// FUNC 0x8d26  uart1_init_115200
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* UART1 configure for display link (115200). */
+/* UART1 init for 115200 (Roadstm8Panel). Sets DAT_0007=0x0C, DAT_0006=0x80,
+   DAT_0002=0xC200 (115200), then calls the configure chain. Parallel to the
+   base board uart1_init_2400 (0x9B17, DAT_0002=0x960). */
 
-undefined1 uart1_configure(void)
+undefined1 uart1_init_115200(void)
 
 {
   sub_8c81();
@@ -1593,7 +1602,7 @@ undefined1 uart1_configure(void)
   DAT_0004 = 0;
   _DAT_0002 = 0xc200;
   _DAT_0000 = 1;
-  x_8080(0);
+  uart1_param_check(0);
   sub_85c1(1,&UNK_0205);
   return 1;
 }
@@ -1771,7 +1780,7 @@ void vec_8e43(void)
     sub_8e1b();
   }
   _DAT_03fe = 0x8e53;
-  sub_896d();
+  panel_main_loop();
   thunk_FUN_8f50();
   return;
 }
@@ -2000,7 +2009,7 @@ undefined1 sub_8f18(byte param_1)
 void sub_8f21(void)
 
 {
-  sub_8252();
+  mul_wide();
   return;
 }
 

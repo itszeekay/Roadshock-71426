@@ -114,7 +114,10 @@ verified = [
     (0x8F65, "pin_clear"),
     (0x8F68, "pin_set"),
     (0x8C52, "led_gpio_init"),
-    (0x8D26, "uart1_configure"),
+    (0x8D26, "uart1_init_115200"),
+    (0x8080, "uart1_param_check"),
+    (0x8252, "mul_wide"),
+    (0x896D, "panel_main_loop"),
     (0x8510, "gpio_init"),
 ]
 
@@ -134,7 +137,18 @@ plate(0x844C,
       "Active-low: low=lit. See docs/panel_led_map.md.")
 plate(0x8C52,
       "LED GPIO init. Iterates _DAT_0008=0x0010 with DAT_000a=0x18 (24 pins), calls sub_8510 with mode 0xF0.")
-plate(0x8D26, "UART1 configure for display link (115200).")
+plate(0x8D26,
+      "UART1 init for 115200 (Roadstm8Panel). Sets DAT_0007=0x0C, DAT_0006=0x80,\n"
+      "DAT_0002=0xC200 (115200), then calls the configure chain. Parallel to the\n"
+      "base board uart1_init_2400 (0x9B17, DAT_0002=0x960).")
+plate(0x8080,
+      "UART1 parameter check/checker. Validates DAT_000e/DAT_000c/DAT_000d and\n"
+      "mask args against valid sets; calls sub_8edd on failure.")
+plate(0x896D,
+      "Panel main loop. Calls uart1_init_115200, led_gpio_init, sub_8a52 twice,\n"
+      "enables interrupts, prints the DAT_005b buffer, then loops calling\n"
+      "display_frame_handler (sub_844c) + sub_8e65.")
+plate(0x8252, "Wide multiply helper (MUL with carry), panel twin of base mul_wide.")
 plate(0x8510, "GPIO_Init helper (SPL-style). Mode 0xF0 = push-pull output.")
 
 print "build_panel_project: %d functions named" % (named,)

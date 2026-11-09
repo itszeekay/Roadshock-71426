@@ -159,6 +159,32 @@ verified = [
     (0x9B17, "uart1_init_2400"),
     (0x9C1B, "flash_key_dispatch"),
     (0x8146, "config_mode_handler"),
+    (0x8FB5, "uart1_configure_ex"),
+    (0x9541, "gpio_init"),
+    (0x93E5, "clk_switch"),
+    (0x8E5C, "system_init"),
+    (0x8EE6, "link_service_loop"),
+    (0x9223, "acc_sense_sample"),
+    (0x9823, "mode_remap"),
+    (0x966A, "itc_spr_write"),
+    (0x9728, "uart1_cr_write"),
+    (0x8DC3, "div_helper"),
+    (0x8D31, "mul_wide"),
+    (0x99B6, "mul_small"),
+    (0x9A34, "block_move"),
+    (0x9872, "pin_table_apply"),
+    (0x917B, "state_table_init"),
+    (0x8700, "mode_tick"),
+    (0x833B, "mode_apply_block"),
+    (0x8A46, "param_block_apply"),
+    (0x8C31, "idle_reply_builder"),
+    (0x8B96, "button_frame_builder"),
+    (0x935E, "tx_queue_drain"),
+    (0x94D6, "outputs_init"),
+    (0x92C2, "channels_apply"),
+    (0x995A, "mem_compare"),
+    (0x98B6, "baud_lookup"),
+    (0x8080, "message_post_loop"),
     (0x816D, "mode_handler"),
     (0x82B3, "button_bitmask_handler"),
     (0x848B, "channel_index_get"),
@@ -216,6 +242,36 @@ plate(0x8F7E,
       "Caller sets DAT_0007=0x0C, DAT_0006=0x80, DAT_0005=0, DAT_0004=0, DAT_0002=0x960 (2400)\n"
       "then CALLs this function. BRR1/BRR2 split via sub_99dc (>>4). Live value: 2400 baud\n"
       "(BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/mode_timing.md.")
+plate(0x8FB5, "UART1 configure with explicit params (CR1/BRR/CR2/CR3 from args).")
+plate(0x8E5C,
+      "System init. Calls uart1_init_2400, clk_set_divider, uart1_set_control_bits,\n"
+      "sub_9b72 (output init), enables interrupts, posts message 0x1B.")
+plate(0x8EE6,
+      "Link service loop. When uart_flag_c is set, copies the RX frame and calls frame_handler.\n"
+      "Also services DAT_02d5/DAT_025f and the pin-table block at UNK_01bf.")
+plate(0x9223,
+      "ACC sense sample. Reads PA_IDR bit1 (PA1), debounce 8 samples into DAT_02da,\n"
+      "stores to DAT_0260. DT/DAT_02d4 selects the sample vs reset path.")
+plate(0x8700,
+      "Mode tick. DAT_02d7 divider (every 3rd pass), toggles pin_state_d3/d4 via\n"
+      "sub_8811/8814/881c. Blink/pulse state advance.")
+plate(0x94D6,
+      "Outputs init. GPIO_Init on PD (0x40), tim2_set_ccr1l twice, then iterates the\n"
+      "12-entry pin table at DAT_02df calling sub_9541 + FUN_9f12 per channel.")
+plate(0x935E,
+      "TX queue drain. Loops msg_post/msg_peek over 0..9, decrements counts,\n"
+      "then scans DAT_02ce queue for zero-count messages.")
+plate(0x9541,
+      "GPIO_Init helper (SPL-style). Mode bits 0x80/0x10 in DAT_0000 select\n"
+      "ODR/DDR/CR1/CR2 read-modify-write via the port pointer.")
+plate(0x8DC3, "32-bit division/modulo helper (compiler library).")
+plate(0x8D31, "Wide multiply helper (MUL with carry).")
+plate(0x99B6, "Small multiply helper (MUL X,A).")
+plate(0x9A34, "Block move (backward copy).")
+plate(0x995A, "Memory compare (returns 0/-1/1).")
+plate(0x98B6,
+      "Clock/baud lookup. Reads CLK_CMSR, looks up sub_9ef5 table by CKDIVR.\n"
+      "Returns DAT_0002=0x2400 (2400 baud) for the default clock, 0xF400 otherwise.")
 plate(0x9B17,
       "UART init for 2400 baud (Roadstm8true, 2026-11-09).\n"
       "Sets the UART control masks and DAT_0002=0x960, then CALLs uart1_configure (0x8F7E).\n"

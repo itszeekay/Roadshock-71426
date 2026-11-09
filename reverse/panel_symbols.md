@@ -5,10 +5,10 @@
 | 0x8000 | `VEC00_RESET` |
 | 0x8018 | `VEC06_EXTI1` |
 | 0x801C | `VEC07_EXTI2` |
-| 0x8080 | `x_8080` |
+| 0x8080 | `uart1_param_check` |
 | 0x816D | `x_816d` |
 | 0x8237 | `sub_8237` |
-| 0x8252 | `sub_8252` |
+| 0x8252 | `mul_wide` |
 | 0x82DC | `sub_82dc` |
 | 0x82E1 | `sub_82e1` |
 | 0x82E4 | `sub_82e4` |
@@ -41,7 +41,7 @@
 | 0x8510 | `gpio_init` |
 | 0x85C1 | `sub_85c1` |
 | 0x8841 | `x_8841` |
-| 0x896D | `sub_896d` |
+| 0x896D | `panel_main_loop` |
 | 0x89EF | `sub_89ef` |
 | 0x8A52 | `sub_8a52` |
 | 0x8AB4 | `led_pin_table_flash` |
@@ -60,7 +60,7 @@
 | 0x8C81 | `sub_8c81` |
 | 0x8CAC | `sub_8cac` |
 | 0x8CD6 | `sub_8cd6` |
-| 0x8D26 | `uart1_configure` |
+| 0x8D26 | `uart1_init_115200` |
 | 0x8D4D | `vec_8d4d` |
 | 0x8D74 | `sub_8d74` |
 | 0x8D81 | `sub_8d81` |
