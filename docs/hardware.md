@@ -6,9 +6,10 @@
 [owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf)
 (linked, not redistributed).
 
-![Button panel PCB](../images/panel-pcb.jpg)
-
 ## Base board (power/output module)
+
+![Base/output unit](../images/base-unit.jpg)
+*Base/output unit: the eight fused outputs and the power stage, inside its case.*
 
 The base is the board with the fused outputs and the switch panel connector.
 
@@ -38,7 +39,8 @@ There is **no current sensing**, no ADC use, and no I2C in the stock firmware.
 
 ## Button panel
 
-![Button panel connectors](../images/panel-connectors.jpg)
+![Button panel PCB, bottom side](../images/panel-pcb.jpg)
+*Button panel PCB (bottom side): ASR5601S (U1), STM8S003K3 (U2), J3 and the J2 cable.*
 
 The panel contains two processors.
 
@@ -48,6 +50,9 @@ The panel contains two processors.
 | **U2** | **STM8S003K3** (LQFP-32) | RGB LED display driver |
 
 ### Headers
+
+![Button panel connectors](../images/panel-connectors.jpg)
+*J3 (ASR UART1 / boot mode) and the J2 cable to the base.*
 
 | Header | Pads | Purpose |
 |---|---|---|
