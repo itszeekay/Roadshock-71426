@@ -120,11 +120,18 @@ Deliverables:
 | `reference/asr560x/drive/DOGO_extract/data.pyc` | embedded chip database, added with this phase |
 | `reference/asr560x/drive/DOGO_extract/chip_table.txt` | readable dump of the chip entries |
 | `tools/asr5601_dump.py` | read-only probe, capture and parser |
+| `tools/asr5601_fake_monitor.py` | socket-backed test monitor |
 | `tools/extract_pyz.py` | reproducible PYZ extraction helper |
 
 The parser handles both stream shapes: `:<label><hex>$` and `$<hex>$`. It
 rebuilds a flat `flash.bin` when every label is an eight-digit address, filling
 gaps with `0xFF`, and writes a SHA-256 next to it.
+
+The full path has been exercised on the desk against
+`tools/asr5601_fake_monitor.py`, a socket-backed monitor that speaks the same
+banner, commands and frame shape. That test covers the link, the command
+sequence, the parser and the flat-image rebuild. It does not prove anything
+about the real chip.
 
 ## Phase 1: handshake on the bench, non-destructive
 

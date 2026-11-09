@@ -69,8 +69,7 @@ class Link:
     def __init__(self, port: str, baud: int, log_path: pathlib.Path):
         import serial  # imported here so --parse works without pyserial
 
-        self.ser = serial.Serial(
-            port=port,
+        settings = dict(
             baudrate=baud,
             bytesize=8,
             parity="N",
@@ -78,8 +77,13 @@ class Link:
             timeout=0.2,
             write_timeout=2.0,
         )
+        if "://" in port:
+            self.ser = serial.serial_for_url(port, **settings)
+        else:
+            self.ser = serial.Serial(port=port, **settings)
         self.log = open(log_path, "a", encoding="utf-8", errors="replace")
         self.rx = bytearray()
+        self.error = None
         _log_line(self.log, "# opened %s at %d 8N1" % (port, baud))
 
     def close(self) -> None:
@@ -105,7 +109,12 @@ class Link:
         deadline = time.time() + seconds
         got = bytearray()
         while time.time() < deadline:
-            data = self.ser.read(4096)
+            try:
+                data = self.ser.read(4096)
+            except Exception as exc:
+                self.error = exc
+                _log_line(self.log, "# read error: %r" % exc)
+                break
             if data:
                 got.extend(data)
                 self.rx.extend(data)
@@ -118,7 +127,12 @@ class Link:
         last = None
         got = bytearray()
         while time.time() - start < maximum:
-            data = self.ser.read(4096)
+            try:
+                data = self.ser.read(4096)
+            except Exception as exc:
+                self.error = exc
+                _log_line(self.log, "# read error: %r" % exc)
+                break
             if data:
                 got.extend(data)
                 self.rx.extend(data)
@@ -201,6 +215,8 @@ def dump(link: Link, outdir: pathlib.Path, idle: float, maximum: float) -> int:
     print("Captured %d bytes to %s" % (len(data), capture))
     if not data:
         print("Nothing received. Check SEL0, reset, baud and TX/RX swap.")
+        if link.error:
+            print("Serial error: %r" % (link.error,))
         return 1
     return parse_capture(capture, outdir)
 

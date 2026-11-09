@@ -11,6 +11,7 @@ Python helpers for protocol work, dump validation, and Ghidra analysis.
 | `read_serial.py` | read a serial console for N seconds |
 | `parse_tap.py` | parse an older `FRAME A/B len=…` capture |
 | `asr5601_dump.py` | read-only ASR560X UART probe, capture and image parser |
+| `asr5601_fake_monitor.py` | socket-backed fake monitor for testing the dump tool without hardware |
 | `extract_pyz.py` | extract Python 3.5 modules from DOGO's `PYZ-00.pyz` |
 | `ghidra/` | Java/Python Ghidra scripts used to build the reverse-engineering tree |
 
@@ -60,6 +61,18 @@ The board must already be in download mode: `SEL0 = 1`, `SEL1 = 0`, reset.
 Start at 115200; use `--baud 921600` for high-speed mode. See
 [`docs/asr5601_dump_plan.md`](../docs/asr5601_dump_plan.md) for the wiring and
 the exact command order.
+
+The full capture path can be tested without hardware. The fake monitor answers
+the banner, `get_chip_type`, `help` and `coredump flash all` with a small
+synthetic image:
+
+```bash
+python3 tools/asr5601_fake_monitor.py --port 5555 --one &
+python3 tools/asr5601_dump.py --port socket://127.0.0.1:5555 --idle 0.5 --dump /tmp/asr-test
+```
+
+It exercises the socket link, the command sequence, the frame parser and the
+flat-image rebuild. It does not emulate the chip.
 
 ## DOGO PYZ extraction
 
