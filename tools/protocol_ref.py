@@ -162,3 +162,11 @@ if __name__ == "__main__":
     print("key frames ok, e.g. button 6:", key_press(0x40, 6).hex(" "))
     print("release all:", key_release(0x41).hex(" "))
     print("power on:", power(0x42, True).hex(" "))
+
+    # hidden-command builders (see docs/hidden_commands.md)
+    for fr, ty in [(hidden_0b(0x10, 5), 0x0B), (hidden_0d(0x10, 0), 0x0D),
+                   (hidden_0d(0x10, 1), 0x0D), (hidden_19(0x10, 0x2A), 0x19)]:
+        assert len(fr) == 11 and checksum(fr[:-1]) == fr[-1]
+        f = parse(fr)
+        assert f.type == ty and f.sum_ok
+    print("hidden builders ok, e.g. 0x0B:", hidden_0b(0x10, 5).hex(" "))

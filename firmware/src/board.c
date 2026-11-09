@@ -6,7 +6,7 @@
 /* Channel -> port/mask.
 
    Verified by wire-probe (multimeter continuity + scope):
-   - Channel 1  = PA3  (pin 2 of LQFP-32, confirmed with scope on TIM1_CH3)
+   - Channel 1  = PA3  (confirmed with scope on TIM1_CH3; package pins in docs/pinouts.md)
    - Channel 2  = PA2  (inferred by elimination; not yet wire-verified)
    - Channels 3 = PC7  (verified)
    - Channels 4 = PC6  (verified)
