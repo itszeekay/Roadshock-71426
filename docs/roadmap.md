@@ -83,7 +83,7 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
 
 | ID | Direction | Payload |
 |---|---|---|
-| `0x100` | panel/ECU to gateway | 8-button bitmask (mirrors `08 0C`) |
+| `0x100` | panel/ECU to gateway | 8-channel button bitmask (mirrors `08 0C`) |
 | `0x101` | panel/ECU to gateway | master power (mirrors `07 00/01`) |
 | `0x110 + n` | ECU to PDU | channel n: mode, duty |
 | `0x120` | ECU to PDU | status request |

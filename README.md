@@ -15,7 +15,7 @@ This is a community reverse-engineering project for the **Harbor Freight 71426**
 boards:
 
 - the **base board** (the power/output module), and
-- the **button panel** (the 8-button remote with RGB status LEDs).
+- the **button panel** (10-button remote with RGB status LEDs).
 
 Everything here was obtained from hardware the author owns: SWIM dumps of two
 unprotected STM8 microcontrollers, static analysis, and passive UART captures.
@@ -81,7 +81,7 @@ Two processors with a clear split:
 
 | Part | Role |
 |---|---|
-| **ASR5601S** (U1) | Main panel controller: scans the 8 buttons, runs the UI, speaks the 2400-baud base link, optional BLE |
+| **ASR5601S** (U1) | Main panel controller: scans the 10 buttons, runs the UI, speaks the 2400-baud base link, optional BLE |
 | **STM8S003K3** (U2) | RGB LED display driver: 8 × RGB LEDs on 24 GPIOs, receives 115200 display frames |
 
 The STM8 has **no button inputs**. All 24 GPIOs are outputs. The buttons are on

@@ -7,7 +7,7 @@ The panel contains two processors that do different jobs.
 ```
              ┌──────────────────────────────────────────────┐
    buttons → │ ASR5601S   main controller                   │
-             │  · scans 8 buttons                           │
+             │  · scans 10 buttons (8 channel + power + mode) │
              │  · runs the UI / modes                       │
              │  · 2400-baud base link (UART1, P04/P05)      │
              │  · optional BLE                              │
@@ -29,12 +29,12 @@ descriptor table are outputs. Its UART runs at 115200, not the 2400-baud base
 link, and it receives a 9-byte display frame (`0x5A … 0xEE`). Those 24 pins are
 driven as eight groups of three from the frame's eight nibbles.
 
-The eight buttons cannot fit on the STM8: apart from the 24 LED pins, only PD7
+The ten buttons cannot fit on the STM8: apart from the 24 LED pins, only PD7
 would be free. The live capture with the panel connected to the base shows
 button frames, so something scans them. The ASR is the only other IC that can.
 
 The ASR datasheet says the chip has a hardware keypad controller with up to 112
-keys and `KEY_ROW0..13` / `KEY_COL0..7` alternate functions. The panel's eight
+keys and `KEY_ROW0..13` / `KEY_COL0..7` alternate functions. The panel's ten
 buttons may use that matrix rather than eight plain GPIO inputs. The exact row
 and column pins are not confirmed; when the ASR firmware is dumped, check
 accesses to the KEYPAD block at `0x4001_5000`.

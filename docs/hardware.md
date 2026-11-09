@@ -99,7 +99,7 @@ The panel contains two processors.
 
 | Function | Owner |
 |---|---|
-| 8 buttons | **ASR5601S** |
+| 10 buttons (8 channel + power + mode) | **ASR5601S** |
 | 8 RGB status LEDs | STM8S003K3, driven by the ASR over 115200 |
 | Backlight | Separate always-on / ASR-controlled light |
 | 2400-baud base link | ASR5601S (UART1) |
@@ -156,9 +156,9 @@ The panel PCB marking on U1 reads `ASR5601S`, `FD1A21G`, `P19K89-00`.
 - No external flash on the ASR (1 MB or 512 KB is inside the SiP).
 - No light sensor path in the STM8 firmware (the ADC is unused).
 
-If an ambient-light sensor exists on the panel, it is on the ASR (which has
-ADC pins) or handled by analog backlight circuitry. The ASR firmware has not
-been dumped, so that remains **?**.
+The panel has an ambient-light sensor. It is on the ASR side (which has ADC
+pins) or in analog backlight circuitry; the STM8 firmware contains no light
+sensor path. The ASR firmware has not been dumped, so details remain **?**.
 
 ---
 

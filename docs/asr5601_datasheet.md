@@ -76,7 +76,7 @@ should target the UART2 and UART3 pins above, not all 30 GPIOs.
 ### Keypad
 
 The ASR has a hardware keypad controller with up to 112 keys, using
-`KEY_ROW0..13` and `KEY_COL0..7` alternate functions. The panel has 8 buttons,
+`KEY_ROW0..13` and `KEY_COL0..7` alternate functions. The panel has 10 buttons (8 channel, 1 power, 1 mode),
 so it may use the keypad matrix rather than eight plain GPIO inputs.
 
 This is an inference, not a confirmed panel connection. When the ASR firmware is
