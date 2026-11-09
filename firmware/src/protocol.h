@@ -11,6 +11,7 @@
 #define PROTO_TYPE_KEYS  0x08
 #define PROTO_FLAG_KEYS  0x0C
 #define PROTO_TYPE_CONFIG 0x09   /* custom: configure one output */
+#define PROTO_TYPE_STATUS 0x0A   /* custom: status report */
 
 typedef struct {
     uint8_t seq;
