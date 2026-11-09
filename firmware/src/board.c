@@ -3,8 +3,8 @@
  */
 #include "board.h"
 
-/* Channel -> port/mask. Placeholder mapping from the tentative static fit;
- * verify before driving real loads. */
+/* Channel -> port/mask. Matches the stock table recovered from the dump;
+ * confirmed by continuity on the base board. */
 const uint8_t board_pin_count = 8;
 const uint8_t board_pin_port[8] = {
     PIN_PA, PIN_PA,                              /* ch1 PA3, ch2 PA2        */

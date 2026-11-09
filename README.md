@@ -30,7 +30,7 @@ No vendor source code is included.
 |---|---|
 | Product | **ROADSHOCK Universal LED 8 Gang Switch Panel**, Harbor Freight **SKU 71426** |
 | Base MCU | **STM8S003F3P6**, TSSOP-20, 8 KB flash, ROP **open** |
-| Button-panel MCU | **STM8S003K3**, LQFP-32, 8 KB flash, ROP **open** |
+| Panel LED-driver MCU | **STM8S003K3**, LQFP-32, 8 KB flash, ROP **open** |
 | Panel BLE SoC | **ASR5601S**, QFN-48 (main panel controller; BLE does not advertise in this variant) |
 | Base ↔ panel link | UART, **2400 baud 8N1**, 11-byte frames, additive checksum |
 | Panel display link | UART, **115200 8N1**, 9-byte `0x5A … 0xEE` frames, 8 nibbles = 8 RGB LEDs |
@@ -177,7 +177,7 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 - **Hardware PWM** on channel 6 at 200–2000 Hz, 10–100 % duty
   (TIM1, verified on a scope).
 - **Build custom base firmware** with SDCC 4.5.
-- **Restore the stock firmware** from verified images at any time.
+- **Restore the STM8 stock firmware** from verified images at any time.
 
 ---
 
@@ -186,8 +186,11 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 - The **ASR5601S firmware** has not been dumped. Its button/UI logic is the one
   remaining black box. SWD (P06/P07) is the reliable dump route. The J3 UART
   monitor also has a documented read candidate, `coredump flash all`, which is
-  read-only and needs no licence. See
+  a capture command and needs no licence. See
   [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
+- Bench verification of the four stock channel modes and the low-frequency TIM1
+  prescaler fix. Both are built, but the prebuilt full image has not been
+  flashed for those tests.
 - Direct control of the panel LEDs without touching the private 115200 link.
   Over J2 alone, the LEDs remain under the ASR's UI control.
 - The final CAN gateway/PDU hardware (CAN controller choice, current sensing).
@@ -206,10 +209,11 @@ Feather is not part of the current design and is not actively used. See
 ```
 docs/       human-readable documentation
 dumps/      stock flash / EEPROM / option bytes + SHA-256
-restore/    stock restore images and script
+restore/    base-board stock restore images and script
 reverse/    decompiled firmware + annotated listings
 firmware/   custom base firmware (SDCC source + prebuilt images)
-tools/      protocol reference, PWM tests, Ghidra scripts
+tools/      protocol reference, PWM tests, ASR dump tools, Ghidra scripts
+reference/  curated ASR560X documentation, DOGO extraction and chip table
 rp2040/     CircuitPython sniffer, impersonator, base emulator, CAN sketch
 captures/   real bus captures
 images/     board photos (EXIF/GPS stripped)
@@ -230,7 +234,7 @@ python3 tools/validate_dump.py dumps/base/flash.bin 8192
 #    copy rp2040/dual_listen.py to CIRCUITPY as code.py
 #    wire the two signal wires to board.RX and board.D9, GND to GND
 
-# 3. Build the custom base firmware (SDCC 4.5 in PATH)
+# 4. Build the custom base firmware (SDCC 4.5 in PATH)
 cd firmware && make
 ```
 
@@ -248,7 +252,9 @@ Findings are tagged where it matters:
 - **Unknown**: not yet determined.
 
 The protocol, pin maps, dump integrity, PWM behaviour, and the STM8 display
-driver are verified. The ASR firmware and any J2-only LED control are not.
+driver are verified. The custom firmware's four channel modes are implemented
+but not fully bench-verified, and the low-frequency prescaler fix is built but
+not yet flashed. The ASR firmware and any J2-only LED control are not verified.
 
 ---
 
@@ -266,7 +272,7 @@ Original code and documentation in this repository are released under the MIT
 licence (see [`LICENSE`](LICENSE)). Stock firmware dumps are provided for
 interoperability and research on hardware owned by the author; vendor firmware
 remains the property of its respective owners. No vendor source code, ASR BLE
-stack, or third-party datasheet is redistributed here. See
+stack or ROM, or third-party datasheet is redistributed here. See
 [`NOTICE.md`](NOTICE.md).
 
 Harbor Freight and the product names are trademarks of their owners. This

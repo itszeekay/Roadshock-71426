@@ -122,7 +122,9 @@ left→right `48 … 37`; bottom edge `13 … 24`.
 | 24 | VDCOUT | 48 | VCCRFA |
 | 49 | PAD (GND) | | |
 
-`SEL0`/`SEL1`: `0,0` = boot from flash; `0,1` = UART download on P04/P05.
+`SEL0` (P00) and `SEL1` (P01): `SEL0=0, SEL1=0` boots from flash;
+`SEL0=1, SEL1=0` selects UART download on P04/P05. `SEL1` is held low by its
+internal pull-down and is not on J3.
 
 ## Headers
 

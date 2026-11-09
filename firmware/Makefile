@@ -2,8 +2,9 @@
 # Target: STM8S003F3P6 (8 KB flash, 1 KB RAM)
 #
 # Requires SDCC with the stm8 backend (sdcc -mstm8).
-#   make          -> build/roadshock.ihx
-#   make flash    -> program via stm8flash (see docs/reproduce.md)
+#   make            -> build/roadshock.ihx
+#   make flash      -> program the application image
+#   make flash-full -> program the prebuilt full 8 KB image
 
 CC      ?= sdcc
 AS      ?= sdasstm8
@@ -29,7 +30,10 @@ $(TARGET): $(OBJ)
 flash: $(TARGET)
 	stm8flash -c stlinkv2 -p stm8s003f3 -w $(TARGET)
 
+flash-full:
+	stm8flash -c stlinkv2 -p stm8s003f3 -w prebuilt/roadshock_full.ihx
+
 clean:
 	rm -rf build
 
-.PHONY: all flash clean
+.PHONY: all flash flash-full clean

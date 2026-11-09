@@ -57,6 +57,9 @@ python3 tools/asr5601_dump.py --port COM7 --dump dumps/asr
 python3 tools/asr5601_dump.py --parse dumps/asr/capture-20261109-120000.txt
 ```
 
+The parser rebuilds `flash.bin`, writes `flash.hex` and a `SHA256SUMS` file when
+the stream uses address labels.
+
 The board must already be in download mode: `SEL0 = 1`, `SEL1 = 0`, reset.
 Start at 115200; use `--baud 921600` for high-speed mode. See
 [`docs/asr5601_dump_plan.md`](../docs/asr5601_dump_plan.md) for the wiring and

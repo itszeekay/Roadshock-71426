@@ -90,6 +90,9 @@ Verified from live captures:
 - The advanced timer needs `BKR.MOE = 1`; without it the output never reaches
   the pin.
 - TIM1 has four separate `CCMR` registers, unlike TIM2.
+- The current source includes a TIM1 prescaler fix for low frequencies. It is
+  built into `firmware/prebuilt/roadshock_full.ihx` but not yet flashed;
+  50–199 Hz has not been re-measured.
 
 PWM formula: `f = 16 MHz / (prescaler × (ARR + 1))`.
 
@@ -115,9 +118,10 @@ With the panel powered and the base disconnected:
 - Status LEDs do not respond to buttons.
 - No valid frames seen on the ASR's TX (only a 1-byte `00` glitch).
 
-Cause: the ASR's UI waits for the base's startup/replies. The stock base sends
-one unsolicited `0x1B` at boot. `rp2040/base_emulator.py` reproduces the startup
-frame and the replies for bench testing.
+Working explanation: the ASR's UI appears to wait for the base's startup/replies.
+The stock base sends one unsolicited `0x1B` at boot.
+`rp2040/base_emulator.py` reproduces the startup frame and the replies for bench
+testing.
 
 ## Open
 

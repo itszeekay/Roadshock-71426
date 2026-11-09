@@ -10,11 +10,10 @@
  *   - echoes every accepted frame back with dir 0xFF and type|0x10
  *   - per-channel modes: toggle, momentary, pulse, blinking
  *   - ACC/ignition sense on PA1 (active high)
- *   - independent watchdog
+ *   - independent watchdog refresh (the IWDG is not started by this build)
  *
- * The channel -> MCU pin map is the one unknown left from the reverse
- * engineering; it is isolated in board.h so it can be filled in without
- * touching the rest of the firmware.
+ * The channel -> MCU pin map is isolated in board.h. It matches the stock
+ * table recovered from the dump.
  */
 #include <stdint.h>
 #include <string.h>

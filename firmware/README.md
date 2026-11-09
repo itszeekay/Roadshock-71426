@@ -25,6 +25,12 @@ Target: **STM8S003F3P6** (8 KB flash, 1 KB RAM). Built with **SDCC 4.5**
   MCU).
 - A factual status frame for the gateway/panel.
 
+## Bench verification pending
+
+- The four modes are implemented but have not all been exercised on hardware.
+- The prescaler fix is built into the prebuilt full image but has not been
+  flashed; 50–199 Hz has not been re-measured.
+
 ## Source
 
 | File | Purpose |
@@ -41,7 +47,10 @@ cd firmware
 make
 ```
 
-Output: `build/roadshock.ihx`.
+Output: `build/roadshock.ihx`, the application image.
+
+The full 8 KB image used for flashing is prebuilt. The Makefile does not
+generate it.
 
 Requires SDCC 4.5 in `PATH`.
 
@@ -49,9 +58,10 @@ Requires SDCC 4.5 in `PATH`.
 
 | File | Notes |
 |---|---|
-| `prebuilt/roadshock_full.ihx` | latest full 8 KB image (prescaler fix) |
+| `prebuilt/roadshock_full.ihx` | latest full 8 KB image (prescaler fix); not yet flashed on the bench |
 | `prebuilt/roadshock_full.bin` | binary generated from that `.ihx` |
 | `prebuilt/roadshock_app.ihx` | application-only image |
+| `prebuilt/SHA256SUMS` | hashes of the prebuilt images |
 
 The prebuilt `.bin` is generated from the `.ihx` (0xFF fill), so the pair is
 consistent. Always prefer the `.ihx` for `stm8flash`.
@@ -63,6 +73,9 @@ consistent. Always prefer the `.ihx` for `stm8flash`.
 ```bash
 stm8flash -c stlinkv2 -p stm8s003f3 -w prebuilt/roadshock_full.ihx
 ```
+
+Or `make flash-full` from the `firmware` directory. `make flash` writes the
+just-built application image instead.
 
 Remove `RST`/the ST-Link to run.
 

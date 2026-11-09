@@ -3,6 +3,9 @@
 This directory contains the verified stock images and a script to verify or
 restore the base board.
 
+The panel STM8 restore images are in [`dumps/panel/`](../dumps/panel/). They use
+the same `stm8flash` commands with `-p stm8s003k3`; there is no separate script.
+
 | File | Meaning |
 |---|---|
 | `firmware_stock.bin` | 8192 B stock base flash, corrected |

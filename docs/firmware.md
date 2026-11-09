@@ -31,7 +31,7 @@ Full decompilation: **256 / 256 functions, 0 failures**
 - Stock outputs are on/off. No dimming in the stock protocol.
 - **PA1 = ACC/ignition sense**; when low the firmware drops the outputs.
 - Per-channel settings live in the base EEPROM at `0x0D–0x14`.
-- No ADC, no I2C, no SPI.
+- No ADC, I2C or SPI use in the stock firmware.
 
 ### Behaviour
 
@@ -56,7 +56,7 @@ The panel STM8 is **not** a button controller. It is an RGB LED driver:
 - RX is a **9-byte** frame `0x5A … 0xEE`; four payload bytes → 8 nibbles →
   8 groups of 3 pins.
 - 8 RGB LEDs, one per channel (see [pinouts.md](pinouts.md)).
-- WWDG + TIM4; no ADC, no I2C, no PWM timer.
+- WWDG + TIM4; no ADC use, no I2C, no PWM output in the stock firmware.
 - No button inputs; the buttons are on the ASR5601S.
 
 The display decoder and pin grouping are in `sub_844C` / `sub_8C52` /
@@ -93,7 +93,9 @@ What it implements:
 - UART 2400 8N1 with the stock frame format and replies.
 - **Hardware PWM** on TIM1 (channel 6 = PC4 = TIM1_CH4).
 - Custom type `0x09` for off / on / PWM with duty and frequency.
-- EEPROM-backed settings.
+
+Settings are RAM-only for now. The stock base stores per-channel settings in
+EEPROM; the custom build does not yet.
 
 Build:
 
@@ -102,7 +104,10 @@ cd firmware
 make            # requires sdcc in PATH
 ```
 
-Outputs `roadshock.ihx` (application) and the full 8 KB image used for flashing.
+`make` produces `build/roadshock.ihx`, the application image. The full 8 KB
+image used for flashing is the prebuilt `firmware/prebuilt/roadshock_full.ihx`.
+`make flash-full` writes that image. Hashes of the prebuilt files are in
+`firmware/prebuilt/SHA256SUMS`.
 
 Bench-verified:
 
@@ -110,9 +115,17 @@ Bench-verified:
 - Blink on a minimal build.
 - Hardware PWM on channel 6 at 1 kHz and 200–2000 Hz, duty 10–100 %.
 
+Bench verification pending:
+
+- The four modes are implemented in the source but have not all been exercised
+  on hardware.
+- The TIM1 prescaler fix is built into `firmware/prebuilt/roadshock_full.ihx`
+  but has not been flashed; 50–199 Hz has not been re-measured.
+
 Not yet implemented:
 
-- The four stock modes are being folded into the production build.
+- EEPROM persistence of per-channel settings.
+- A factual status frame for the gateway/panel.
 - CAN. The STM8S003 has no CAN controller; the gateway/PDU plan puts a
   companion MCU in the middle.
 

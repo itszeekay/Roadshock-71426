@@ -11,6 +11,7 @@ Checks:
 import hashlib
 import os
 import sys
+import tempfile
 
 BASE = 0x8000
 
@@ -78,12 +79,13 @@ def main():
         print("non-0xFF in 0x8080-0x9DFF: %d/%d" %
               (sum(1 for b in code if b != 0xFF), len(code)))
 
-    # round trip
-    hx = path + ".verify.hex"
-    to_hex(data, BASE, hx)
-    img = from_hex(hx)
+    # round trip through a temporary Intel-HEX file
+    with tempfile.TemporaryDirectory() as td:
+        hx = os.path.join(td, "verify.hex")
+        to_hex(data, BASE, hx)
+        img = from_hex(hx)
     ok_rt = all(img.get(BASE + i, -1) == data[i] for i in range(len(data)))
-    print("\nIntel-HEX round trip :", "IDENTICAL" if ok_rt else "MISMATCH", "->", hx)
+    print("\nIntel-HEX round trip :", "IDENTICAL" if ok_rt else "MISMATCH")
     ok &= ok_rt
 
     print("\nRESULT:", "PASS" if ok else "FAIL")

@@ -12,7 +12,7 @@ A curated subset of ASR's public ASR560X material, chosen for the dump work:
 | `reference/asr560x/docs-en/ASR560X/` | Hardware reference, schematics, reference design, hardware design, developer guide, memory layout, DOGO manual, FAQ |
 | `reference/asr560x/docs-en/_sources/ASR560X/` | The clean reStructuredText twins |
 | `reference/asr560x/docs-zh/ASR560X/软件快速入门/` | AT command list and SDK firmware types |
-| `reference/asr560x/drive/` | QFN48 EVB schematic, Peripheral User's Guide, Development Board guide, Security notes, DOGO tool, extracted entry module and chip database, ASR560X test image, image layout notes |
+| `reference/asr560x/drive/` | QFN48 EVB schematic, Peripheral User's Guide, Development Board guide, Security notes, DOGO tool, extracted entry module and chip database, image layout notes |
 | `reference/asr560x/drive/DOGO_extract/` | Python 3.5 modules, readable chip table, annotated dump-path disassembly |
 | `reference/asr560x/notes/ASR582X_FAQ_coredump/` | The ASR582X FAQ page that names `coredump flash all` |
 | `reference/asr560x/SOURCES.md` | Source URL or Drive ID for each file |
@@ -20,8 +20,10 @@ A curated subset of ASR's public ASR560X material, chosen for the dump work:
 
 Not included: the full site mirror, other ASR product families, the ASR SDK, and
 the datasheet (credit or form gated). The one ASR582X page above is kept because
-it documents the read command. PDF author and creator metadata was stripped
-before publication.
+it documents the read command. ASR's 560X demo flash image is not redistributed
+because it contains the ASR BLE ROM; its partition layout is in
+`reference/asr560x/drive/ASR560X_test_image_layout.md`. PDF author and creator
+metadata was stripped before publication.
 
 ## What Phase 0 changed
 
@@ -65,7 +67,7 @@ The chip database is **inside the executable**, not in `config.ini`. The
 | BLE ROM | `0x1000D000` |
 | App | `0x10048000` |
 | ATE | `0x100F0000` |
-| OTA info | `0x10008000` |
+| OTA tag address | `0x10008000` |
 
 `config/config.ini` only stores language and last-used paths. A missing file
 produces a dialog, not an empty chip table. `config/script.ini` is the unrelated

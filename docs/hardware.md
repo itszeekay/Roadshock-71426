@@ -108,7 +108,8 @@ The panel contains two processors.
 
 The STM8 has **no button inputs**. All 24 of its GPIOs are outputs for the RGB
 LEDs. The panel works when connected to the base, but its status LEDs stay dark
-when the base is absent because the ASR is waiting for the start-up handshake.
+when the base is absent, which suggests the ASR is waiting for the base's
+start-up handshake.
 
 ---
 
@@ -131,10 +132,10 @@ The panel PCB marking on U1 reads `ASR5601S`, `FD1A21G`, `P19K89-00`.
 - No CAN transceiver/controller on either stock board.
 - No current shunt or current-sense amplifier.
 - No external flash on the ASR (1 MB or 512 KB is inside the SiP).
-- No light sensor path in the STM8 firmware (no ADC at all).
+- No light sensor path in the STM8 firmware (the ADC is unused).
 
 If an ambient-light sensor exists on the panel, it is on the ASR (which has
-ADC pins) or handled by analog backlight circuitry. The ASR firmware has not
+ADC pins) or handled by analogue backlight circuitry. The ASR firmware has not
 been dumped, so that remains **?**.
 
 ---

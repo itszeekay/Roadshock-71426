@@ -1,2 +1,0 @@
-1. This sonata_hl_data_trans_demo.bin file is compiled from ASR BLE NONOS SDK v1.6.1 sonata_hl_data_trans_demo.
-2. The user only needs to download the sonata_hl_data_trans_demo.bin to address 0x10000000 (bootloader) in Flash since this bin file contains bootloader&ROM&APP firmware.

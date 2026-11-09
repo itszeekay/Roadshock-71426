@@ -83,10 +83,12 @@ cd firmware
 make
 ```
 
-Outputs:
+Build result:
 
-- `roadshock.ihx`: application image.
-- the full 8 KB image used for flashing.
+- `build/roadshock.ihx`: application image.
+
+The full 8 KB image used for flashing is the prebuilt
+`firmware/prebuilt/roadshock_full.ihx`. The Makefile does not generate it.
 
 Prebuilt images are in `firmware/prebuilt/`.
 
@@ -99,6 +101,9 @@ Prebuilt images are in `firmware/prebuilt/`.
 ```bash
 stm8flash -c stlinkv2 -p stm8s003f3 -w firmware/prebuilt/roadshock_full.ihx
 ```
+
+Or `make flash-full` from `firmware/`. `make flash` writes the application image
+built by `make`.
 
 To run: disconnect `RST` / remove the ST-Link. The MCU is held in reset while
 `RST` is wired.
@@ -117,10 +122,12 @@ powershell -File restore\restore_stock.ps1
 powershell -File restore\restore_stock.ps1 -Write
 ```
 
-The script uses `stm8flash` from `PATH`; pass `-Flash <path>` if needed.
+The script uses `stm8flash` from `PATH`; pass `-Flash <path>` if needed. It
+covers the base board. The panel STM8 images are in `dumps/panel/`; write them
+with the same commands and `-p stm8s003k3`.
 
 `restore/firmware_stock.bin` is byte-identical to the device dump
-(`a730e8b0…`). Restore is always possible.
+(`a730e8b0…`). Base-board restore is always possible.
 
 ---
 

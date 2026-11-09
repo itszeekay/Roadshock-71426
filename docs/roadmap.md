@@ -15,7 +15,7 @@ Both products use the **same middle MCU** between the panel and the base:
                          CAN
 ```
 
-The middle MCU is a **3-port bridge**:
+The middle MCU is a **bridge with three serial ports plus CAN**:
 
 | Port | Link | Direction |
 |---|---|---|
@@ -42,8 +42,10 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
 ## Phases
 
 1. **Finish the base**
-   - Flash the prescaler fix; re-test low PWM frequencies.
-   - Implement the four stock modes (toggle / momentary / pulse / blinking).
+   - Flash `firmware/prebuilt/roadshock_full.ihx` (includes the prescaler fix);
+     re-test low PWM frequencies.
+   - Verify the four stock modes (toggle / momentary / pulse / blinking) on
+     hardware; they are implemented in the source.
    - Add a factual status frame (actual duty, ACC gating, faults).
 
 2. **Prove full panel control**
@@ -52,7 +54,7 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
    - Ship a host tool + Feather injector.
 
 3. **Gateway prototype**
-   - 3-port MITM, pass-through first.
+   - Three-port MITM, pass-through first.
    - Button frames → host/CAN; CAN → `08 0C` / `07` / `09`.
    - LED override via the display link.
 

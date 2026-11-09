@@ -7,7 +7,7 @@ behavioural, not structural:
 1. Does the ASR5601S download monitor accept `coredump flash all`?
 2. Does the stream use the `:<label><hex>$` framing that DOGO parses?
 
-Both are answered with read-only traffic.
+Both are answered with non-destructive traffic.
 
 ## What Phase 0 established
 
@@ -57,12 +57,13 @@ ASR582X FAQ says:
 That is the command this plan uses. It is documented for the same DOGO tool and
 the same UART1 monitor, but it has not been proven on the 5601S.
 
-The 560X transparent-transmission test image in the archive confirms the flash
-bootloader is `ASRBOOTLOADER-560X-MX-V2.0.3` and that `COREDUMP` is a partition
-name. It contains no CLI command strings, which suggests the `>>>` monitor and
-its commands live in mask ROM, not in the flash bootloader. If the ROM monitor
-does not implement `coredump flash all`, the fallback is the same command to the
-running app on UART1.
+The layout note from ASR's public 560X transparent-transmission image confirms
+the flash bootloader is `ASRBOOTLOADER-560X-MX-V2.0.3` and that `COREDUMP` is a
+partition name. The image itself is not redistributed because it contains the
+ASR BLE ROM. The image contains no CLI command strings, which suggests the `>>>`
+monitor and its commands live in mask ROM, not in the flash bootloader. If the
+ROM monitor does not implement `coredump flash all`, the fallback is the same
+command to the running app on UART1.
 
 ## Exact traffic
 
@@ -124,8 +125,9 @@ Deliverables:
 | `tools/extract_pyz.py` | reproducible PYZ extraction helper |
 
 The parser handles both stream shapes: `:<label><hex>$` and `$<hex>$`. It
-rebuilds a flat `flash.bin` when every label is an eight-digit address, filling
-gaps with `0xFF`, and writes a SHA-256 next to it.
+rebuilds a flat `flash.bin` when every label is an eight-digit address, fills
+gaps with `0xFF`, writes `flash.hex`, and writes a `SHA256SUMS` file for all
+generated images.
 
 The full path has been exercised on the desk against
 `tools/asr5601_fake_monitor.py`, a socket-backed monitor that speaks the same
@@ -188,8 +190,9 @@ vector into flash. A block of all `0xFF` means the wrong region or a protected
 region.
 
 If the first block looks right, read the full part twice, in separate power
-cycles, to two directories. The ASR560X family ships with 1 MB or 512 KB of
-flash; read 1 MB first and trim trailing `0xFF` if the part is the smaller one.
+cycles, to two directories. The read streams the whole part. The ASR560X family
+ships with 1 MB or 512 KB of flash; if a 512 KB part returns a 1 MB image with a
+`0xFF` tail, trim the tail.
 
 Exit criterion: two captures whose parsed `flash.bin` files are the same size
 and have identical SHA-256, covering the full part.
@@ -199,8 +202,8 @@ and have identical SHA-256, covering the full part.
 1. Compare the two reads. Any difference means retry; do not rationalise it.
 2. Check the vector table at `0x10000000` and carve the partitions using
    `docs/asr5601_reference_archive.md` and the Memory Layout page. The offsets
-   have not been confirmed on hardware yet. The ASR560X test image confirms the
-   same boundaries on a known-good build; see
+   have not been confirmed on hardware yet. The layout note from ASR's public
+   test image confirms the same boundaries on a known-good build; see
    `reference/asr560x/drive/ASR560X_test_image_layout.md`.
 3. Run a string scan for BLE names and UUIDs to confirm this is real code and
    not `0xFF` padding.

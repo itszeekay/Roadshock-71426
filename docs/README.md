@@ -9,7 +9,7 @@
 | [firmware.md](firmware.md) | Base and panel firmware behaviour, decompilation, custom firmware |
 | [panel.md](panel.md) | Panel architecture, ASR + STM8 split, buttons, LEDs, standalone behaviour |
 | [asr5601.md](asr5601.md) | ASR5601S pin map, J3, boot mode, dump options |
-| [asr5601_reference_archive.md](asr5601_reference_archive.md) | Curated ASR reference archive and the DOGO read-path finding |
+| [asr5601_reference_archive.md](asr5601_reference_archive.md) | Curated ASR archive, embedded chip table, and the DOGO read path |
 | [asr5601_dump_plan.md](asr5601_dump_plan.md) | Step-by-step plan to dump the ASR over J3 |
 | [bench-results.md](bench-results.md) | Everything verified on hardware, plus the dump text-mode trap |
 | [reproduce.md](reproduce.md) | Dump, build, flash, restore, capture, inject |

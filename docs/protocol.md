@@ -104,7 +104,8 @@ The stock base does not implement it. Payload:
 
 - `mode`: `0` = off, `1` = steady on, `2` = PWM
 - `duty`: 0–100
-- `freq`: 50–2000 Hz (16-bit little-endian in `freq_lo`/`freq_hi`)
+- `freq`: 50–2000 Hz (16-bit little-endian in `freq_lo`/`freq_hi`);
+  bench-tested at 200–2000 Hz
 - Reply: `0x19` (type `0x09 | 0x10`), 11 bytes.
 
 ---

@@ -3,8 +3,9 @@
 
 The ASR ROM download monitor is a text CLI on UART1. It prints
 ``1F2E3D00`` after reset in download mode and then offers a ``>>>`` prompt.
-ASR's own FAQ documents ``coredump flash all`` as the command that streams
-flash contents back over the same UART.
+ASR's ASR582X FAQ documents ``coredump flash all`` as the command that streams
+flash contents back over the same UART. It has not yet been proven on the
+ASR5601S.
 
 This tool only ever sends that one read command. It refuses any command that
 contains erase, burn, boot, write or program.
@@ -56,6 +57,25 @@ def _hex_to_bytes(text: str) -> bytes:
 
 def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def _write_ihex(path: pathlib.Path, data: bytes, base: int) -> None:
+    """Write a 32-bit Intel HEX file with extended linear address records."""
+    lines: list[str] = []
+    upper = None
+    for offset in range(0, len(data), 16):
+        address = base + offset
+        this_upper = (address >> 16) & 0xFFFF
+        if this_upper != upper:
+            body = bytes([0x02, 0x00, 0x00, 0x04,
+                          (this_upper >> 8) & 0xFF, this_upper & 0xFF])
+            lines.append(":" + body.hex().upper() + "%02X" % ((0x100 - sum(body)) & 0xFF))
+            upper = this_upper
+        chunk = data[offset:offset + 16]
+        body = bytes([len(chunk), (address >> 8) & 0xFF, address & 0xFF, 0x00]) + chunk
+        lines.append(":" + body.hex().upper() + "%02X" % ((0x100 - sum(body)) & 0xFF))
+    lines.append(":00000001FF")
+    path.write_bytes(("\n".join(lines) + "\n").encode("ascii"))
 
 
 def _log_line(log, text: str) -> None:
@@ -160,15 +180,18 @@ def probe(link: Link) -> int:
     link.send("", newline=True)
     reply = link.read_for(2.0)
     _show("CRLF reply", reply)
+    saw_any = bool(reply)
 
     if b">>>" not in reply and b"3D00" not in reply:
         print("No prompt. Sending the ASCII handshake and trying again.")
         link.send_raw(HANDSHAKE)
         reply += link.read_for(2.0)
+        saw_any = saw_any or bool(reply)
         if reply:
             _show("handshake reply", reply)
         link.send("", newline=True)
         reply = link.read_for(2.0)
+        saw_any = saw_any or bool(reply)
         if reply:
             _show("CRLF after handshake", reply)
 
@@ -176,9 +199,16 @@ def probe(link: Link) -> int:
         print("\nSending %r" % command)
         link.send(command)
         reply = link.read_for(2.0)
+        saw_any = saw_any or bool(reply)
         _show(command, reply)
         if b"1F2E3D00" in reply or b"3D00" in reply:
             print("note: the 3D00 banner appeared in this reply")
+
+    if not saw_any:
+        print("No bytes received. Check SEL0, reset, baud, TX/RX and ground.")
+        if link.error:
+            print("Serial error: %r" % (link.error,))
+        return 1
     return 0
 
 
@@ -237,6 +267,8 @@ def parse_capture(capture: pathlib.Path, outdir: pathlib.Path | None = None) -> 
         print("No known frame found. The capture is kept for inspection.")
         return 1
 
+    written: list[pathlib.Path] = []
+
     if chunks:
         by_label: dict[str, bytearray] = {}
         order: list[str] = []
@@ -255,8 +287,9 @@ def parse_capture(capture: pathlib.Path, outdir: pathlib.Path | None = None) -> 
         addressed = [label for label in order if address_re.fullmatch(label)]
         for label in order:
             blob = bytes(by_label[label])
-            name = label + ".bin"
-            (outdir / name).write_bytes(blob)
+            path = outdir / (label + ".bin")
+            path.write_bytes(blob)
+            written.append(path)
             print("  %-12s %7d bytes  sha256 %s" % (label, len(blob), _sha256(blob)[:16]))
 
         if addressed and len(addressed) == len(order):
@@ -266,18 +299,27 @@ def parse_capture(capture: pathlib.Path, outdir: pathlib.Path | None = None) -> 
             flat = bytearray(b"\xff" * (end - base))
             for addr, blob in pairs:
                 flat[addr - base:addr - base + len(blob)] = blob
-            (outdir / "flash.bin").write_bytes(flat)
+            bin_path = outdir / "flash.bin"
+            hex_path = outdir / "flash.hex"
+            bin_path.write_bytes(flat)
+            _write_ihex(hex_path, bytes(flat), base)
+            written.extend([bin_path, hex_path])
             print("  flat image   %7d bytes  base 0x%08X  sha256 %s"
                   % (len(flat), base, _sha256(bytes(flat))))
-            (outdir / "flash.bin.sha256").write_text(
-                "%s  flash.bin\n" % _sha256(bytes(flat)), encoding="ascii")
         else:
             print("  labels are not all 8-digit addresses; left as separate files")
 
     if images:
         blob = b"".join(_hex_to_bytes(h) for h in images)
-        (outdir / "readimage.bin").write_bytes(blob)
+        path = outdir / "readimage.bin"
+        path.write_bytes(blob)
+        written.append(path)
         print("  readimage    %7d bytes  sha256 %s" % (len(blob), _sha256(blob)[:16]))
+
+    if written:
+        lines = ["%s *%s" % (_sha256(path.read_bytes()), path.name) for path in written]
+        (outdir / "SHA256SUMS").write_bytes(("\n".join(lines) + "\n").encode("ascii"))
+        print("  wrote        SHA256SUMS (%d files)" % len(written))
 
     return 0
 
@@ -302,6 +344,12 @@ def selftest() -> int:
         return 1
     if (work / "flash.bin").read_bytes() != bytes.fromhex("DEADBEEFCAFEF00D"):
         print("selftest failed: flat image")
+        return 1
+    if not (work / "flash.hex").exists():
+        print("selftest failed: missing flash.hex")
+        return 1
+    if not (work / "SHA256SUMS").exists():
+        print("selftest failed: missing SHA256SUMS")
         return 1
     if (work / "readimage.bin").read_bytes() != bytes.fromhex("0011223344556677"):
         print("selftest failed: readimage")

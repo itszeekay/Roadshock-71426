@@ -57,8 +57,8 @@ data)` and writes `flash_image_bin.bin`. This is the Read Image and Generate Bin
 path.
 
 The tool in `tools/asr5601_dump.py` accepts both shapes. When every label is an
-eight-digit address it also rebuilds a flat `flash.bin` and fills gaps with
-`0xFF`.
+eight-digit address it also rebuilds a flat `flash.bin`, writes `flash.hex`, and
+fills gaps with `0xFF`.
 
 ## Safety
 

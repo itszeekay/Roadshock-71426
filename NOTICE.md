@@ -20,13 +20,16 @@ open an issue.
 
 `reference/asr560x/` contains a curated set of ASR-published documentation and
 the DOGO tool, included for preservation and interoperability research because
-ASR's original links are disappearing. Copyright remains with ASR
-Microelectronics; no license is granted. PDF author and creator metadata was
+ASR's original links are disappearing. It also contains Python modules extracted
+from that tool for protocol analysis. Copyright remains with ASR
+Microelectronics; no licence is granted. PDF author and creator metadata was
 stripped. If ASR or a rights holder asks for removal, the files will be removed.
 
 The rest of the repository contains no vendor source code. In particular it does
 not include the ASR SDK, the ASR BLE stack or ROM, the ST Standard Peripheral
-Library, or the community STM8 SLEIGH module.
+Library, or the community STM8 SLEIGH module. ASR's 560X demo flash image is not
+included because it contains the BLE ROM; only a derived partition layout note is
+published.
 
 Those are referenced by name/URL where relevant. The decompiled C is a
 reconstruction produced from the author's own dumps; the STM8 SLEIGH module is

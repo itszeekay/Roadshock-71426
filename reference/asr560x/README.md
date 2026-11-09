@@ -7,7 +7,9 @@ dump work depends on a few of them.
 Only the files used by the Roadshock work are included. The full site mirror,
 the SDK, and the datasheet (credit or form gated) are not. One ASR582X page is
 kept in `notes/` because it is the only ASR document found that names the read
-command.
+command. ASR's 560X demo flash image is not redistributed because it contains
+the ASR BLE ROM; its partition layout is recorded in
+`drive/ASR560X_test_image_layout.md`.
 
 ## Contents
 
@@ -23,9 +25,7 @@ command.
 | `drive/ASR_IoT_Security_Application_Notes_V1.0.0_EN.pdf` | Readout, secure boot, eFuse |
 | `drive/DOGO_VP2.3.8.exe` | ASR's flash tool, PyInstaller build |
 | `drive/DOGO_extract/` | Entry module, embedded chip database, string table, and annotated disassembly of the dump path |
-| `drive/sonata_hl_data_trans_demo.bin` | Full ASR560X flash image: bootloader, BLE ROM and demo app |
-| `drive/ASR560X_Transparent_Transmission_readme.txt` | ASR's note for that image |
-| `drive/ASR560X_test_image_layout.md` | Partition offsets and signatures confirmed from that image |
+| `drive/ASR560X_test_image_layout.md` | Partition offsets and signatures from ASR's public 560X demo image |
 | `notes/ASR582X_FAQ_coredump/` | The one ASR page that names `coredump flash all` |
 
 ## Datasheet status
@@ -50,17 +50,17 @@ The `analysis/asr6601.pdf` file sometimes mistaken for this datasheet is the
   on the panel.
 - The Peripheral User's Guide covers the flash controller, eFuse, AES and TRNG.
 - The Development Board guide covers the boot straps and the `1F2E3D00`
-  handshake.
+  download-mode banner.
 - The Security notes cover readout and secure boot.
 - The DOGO tool contains the undocumented read path (`read_image`,
   `recv_flash_image`, `dumping done!!!`).
 - The embedded `data.pyc` chip table gives the 5601S image addresses, the ASCII
   handshake `AsrIot560x` and the 921600 high-speed baud without needing
   `config.ini`.
-- The transparent-transmission image is a known-good 560X flash layout. Its
-  bootloader identifies itself as `ASRBOOTLOADER-560X-MX-V2.0.3` and its
-  partition table includes `COREDUMP`. The offsets and signatures are in
-  `drive/ASR560X_test_image_layout.md`.
+- ASR's 560X demo image is a known-good flash layout. Its bootloader identifies
+  itself as `ASRBOOTLOADER-560X-MX-V2.0.3` and its partition table includes
+  `COREDUMP`. The offsets and signatures are in
+  `drive/ASR560X_test_image_layout.md`; the image itself is not redistributed.
 - The selected EN pages cover the boot, memory layout, download tool and FAQ.
 - The two ZH pages cover the AT command list and the SDK firmware types.
 
@@ -92,10 +92,10 @@ the 5601S. The probe order and fallbacks are in
 
 ## Copyright and takedown
 
-These documents and the DOGO executable are copyright ASR Microelectronics
-Co., Ltd. They remain ASR's property. They are included for preservation,
-interoperability and repair research, with no license granted. If ASR or a
-rights holder asks for removal, the files will be removed.
+These documents, the DOGO executable, and the modules extracted from it are
+copyright ASR Microelectronics Co., Ltd. They remain ASR's property. They are
+included for preservation, interoperability and repair research, with no licence
+granted. If ASR or a rights holder asks for removal, the files will be removed.
 
 PDF author and creator metadata was stripped before publication. The visible
 content is unchanged. `MANIFEST.sha256` covers the files as published.

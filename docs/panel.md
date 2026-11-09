@@ -18,7 +18,7 @@ The panel contains two processors that do different jobs.
              │ STM8S003K3   RGB LED driver                  │
              │  · 24 GPIOs, all outputs                     │
              │  · 8 groups of 3 = 8 RGB LEDs                │
-             │  · no buttons, no ADC, no PWM timer          │
+             │  · no buttons, no ADC use, no PWM output     │
              └──────────────────────────────────────────────┘
 ```
 

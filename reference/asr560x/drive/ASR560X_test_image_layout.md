@@ -1,9 +1,13 @@
 # ASR560X test image layout
 
-`sonata_hl_data_trans_demo.bin` is a 400 KB full-flash image from ASR's
+ASR's `sonata_hl_data_trans_demo.bin` is a 400 KB full-flash image from the
 transparent-transmission demo. It is written at `0x10000000`. Its partition
 boundaries match the ASR560X developer guide, so it is a useful template for
 carving the panel dump.
+
+The image itself is **not redistributed here** because it contains the ASR BLE
+ROM. It is available from the ASR Drive link in [SOURCES.md](../SOURCES.md).
+This note records the offsets and signatures only.
 
 | Offset in image | Address | Size | Signature found |
 |---|---|---|---|
@@ -17,8 +21,8 @@ carving the panel dump.
 | `0x48000` | `0x10048000` | 112 KB | SP `0x20006000`, reset `0x10049F0D` |
 | `0x64000` | `0x10064000` | 112 KB | not present; image ends here |
 
-The image is exactly `0x64000` bytes, so it stops at the OTA/ATE base. The app
-reset vector is `0x10049F0D`, which is inside the app region.
+The published image is exactly `0x64000` bytes, so it stops at the OTA/ATE base.
+The app reset vector is `0x10049F0D`, which is inside the app region.
 
 ## How to use this
 

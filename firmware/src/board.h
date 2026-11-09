@@ -99,8 +99,8 @@ typedef struct {
     uint8_t           mask;  /* pin bit              */
 } pin_t;
 
-/* TODO: confirm and fill. Placeholder order follows the tentative static
- *       fit (PC3..PC7, PA2/PA3, PD2/PD3). */
+/* Channel table is in board.c and matches the stock map recovered from the
+ * dump. */
 extern const uint8_t board_pin_count;
 extern const uint8_t board_pin_port[8];   /* 0=PA 1=PB 2=PC 3=PD */
 #define PIN_PA 0
