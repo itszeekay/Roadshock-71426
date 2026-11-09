@@ -18,6 +18,13 @@
 | `drive/ASR560X_Development_Board_User_Guide_V1.1.0.pdf` | https://drive.google.com/file/d/1ie_yM-ItQ5_PIh5NClD7macu2FYobJXd/view |
 | `drive/ASR_IoT_Security_Application_Notes_V1.0.0_EN.pdf` | https://drive.google.com/file/d/1UYQFE1LQbBFFVinsHPXCAljKA4VLE6F_/view |
 | `drive/DOGO_VP2.3.8.exe` | https://drive.google.com/file/d/1wWtGCSKRu0-ehqY-_R00N9Rb6gdeiZ0G/view |
+| `drive/DOGO_extract/pyserial_demo.pyc` | Extracted from that executable |
+| `drive/DOGO_extract/dump_path.dis.txt` | Annotated disassembly produced from `pyserial_demo.pyc` |
 
 The PDFs were re-saved with author and creator metadata removed. Their visible
 content is unchanged.
+
+The ASR560X datasheet is not listed because it could not be obtained:
+V1.4.0 is form-gated on asrmicro.com and V1.2.1 is credit-gated on CSDN. The
+public CSDN preview pages are blank cover pages. If you obtain the PDF, add it
+here with its source URL and update `MANIFEST.sha256`.

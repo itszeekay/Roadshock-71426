@@ -21,7 +21,23 @@ are not.
 | `drive/ASR560X_Development_Board_User_Guide_V1.1.0.pdf` | Boot straps, `1F2E3D00`, EVB serial wiring |
 | `drive/ASR_IoT_Security_Application_Notes_V1.0.0_EN.pdf` | Readout, secure boot, eFuse |
 | `drive/DOGO_VP2.3.8.exe` | ASR's flash tool, PyInstaller build |
-| `drive/DOGO_extract/` | Entry module and strings from the tool |
+| `drive/DOGO_extract/` | Entry module, string table, and annotated disassembly of the dump path |
+
+## Datasheet status
+
+The full ASR560X datasheet is **not** in this archive. V1.4.0 is form-gated on
+`asrmicro.com` (name, email, verification code); V1.2.1 is credit-gated on CSDN;
+the Google Drive link in ASR's own docs returns 404. The public CSDN preview
+pages are blank cover and divider pages with "ASR Confidential" watermarks, so
+they add nothing.
+
+The dump work does not need the PDF: the QFN48 EVB schematic, the Peripheral
+User's Guide, the Development Board guide, and `docs/pinouts.md` cover the pins,
+flash controller, eFuse and memory layout. If you obtain the PDF through ASR's
+form, add it here and update `SOURCES.md` and `MANIFEST.sha256`.
+
+The `analysis/asr6601.pdf` file sometimes mistaken for this datasheet is the
+**ASR6601** datasheet, a different LoRa chip. It is not included.
 
 ## Why these files
 

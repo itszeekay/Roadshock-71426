@@ -23,22 +23,40 @@ was stripped before publication.
 ## The finding that changes the dump plan
 
 `DOGO_VP2.3.8.exe` is a PyInstaller one-file build of a Python 3.5/Qt app. Its
-entry module is `pyserial_demo.pyc` (extracted copy in
-`reference/asr560x/drive/DOGO_extract/`). The binary's own names show a flash
-read-back path that the manual does not document:
+entry module is `pyserial_demo.pyc`. The annotated disassembly of
+`recv_flash_image`, `generate_real_bin`, `get_cmd_cfg`, `send_cmd` and
+`data_receive` is in `reference/asr560x/drive/DOGO_extract/dump_path.dis.txt`.
 
-- `read_image`, `checkBox_read_image`, `recv_flash_image`, `direct_download_image`
-- the completion string `dumping done!!!`, plus `dump_datalist`
-- `\recev_data\coredump\` and `coredump_data` (core/RAM dump)
-- `get_cmd_cfg` / `save_cmd_cfg` / `cmd_dict` / `cmd1..3`, so the serial commands
-  are table-driven from a config file
-- address constants `0x10000000` and `0x10040000`
-- `erase %s 4096`, `boot %s %d`, `image verify success`, `get_chip_id`
-- `please check license file.` / `update_license`
+`read_image` is **not** a command. It is a checkbox flag plus two host files:
 
-The manual documents download and erase only. The read path exists in the
-binary, but the GUI is licence-gated, so it is present in code and not yet
-proven to run.
+- `checkBox_read_image` sets `self.read_image = True`.
+- `data_receive` appends incoming payload to `flash_image_fname` when the flag
+  is set.
+- `rece_bin` calls `write_to_bin_file` and `generate_real_bin`.
+- `generate_real_bin` runs the regex `:(.*?)\$`, converts each match with
+  `int(m, 16)` and `struct.pack("B", ...)`, writes the `.bin` to
+  `./recev_data/coredump/`, and prints `dumping done!!!`.
+
+The bootloader is a **text CLI**, not binary framing:
+
+- prompt `welcome to download\r\n>>>`
+- ASCII, CRLF-terminated commands
+- `get_chip_type`, `erase  0`, `boot <type> <addr>`, `init <baud>`
+- `1F2E3D00` handshake, `1F2E3D81` communication error
+- `CT:` plus a regex for the chip ID
+- `1048576` and `2097152` for the 1 MB and 2 MB parts
+
+Two config files are involved, and they are not the same:
+
+| File | Role | Needed for a dump? |
+|---|---|---|
+| `config/config.ini` | chip database: addresses, image slots, verbs | **Yes for DOGO** |
+| `config/script.ini` | multi-send macros | No, unrelated |
+
+Neither ships inside the exe, and the tool is licence-gated (`LicenseManager`,
+registry-backed, XOR-obfuscated), so the read control may be hidden. The
+cheapest first move is the `>>>` prompt over J3, which needs no ASR files. See
+[asr5601_dump_plan.md](asr5601_dump_plan.md).
 
 ## Pins: what reaches a pad
 

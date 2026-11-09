@@ -1,0 +1,2859 @@
+
+1221:           0 LOAD_GLOBAL          (print)
+               3 LOAD_CONST           ("recv flash image")
+               6 CALL_FUNCTION        (1 positional, 0 named)
+               9 POP_TOP
+
+1222:          10 LOAD_FAST            (self)
+              13 LOAD_ATTR            (checkBox_read_image)
+              16 LOAD_ATTR            (checkState)
+              19 CALL_FUNCTION        (0 positional, 0 named)
+              22 POP_JUMP_IF_FALSE    (to 229)
+
+1223:          25 LOAD_CONST           (True)
+              28 LOAD_FAST            (self)
+              31 STORE_ATTR           (read_image)
+
+1224:          34 LOAD_GLOBAL          (os)
+              37 LOAD_ATTR            (path)
+              40 LOAD_ATTR            (exists)
+              43 LOAD_FAST            (self)
+              46 LOAD_ATTR            (flash_image_fname)
+              49 CALL_FUNCTION        (1 positional, 0 named)
+              52 LOAD_CONST           (False)
+              55 COMPARE_OP           (is)
+              58 POP_JUMP_IF_FALSE    (to 92)
+
+1225:          61 LOAD_GLOBAL          (open)
+              64 LOAD_FAST            (self)
+              67 LOAD_ATTR            (flash_image_fname)
+              70 LOAD_CONST           ("w+")
+              73 CALL_FUNCTION        (2 positional, 0 named)
+              76 STORE_FAST           (f_image)
+
+1226:          79 LOAD_FAST            (f_image)
+              82 LOAD_ATTR            (close)
+              85 CALL_FUNCTION        (0 positional, 0 named)
+              88 POP_TOP
+              89 JUMP_FORWARD         (to 130)
+
+1228:     >>   92 LOAD_GLOBAL          (open)
+              95 LOAD_FAST            (self)
+              98 LOAD_ATTR            (flash_image_fname)
+             101 LOAD_CONST           ("r+")
+             104 CALL_FUNCTION        (2 positional, 0 named)
+             107 STORE_FAST           (f)
+
+1229:         110 LOAD_FAST            (f)
+             113 LOAD_ATTR            (truncate)
+             116 CALL_FUNCTION        (0 positional, 0 named)
+             119 POP_TOP
+
+1230:         120 LOAD_FAST            (f)
+             123 LOAD_ATTR            (close)
+             126 CALL_FUNCTION        (0 positional, 0 named)
+             129 POP_TOP
+
+1231:     >>  130 LOAD_GLOBAL          (os)
+             133 LOAD_ATTR            (path)
+             136 LOAD_ATTR            (exists)
+             139 LOAD_FAST            (self)
+             142 LOAD_ATTR            (flash_image_fname_bin)
+             145 CALL_FUNCTION        (1 positional, 0 named)
+             148 LOAD_CONST           (False)
+             151 COMPARE_OP           (is)
+             154 POP_JUMP_IF_FALSE    (to 188)
+
+1232:         157 LOAD_GLOBAL          (open)
+             160 LOAD_FAST            (self)
+             163 LOAD_ATTR            (flash_image_fname_bin)
+             166 LOAD_CONST           ("wb+")
+             169 CALL_FUNCTION        (2 positional, 0 named)
+             172 STORE_FAST           (f_image)
+
+1233:         175 LOAD_FAST            (f_image)
+             178 LOAD_ATTR            (close)
+             181 CALL_FUNCTION        (0 positional, 0 named)
+             184 POP_TOP
+             185 JUMP_ABSOLUTE        (to 238)
+
+1235:     >>  188 LOAD_GLOBAL          (open)
+             191 LOAD_FAST            (self)
+             194 LOAD_ATTR            (flash_image_fname_bin)
+             197 LOAD_CONST           ("r+")
+             200 CALL_FUNCTION        (2 positional, 0 named)
+             203 STORE_FAST           (f1)
+
+1236:         206 LOAD_FAST            (f1)
+             209 LOAD_ATTR            (truncate)
+             212 CALL_FUNCTION        (0 positional, 0 named)
+             215 POP_TOP
+
+1237:         216 LOAD_FAST            (f1)
+             219 LOAD_ATTR            (close)
+             222 CALL_FUNCTION        (0 positional, 0 named)
+             225 POP_TOP
+             226 JUMP_FORWARD         (to 238)
+
+1239:     >>  229 LOAD_CONST           (False)
+             232 LOAD_FAST            (self)
+             235 STORE_ATTR           (read_image)
+         >>  238 LOAD_CONST           (None)
+             241 RETURN_VALUE
+
+
+
+1769:           0 LOAD_FAST            (self)
+               3 LOAD_ATTR            (bfname)
+               6 LOAD_CONST           ("")
+               9 COMPARE_OP           (!=)
+              12 POP_JUMP_IF_FALSE    (to 58)
+
+1770:          15 LOAD_GLOBAL          (open)
+              18 LOAD_FAST            (self)
+         >>   21 LOAD_ATTR            (bfname)
+              24 LOAD_CONST           ("r")
+              27 CALL_FUNCTION        (2 positional, 0 named)
+              30 SETUP_WITH           (to 52)
+              33 STORE_FAST           (f)
+
+1771:          36 LOAD_FAST            (f)
+              39 LOAD_ATTR            (read)
+              42 CALL_FUNCTION        (0 positional, 0 named)
+              45 STORE_FAST           (data)
+              48 POP_BLOCK
+              49 LOAD_CONST           (None)
+         >>   52 WITH_CLEANUP_START
+              53 WITH_CLEANUP_FINISH
+              54 END_FINALLY
+              55 JUMP_FORWARD         (to 62)
+
+1773:     >>   58 LOAD_CONST           (None)
+              61 RETURN_VALUE
+
+1774:     >>   62 LOAD_CONST           (":(.*?)\\$")
+              65 STORE_FAST           (rule)
+
+1775:          68 LOAD_GLOBAL          (re)
+              71 LOAD_ATTR            (findall)
+              74 LOAD_FAST            (rule)
+              77 LOAD_FAST            (data)
+              80 CALL_FUNCTION        (2 positional, 0 named)
+              83 STORE_FAST           (dump_datalist)
+
+1776:          86 SETUP_LOOP           (to 718)
+              89 LOAD_FAST            (dump_datalist)
+              92 GET_ITER
+         >>   93 FOR_ITER             (to 717)
+              96 STORE_FAST           (datal)
+
+1777:          99 LOAD_FAST            (datal)
+             102 LOAD_CONST           (0)
+             105 LOAD_CONST           (10)
+             108 BUILD_SLICE          2
+             111 BINARY_SUBSCR
+             112 STORE_FAST           (file_name)
+
+1778:         115 LOAD_FAST            (datal)
+             118 LOAD_CONST           (10)
+         >>  121 LOAD_CONST           (None)
+             124 BUILD_SLICE          2
+             127 BINARY_SUBSCR
+             128 STORE_FAST           (file_content)
+
+1779:         131 LOAD_FAST            (file_content)
+             134 LOAD_ATTR            (encode)
+             137 LOAD_CONST           ("utf-8")
+             140 CALL_FUNCTION        (1 positional, 0 named)
+             143 STORE_FAST           (file_content)
+
+1780:         146 BUILD_LIST           0
+             149 STORE_FAST           (list_unit_data)
+
+1781:         152 SETUP_LOOP           (to 201)
+             155 LOAD_GLOBAL          (range)
+             158 LOAD_CONST           (0)
+             161 LOAD_GLOBAL          (len)
+             164 LOAD_FAST            (file_content)
+             167 CALL_FUNCTION        (1 positional, 0 named)
+             170 CALL_FUNCTION        (2 positional, 0 named)
+         >>  173 GET_ITER
+         >>  174 FOR_ITER             (to 200)
+             177 STORE_FAST           (i)
+
+1782:         180 LOAD_FAST            (list_unit_data)
+             183 LOAD_ATTR            (append)
+             186 LOAD_FAST            (file_content)
+             189 LOAD_FAST            (i)
+             192 BINARY_SUBSCR
+             193 CALL_FUNCTION        (1 positional, 0 named)
+             196 POP_TOP
+             197 JUMP_ABSOLUTE        (to 174)
+         >>  200 POP_BLOCK
+
+1783:     >>  201 LOAD_GLOBAL          (open)
+             204 LOAD_FAST            (file_name)
+             207 LOAD_CONST           (".txt")
+             210 BINARY_ADD
+             211 LOAD_CONST           ("ab")
+             214 CALL_FUNCTION        (2 positional, 0 named)
+             217 SETUP_WITH           (to 269)
+             220 STORE_FAST           (f)
+
+1784:         223 SETUP_LOOP           (to 265)
+             226 LOAD_FAST            (list_unit_data)
+             229 GET_ITER
+         >>  230 FOR_ITER             (to 264)
+             233 STORE_FAST           (byte)
+
+1785:         236 LOAD_FAST            (f)
+             239 LOAD_ATTR            (write)
+             242 LOAD_GLOBAL          (struct)
+             245 LOAD_ATTR            (pack)
+             248 LOAD_CONST           ("B")
+             251 LOAD_FAST            (byte)
+             254 CALL_FUNCTION        (2 positional, 0 named)
+             257 CALL_FUNCTION        (1 positional, 0 named)
+             260 POP_TOP
+             261 JUMP_ABSOLUTE        (to 230)
+         >>  264 POP_BLOCK
+         >>  265 POP_BLOCK
+             266 LOAD_CONST           (None)
+         >>  269 WITH_CLEANUP_START
+             270 WITH_CLEANUP_FINISH
+             271 END_FINALLY
+
+1786:         272 LOAD_GLOBAL          (open)
+             275 LOAD_FAST            (file_name)
+             278 LOAD_CONST           (".txt")
+             281 BINARY_ADD
+             282 LOAD_CONST           ("r")
+             285 CALL_FUNCTION        (2 positional, 0 named)
+             288 SETUP_WITH           (to 310)
+             291 STORE_FAST           (f)
+
+1787:         294 LOAD_FAST            (f)
+             297 LOAD_ATTR            (read)
+             300 CALL_FUNCTION        (0 positional, 0 named)
+             303 STORE_FAST           (data)
+             306 POP_BLOCK
+             307 LOAD_CONST           (None)
+         >>  310 WITH_CLEANUP_START
+             311 WITH_CLEANUP_FINISH
+             312 END_FINALLY
+
+1788:         313 BUILD_LIST           0
+             316 STORE_FAST           (list_data)
+
+1789:         319 SETUP_LOOP           (to 477)
+             322 LOAD_GLOBAL          (range)
+             325 LOAD_CONST           (0)
+             328 LOAD_GLOBAL          (len)
+             331 LOAD_FAST            (data)
+             334 CALL_FUNCTION        (1 positional, 0 named)
+             337 LOAD_CONST           (2)
+             340 CALL_FUNCTION        (3 positional, 0 named)
+             343 GET_ITER
+             344 FOR_ITER             (to 476)
+             347 STORE_FAST           (i)
+
+1790:         350 LOAD_FAST            (data)
+             353 LOAD_FAST            (i)
+             356 LOAD_FAST            (i)
+             359 LOAD_CONST           (2)
+             362 BINARY_ADD
+             363 BUILD_SLICE          2
+             366 BINARY_SUBSCR
+             367 STORE_FAST           (a)
+
+1791:         370 SETUP_EXCEPT         (to 392)
+
+1792:         373 LOAD_GLOBAL          (int)
+             376 LOAD_FAST            (a)
+             379 LOAD_CONST           (16)
+             382 CALL_FUNCTION        (2 positional, 0 named)
+             385 STORE_FAST           (val)
+             388 POP_BLOCK
+             389 JUMP_FORWARD         (to 430)
+
+1793:     >>  392 DUP_TOP
+             393 LOAD_GLOBAL          (ValueError)
+             396 COMPARE_OP           (exception-match)
+             399 POP_JUMP_IF_FALSE    (to 429)
+             402 POP_TOP
+             403 POP_TOP
+             404 POP_TOP
+
+1794:         405 LOAD_FAST            (self)
+             408 LOAD_ATTR            (s2__receive_text)
+             411 LOAD_ATTR            (append)
+             414 LOAD_CONST           ("invalid data\r\n")
+             417 CALL_FUNCTION        (1 positional, 0 named)
+             420 POP_TOP
+
+1795:         421 LOAD_CONST           (None)
+             424 RETURN_VALUE
+             425 POP_EXCEPT
+             426 JUMP_FORWARD         (to 430)
+             429 END_FINALLY
+
+1796:     >>  430 LOAD_FAST            (list_data)
+             433 LOAD_ATTR            (append)
+             436 LOAD_FAST            (val)
+             439 CALL_FUNCTION        (1 positional, 0 named)
+             442 POP_TOP
+
+1797:         443 LOAD_GLOBAL          (os)
+             446 LOAD_ATTR            (getcwd)
+             449 CALL_FUNCTION        (0 positional, 0 named)
+             452 STORE_FAST           (w_path)
+
+1798:         455 LOAD_FAST            (w_path)
+             458 LOAD_CONST           ("\\recev_data\\coredump\\")
+             461 BINARY_ADD
+             462 LOAD_FAST            (file_name)
+             465 BINARY_ADD
+             466 LOAD_CONST           (".bin")
+             469 BINARY_ADD
+             470 STORE_FAST           (bin_file_name)
+             473 JUMP_ABSOLUTE        (to 344)
+         >>  476 POP_BLOCK
+
+1799:     >>  477 LOAD_GLOBAL          (os)
+             480 LOAD_ATTR            (path)
+             483 LOAD_ATTR            (exists)
+             486 LOAD_FAST            (bin_file_name)
+             489 CALL_FUNCTION        (1 positional, 0 named)
+             492 POP_JUMP_IF_FALSE    (to 533)
+
+1800:         495 LOAD_GLOBAL          (open)
+             498 LOAD_FAST            (bin_file_name)
+             501 LOAD_CONST           ("r+")
+             504 CALL_FUNCTION        (2 positional, 0 named)
+             507 STORE_FAST           (f)
+
+1801:         510 LOAD_FAST            (f)
+             513 LOAD_ATTR            (truncate)
+             516 CALL_FUNCTION        (0 positional, 0 named)
+             519 POP_TOP
+
+1802:         520 LOAD_FAST            (f)
+             523 LOAD_ATTR            (close)
+             526 CALL_FUNCTION        (0 positional, 0 named)
+             529 POP_TOP
+             530 JUMP_FORWARD         (to 608)
+
+1804:         533 SETUP_EXCEPT         (to 565)
+
+1805:         536 LOAD_GLOBAL          (os)
+             539 LOAD_ATTR            (mkdir)
+             542 LOAD_GLOBAL          (os)
+             545 LOAD_ATTR            (path)
+             548 LOAD_ATTR            (dirname)
+             551 LOAD_FAST            (bin_file_name)
+             554 CALL_FUNCTION        (1 positional, 0 named)
+             557 CALL_FUNCTION        (1 positional, 0 named)
+             560 POP_TOP
+             561 POP_BLOCK
+             562 JUMP_FORWARD         (to 583)
+
+1806:     >>  565 DUP_TOP
+             566 LOAD_GLOBAL          (FileExistsError)
+             569 COMPARE_OP           (exception-match)
+             572 POP_JUMP_IF_FALSE    (to 582)
+             575 POP_TOP
+             576 POP_TOP
+             577 POP_TOP
+
+1807:         578 POP_EXCEPT
+             579 JUMP_FORWARD         (to 583)
+             582 END_FINALLY
+
+1808:     >>  583 LOAD_GLOBAL          (open)
+             586 LOAD_FAST            (bin_file_name)
+             589 LOAD_CONST           ("wb")
+             592 CALL_FUNCTION        (2 positional, 0 named)
+             595 SETUP_WITH           (to 605)
+             598 STORE_FAST           (f)
+
+1809:         601 POP_BLOCK
+             602 LOAD_CONST           (None)
+         >>  605 WITH_CLEANUP_START
+             606 WITH_CLEANUP_FINISH
+             607 END_FINALLY
+
+1811:     >>  608 LOAD_GLOBAL          (open)
+             611 LOAD_FAST            (bin_file_name)
+             614 LOAD_CONST           ("ab")
+             617 CALL_FUNCTION        (2 positional, 0 named)
+             620 SETUP_WITH           (to 672)
+             623 STORE_FAST           (f)
+
+1812:         626 SETUP_LOOP           (to 668)
+             629 LOAD_FAST            (list_data)
+             632 GET_ITER
+             633 FOR_ITER             (to 667)
+             636 STORE_FAST           (byte)
+
+1813:         639 LOAD_FAST            (f)
+             642 LOAD_ATTR            (write)
+             645 LOAD_GLOBAL          (struct)
+             648 LOAD_ATTR            (pack)
+             651 LOAD_CONST           ("B")
+             654 LOAD_FAST            (byte)
+             657 CALL_FUNCTION        (2 positional, 0 named)
+             660 CALL_FUNCTION        (1 positional, 0 named)
+             663 POP_TOP
+             664 JUMP_ABSOLUTE        (to 633)
+         >>  667 POP_BLOCK
+         >>  668 POP_BLOCK
+             669 LOAD_CONST           (None)
+         >>  672 WITH_CLEANUP_START
+             673 WITH_CLEANUP_FINISH
+             674 END_FINALLY
+
+1814:         675 LOAD_GLOBAL          (os)
+             678 LOAD_ATTR            (path)
+             681 LOAD_ATTR            (exists)
+             684 LOAD_FAST            (file_name)
+             687 LOAD_CONST           (".txt")
+             690 BINARY_ADD
+             691 CALL_FUNCTION        (1 positional, 0 named)
+             694 POP_JUMP_IF_FALSE    (to 93)
+
+1815:         697 LOAD_GLOBAL          (os)
+             700 LOAD_ATTR            (remove)
+             703 LOAD_FAST            (file_name)
+             706 LOAD_CONST           (".txt")
+             709 BINARY_ADD
+             710 CALL_FUNCTION        (1 positional, 0 named)
+             713 POP_TOP
+             714 JUMP_ABSOLUTE        (to 93)
+             717 POP_BLOCK
+
+1816:         718 LOAD_FAST            (self)
+             721 LOAD_ATTR            (s2__receive_text)
+             724 LOAD_ATTR            (append)
+             727 LOAD_CONST           ("dumping done!!!\r\n")
+             730 CALL_FUNCTION        (1 positional, 0 named)
+             733 POP_TOP
+             734 LOAD_CONST           (None)
+             737 RETURN_VALUE
+
+
+
+506:           0 LOAD_CONST           ("./config/script.ini")
+               3 LOAD_FAST            (self)
+               6 STORE_ATTR           (script_name)
+
+507:           9 LOAD_GLOBAL          (os)
+              12 LOAD_ATTR            (path)
+              15 LOAD_ATTR            (exists)
+              18 LOAD_FAST            (self)
+              21 LOAD_ATTR            (script_name)
+              24 CALL_FUNCTION        (1 positional, 0 named)
+              27 LOAD_CONST           (False)
+              30 COMPARE_OP           (is)
+              33 POP_JUMP_IF_FALSE    (to 70)
+
+508:          36 LOAD_GLOBAL          (open)
+              39 LOAD_FAST            (self)
+              42 LOAD_ATTR            (script_name)
+              45 LOAD_CONST           ("w+")
+              48 CALL_FUNCTION        (2 positional, 0 named)
+              51 LOAD_FAST            (self)
+              54 STORE_ATTR           (script_file)
+
+509:          57 LOAD_FAST            (self)
+              60 LOAD_ATTR            (script_file)
+              63 LOAD_ATTR            (close)
+              66 CALL_FUNCTION        (0 positional, 0 named)
+              69 POP_TOP
+
+510:     >>   70 LOAD_GLOBAL          (open)
+              73 LOAD_FAST            (self)
+              76 LOAD_ATTR            (script_name)
+              79 LOAD_CONST           ("r")
+              82 CALL_FUNCTION        (2 positional, 0 named)
+              85 SETUP_WITH           (to 220)
+              88 STORE_FAST           (f)
+
+511:          91 LOAD_FAST            (f)
+              94 LOAD_ATTR            (readlines)
+              97 CALL_FUNCTION        (0 positional, 0 named)
+             100 STORE_FAST           (content)
+
+512:         103 SETUP_LOOP           (to 216)
+             106 LOAD_GLOBAL          (enumerate)
+             109 LOAD_FAST            (content)
+             112 CALL_FUNCTION        (1 positional, 0 named)
+             115 GET_ITER
+         >>  116 FOR_ITER             (to 215)
+             119 UNPACK_SEQUENCE      2
+             122 STORE_FAST           (idx)
+             125 STORE_FAST           (line)
+
+513:         128 LOAD_FAST            (line)
+             131 LOAD_ATTR            (strip)
+             134 CALL_FUNCTION        (0 positional, 0 named)
+             137 LOAD_ATTR            (split)
+             140 LOAD_CONST           ("||")
+             143 CALL_FUNCTION        (1 positional, 0 named)
+             146 STORE_FAST           (tmp)
+
+514:         149 LOAD_GLOBAL          (len)
+             152 LOAD_FAST            (tmp)
+             155 CALL_FUNCTION        (1 positional, 0 named)
+             158 LOAD_CONST           (1)
+             161 COMPARE_OP           (==)
+             164 POP_JUMP_IF_FALSE    (to 196)
+
+515:         167 LOAD_FAST            (self)
+             170 LOAD_ATTR            (cmd_content)
+             173 LOAD_ATTR            (append)
+             176 LOAD_FAST            (tmp)
+             179 LOAD_CONST           ("0")
+             182 LOAD_CONST           ("1000")
+             185 BUILD_LIST           2
+             188 BINARY_ADD
+             189 CALL_FUNCTION        (1 positional, 0 named)
+             192 POP_TOP
+             193 JUMP_ABSOLUTE        (to 116)
+
+517:     >>  196 LOAD_FAST            (self)
+             199 LOAD_ATTR            (cmd_content)
+             202 LOAD_ATTR            (append)
+             205 LOAD_FAST            (tmp)
+             208 CALL_FUNCTION        (1 positional, 0 named)
+             211 POP_TOP
+             212 JUMP_ABSOLUTE        (to 116)
+         >>  215 POP_BLOCK
+         >>  216 POP_BLOCK
+             217 LOAD_CONST           (None)
+         >>  220 WITH_CLEANUP_START
+             221 WITH_CLEANUP_FINISH
+             222 END_FINALLY
+
+518:         223 LOAD_GLOBAL          (len)
+             226 LOAD_FAST            (self)
+             229 LOAD_ATTR            (cmd_content)
+             232 CALL_FUNCTION        (1 positional, 0 named)
+             235 LOAD_CONST           (0)
+             238 COMPARE_OP           (==)
+             241 POP_JUMP_IF_FALSE    (to 253)
+
+519:         244 LOAD_CONST           (True)
+             247 LOAD_FAST            (self)
+             250 STORE_ATTR           (ini_none)
+         >>  253 LOAD_CONST           (None)
+             256 RETURN_VALUE
+
+
+
+1847:           0 LOAD_FAST            (self)
+               3 LOAD_ATTR            (cmd_index)
+               6 LOAD_CONST           (1)
+               9 BINARY_ADD
+              10 LOAD_FAST            (self)
+              13 STORE_ATTR           (cmd_index)
+
+1848:          16 LOAD_FAST            (self)
+              19 LOAD_ATTR            (cmd_index)
+              22 LOAD_FAST            (self)
+              25 LOAD_ATTR            (cmd_total)
+              28 COMPARE_OP           (<)
+              31 POP_JUMP_IF_FALSE    (to 186)
+
+1849:          34 LOAD_GLOBAL          (list)
+              37 LOAD_FAST            (self)
+              40 LOAD_ATTR            (case_list)
+              43 LOAD_FAST            (self)
+              46 LOAD_ATTR            (cmd_index)
+              49 BINARY_SUBSCR
+              50 LOAD_ATTR            (keys)
+              53 CALL_FUNCTION        (0 positional, 0 named)
+              56 CALL_FUNCTION        (1 positional, 0 named)
+              59 LOAD_CONST           (0)
+              62 BINARY_SUBSCR
+              63 STORE_FAST           (input_s)
+
+1850:          66 LOAD_CONST           ("boot")
+              69 LOAD_FAST            (input_s)
+              72 COMPARE_OP           (in)
+              75 POP_JUMP_IF_FALSE    (to 96)
+
+1851:          78 LOAD_FAST            (input_s)
+              81 LOAD_ATTR            (encode)
+              84 LOAD_CONST           ("utf-8")
+              87 CALL_FUNCTION        (1 positional, 0 named)
+              90 STORE_FAST           (input_s)
+              93 JUMP_FORWARD         (to 115)
+
+1853:     >>   96 LOAD_FAST            (input_s)
+              99 LOAD_CONST           ("\r\n")
+             102 BINARY_ADD
+             103 LOAD_ATTR            (encode)
+             106 LOAD_CONST           ("utf-8")
+             109 CALL_FUNCTION        (1 positional, 0 named)
+             112 STORE_FAST           (input_s)
+
+1854:     >>  115 LOAD_GLOBAL          (print)
+             118 LOAD_FAST            (input_s)
+             121 CALL_FUNCTION        (1 positional, 0 named)
+             124 POP_TOP
+
+1855:         125 LOAD_FAST            (self)
+             128 LOAD_ATTR            (ser)
+             131 LOAD_ATTR            (write)
+             134 LOAD_FAST            (input_s)
+             137 CALL_FUNCTION        (1 positional, 0 named)
+             140 STORE_FAST           (num)
+
+1856:         143 LOAD_FAST            (self)
+             146 DUP_TOP
+             147 LOAD_ATTR            (data_num_sended)
+             150 LOAD_FAST            (num)
+             153 INPLACE_ADD
+             154 ROT_TWO
+             155 STORE_ATTR           (data_num_sended)
+
+1857:         158 LOAD_FAST            (self)
+             161 LOAD_ATTR            (lineEdit_2)
+             164 LOAD_ATTR            (setText)
+             167 LOAD_GLOBAL          (str)
+             170 LOAD_FAST            (self)
+             173 LOAD_ATTR            (data_num_sended)
+             176 CALL_FUNCTION        (1 positional, 0 named)
+             179 CALL_FUNCTION        (1 positional, 0 named)
+             182 POP_TOP
+             183 JUMP_FORWARD         (to 223)
+
+1859:     >>  186 LOAD_CONST           (0)
+             189 LOAD_FAST            (self)
+             192 STORE_ATTR           (cmd_index)
+
+1860:         195 LOAD_CONST           (0)
+             198 LOAD_FAST            (self)
+             201 STORE_ATTR           (cmd_total)
+
+1861:         204 LOAD_FAST            (self)
+             207 LOAD_ATTR            (send_bin_to_b)
+             210 CALL_FUNCTION        (0 positional, 0 named)
+             213 POP_TOP
+
+1862:         214 LOAD_CONST           (False)
+             217 LOAD_FAST            (self)
+             220 STORE_ATTR           (upload_bin_flag)
+         >>  223 LOAD_CONST           (None)
+             226 RETURN_VALUE
+
+
+
+1282:           0 SETUP_EXCEPT         (to 22)
+
+1283:           3 LOAD_FAST            (self)
+         >>    6 LOAD_ATTR            (ser)
+               9 LOAD_ATTR            (inWaiting)
+              12 CALL_FUNCTION        (0 positional, 0 named)
+         >>   15 STORE_FAST           (num)
+              18 POP_BLOCK
+              19 JUMP_FORWARD         (to 44)
+
+1284:     >>   22 POP_TOP
+              23 POP_TOP
+              24 POP_TOP
+
+1285:          25 LOAD_FAST            (self)
+              28 LOAD_ATTR            (port_close)
+              31 CALL_FUNCTION        (0 positional, 0 named)
+              34 POP_TOP
+
+1286:          35 LOAD_CONST           (None)
+              38 RETURN_VALUE
+              39 POP_EXCEPT
+              40 JUMP_FORWARD         (to 44)
+              43 END_FINALLY
+
+1287:     >>   44 LOAD_FAST            (num)
+              47 LOAD_CONST           (0)
+         >>   50 COMPARE_OP           (>)
+         >>   53 POP_JUMP_IF_FALSE    (to 5168)
+
+1288:          56 LOAD_CONST           ("")
+              59 STORE_FAST           (cmd_queue_data)
+
+1289:          62 LOAD_FAST            (self)
+         >>   65 LOAD_ATTR            (ser)
+              68 LOAD_ATTR            (read)
+              71 LOAD_FAST            (num)
+              74 CALL_FUNCTION        (1 positional, 0 named)
+              77 STORE_FAST           (data)
+
+1290:          80 LOAD_GLOBAL          (len)
+              83 LOAD_FAST            (data)
+         >>   86 CALL_FUNCTION        (1 positional, 0 named)
+         >>   89 STORE_FAST           (num)
+
+1292:     >>   92 LOAD_CONST           ("jump to ate")
+              95 LOAD_FAST            (data)
+              98 LOAD_ATTR            (decode)
+         >>  101 LOAD_CONST           ("iso-8859-1")
+             104 CALL_FUNCTION        (1 positional, 0 named)
+             107 COMPARE_OP           (in)
+             110 POP_JUMP_IF_TRUE     (to 134)
+             113 LOAD_CONST           ("ASR_582X_ATE")
+         >>  116 LOAD_FAST            (data)
+             119 LOAD_ATTR            (decode)
+         >>  122 LOAD_CONST           ("iso-8859-1")
+         >>  125 CALL_FUNCTION        (1 positional, 0 named)
+         >>  128 COMPARE_OP           (in)
+             131 POP_JUMP_IF_FALSE    (to 314)
+
+1293:     >>  134 LOAD_CONST           ("")
+             137 STORE_FAST           (out_err)
+
+1294:         140 SETUP_LOOP           (to 314)
+         >>  143 LOAD_GLOBAL          (range)
+         >>  146 LOAD_CONST           (0)
+             149 LOAD_FAST            (num)
+             152 CALL_FUNCTION        (2 positional, 0 named)
+             155 GET_ITER
+         >>  156 FOR_ITER             (to 313)
+             159 STORE_FAST           (i)
+
+1295:     >>  162 LOAD_CONST           ("{:02X}")
+         >>  165 LOAD_ATTR            (format)
+         >>  168 LOAD_FAST            (data)
+         >>  171 LOAD_FAST            (i)
+             174 BINARY_SUBSCR
+             175 CALL_FUNCTION        (1 positional, 0 named)
+             178 STORE_FAST           (out_err)
+
+1296:         181 LOAD_FAST            (out_err)
+             184 LOAD_CONST           ("FF")
+             187 COMPARE_OP           (==)
+         >>  190 POP_JUMP_IF_FALSE    (to 156)
+
+1297:     >>  193 LOAD_FAST            (i)
+         >>  196 LOAD_CONST           (0)
+             199 COMPARE_OP           (==)
+         >>  202 POP_JUMP_IF_FALSE    (to 228)
+
+1298:         205 LOAD_FAST            (data)
+             208 LOAD_FAST            (i)
+             211 LOAD_CONST           (1)
+         >>  214 BINARY_ADD
+             215 LOAD_CONST           (None)
+             218 BUILD_SLICE          2
+             221 BINARY_SUBSCR
+             222 STORE_FAST           (data)
+             225 JUMP_FORWARD         (to 309)
+
+1299:     >>  228 LOAD_FAST            (i)
+             231 LOAD_CONST           (1)
+             234 COMPARE_OP           (==)
+             237 POP_JUMP_IF_FALSE    (to 271)
+
+1300:     >>  240 LOAD_FAST            (data)
+         >>  243 LOAD_CONST           (0)
+             246 BINARY_SUBSCR
+         >>  247 LOAD_FAST            (data)
+             250 LOAD_FAST            (i)
+         >>  253 LOAD_CONST           (1)
+             256 BINARY_ADD
+             257 LOAD_CONST           (None)
+             260 BUILD_SLICE          2
+             263 BINARY_SUBSCR
+             264 BINARY_ADD
+             265 STORE_FAST           (data)
+             268 JUMP_FORWARD         (to 309)
+
+1302:         271 LOAD_FAST            (data)
+             274 LOAD_CONST           (0)
+             277 LOAD_FAST            (i)
+             280 LOAD_CONST           (1)
+             283 BINARY_SUBTRACT
+             284 BUILD_SLICE          2
+             287 BINARY_SUBSCR
+             288 LOAD_FAST            (data)
+             291 LOAD_FAST            (i)
+             294 LOAD_CONST           (1)
+             297 BINARY_ADD
+             298 LOAD_CONST           (None)
+             301 BUILD_SLICE          2
+             304 BINARY_SUBSCR
+             305 BINARY_ADD
+             306 STORE_FAST           (data)
+
+1303:     >>  309 BREAK_LOOP
+             310 JUMP_ABSOLUTE        (to 156)
+         >>  313 POP_BLOCK
+
+1305:     >>  314 LOAD_FAST            (self)
+             317 LOAD_ATTR            (hex_receive)
+             320 LOAD_ATTR            (checkState)
+             323 CALL_FUNCTION        (0 positional, 0 named)
+             326 POP_JUMP_IF_FALSE    (to 433)
+
+1306:         329 LOAD_CONST           ("")
+             332 STORE_FAST           (out_s)
+
+1307:         335 SETUP_LOOP           (to 394)
+             338 LOAD_GLOBAL          (range)
+             341 LOAD_CONST           (0)
+             344 LOAD_GLOBAL          (len)
+             347 LOAD_FAST            (data)
+             350 CALL_FUNCTION        (1 positional, 0 named)
+             353 CALL_FUNCTION        (2 positional, 0 named)
+             356 GET_ITER
+             357 FOR_ITER             (to 393)
+             360 STORE_FAST           (i)
+
+1308:         363 LOAD_FAST            (out_s)
+             366 LOAD_CONST           ("{:02X}")
+             369 LOAD_ATTR            (format)
+             372 LOAD_FAST            (data)
+             375 LOAD_FAST            (i)
+             378 BINARY_SUBSCR
+             379 CALL_FUNCTION        (1 positional, 0 named)
+             382 BINARY_ADD
+             383 LOAD_CONST           (" ")
+             386 BINARY_ADD
+             387 STORE_FAST           (out_s)
+             390 JUMP_ABSOLUTE        (to 357)
+         >>  393 POP_BLOCK
+
+1310:     >>  394 LOAD_FAST            (self)
+             397 LOAD_ATTR            (update_text_view)
+             400 LOAD_FAST            (out_s)
+             403 CALL_FUNCTION        (1 positional, 0 named)
+             406 POP_TOP
+
+1311:         407 LOAD_FAST            (self)
+             410 LOAD_ATTR            (output_log_file)
+             413 LOAD_FAST            (out_s)
+             416 CALL_FUNCTION        (1 positional, 0 named)
+             419 POP_TOP
+
+1312:         420 LOAD_FAST            (self)
+             423 LOAD_ATTR            (file_size_check)
+             426 CALL_FUNCTION        (0 positional, 0 named)
+             429 POP_TOP
+             430 JUMP_FORWARD         (to 5078)
+
+1316:         433 LOAD_FAST            (self)
+             436 LOAD_ATTR            (update_text_view)
+             439 LOAD_FAST            (data)
+             442 LOAD_ATTR            (decode)
+             445 LOAD_CONST           ("iso-8859-1")
+             448 CALL_FUNCTION        (1 positional, 0 named)
+             451 CALL_FUNCTION        (1 positional, 0 named)
+             454 POP_TOP
+
+1317:         455 LOAD_FAST            (data)
+             458 LOAD_ATTR            (decode)
+             461 LOAD_CONST           ("iso-8859-1")
+             464 CALL_FUNCTION        (1 positional, 0 named)
+             467 LOAD_FAST            (self)
+         >>  470 STORE_ATTR           (re_data_s)
+
+1318:         473 LOAD_FAST            (self)
+             476 LOAD_ATTR            (output_log_file)
+             479 LOAD_FAST            (self)
+             482 LOAD_ATTR            (re_data_s)
+             485 CALL_FUNCTION        (1 positional, 0 named)
+             488 POP_TOP
+
+1319:         489 LOAD_FAST            (self)
+             492 LOAD_ATTR            (file_size_check)
+             495 CALL_FUNCTION        (0 positional, 0 named)
+             498 POP_TOP
+
+1321:         499 LOAD_GLOBAL          (len)
+             502 LOAD_FAST            (self)
+             505 LOAD_ATTR            (back_record)
+             508 CALL_FUNCTION        (1 positional, 0 named)
+             511 LOAD_CONST           (2)
+             514 COMPARE_OP           (<)
+             517 POP_JUMP_IF_FALSE    (to 542)
+
+1322:         520 LOAD_FAST            (self)
+             523 LOAD_ATTR            (back_record)
+             526 LOAD_ATTR            (append)
+             529 LOAD_FAST            (self)
+             532 LOAD_ATTR            (re_data_s)
+             535 CALL_FUNCTION        (1 positional, 0 named)
+             538 POP_TOP
+             539 JUMP_FORWARD         (to 578)
+
+1324:         542 LOAD_FAST            (self)
+             545 LOAD_ATTR            (back_record)
+             548 LOAD_CONST           (1)
+             551 BINARY_SUBSCR
+             552 LOAD_FAST            (self)
+             555 LOAD_ATTR            (back_record)
+             558 LOAD_CONST           (0)
+             561 STORE_SUBSCR
+
+1325:         562 LOAD_FAST            (self)
+             565 LOAD_ATTR            (re_data_s)
+             568 LOAD_FAST            (self)
+             571 LOAD_ATTR            (back_record)
+             574 LOAD_CONST           (1)
+             577 STORE_SUBSCR
+
+1326:     >>  578 LOAD_GLOBAL          (len)
+             581 LOAD_FAST            (self)
+             584 LOAD_ATTR            (back_record)
+             587 CALL_FUNCTION        (1 positional, 0 named)
+             590 LOAD_CONST           (2)
+             593 COMPARE_OP           (==)
+             596 POP_JUMP_IF_FALSE    (to 626)
+
+1327:         599 LOAD_FAST            (self)
+             602 LOAD_ATTR            (back_record)
+             605 LOAD_CONST           (0)
+             608 BINARY_SUBSCR
+             609 LOAD_FAST            (self)
+             612 LOAD_ATTR            (back_record)
+             615 LOAD_CONST           (1)
+             618 BINARY_SUBSCR
+             619 BINARY_ADD
+             620 STORE_FAST           (cmd_queue_data)
+             623 JUMP_FORWARD         (to 663)
+
+1328:         626 LOAD_GLOBAL          (len)
+             629 LOAD_FAST            (self)
+             632 LOAD_ATTR            (back_record)
+             635 CALL_FUNCTION        (1 positional, 0 named)
+             638 LOAD_CONST           (1)
+             641 COMPARE_OP           (==)
+             644 POP_JUMP_IF_FALSE    (to 663)
+
+1329:         647 LOAD_FAST            (self)
+             650 LOAD_ATTR            (back_record)
+             653 LOAD_CONST           (0)
+             656 BINARY_SUBSCR
+             657 STORE_FAST           (cmd_queue_data)
+             660 JUMP_FORWARD         (to 663)
+
+1333:     >>  663 LOAD_GLOBAL          (len)
+             666 LOAD_FAST            (self)
+             669 LOAD_ATTR            (s2__receive_text)
+             672 LOAD_ATTR            (toPlainText)
+             675 CALL_FUNCTION        (0 positional, 0 named)
+             678 CALL_FUNCTION        (1 positional, 0 named)
+             681 LOAD_CONST           (2097152)
+             684 COMPARE_OP           (>)
+             687 POP_JUMP_IF_FALSE    (to 703)
+
+1334:         690 LOAD_FAST            (self)
+             693 LOAD_ATTR            (s2__receive_text)
+             696 LOAD_ATTR            (clear)
+             699 CALL_FUNCTION        (0 positional, 0 named)
+             702 POP_TOP
+
+1336:         703 LOAD_CONST           ("3D00")
+             706 LOAD_FAST            (cmd_queue_data)
+             709 COMPARE_OP           (in)
+             712 POP_JUMP_IF_FALSE    (to 724)
+
+1337:         715 LOAD_CONST           (True)
+             718 LOAD_FAST            (self)
+             721 STORE_ATTR           (down_load_process)
+
+1339:         724 LOAD_FAST            (self)
+             727 LOAD_ATTR            (coredump_data)
+             730 LOAD_ATTR            (decode)
+             733 CALL_FUNCTION        (0 positional, 0 named)
+             736 STORE_FAST           (coredump_data_s)
+
+1341:         739 LOAD_FAST            (self)
+             742 LOAD_ATTR            (read_image)
+             745 LOAD_CONST           (True)
+             748 COMPARE_OP           (is)
+             751 POP_JUMP_IF_FALSE    (to 798)
+
+1342:         754 LOAD_GLOBAL          (open)
+             757 LOAD_FAST            (self)
+             760 LOAD_ATTR            (flash_image_fname)
+             763 LOAD_CONST           ("a+")
+             766 CALL_FUNCTION        (2 positional, 0 named)
+             769 SETUP_WITH           (to 795)
+             772 STORE_FAST           (f)
+
+1343:         775 LOAD_FAST            (f)
+             778 LOAD_ATTR            (write)
+             781 LOAD_FAST            (self)
+             784 LOAD_ATTR            (re_data_s)
+             787 CALL_FUNCTION        (1 positional, 0 named)
+             790 POP_TOP
+             791 POP_BLOCK
+             792 LOAD_CONST           (None)
+         >>  795 WITH_CLEANUP_START
+             796 WITH_CLEANUP_FINISH
+             797 END_FINALLY
+
+1345:         798 LOAD_FAST            (self)
+             801 LOAD_ATTR            (rece_bin)
+             804 LOAD_ATTR            (checkState)
+             807 CALL_FUNCTION        (0 positional, 0 named)
+             810 POP_JUMP_IF_FALSE    (to 1331)
+
+1346:         813 LOAD_FAST            (self)
+             816 LOAD_ATTR            (coredump_data)
+             819 LOAD_CONST           (b'')
+             822 COMPARE_OP           (!=)
+             825 POP_JUMP_IF_FALSE    (to 1331)
+
+1347:         828 LOAD_FAST            (self)
+             831 LOAD_ATTR            (coredump_data)
+             834 LOAD_FAST            (data)
+             837 COMPARE_OP           (in)
+             840 POP_JUMP_IF_FALSE    (to 877)
+
+1348:         843 LOAD_FAST            (data)
+             846 LOAD_ATTR            (split)
+             849 LOAD_FAST            (self)
+             852 LOAD_ATTR            (coredump_data)
+             855 CALL_FUNCTION        (1 positional, 0 named)
+             858 LOAD_CONST           (-1)
+             861 BINARY_SUBSCR
+             862 STORE_FAST           (data)
+
+1349:         865 LOAD_CONST           (False)
+             868 LOAD_FAST            (self)
+             871 STORE_ATTR           (bin_start_flag)
+             874 JUMP_FORWARD         (to 896)
+
+1351:         877 LOAD_FAST            (self)
+             880 LOAD_ATTR            (bin_start_flag)
+             883 LOAD_CONST           (True)
+             886 COMPARE_OP           (is)
+             889 POP_JUMP_IF_FALSE    (to 896)
+
+1352:         892 LOAD_CONST           (None)
+             895 RETURN_VALUE
+
+1355:     >>  896 LOAD_FAST            (data)
+             899 LOAD_ATTR            (replace)
+             902 LOAD_CONST           (b' ')
+             905 LOAD_CONST           (b'')
+             908 CALL_FUNCTION        (2 positional, 0 named)
+             911 STORE_FAST           (data)
+
+1356:         914 LOAD_FAST            (data)
+             917 LOAD_ATTR            (replace)
+             920 LOAD_CONST           (b'\r\n')
+             923 LOAD_CONST           (b'')
+             926 CALL_FUNCTION        (2 positional, 0 named)
+             929 STORE_FAST           (data)
+
+1357:         932 LOAD_FAST            (data)
+             935 LOAD_ATTR            (replace)
+             938 LOAD_CONST           (b'\r')
+             941 LOAD_CONST           (b'')
+             944 CALL_FUNCTION        (2 positional, 0 named)
+             947 STORE_FAST           (data)
+
+1358:         950 LOAD_FAST            (data)
+             953 LOAD_ATTR            (replace)
+             956 LOAD_CONST           (b'\n')
+             959 LOAD_CONST           (b'')
+             962 CALL_FUNCTION        (2 positional, 0 named)
+             965 STORE_FAST           (data)
+
+1360:         968 LOAD_CONST           (b'@^@')
+             971 LOAD_FAST            (data)
+             974 COMPARE_OP           (in)
+             977 POP_JUMP_IF_FALSE    (to 1054)
+
+1361:         980 LOAD_FAST            (data)
+             983 LOAD_ATTR            (split)
+             986 LOAD_CONST           (b'@^@')
+             989 CALL_FUNCTION        (1 positional, 0 named)
+             992 LOAD_CONST           (0)
+             995 BINARY_SUBSCR
+             996 STORE_FAST           (data)
+
+1362:         999 LOAD_FAST            (self)
+            1002 LOAD_ATTR            (coredump_data)
+            1005 LOAD_ATTR            (decode)
+            1008 CALL_FUNCTION        (0 positional, 0 named)
+            1011 LOAD_FAST            (self)
+            1014 STORE_ATTR           (coredump_data_s)
+
+1364:        1017 LOAD_CONST           (False)
+            1020 LOAD_FAST            (self)
+            1023 STORE_ATTR           (bin_start_flag)
+
+1365:        1026 LOAD_CONST           (True)
+            1029 LOAD_FAST            (self)
+            1032 STORE_ATTR           (bin_end_flag)
+
+1366:        1035 LOAD_FAST            (self)
+            1038 LOAD_ATTR            (s2__receive_text)
+            1041 LOAD_ATTR            (append)
+            1044 LOAD_CONST           ("detect end whole\r\n")
+            1047 CALL_FUNCTION        (1 positional, 0 named)
+            1050 POP_TOP
+            1051 JUMP_FORWARD         (to 1226)
+
+1368:        1054 LOAD_CONST           (b'@')
+            1057 LOAD_FAST            (data)
+            1060 COMPARE_OP           (in)
+            1063 POP_JUMP_IF_FALSE    (to 1140)
+
+1369:        1066 LOAD_FAST            (data)
+            1069 LOAD_ATTR            (split)
+            1072 LOAD_CONST           (b'@')
+            1075 CALL_FUNCTION        (1 positional, 0 named)
+            1078 LOAD_CONST           (0)
+            1081 BINARY_SUBSCR
+            1082 STORE_FAST           (data)
+
+1370:        1085 LOAD_FAST            (self)
+            1088 LOAD_ATTR            (coredump_data)
+            1091 LOAD_ATTR            (decode)
+            1094 CALL_FUNCTION        (0 positional, 0 named)
+            1097 LOAD_FAST            (self)
+            1100 STORE_ATTR           (coredump_data_s)
+
+1372:        1103 LOAD_CONST           (False)
+            1106 LOAD_FAST            (self)
+            1109 STORE_ATTR           (bin_start_flag)
+
+1373:        1112 LOAD_CONST           (True)
+            1115 LOAD_FAST            (self)
+            1118 STORE_ATTR           (bin_end_flag)
+
+1374:        1121 LOAD_FAST            (self)
+            1124 LOAD_ATTR            (s2__receive_text)
+            1127 LOAD_ATTR            (append)
+            1130 LOAD_CONST           ("detect end @\r\n")
+            1133 CALL_FUNCTION        (1 positional, 0 named)
+            1136 POP_TOP
+            1137 JUMP_FORWARD         (to 1226)
+
+1376:        1140 LOAD_CONST           (b'@^')
+            1143 LOAD_FAST            (data)
+            1146 COMPARE_OP           (in)
+            1149 POP_JUMP_IF_FALSE    (to 1226)
+
+1377:        1152 LOAD_FAST            (data)
+            1155 LOAD_ATTR            (split)
+            1158 LOAD_CONST           (b'@^')
+            1161 CALL_FUNCTION        (1 positional, 0 named)
+            1164 LOAD_CONST           (0)
+            1167 BINARY_SUBSCR
+            1168 STORE_FAST           (data)
+
+1378:        1171 LOAD_FAST            (self)
+            1174 LOAD_ATTR            (coredump_data)
+            1177 LOAD_ATTR            (decode)
+            1180 CALL_FUNCTION        (0 positional, 0 named)
+            1183 LOAD_FAST            (self)
+            1186 STORE_ATTR           (coredump_data_s)
+
+1380:        1189 LOAD_CONST           (False)
+            1192 LOAD_FAST            (self)
+            1195 STORE_ATTR           (bin_start_flag)
+
+1381:        1198 LOAD_CONST           (True)
+            1201 LOAD_FAST            (self)
+            1204 STORE_ATTR           (bin_end_flag)
+
+1382:        1207 LOAD_FAST            (self)
+            1210 LOAD_ATTR            (s2__receive_text)
+            1213 LOAD_ATTR            (append)
+            1216 LOAD_CONST           ("detect end @^\r\n")
+            1219 CALL_FUNCTION        (1 positional, 0 named)
+            1222 POP_TOP
+            1223 JUMP_FORWARD         (to 1226)
+
+1387:     >> 1226 BUILD_LIST           0
+            1229 STORE_FAST           (list_data_s)
+
+1388:        1232 SETUP_LOOP           (to 1281)
+            1235 LOAD_GLOBAL          (range)
+            1238 LOAD_CONST           (0)
+            1241 LOAD_GLOBAL          (len)
+            1244 LOAD_FAST            (data)
+            1247 CALL_FUNCTION        (1 positional, 0 named)
+            1250 CALL_FUNCTION        (2 positional, 0 named)
+            1253 GET_ITER
+            1254 FOR_ITER             (to 1280)
+            1257 STORE_FAST           (i)
+
+1389:        1260 LOAD_FAST            (list_data_s)
+            1263 LOAD_ATTR            (append)
+            1266 LOAD_FAST            (data)
+            1269 LOAD_FAST            (i)
+            1272 BINARY_SUBSCR
+            1273 CALL_FUNCTION        (1 positional, 0 named)
+            1276 POP_TOP
+            1277 JUMP_ABSOLUTE        (to 1254)
+         >> 1280 POP_BLOCK
+
+1390:     >> 1281 LOAD_FAST            (self)
+            1284 LOAD_ATTR            (write_to_bin_file)
+            1287 LOAD_FAST            (list_data_s)
+            1290 CALL_FUNCTION        (1 positional, 0 named)
+            1293 POP_TOP
+
+1392:        1294 LOAD_FAST            (self)
+            1297 LOAD_ATTR            (bin_end_flag)
+            1300 LOAD_CONST           (True)
+            1303 COMPARE_OP           (is)
+            1306 POP_JUMP_IF_FALSE    (to 1331)
+
+1393:        1309 LOAD_FAST            (self)
+            1312 LOAD_ATTR            (generate_real_bin)
+            1315 CALL_FUNCTION        (0 positional, 0 named)
+            1318 POP_TOP
+
+1394:        1319 LOAD_CONST           (False)
+            1322 LOAD_FAST            (self)
+            1325 STORE_ATTR           (bin_end_flag)
+            1328 JUMP_FORWARD         (to 1331)
+
+1398:     >> 1331 LOAD_FAST            (self)
+            1334 LOAD_ATTR            (chip_id_flag)
+            1337 LOAD_CONST           (True)
+            1340 COMPARE_OP           (is)
+            1343 POP_JUMP_IF_FALSE    (to 2326)
+
+1399:        1346 LOAD_CONST           ("get_chip_type")
+            1349 LOAD_FAST            (cmd_queue_data)
+            1352 COMPARE_OP           (in)
+            1355 POP_JUMP_IF_FALSE    (to 2326)
+
+1400:        1358 LOAD_FAST            (self)
+            1361 LOAD_ATTR            (back_record)
+            1364 LOAD_ATTR            (clear)
+            1367 CALL_FUNCTION        (0 positional, 0 named)
+            1370 POP_TOP
+
+1401:        1371 LOAD_CONST           (False)
+            1374 LOAD_FAST            (self)
+            1377 STORE_ATTR           (chip_id_flag)
+
+1402:        1380 LOAD_CONST           (True)
+            1383 LOAD_FAST            (self)
+            1386 STORE_ATTR           (down_load_process)
+
+1403:        1389 LOAD_CONST           ("CT:")
+            1392 LOAD_FAST            (cmd_queue_data)
+            1395 COMPARE_OP           (in)
+            1398 POP_JUMP_IF_FALSE    (to 1563)
+
+1404:        1401 LOAD_GLOBAL          (int)
+            1404 LOAD_GLOBAL          (re)
+            1407 LOAD_ATTR            (findall)
+            1410 LOAD_CONST           ("(?<=CT:)0x[0-9a-fA-F]+")
+            1413 LOAD_FAST            (cmd_queue_data)
+            1416 CALL_FUNCTION        (2 positional, 0 named)
+            1419 LOAD_CONST           (0)
+            1422 BINARY_SUBSCR
+            1423 LOAD_CONST           (16)
+            1426 CALL_FUNCTION        (2 positional, 0 named)
+            1429 STORE_FAST           (chip_id)
+
+1405:        1432 LOAD_GLOBAL          (print)
+            1435 LOAD_CONST           ("chip_id")
+            1438 LOAD_FAST            (chip_id)
+            1441 CALL_FUNCTION        (2 positional, 0 named)
+            1444 POP_TOP
+
+1406:        1445 LOAD_CONST           (0)
+            1448 LOAD_FAST            (chip_id)
+            1451 DUP_TOP
+            1452 ROT_THREE
+            1453 COMPARE_OP           (<)
+            1456 JUMP_IF_FALSE_OR_POP (to 1468)
+            1459 LOAD_CONST           (3)
+            1462 COMPARE_OP           (<=)
+            1465 JUMP_FORWARD         (to 1470)
+            1468 ROT_TWO
+            1469 POP_TOP
+         >> 1470 POP_JUMP_IF_TRUE     (to 1483)
+            1473 LOAD_FAST            (chip_id)
+            1476 LOAD_CONST           (128)
+            1479 BINARY_AND
+            1480 POP_JUMP_IF_FALSE    (to 1496)
+
+1407:        1483 LOAD_FAST            (self)
+            1486 LOAD_ATTR            (check_fw_version)
+            1489 CALL_FUNCTION        (0 positional, 0 named)
+            1492 POP_TOP
+            1493 JUMP_FORWARD         (to 1532)
+
+1412:        1496 LOAD_CONST           (False)
+            1499 LOAD_FAST            (self)
+            1502 STORE_ATTR           (is_old_verison)
+
+1413:        1505 LOAD_CONST           (False)
+            1508 LOAD_FAST            (self)
+            1511 STORE_ATTR           (is_old_image_ver)
+
+1414:        1514 LOAD_CONST           (False)
+            1517 LOAD_FAST            (self)
+            1520 STORE_ATTR           (is_old_ate_ver)
+
+1415:        1523 LOAD_CONST           (False)
+            1526 LOAD_FAST            (self)
+            1529 STORE_ATTR           (is_old_boot_ver)
+
+1416:     >> 1532 LOAD_GLOBAL          (print)
+            1535 LOAD_FAST            (self)
+            1538 LOAD_ATTR            (is_old_verison)
+            1541 LOAD_FAST            (self)
+            1544 LOAD_ATTR            (is_old_boot_ver)
+            1547 LOAD_FAST            (self)
+            1550 LOAD_ATTR            (is_old_image_ver)
+            1553 LOAD_FAST            (self)
+            1556 LOAD_ATTR            (is_old_ate_ver)
+            1559 CALL_FUNCTION        (4 positional, 0 named)
+            1562 POP_TOP
+
+1418:        1563 LOAD_FAST            (self)
+            1566 LOAD_ATTR            (only_image)
+            1569 LOAD_ATTR            (isChecked)
+            1572 CALL_FUNCTION        (0 positional, 0 named)
+            1575 POP_JUMP_IF_FALSE    (to 1790)
+
+1419:        1578 LOAD_FAST            (self)
+            1581 LOAD_ATTR            (is_old_image_ver)
+            1584 LOAD_CONST           (True)
+            1587 COMPARE_OP           (is)
+            1590 POP_JUMP_IF_FALSE    (to 1622)
+
+1420:        1593 LOAD_FAST            (self)
+            1596 LOAD_ATTR            (s2__receive_text)
+            1599 LOAD_ATTR            (append)
+            1602 LOAD_CONST           ("version of image is old!")
+            1605 CALL_FUNCTION        (1 positional, 0 named)
+            1608 POP_TOP
+
+1421:        1609 LOAD_CONST           (False)
+            1612 LOAD_FAST            (self)
+            1615 STORE_ATTR           (program_flag)
+
+1423:        1618 LOAD_CONST           (None)
+            1621 RETURN_VALUE
+
+1424:        1622 LOAD_GLOBAL          (chip_data)
+            1625 LOAD_ATTR            (chip_type)
+            1628 LOAD_GLOBAL          (ChipType)
+            1631 LOAD_ATTR            (SONATA)
+            1634 COMPARE_OP           (==)
+            1637 POP_JUMP_IF_FALSE    (to 1704)
+
+1425:        1640 LOAD_CONST           (False)
+            1643 LOAD_FAST            (self)
+            1646 STORE_ATTR           (down_load_process)
+
+1426:        1649 LOAD_CONST           (True)
+            1652 LOAD_FAST            (self)
+            1655 STORE_ATTR           (continuous_operation_flag)
+
+1427:        1658 LOAD_CONST           (True)
+            1661 LOAD_FAST            (self)
+            1664 STORE_ATTR           (upload_bin_flag)
+
+1428:        1667 LOAD_FAST            (self)
+            1670 LOAD_ATTR            (checkBox_high)
+            1673 LOAD_ATTR            (checkState)
+            1676 CALL_FUNCTION        (0 positional, 0 named)
+            1679 LOAD_GLOBAL          (Qt)
+            1682 LOAD_ATTR            (Unchecked)
+            1685 COMPARE_OP           (==)
+            1688 POP_JUMP_IF_FALSE    (to 1753)
+
+1429:        1691 LOAD_FAST            (self)
+            1694 LOAD_ATTR            (update_bootloader)
+            1697 CALL_FUNCTION        (0 positional, 0 named)
+            1700 POP_TOP
+            1701 JUMP_FORWARD         (to 1753)
+
+1431:        1704 LOAD_CONST           (True)
+            1707 LOAD_FAST            (self)
+            1710 STORE_ATTR           (direct_download_image)
+
+1432:        1713 LOAD_FAST            (self)
+            1716 LOAD_ATTR            (load_bin_file)
+            1719 CALL_FUNCTION        (0 positional, 0 named)
+            1722 POP_TOP
+
+1433:        1723 LOAD_CONST           (True)
+            1726 LOAD_FAST            (self)
+            1729 STORE_ATTR           (upload_bin_flag)
+
+1434:        1732 LOAD_CONST           (False)
+            1735 LOAD_FAST            (self)
+            1738 STORE_ATTR           (direct_download_image)
+
+1435:        1741 LOAD_GLOBAL          (chip_data)
+            1744 LOAD_ATTR            (app)
+            1747 LOAD_FAST            (self)
+            1750 STORE_ATTR           (input_addr)
+
+1436:     >> 1753 LOAD_FAST            (self)
+            1756 LOAD_ATTR            (checkBox_high)
+            1759 LOAD_ATTR            (checkState)
+            1762 CALL_FUNCTION        (0 positional, 0 named)
+            1765 LOAD_GLOBAL          (Qt)
+            1768 LOAD_ATTR            (Unchecked)
+            1771 COMPARE_OP           (==)
+            1774 POP_JUMP_IF_FALSE    (to 2213)
+
+1437:        1777 LOAD_FAST            (self)
+            1780 LOAD_ATTR            (upload_bin)
+            1783 CALL_FUNCTION        (0 positional, 0 named)
+            1786 POP_TOP
+            1787 JUMP_FORWARD         (to 2213)
+
+1438:        1790 LOAD_FAST            (self)
+            1793 LOAD_ATTR            (only_ate)
+            1796 LOAD_ATTR            (isChecked)
+            1799 CALL_FUNCTION        (0 positional, 0 named)
+            1802 POP_JUMP_IF_FALSE    (to 1935)
+
+1439:        1805 LOAD_FAST            (self)
+            1808 LOAD_ATTR            (is_old_ate_ver)
+            1811 LOAD_CONST           (True)
+            1814 COMPARE_OP           (is)
+            1817 POP_JUMP_IF_FALSE    (to 1849)
+
+1440:        1820 LOAD_FAST            (self)
+            1823 LOAD_ATTR            (s2__receive_text)
+            1826 LOAD_ATTR            (append)
+            1829 LOAD_CONST           ("version of ate is old!")
+            1832 CALL_FUNCTION        (1 positional, 0 named)
+            1835 POP_TOP
+
+1441:        1836 LOAD_CONST           (False)
+            1839 LOAD_FAST            (self)
+            1842 STORE_ATTR           (program_flag)
+
+1443:        1845 LOAD_CONST           (None)
+            1848 RETURN_VALUE
+
+1444:        1849 LOAD_CONST           (True)
+            1852 LOAD_FAST            (self)
+            1855 STORE_ATTR           (direct_download_image)
+
+1445:        1858 LOAD_FAST            (self)
+            1861 LOAD_ATTR            (load_bin_file)
+            1864 CALL_FUNCTION        (0 positional, 0 named)
+            1867 POP_TOP
+
+1446:        1868 LOAD_CONST           (True)
+            1871 LOAD_FAST            (self)
+            1874 STORE_ATTR           (upload_bin_flag)
+
+1447:        1877 LOAD_CONST           (False)
+            1880 LOAD_FAST            (self)
+            1883 STORE_ATTR           (direct_download_image)
+
+1448:        1886 LOAD_GLOBAL          (chip_data)
+            1889 LOAD_ATTR            (ate)
+            1892 LOAD_FAST            (self)
+            1895 STORE_ATTR           (input_addr)
+
+1449:        1898 LOAD_FAST            (self)
+            1901 LOAD_ATTR            (checkBox_high)
+            1904 LOAD_ATTR            (checkState)
+            1907 CALL_FUNCTION        (0 positional, 0 named)
+            1910 LOAD_GLOBAL          (Qt)
+            1913 LOAD_ATTR            (Unchecked)
+            1916 COMPARE_OP           (==)
+            1919 POP_JUMP_IF_FALSE    (to 2213)
+
+1450:        1922 LOAD_FAST            (self)
+            1925 LOAD_ATTR            (upload_bin)
+            1928 CALL_FUNCTION        (0 positional, 0 named)
+            1931 POP_TOP
+            1932 JUMP_FORWARD         (to 2213)
+
+1451:        1935 LOAD_FAST            (self)
+            1938 LOAD_ATTR            (only_bootloader)
+            1941 LOAD_ATTR            (isChecked)
+            1944 CALL_FUNCTION        (0 positional, 0 named)
+            1947 POP_JUMP_IF_FALSE    (to 2049)
+
+1452:        1950 LOAD_FAST            (self)
+            1953 LOAD_ATTR            (is_old_boot_ver)
+            1956 LOAD_CONST           (True)
+            1959 COMPARE_OP           (is)
+            1962 POP_JUMP_IF_FALSE    (to 1994)
+
+1453:        1965 LOAD_FAST            (self)
+            1968 LOAD_ATTR            (s2__receive_text)
+            1971 LOAD_ATTR            (append)
+            1974 LOAD_CONST           ("version of bootloader is old!")
+            1977 CALL_FUNCTION        (1 positional, 0 named)
+            1980 POP_TOP
+
+1454:        1981 LOAD_CONST           (False)
+            1984 LOAD_FAST            (self)
+            1987 STORE_ATTR           (program_flag)
+
+1456:        1990 LOAD_CONST           (None)
+            1993 RETURN_VALUE
+
+1457:        1994 LOAD_CONST           (False)
+            1997 LOAD_FAST            (self)
+            2000 STORE_ATTR           (down_load_process)
+
+1458:        2003 LOAD_CONST           (True)
+            2006 LOAD_FAST            (self)
+            2009 STORE_ATTR           (upload_bin_flag)
+
+1459:        2012 LOAD_FAST            (self)
+            2015 LOAD_ATTR            (checkBox_high)
+            2018 LOAD_ATTR            (checkState)
+            2021 CALL_FUNCTION        (0 positional, 0 named)
+            2024 LOAD_GLOBAL          (Qt)
+            2027 LOAD_ATTR            (Unchecked)
+            2030 COMPARE_OP           (==)
+            2033 POP_JUMP_IF_FALSE    (to 2213)
+
+1460:        2036 LOAD_FAST            (self)
+            2039 LOAD_ATTR            (update_bootloader)
+            2042 CALL_FUNCTION        (0 positional, 0 named)
+            2045 POP_TOP
+            2046 JUMP_FORWARD         (to 2213)
+
+1462:        2049 LOAD_FAST            (self)
+            2052 LOAD_ATTR            (is_old_boot_ver)
+            2055 LOAD_CONST           (True)
+            2058 COMPARE_OP           (is)
+            2061 POP_JUMP_IF_FALSE    (to 2080)
+
+1463:        2064 LOAD_FAST            (self)
+            2067 LOAD_ATTR            (s2__receive_text)
+            2070 LOAD_ATTR            (append)
+            2073 LOAD_CONST           ("version of bootloader is old!")
+            2076 CALL_FUNCTION        (1 positional, 0 named)
+            2079 POP_TOP
+
+1465:        2080 LOAD_FAST            (self)
+            2083 LOAD_ATTR            (is_old_ate_ver)
+            2086 LOAD_CONST           (True)
+            2089 COMPARE_OP           (is)
+            2092 POP_JUMP_IF_FALSE    (to 2111)
+
+1466:        2095 LOAD_FAST            (self)
+            2098 LOAD_ATTR            (s2__receive_text)
+            2101 LOAD_ATTR            (append)
+            2104 LOAD_CONST           ("version of ate is old!")
+            2107 CALL_FUNCTION        (1 positional, 0 named)
+            2110 POP_TOP
+
+1468:        2111 LOAD_FAST            (self)
+            2114 LOAD_ATTR            (is_old_image_ver)
+            2117 LOAD_CONST           (True)
+            2120 COMPARE_OP           (is)
+            2123 POP_JUMP_IF_FALSE    (to 2142)
+
+1469:        2126 LOAD_FAST            (self)
+            2129 LOAD_ATTR            (s2__receive_text)
+            2132 LOAD_ATTR            (append)
+            2135 LOAD_CONST           ("version of image is old!")
+            2138 CALL_FUNCTION        (1 positional, 0 named)
+            2141 POP_TOP
+
+1471:        2142 LOAD_FAST            (self)
+            2145 LOAD_ATTR            (is_old_verison)
+            2148 LOAD_CONST           (True)
+            2151 COMPARE_OP           (is)
+            2154 POP_JUMP_IF_FALSE    (to 2170)
+
+1472:        2157 LOAD_CONST           (False)
+            2160 LOAD_FAST            (self)
+            2163 STORE_ATTR           (program_flag)
+
+1473:        2166 LOAD_CONST           (None)
+            2169 RETURN_VALUE
+
+1475:        2170 LOAD_CONST           (True)
+            2173 LOAD_FAST            (self)
+            2176 STORE_ATTR           (upload_bin_flag)
+
+1476:        2179 LOAD_FAST            (self)
+            2182 LOAD_ATTR            (checkBox_high)
+            2185 LOAD_ATTR            (checkState)
+            2188 CALL_FUNCTION        (0 positional, 0 named)
+            2191 LOAD_GLOBAL          (Qt)
+            2194 LOAD_ATTR            (Unchecked)
+            2197 COMPARE_OP           (==)
+            2200 POP_JUMP_IF_FALSE    (to 2213)
+
+1477:        2203 LOAD_FAST            (self)
+            2206 LOAD_ATTR            (load_file_default)
+            2209 CALL_FUNCTION        (0 positional, 0 named)
+            2212 POP_TOP
+
+1479:     >> 2213 LOAD_FAST            (self)
+            2216 LOAD_ATTR            (checkBox_high)
+            2219 LOAD_ATTR            (isChecked)
+            2222 CALL_FUNCTION        (0 positional, 0 named)
+            2225 POP_JUMP_IF_FALSE    (to 2326)
+
+1480:        2228 LOAD_CONST           ("init %d\r\n")
+            2231 LOAD_GLOBAL          (chip_data)
+            2234 LOAD_ATTR            (baud)
+            2237 BINARY_MODULO
+            2238 LOAD_ATTR            (encode)
+            2241 LOAD_CONST           ("utf-8")
+            2244 CALL_FUNCTION        (1 positional, 0 named)
+            2247 STORE_FAST           (input_s)
+
+1481:        2250 SETUP_EXCEPT         (to 2273)
+
+1482:        2253 LOAD_FAST            (self)
+            2256 LOAD_ATTR            (ser)
+            2259 LOAD_ATTR            (write)
+            2262 LOAD_FAST            (input_s)
+            2265 CALL_FUNCTION        (1 positional, 0 named)
+            2268 POP_TOP
+            2269 POP_BLOCK
+            2270 JUMP_FORWARD         (to 2326)
+
+1483:     >> 2273 DUP_TOP
+            2274 LOAD_GLOBAL          (Exception)
+            2277 COMPARE_OP           (exception-match)
+            2280 POP_JUMP_IF_FALSE    (to 2325)
+            2283 POP_TOP
+            2284 STORE_FAST           (e)
+            2287 POP_TOP
+            2288 SETUP_FINALLY        (to 2312)
+
+1484:        2291 LOAD_GLOBAL          (print)
+            2294 LOAD_GLOBAL          (str)
+            2297 LOAD_FAST            (e)
+            2300 CALL_FUNCTION        (1 positional, 0 named)
+            2303 CALL_FUNCTION        (1 positional, 0 named)
+            2306 POP_TOP
+            2307 POP_BLOCK
+            2308 POP_EXCEPT
+            2309 LOAD_CONST           (None)
+         >> 2312 LOAD_CONST           (None)
+            2315 STORE_FAST           (e)
+            2318 DELETE_FAST          (e)
+            2321 END_FINALLY
+            2322 JUMP_FORWARD         (to 2326)
+            2325 END_FINALLY
+
+1486:     >> 2326 LOAD_FAST            (self)
+            2329 LOAD_ATTR            (upload_bin_flag)
+            2332 LOAD_CONST           (True)
+            2335 COMPARE_OP           (is)
+            2338 POP_JUMP_IF_FALSE    (to 2722)
+
+1487:        2341 LOAD_GLOBAL          (len)
+            2344 LOAD_FAST            (self)
+            2347 LOAD_ATTR            (case_list)
+            2350 CALL_FUNCTION        (1 positional, 0 named)
+            2353 LOAD_CONST           (0)
+            2356 COMPARE_OP           (>)
+            2359 POP_JUMP_IF_FALSE    (to 2722)
+
+1488:        2362 LOAD_GLOBAL          (print)
+            2365 LOAD_FAST            (cmd_queue_data)
+            2368 CALL_FUNCTION        (1 positional, 0 named)
+            2371 POP_TOP
+
+1489:        2372 LOAD_CONST           (None)
+            2375 STORE_FAST           (m1)
+
+1490:        2378 LOAD_GLOBAL          (re)
+            2381 LOAD_ATTR            (search)
+            2384 LOAD_GLOBAL          (list)
+            2387 LOAD_FAST            (self)
+            2390 LOAD_ATTR            (case_list)
+            2393 LOAD_FAST            (self)
+            2396 LOAD_ATTR            (cmd_index)
+            2399 BINARY_SUBSCR
+            2400 LOAD_ATTR            (values)
+            2403 CALL_FUNCTION        (0 positional, 0 named)
+            2406 CALL_FUNCTION        (1 positional, 0 named)
+            2409 LOAD_CONST           (0)
+            2412 BINARY_SUBSCR
+            2413 LOAD_FAST            (cmd_queue_data)
+            2416 CALL_FUNCTION        (2 positional, 0 named)
+            2419 STORE_FAST           (m1)
+
+1491:        2422 LOAD_CONST           ("init uart ok")
+            2425 LOAD_FAST            (cmd_queue_data)
+            2428 COMPARE_OP           (in)
+            2431 POP_JUMP_IF_FALSE    (to 2663)
+
+1492:        2434 LOAD_GLOBAL          (print)
+            2437 LOAD_CONST           ("we detect")
+            2440 CALL_FUNCTION        (1 positional, 0 named)
+            2443 POP_TOP
+
+1493:        2444 LOAD_FAST            (self)
+            2447 LOAD_ATTR            (back_record)
+            2450 LOAD_ATTR            (clear)
+            2453 CALL_FUNCTION        (0 positional, 0 named)
+            2456 POP_TOP
+
+1494:        2457 LOAD_GLOBAL          (chip_data)
+            2460 LOAD_ATTR            (baud)
+            2463 LOAD_FAST            (self)
+            2466 LOAD_ATTR            (ser)
+            2469 STORE_ATTR           (baudrate)
+
+1495:        2472 LOAD_FAST            (self)
+            2475 LOAD_ATTR            (s1__box_3)
+            2478 LOAD_ATTR            (setCurrentText)
+            2481 LOAD_GLOBAL          (str)
+            2484 LOAD_GLOBAL          (chip_data)
+            2487 LOAD_ATTR            (baud)
+            2490 CALL_FUNCTION        (1 positional, 0 named)
+            2493 CALL_FUNCTION        (1 positional, 0 named)
+            2496 POP_TOP
+
+1496:        2497 LOAD_FAST            (self)
+            2500 LOAD_ATTR            (only_image)
+            2503 LOAD_ATTR            (isChecked)
+            2506 CALL_FUNCTION        (0 positional, 0 named)
+            2509 POP_JUMP_IF_TRUE     (to 2557)
+            2512 LOAD_FAST            (self)
+            2515 LOAD_ATTR            (only_ate)
+            2518 LOAD_ATTR            (isChecked)
+            2521 CALL_FUNCTION        (0 positional, 0 named)
+            2524 POP_JUMP_IF_TRUE     (to 2557)
+            2527 LOAD_FAST            (self)
+            2530 LOAD_ATTR            (only_rom)
+            2533 LOAD_ATTR            (isChecked)
+            2536 CALL_FUNCTION        (0 positional, 0 named)
+            2539 POP_JUMP_IF_TRUE     (to 2557)
+
+1497:        2542 LOAD_FAST            (self)
+            2545 LOAD_ATTR            (only_aup)
+            2548 LOAD_ATTR            (isChecked)
+            2551 CALL_FUNCTION        (0 positional, 0 named)
+            2554 POP_JUMP_IF_FALSE    (to 2625)
+
+1498:        2557 LOAD_FAST            (self)
+            2560 LOAD_ATTR            (only_image)
+            2563 LOAD_ATTR            (isChecked)
+            2566 CALL_FUNCTION        (0 positional, 0 named)
+            2569 POP_JUMP_IF_FALSE    (to 2612)
+            2572 LOAD_GLOBAL          (chip_data)
+            2575 LOAD_ATTR            (chip_type)
+            2578 LOAD_GLOBAL          (ChipType)
+            2581 LOAD_ATTR            (SONATA)
+            2584 COMPARE_OP           (==)
+            2587 POP_JUMP_IF_FALSE    (to 2612)
+
+1499:        2590 LOAD_FAST            (self)
+            2593 LOAD_ATTR            (continuous_operation_flag)
+            2596 POP_JUMP_IF_FALSE    (to 2612)
+
+1500:        2599 LOAD_FAST            (self)
+            2602 LOAD_ATTR            (update_bootloader)
+            2605 CALL_FUNCTION        (0 positional, 0 named)
+            2608 POP_TOP
+            2609 JUMP_ABSOLUTE        (to 2663)
+
+1502:        2612 LOAD_FAST            (self)
+            2615 LOAD_ATTR            (upload_bin)
+            2618 CALL_FUNCTION        (0 positional, 0 named)
+            2621 POP_TOP
+            2622 JUMP_FORWARD         (to 2663)
+
+1503:        2625 LOAD_FAST            (self)
+            2628 LOAD_ATTR            (only_bootloader)
+            2631 LOAD_ATTR            (isChecked)
+            2634 CALL_FUNCTION        (0 positional, 0 named)
+            2637 POP_JUMP_IF_FALSE    (to 2653)
+
+1504:        2640 LOAD_FAST            (self)
+            2643 LOAD_ATTR            (update_bootloader)
+            2646 CALL_FUNCTION        (0 positional, 0 named)
+            2649 POP_TOP
+            2650 JUMP_FORWARD         (to 2663)
+
+1506:        2653 LOAD_FAST            (self)
+            2656 LOAD_ATTR            (load_file_default)
+            2659 CALL_FUNCTION        (0 positional, 0 named)
+            2662 POP_TOP
+
+1507:     >> 2663 LOAD_FAST            (m1)
+            2666 LOAD_CONST           (None)
+            2669 COMPARE_OP           (is-not)
+            2672 POP_JUMP_IF_FALSE    (to 2722)
+
+1508:        2675 LOAD_FAST            (self)
+            2678 LOAD_ATTR            (back_record)
+            2681 LOAD_ATTR            (clear)
+            2684 CALL_FUNCTION        (0 positional, 0 named)
+            2687 POP_TOP
+
+1509:        2688 LOAD_GLOBAL          (chip_data)
+            2691 LOAD_ATTR            (handshake_count)
+            2694 LOAD_FAST            (self)
+            2697 STORE_ATTR           (handshakeCnt)
+
+1510:        2700 LOAD_CONST           (False)
+            2703 LOAD_FAST            (self)
+            2706 STORE_ATTR           (handshake_flag)
+
+1511:        2709 LOAD_FAST            (self)
+            2712 LOAD_ATTR            (send_cmd)
+            2715 CALL_FUNCTION        (0 positional, 0 named)
+            2718 POP_TOP
+            2719 JUMP_FORWARD         (to 2722)
+
+1514:     >> 2722 LOAD_FAST            (self)
+            2725 LOAD_ATTR            (load_ate_flag)
+            2728 LOAD_CONST           (True)
+            2731 COMPARE_OP           (is)
+            2734 POP_JUMP_IF_FALSE    (to 3122)
+
+1515:        2737 LOAD_FAST            (self)
+            2740 LOAD_ATTR            (only_ate_sram)
+            2743 LOAD_ATTR            (isChecked)
+            2746 CALL_FUNCTION        (0 positional, 0 named)
+            2749 POP_JUMP_IF_FALSE    (to 3122)
+
+1516:        2752 LOAD_FAST            (self)
+            2755 LOAD_ATTR            (back_record)
+            2758 LOAD_ATTR            (clear)
+            2761 CALL_FUNCTION        (0 positional, 0 named)
+            2764 POP_TOP
+
+1517:        2765 LOAD_CONST           ("init uart ok")
+            2768 LOAD_FAST            (cmd_queue_data)
+            2771 COMPARE_OP           (in)
+            2774 POP_JUMP_IF_FALSE    (to 3122)
+
+1518:        2777 LOAD_GLOBAL          (print)
+            2780 LOAD_CONST           ("config baudrate ok")
+            2783 CALL_FUNCTION        (1 positional, 0 named)
+            2786 POP_TOP
+
+1519:        2787 LOAD_CONST           (False)
+            2790 LOAD_FAST            (self)
+            2793 STORE_ATTR           (load_ate_flag)
+
+1520:        2796 LOAD_CONST           (True)
+            2799 LOAD_FAST            (self)
+            2802 STORE_ATTR           (program_ate_flag)
+
+1521:        2805 LOAD_CONST           (1000000)
+            2808 LOAD_FAST            (self)
+            2811 LOAD_ATTR            (ser)
+            2814 STORE_ATTR           (baudrate)
+
+1523:        2817 LOAD_FAST            (self)
+            2820 LOAD_ATTR            (s1__box_3)
+            2823 LOAD_ATTR            (setCurrentIndex)
+            2826 LOAD_CONST           (1)
+            2829 CALL_FUNCTION        (1 positional, 0 named)
+            2832 POP_TOP
+
+1524:        2833 LOAD_FAST            (self)
+            2836 LOAD_ATTR            (load_ate_bin)
+            2839 CALL_FUNCTION        (0 positional, 0 named)
+            2842 LOAD_FAST            (self)
+            2845 STORE_ATTR           (data)
+
+1525:        2848 LOAD_FAST            (self)
+            2851 LOAD_ATTR            (data)
+            2854 LOAD_CONST           (None)
+            2857 COMPARE_OP           (is)
+            2860 POP_JUMP_IF_FALSE    (to 2938)
+
+1526:        2863 LOAD_CONST           (True)
+            2866 LOAD_FAST            (self)
+            2869 STORE_ATTR           (download_done)
+
+1527:        2872 LOAD_CONST           (115200)
+            2875 LOAD_FAST            (self)
+            2878 LOAD_ATTR            (ser)
+            2881 STORE_ATTR           (baudrate)
+
+1528:        2884 LOAD_FAST            (self)
+            2887 LOAD_ATTR            (s1__box_3)
+            2890 LOAD_ATTR            (setCurrentIndex)
+            2893 LOAD_CONST           (0)
+            2896 CALL_FUNCTION        (1 positional, 0 named)
+            2899 POP_TOP
+
+1529:        2900 LOAD_FAST            (self)
+            2903 LOAD_ATTR            (s2__receive_text)
+            2906 LOAD_ATTR            (append)
+            2909 LOAD_CONST           ("ate file not found\r\n")
+            2912 CALL_FUNCTION        (1 positional, 0 named)
+            2915 POP_TOP
+
+1530:        2916 LOAD_CONST           (True)
+            2919 LOAD_FAST            (self)
+            2922 STORE_ATTR           (down_load_process)
+
+1531:        2925 LOAD_CONST           (False)
+            2928 LOAD_FAST            (self)
+            2931 STORE_ATTR           (program_ate_flag)
+
+1532:        2934 LOAD_CONST           (None)
+            2937 RETURN_VALUE
+
+1533:        2938 LOAD_GLOBAL          (len)
+            2941 LOAD_FAST            (self)
+            2944 LOAD_ATTR            (data)
+            2947 CALL_FUNCTION        (1 positional, 0 named)
+            2950 LOAD_FAST            (self)
+            2953 STORE_ATTR           (bin_size)
+
+1535:        2956 LOAD_FAST            (self)
+            2959 LOAD_ATTR            (addr_edit)
+            2962 LOAD_ATTR            (text)
+            2965 CALL_FUNCTION        (0 positional, 0 named)
+            2968 STORE_FAST           (addr_sram)
+
+1536:        2971 LOAD_FAST            (addr_sram)
+            2974 LOAD_CONST           ("")
+            2977 COMPARE_OP           (==)
+            2980 POP_JUMP_IF_FALSE    (to 2992)
+
+1537:        2983 LOAD_GLOBAL          (chip_data)
+            2986 LOAD_ATTR            (ate_sram)
+            2989 STORE_FAST           (addr_sram)
+
+1538:        2992 LOAD_CONST           ("boot %s %d ")
+            2995 LOAD_FAST            (addr_sram)
+            2998 LOAD_FAST            (self)
+            3001 LOAD_ATTR            (bin_size)
+            3004 BUILD_TUPLE          2
+            3007 BINARY_MODULO
+            3008 STORE_FAST           (input_s)
+
+1539:        3011 LOAD_FAST            (input_s)
+            3014 LOAD_ATTR            (encode)
+            3017 LOAD_CONST           ("utf-8")
+            3020 CALL_FUNCTION        (1 positional, 0 named)
+            3023 STORE_FAST           (input_s)
+
+1540:        3026 SETUP_EXCEPT         (to 3069)
+
+1541:        3029 LOAD_GLOBAL          (print)
+            3032 LOAD_FAST            (input_s)
+            3035 CALL_FUNCTION        (1 positional, 0 named)
+            3038 POP_TOP
+
+1542:        3039 LOAD_FAST            (self)
+            3042 LOAD_ATTR            (ser)
+            3045 LOAD_ATTR            (write)
+            3048 LOAD_FAST            (input_s)
+            3051 CALL_FUNCTION        (1 positional, 0 named)
+            3054 POP_TOP
+
+1543:        3055 LOAD_FAST            (self)
+            3058 LOAD_ATTR            (send_bin_to_b)
+            3061 CALL_FUNCTION        (0 positional, 0 named)
+            3064 POP_TOP
+            3065 POP_BLOCK
+            3066 JUMP_FORWARD         (to 3122)
+
+1545:     >> 3069 DUP_TOP
+            3070 LOAD_GLOBAL          (Exception)
+            3073 COMPARE_OP           (exception-match)
+            3076 POP_JUMP_IF_FALSE    (to 3121)
+            3079 POP_TOP
+            3080 STORE_FAST           (e)
+            3083 POP_TOP
+            3084 SETUP_FINALLY        (to 3108)
+
+1546:        3087 LOAD_GLOBAL          (print)
+            3090 LOAD_GLOBAL          (str)
+            3093 LOAD_FAST            (e)
+            3096 CALL_FUNCTION        (1 positional, 0 named)
+            3099 CALL_FUNCTION        (1 positional, 0 named)
+            3102 POP_TOP
+            3103 POP_BLOCK
+            3104 POP_EXCEPT
+            3105 LOAD_CONST           (None)
+         >> 3108 LOAD_CONST           (None)
+            3111 STORE_FAST           (e)
+            3114 DELETE_FAST          (e)
+            3117 END_FINALLY
+            3118 JUMP_FORWARD         (to 3122)
+            3121 END_FINALLY
+
+1548:     >> 3122 LOAD_FAST            (self)
+            3125 LOAD_ATTR            (program_flag)
+            3128 LOAD_CONST           (True)
+            3131 COMPARE_OP           (is)
+            3134 POP_JUMP_IF_FALSE    (to 4917)
+
+1549:        3137 LOAD_CONST           ("D05")
+            3140 LOAD_FAST            (cmd_queue_data)
+            3143 COMPARE_OP           (in)
+            3146 POP_JUMP_IF_FALSE    (to 3257)
+
+1550:        3149 LOAD_FAST            (self)
+            3152 LOAD_ATTR            (only_ate_sram)
+            3155 LOAD_ATTR            (isChecked)
+            3158 CALL_FUNCTION        (0 positional, 0 named)
+            3161 POP_JUMP_IF_FALSE    (to 3257)
+
+1551:        3164 LOAD_FAST            (self)
+            3167 LOAD_ATTR            (back_record)
+            3170 LOAD_ATTR            (clear)
+            3173 CALL_FUNCTION        (0 positional, 0 named)
+            3176 POP_TOP
+
+1552:        3177 LOAD_CONST           (False)
+            3180 LOAD_FAST            (self)
+            3183 STORE_ATTR           (down_load_process)
+
+1553:        3186 LOAD_GLOBAL          (chip_data)
+            3189 LOAD_ATTR            (has_flash_for_program)
+            3192 LOAD_CONST           (False)
+            3195 COMPARE_OP           (is)
+            3198 POP_JUMP_IF_TRUE     (to 3219)
+            3201 LOAD_GLOBAL          (chip_data)
+            3204 LOAD_ATTR            (chip_type)
+            3207 LOAD_GLOBAL          (ChipType)
+            3210 LOAD_ATTR            (WIFI6)
+            3213 COMPARE_OP           (==)
+            3216 POP_JUMP_IF_FALSE    (to 3257)
+
+1554:        3219 LOAD_FAST            (self)
+            3222 LOAD_ATTR            (s2__receive_text)
+            3225 LOAD_ATTR            (append)
+            3228 LOAD_CONST           ("ate bin done\r\n")
+            3231 CALL_FUNCTION        (1 positional, 0 named)
+            3234 POP_TOP
+
+1555:        3235 LOAD_CONST           (True)
+            3238 LOAD_FAST            (self)
+            3241 STORE_ATTR           (down_load_process)
+
+1556:        3244 LOAD_CONST           (False)
+            3247 LOAD_FAST            (self)
+            3250 STORE_ATTR           (program_flag)
+
+1557:        3253 LOAD_CONST           (None)
+            3256 RETURN_VALUE
+
+1558:        3257 LOAD_CONST           ("welcome to download\r\n>>>")
+            3260 LOAD_FAST            (cmd_queue_data)
+            3263 COMPARE_OP           (in)
+            3266 POP_JUMP_IF_FALSE    (to 4292)
+
+1559:        3269 LOAD_FAST            (self)
+            3272 LOAD_ATTR            (back_record)
+            3275 LOAD_ATTR            (clear)
+            3278 CALL_FUNCTION        (0 positional, 0 named)
+            3281 POP_TOP
+
+1560:        3282 LOAD_CONST           (False)
+            3285 LOAD_FAST            (self)
+            3288 STORE_ATTR           (down_load_process)
+
+1561:        3291 LOAD_CONST           (False)
+            3294 LOAD_FAST            (self)
+            3297 STORE_ATTR           (ota_info_flag)
+
+1563:        3300 LOAD_GLOBAL          (chip_data)
+            3303 LOAD_ATTR            (has_new_wafer)
+            3306 POP_JUMP_IF_FALSE    (to 3389)
+            3309 LOAD_FAST            (self)
+            3312 LOAD_ATTR            (only_download)
+            3315 LOAD_ATTR            (checkState)
+            3318 CALL_FUNCTION        (0 positional, 0 named)
+            3321 LOAD_GLOBAL          (Qt)
+            3324 LOAD_ATTR            (Unchecked)
+            3327 COMPARE_OP           (==)
+            3330 POP_JUMP_IF_FALSE    (to 3389)
+            3333 LOAD_FAST            (self)
+            3336 LOAD_ATTR            (only_ate_sram)
+            3339 LOAD_ATTR            (checkState)
+            3342 CALL_FUNCTION        (0 positional, 0 named)
+            3345 LOAD_GLOBAL          (Qt)
+            3348 LOAD_ATTR            (Unchecked)
+            3351 COMPARE_OP           (==)
+            3354 POP_JUMP_IF_FALSE    (to 3389)
+            3357 LOAD_GLOBAL          (chip_data)
+            3360 LOAD_ATTR            (customized_name_type)
+            3363 LOAD_GLOBAL          (CustomizedNameType)
+            3366 LOAD_ATTR            (MIDEA)
+            3369 COMPARE_OP           (==)
+            3372 POP_JUMP_IF_FALSE    (to 3389)
+
+1564:        3375 LOAD_FAST            (self)
+            3378 LOAD_ATTR            (get_chip_id)
+            3381 CALL_FUNCTION        (0 positional, 0 named)
+            3384 POP_TOP
+
+1565:        3385 LOAD_CONST           (None)
+            3388 RETURN_VALUE
+
+1567:        3389 LOAD_CONST           (False)
+            3392 LOAD_FAST            (self)
+            3395 STORE_ATTR           (is_old_verison)
+
+1568:        3398 LOAD_FAST            (self)
+            3401 LOAD_ATTR            (checkBox_high)
+            3404 LOAD_ATTR            (isChecked)
+            3407 CALL_FUNCTION        (0 positional, 0 named)
+            3410 POP_JUMP_IF_FALSE    (to 3511)
+
+1569:        3413 LOAD_CONST           ("init %d\r\n")
+            3416 LOAD_GLOBAL          (chip_data)
+            3419 LOAD_ATTR            (baud)
+            3422 BINARY_MODULO
+            3423 LOAD_ATTR            (encode)
+            3426 LOAD_CONST           ("utf-8")
+            3429 CALL_FUNCTION        (1 positional, 0 named)
+            3432 STORE_FAST           (input_s)
+
+1570:        3435 SETUP_EXCEPT         (to 3458)
+
+1571:        3438 LOAD_FAST            (self)
+            3441 LOAD_ATTR            (ser)
+            3444 LOAD_ATTR            (write)
+            3447 LOAD_FAST            (input_s)
+            3450 CALL_FUNCTION        (1 positional, 0 named)
+            3453 POP_TOP
+            3454 POP_BLOCK
+            3455 JUMP_FORWARD         (to 3511)
+
+1572:     >> 3458 DUP_TOP
+            3459 LOAD_GLOBAL          (Exception)
+            3462 COMPARE_OP           (exception-match)
+            3465 POP_JUMP_IF_FALSE    (to 3510)
+            3468 POP_TOP
+            3469 STORE_FAST           (e)
+            3472 POP_TOP
+            3473 SETUP_FINALLY        (to 3497)
+
+1573:        3476 LOAD_GLOBAL          (print)
+            3479 LOAD_GLOBAL          (str)
+            3482 LOAD_FAST            (e)
+            3485 CALL_FUNCTION        (1 positional, 0 named)
+            3488 CALL_FUNCTION        (1 positional, 0 named)
+            3491 POP_TOP
+            3492 POP_BLOCK
+            3493 POP_EXCEPT
+            3494 LOAD_CONST           (None)
+         >> 3497 LOAD_CONST           (None)
+            3500 STORE_FAST           (e)
+            3503 DELETE_FAST          (e)
+            3506 END_FINALLY
+            3507 JUMP_FORWARD         (to 3511)
+            3510 END_FINALLY
+
+1574:     >> 3511 LOAD_FAST            (self)
+            3514 LOAD_ATTR            (only_image)
+            3517 LOAD_ATTR            (isChecked)
+            3520 CALL_FUNCTION        (0 positional, 0 named)
+            3523 POP_JUMP_IF_FALSE    (to 3676)
+
+1575:        3526 LOAD_GLOBAL          (chip_data)
+            3529 LOAD_ATTR            (chip_type)
+            3532 LOAD_GLOBAL          (ChipType)
+            3535 LOAD_ATTR            (SONATA)
+            3538 COMPARE_OP           (==)
+            3541 POP_JUMP_IF_FALSE    (to 3590)
+
+1576:        3544 LOAD_CONST           (True)
+            3547 LOAD_FAST            (self)
+            3550 STORE_ATTR           (upload_bin_flag)
+
+1577:        3553 LOAD_CONST           (True)
+            3556 LOAD_FAST            (self)
+            3559 STORE_ATTR           (continuous_operation_flag)
+
+1578:        3562 LOAD_FAST            (self)
+            3565 LOAD_ATTR            (checkBox_high)
+            3568 LOAD_ATTR            (isChecked)
+            3571 CALL_FUNCTION        (0 positional, 0 named)
+            3574 POP_JUMP_IF_TRUE     (to 3673)
+
+1579:        3577 LOAD_FAST            (self)
+            3580 LOAD_ATTR            (update_bootloader)
+            3583 CALL_FUNCTION        (0 positional, 0 named)
+            3586 POP_TOP
+            3587 JUMP_ABSOLUTE        (to 4289)
+
+1581:        3590 LOAD_CONST           (True)
+            3593 LOAD_FAST            (self)
+            3596 STORE_ATTR           (direct_download_image)
+
+1582:        3599 LOAD_FAST            (self)
+            3602 LOAD_ATTR            (load_bin_file)
+            3605 CALL_FUNCTION        (0 positional, 0 named)
+            3608 POP_TOP
+
+1583:        3609 LOAD_CONST           (True)
+            3612 LOAD_FAST            (self)
+            3615 STORE_ATTR           (upload_bin_flag)
+
+1584:        3618 LOAD_CONST           (False)
+            3621 LOAD_FAST            (self)
+            3624 STORE_ATTR           (direct_download_image)
+
+1585:        3627 LOAD_GLOBAL          (chip_data)
+            3630 LOAD_ATTR            (app)
+            3633 LOAD_FAST            (self)
+            3636 STORE_ATTR           (input_addr)
+
+1586:        3639 LOAD_FAST            (self)
+            3642 LOAD_ATTR            (checkBox_high)
+            3645 LOAD_ATTR            (checkState)
+            3648 CALL_FUNCTION        (0 positional, 0 named)
+            3651 LOAD_GLOBAL          (Qt)
+            3654 LOAD_ATTR            (Unchecked)
+            3657 COMPARE_OP           (==)
+            3660 POP_JUMP_IF_FALSE    (to 4289)
+
+1587:        3663 LOAD_FAST            (self)
+            3666 LOAD_ATTR            (upload_bin)
+            3669 CALL_FUNCTION        (0 positional, 0 named)
+            3672 POP_TOP
+            3673 JUMP_ABSOLUTE        (to 4292)
+
+1588:        3676 LOAD_FAST            (self)
+            3679 LOAD_ATTR            (only_rom)
+            3682 LOAD_ATTR            (isChecked)
+            3685 CALL_FUNCTION        (0 positional, 0 named)
+            3688 POP_JUMP_IF_FALSE    (to 3777)
+
+1589:        3691 LOAD_CONST           (True)
+            3694 LOAD_FAST            (self)
+            3697 STORE_ATTR           (direct_download_image)
+
+1590:        3700 LOAD_FAST            (self)
+            3703 LOAD_ATTR            (load_bin_file)
+            3706 CALL_FUNCTION        (0 positional, 0 named)
+            3709 POP_TOP
+
+1591:        3710 LOAD_CONST           (True)
+            3713 LOAD_FAST            (self)
+            3716 STORE_ATTR           (upload_bin_flag)
+
+1592:        3719 LOAD_CONST           (False)
+            3722 LOAD_FAST            (self)
+            3725 STORE_ATTR           (direct_download_image)
+
+1593:        3728 LOAD_GLOBAL          (chip_data)
+            3731 LOAD_ATTR            (rom)
+            3734 LOAD_FAST            (self)
+            3737 STORE_ATTR           (input_addr)
+
+1594:        3740 LOAD_FAST            (self)
+            3743 LOAD_ATTR            (checkBox_high)
+            3746 LOAD_ATTR            (checkState)
+            3749 CALL_FUNCTION        (0 positional, 0 named)
+            3752 LOAD_GLOBAL          (Qt)
+            3755 LOAD_ATTR            (Unchecked)
+            3758 COMPARE_OP           (==)
+            3761 POP_JUMP_IF_FALSE    (to 4289)
+
+1595:        3764 LOAD_FAST            (self)
+            3767 LOAD_ATTR            (upload_bin)
+            3770 CALL_FUNCTION        (0 positional, 0 named)
+            3773 POP_TOP
+            3774 JUMP_ABSOLUTE        (to 4292)
+
+1596:        3777 LOAD_FAST            (self)
+            3780 LOAD_ATTR            (only_download)
+            3783 LOAD_ATTR            (isChecked)
+            3786 CALL_FUNCTION        (0 positional, 0 named)
+            3789 POP_JUMP_IF_FALSE    (to 3831)
+
+1597:        3792 LOAD_CONST           (True)
+            3795 LOAD_FAST            (self)
+            3798 STORE_ATTR           (download_done)
+
+1599:        3801 LOAD_CONST           (True)
+            3804 LOAD_FAST            (self)
+            3807 STORE_ATTR           (down_load_process)
+
+1600:        3810 LOAD_CONST           ("")
+            3813 LOAD_FAST            (self)
+            3816 STORE_ATTR           (input_addr)
+
+1601:        3819 LOAD_CONST           (False)
+            3822 LOAD_FAST            (self)
+            3825 STORE_ATTR           (program_flag)
+            3828 JUMP_ABSOLUTE        (to 4292)
+
+1602:        3831 LOAD_FAST            (self)
+            3834 LOAD_ATTR            (only_ate)
+            3837 LOAD_ATTR            (isChecked)
+            3840 CALL_FUNCTION        (0 positional, 0 named)
+            3843 POP_JUMP_IF_FALSE    (to 3932)
+
+1603:        3846 LOAD_CONST           (True)
+            3849 LOAD_FAST            (self)
+            3852 STORE_ATTR           (direct_download_image)
+
+1604:        3855 LOAD_FAST            (self)
+            3858 LOAD_ATTR            (load_bin_file)
+            3861 CALL_FUNCTION        (0 positional, 0 named)
+            3864 POP_TOP
+
+1605:        3865 LOAD_CONST           (True)
+            3868 LOAD_FAST            (self)
+            3871 STORE_ATTR           (upload_bin_flag)
+
+1606:        3874 LOAD_CONST           (False)
+            3877 LOAD_FAST            (self)
+            3880 STORE_ATTR           (direct_download_image)
+
+1607:        3883 LOAD_GLOBAL          (chip_data)
+            3886 LOAD_ATTR            (ate)
+            3889 LOAD_FAST            (self)
+            3892 STORE_ATTR           (input_addr)
+
+1608:        3895 LOAD_FAST            (self)
+            3898 LOAD_ATTR            (checkBox_high)
+            3901 LOAD_ATTR            (checkState)
+            3904 CALL_FUNCTION        (0 positional, 0 named)
+            3907 LOAD_GLOBAL          (Qt)
+            3910 LOAD_ATTR            (Unchecked)
+            3913 COMPARE_OP           (==)
+            3916 POP_JUMP_IF_FALSE    (to 4289)
+
+1609:        3919 LOAD_FAST            (self)
+            3922 LOAD_ATTR            (upload_bin)
+            3925 CALL_FUNCTION        (0 positional, 0 named)
+            3928 POP_TOP
+            3929 JUMP_ABSOLUTE        (to 4292)
+
+1610:        3932 LOAD_FAST            (self)
+            3935 LOAD_ATTR            (only_ate_sram)
+            3938 LOAD_ATTR            (isChecked)
+            3941 CALL_FUNCTION        (0 positional, 0 named)
+            3944 POP_JUMP_IF_FALSE    (to 4084)
+
+1612:        3947 LOAD_FAST            (self)
+            3950 LOAD_ATTR            (load_ate_flag)
+            3953 LOAD_CONST           (False)
+            3956 COMPARE_OP           (is)
+            3959 POP_JUMP_IF_FALSE    (to 4289)
+
+1613:        3962 LOAD_CONST           (True)
+            3965 LOAD_FAST            (self)
+            3968 STORE_ATTR           (load_ate_flag)
+
+1614:        3971 LOAD_CONST           (False)
+            3974 LOAD_FAST            (self)
+            3977 STORE_ATTR           (program_flag)
+
+1615:        3980 LOAD_CONST           ("init 1000000\r\n")
+            3983 LOAD_ATTR            (encode)
+            3986 LOAD_CONST           ("utf-8")
+            3989 CALL_FUNCTION        (1 positional, 0 named)
+            3992 STORE_FAST           (input_s)
+
+1616:        3995 SETUP_EXCEPT         (to 4028)
+
+1617:        3998 LOAD_GLOBAL          (print)
+            4001 LOAD_FAST            (input_s)
+            4004 CALL_FUNCTION        (1 positional, 0 named)
+            4007 POP_TOP
+
+1618:        4008 LOAD_FAST            (self)
+            4011 LOAD_ATTR            (ser)
+            4014 LOAD_ATTR            (write)
+            4017 LOAD_FAST            (input_s)
+            4020 CALL_FUNCTION        (1 positional, 0 named)
+            4023 POP_TOP
+            4024 POP_BLOCK
+            4025 JUMP_ABSOLUTE        (to 4289)
+
+1619:     >> 4028 DUP_TOP
+            4029 LOAD_GLOBAL          (Exception)
+            4032 COMPARE_OP           (exception-match)
+            4035 POP_JUMP_IF_FALSE    (to 4080)
+            4038 POP_TOP
+            4039 STORE_FAST           (e)
+            4042 POP_TOP
+            4043 SETUP_FINALLY        (to 4067)
+
+1620:        4046 LOAD_GLOBAL          (print)
+            4049 LOAD_GLOBAL          (str)
+            4052 LOAD_FAST            (e)
+            4055 CALL_FUNCTION        (1 positional, 0 named)
+            4058 CALL_FUNCTION        (1 positional, 0 named)
+            4061 POP_TOP
+            4062 POP_BLOCK
+            4063 POP_EXCEPT
+            4064 LOAD_CONST           (None)
+         >> 4067 LOAD_CONST           (None)
+            4070 STORE_FAST           (e)
+            4073 DELETE_FAST          (e)
+            4076 END_FINALLY
+            4077 JUMP_ABSOLUTE        (to 4289)
+            4080 END_FINALLY
+            4081 JUMP_ABSOLUTE        (to 4292)
+
+1621:        4084 LOAD_FAST            (self)
+            4087 LOAD_ATTR            (only_bootloader)
+            4090 LOAD_ATTR            (isChecked)
+            4093 CALL_FUNCTION        (0 positional, 0 named)
+            4096 POP_JUMP_IF_FALSE    (to 4145)
+
+1622:        4099 LOAD_CONST           (True)
+            4102 LOAD_FAST            (self)
+            4105 STORE_ATTR           (upload_bin_flag)
+
+1623:        4108 LOAD_FAST            (self)
+            4111 LOAD_ATTR            (checkBox_high)
+            4114 LOAD_ATTR            (checkState)
+            4117 CALL_FUNCTION        (0 positional, 0 named)
+            4120 LOAD_GLOBAL          (Qt)
+            4123 LOAD_ATTR            (Unchecked)
+            4126 COMPARE_OP           (==)
+            4129 POP_JUMP_IF_FALSE    (to 4289)
+
+1624:        4132 LOAD_FAST            (self)
+            4135 LOAD_ATTR            (update_bootloader)
+            4138 CALL_FUNCTION        (0 positional, 0 named)
+            4141 POP_TOP
+            4142 JUMP_ABSOLUTE        (to 4292)
+
+1625:        4145 LOAD_FAST            (self)
+            4148 LOAD_ATTR            (only_aup)
+            4151 LOAD_ATTR            (isChecked)
+            4154 CALL_FUNCTION        (0 positional, 0 named)
+            4157 POP_JUMP_IF_FALSE    (to 4246)
+
+1626:        4160 LOAD_CONST           (True)
+            4163 LOAD_FAST            (self)
+            4166 STORE_ATTR           (direct_download_image)
+
+1627:        4169 LOAD_FAST            (self)
+            4172 LOAD_ATTR            (load_bin_file)
+            4175 CALL_FUNCTION        (0 positional, 0 named)
+            4178 POP_TOP
+
+1628:        4179 LOAD_CONST           (True)
+            4182 LOAD_FAST            (self)
+            4185 STORE_ATTR           (upload_bin_flag)
+
+1629:        4188 LOAD_CONST           (False)
+            4191 LOAD_FAST            (self)
+            4194 STORE_ATTR           (direct_download_image)
+
+1630:        4197 LOAD_GLOBAL          (chip_data)
+            4200 LOAD_ATTR            (aup)
+            4203 LOAD_FAST            (self)
+            4206 STORE_ATTR           (input_addr)
+
+1631:        4209 LOAD_FAST            (self)
+            4212 LOAD_ATTR            (checkBox_high)
+            4215 LOAD_ATTR            (checkState)
+            4218 CALL_FUNCTION        (0 positional, 0 named)
+            4221 LOAD_GLOBAL          (Qt)
+            4224 LOAD_ATTR            (Unchecked)
+            4227 COMPARE_OP           (==)
+            4230 POP_JUMP_IF_FALSE    (to 4289)
+
+1632:        4233 LOAD_FAST            (self)
+            4236 LOAD_ATTR            (upload_bin)
+            4239 CALL_FUNCTION        (0 positional, 0 named)
+            4242 POP_TOP
+            4243 JUMP_ABSOLUTE        (to 4292)
+
+1635:        4246 LOAD_CONST           (True)
+            4249 LOAD_FAST            (self)
+            4252 STORE_ATTR           (upload_bin_flag)
+
+1636:        4255 LOAD_FAST            (self)
+            4258 LOAD_ATTR            (checkBox_high)
+            4261 LOAD_ATTR            (checkState)
+            4264 CALL_FUNCTION        (0 positional, 0 named)
+            4267 LOAD_GLOBAL          (Qt)
+            4270 LOAD_ATTR            (Unchecked)
+            4273 COMPARE_OP           (==)
+            4276 POP_JUMP_IF_FALSE    (to 4292)
+
+1637:        4279 LOAD_FAST            (self)
+            4282 LOAD_ATTR            (load_file_default)
+            4285 CALL_FUNCTION        (0 positional, 0 named)
+            4288 POP_TOP
+            4289 JUMP_FORWARD         (to 4292)
+
+1641:     >> 4292 LOAD_CONST           ("burn ok")
+            4295 LOAD_FAST            (cmd_queue_data)
+            4298 COMPARE_OP           (in)
+            4301 POP_JUMP_IF_FALSE    (to 4846)
+
+1642:        4304 LOAD_FAST            (self)
+            4307 LOAD_ATTR            (back_record)
+            4310 LOAD_ATTR            (clear)
+            4313 CALL_FUNCTION        (0 positional, 0 named)
+            4316 POP_TOP
+
+1643:        4317 LOAD_CONST           (True)
+            4320 LOAD_FAST            (self)
+            4323 STORE_ATTR           (down_load_process)
+
+1644:        4326 LOAD_CONST           (True)
+            4329 LOAD_FAST            (self)
+            4332 STORE_ATTR           (ota_info_flag)
+
+1645:        4335 LOAD_FAST            (self)
+            4338 LOAD_ATTR            (only_image)
+            4341 LOAD_ATTR            (isChecked)
+            4344 CALL_FUNCTION        (0 positional, 0 named)
+            4347 POP_JUMP_IF_TRUE     (to 4410)
+            4350 LOAD_FAST            (self)
+            4353 LOAD_ATTR            (only_rom)
+            4356 LOAD_ATTR            (isChecked)
+            4359 CALL_FUNCTION        (0 positional, 0 named)
+            4362 POP_JUMP_IF_TRUE     (to 4410)
+            4365 LOAD_FAST            (self)
+            4368 LOAD_ATTR            (only_ate)
+            4371 LOAD_ATTR            (isChecked)
+            4374 CALL_FUNCTION        (0 positional, 0 named)
+            4377 POP_JUMP_IF_TRUE     (to 4410)
+
+1646:        4380 LOAD_FAST            (self)
+            4383 LOAD_ATTR            (only_bootloader)
+            4386 LOAD_ATTR            (isChecked)
+            4389 CALL_FUNCTION        (0 positional, 0 named)
+            4392 POP_JUMP_IF_TRUE     (to 4410)
+            4395 LOAD_FAST            (self)
+            4398 LOAD_ATTR            (only_aup)
+            4401 LOAD_ATTR            (isChecked)
+            4404 CALL_FUNCTION        (0 positional, 0 named)
+            4407 POP_JUMP_IF_FALSE    (to 4622)
+
+1647:        4410 LOAD_CONST           ("")
+            4413 LOAD_FAST            (self)
+            4416 STORE_ATTR           (input_addr)
+
+1648:        4419 LOAD_CONST           (False)
+            4422 LOAD_FAST            (self)
+            4425 STORE_ATTR           (program_flag)
+
+1649:        4428 LOAD_FAST            (self)
+            4431 LOAD_ATTR            (continuous_operation_flag)
+            4434 POP_JUMP_IF_FALSE    (to 4542)
+            4437 LOAD_FAST            (self)
+            4440 LOAD_ATTR            (only_image)
+            4443 LOAD_ATTR            (isChecked)
+            4446 CALL_FUNCTION        (0 positional, 0 named)
+            4449 POP_JUMP_IF_FALSE    (to 4542)
+
+1650:        4452 LOAD_CONST           (True)
+            4455 LOAD_FAST            (self)
+            4458 STORE_ATTR           (program_flag)
+
+1651:        4461 LOAD_CONST           (False)
+            4464 LOAD_FAST            (self)
+            4467 STORE_ATTR           (bootload_update)
+
+1652:        4470 LOAD_CONST           (False)
+            4473 LOAD_FAST            (self)
+            4476 STORE_ATTR           (continuous_operation_flag)
+
+1653:        4479 LOAD_CONST           (True)
+            4482 LOAD_FAST            (self)
+            4485 STORE_ATTR           (direct_download_image)
+
+1654:        4488 LOAD_FAST            (self)
+            4491 LOAD_ATTR            (load_bin_file)
+            4494 CALL_FUNCTION        (0 positional, 0 named)
+            4497 POP_TOP
+
+1655:        4498 LOAD_CONST           (True)
+            4501 LOAD_FAST            (self)
+            4504 STORE_ATTR           (upload_bin_flag)
+
+1656:        4507 LOAD_CONST           (False)
+            4510 LOAD_FAST            (self)
+            4513 STORE_ATTR           (direct_download_image)
+
+1657:        4516 LOAD_GLOBAL          (chip_data)
+            4519 LOAD_ATTR            (app)
+            4522 LOAD_FAST            (self)
+            4525 STORE_ATTR           (input_addr)
+
+1658:        4528 LOAD_FAST            (self)
+            4531 LOAD_ATTR            (upload_bin)
+            4534 CALL_FUNCTION        (0 positional, 0 named)
+            4537 POP_TOP
+
+1659:        4538 LOAD_CONST           (None)
+            4541 RETURN_VALUE
+
+1660:        4542 LOAD_FAST            (self)
+            4545 LOAD_ATTR            (checkBox_high)
+            4548 LOAD_ATTR            (isChecked)
+            4551 CALL_FUNCTION        (0 positional, 0 named)
+            4554 POP_JUMP_IF_FALSE    (to 4595)
+            4557 LOAD_FAST            (self)
+            4560 LOAD_ATTR            (continuous_operation_flag)
+            4563 UNARY_NOT
+            4564 POP_JUMP_IF_FALSE    (to 4595)
+
+1661:        4567 LOAD_CONST           (115200)
+            4570 LOAD_FAST            (self)
+            4573 LOAD_ATTR            (ser)
+            4576 STORE_ATTR           (baudrate)
+
+1662:        4579 LOAD_FAST            (self)
+            4582 LOAD_ATTR            (s1__box_3)
+            4585 LOAD_ATTR            (setCurrentIndex)
+            4588 LOAD_CONST           (0)
+            4591 CALL_FUNCTION        (1 positional, 0 named)
+            4594 POP_TOP
+
+1663:        4595 LOAD_FAST            (self)
+            4598 LOAD_ATTR            (only_bootloader)
+            4601 LOAD_ATTR            (isChecked)
+            4604 CALL_FUNCTION        (0 positional, 0 named)
+            4607 POP_JUMP_IF_FALSE    (to 4846)
+
+1664:        4610 LOAD_CONST           (False)
+            4613 LOAD_FAST            (self)
+            4616 STORE_ATTR           (bootload_update)
+            4619 JUMP_FORWARD         (to 4846)
+
+1667:        4622 LOAD_CONST           ("")
+            4625 LOAD_FAST            (self)
+            4628 STORE_ATTR           (input_addr)
+
+1668:        4631 LOAD_FAST            (self)
+            4634 DUP_TOP
+            4635 LOAD_ATTR            (file_index)
+            4638 LOAD_CONST           (1)
+            4641 INPLACE_ADD
+            4642 ROT_TWO
+            4643 STORE_ATTR           (file_index)
+
+1669:        4646 LOAD_FAST            (self)
+            4649 LOAD_ATTR            (file_index)
+            4652 LOAD_FAST            (self)
+            4655 LOAD_ATTR            (file_total_of_chip)
+            4658 COMPARE_OP           (<=)
+            4661 POP_JUMP_IF_FALSE    (to 4779)
+
+1670:        4664 SETUP_LOOP           (to 4767)
+            4667 LOAD_GLOBAL          (range)
+            4670 LOAD_FAST            (self)
+            4673 LOAD_ATTR            (file_index)
+            4676 LOAD_FAST            (self)
+            4679 LOAD_ATTR            (file_total_of_chip)
+            4682 CALL_FUNCTION        (2 positional, 0 named)
+            4685 GET_ITER
+            4686 FOR_ITER             (to 4766)
+            4689 STORE_FAST           (index)
+
+1671:        4692 LOAD_FAST            (self)
+            4695 LOAD_ATTR            (check_file)
+            4698 LOAD_FAST            (index)
+            4701 CALL_FUNCTION        (1 positional, 0 named)
+            4704 STORE_FAST           (val)
+
+1672:        4707 LOAD_FAST            (val)
+            4710 LOAD_CONST           (True)
+            4713 COMPARE_OP           (is)
+            4716 POP_JUMP_IF_FALSE    (to 4733)
+
+1673:        4719 LOAD_FAST            (self)
+            4722 LOAD_ATTR            (load_file_default)
+            4725 CALL_FUNCTION        (0 positional, 0 named)
+            4728 POP_TOP
+
+1674:        4729 LOAD_CONST           (None)
+            4732 RETURN_VALUE
+
+1675:        4733 LOAD_FAST            (self)
+            4736 LOAD_ATTR            (file_index)
+            4739 LOAD_FAST            (self)
+            4742 LOAD_ATTR            (file_total_of_chip)
+            4745 COMPARE_OP           (<=)
+            4748 POP_JUMP_IF_FALSE    (to 4754)
+
+1676:        4751 JUMP_ABSOLUTE        (to 4686)
+
+1678:        4754 LOAD_CONST           (False)
+            4757 LOAD_FAST            (self)
+            4760 STORE_ATTR           (program_flag)
+            4763 JUMP_ABSOLUTE        (to 4686)
+         >> 4766 POP_BLOCK
+
+1679:     >> 4767 LOAD_CONST           (False)
+            4770 LOAD_FAST            (self)
+            4773 STORE_ATTR           (program_flag)
+            4776 JUMP_FORWARD         (to 4788)
+
+1681:        4779 LOAD_CONST           (False)
+            4782 LOAD_FAST            (self)
+            4785 STORE_ATTR           (program_flag)
+
+1682:     >> 4788 LOAD_FAST            (self)
+            4791 LOAD_ATTR            (program_flag)
+            4794 LOAD_CONST           (False)
+            4797 COMPARE_OP           (is)
+            4800 POP_JUMP_IF_FALSE    (to 4846)
+            4803 LOAD_FAST            (self)
+            4806 LOAD_ATTR            (checkBox_high)
+            4809 LOAD_ATTR            (isChecked)
+            4812 CALL_FUNCTION        (0 positional, 0 named)
+            4815 POP_JUMP_IF_FALSE    (to 4846)
+
+1683:        4818 LOAD_CONST           (115200)
+            4821 LOAD_FAST            (self)
+            4824 LOAD_ATTR            (ser)
+            4827 STORE_ATTR           (baudrate)
+
+1684:        4830 LOAD_FAST            (self)
+            4833 LOAD_ATTR            (s1__box_3)
+            4836 LOAD_ATTR            (setCurrentIndex)
+            4839 LOAD_CONST           (0)
+            4842 CALL_FUNCTION        (1 positional, 0 named)
+            4845 POP_TOP
+
+1685:     >> 4846 LOAD_GLOBAL          (len)
+            4849 LOAD_FAST            (cmd_queue_data)
+            4852 CALL_FUNCTION        (1 positional, 0 named)
+            4855 LOAD_CONST           (1)
+            4858 COMPARE_OP           (==)
+            4861 POP_JUMP_IF_FALSE    (to 4917)
+            4864 LOAD_GLOBAL          (len)
+            4867 LOAD_FAST            (coredump_data_s)
+            4870 CALL_FUNCTION        (1 positional, 0 named)
+            4873 LOAD_CONST           (0)
+            4876 COMPARE_OP           (==)
+            4879 POP_JUMP_IF_FALSE    (to 4917)
+            4882 LOAD_FAST            (self)
+            4885 LOAD_ATTR            (work_thread)
+            4888 LOAD_ATTR            (isRunning)
+            4891 CALL_FUNCTION        (0 positional, 0 named)
+            4894 LOAD_CONST           (True)
+            4897 COMPARE_OP           (is)
+            4900 POP_JUMP_IF_FALSE    (to 4917)
+
+1686:        4903 LOAD_FAST            (self)
+            4906 LOAD_ATTR            (write_bin_poweroff_error)
+            4909 CALL_FUNCTION        (0 positional, 0 named)
+            4912 POP_TOP
+
+1687:        4913 LOAD_CONST           (None)
+            4916 RETURN_VALUE
+
+1688:        4917 LOAD_FAST            (self)
+            4920 LOAD_ATTR            (program_ate_flag)
+            4923 LOAD_CONST           (True)
+            4926 COMPARE_OP           (is)
+            4929 POP_JUMP_IF_FALSE    (to 5078)
+
+1689:        4932 LOAD_CONST           ("image verify success")
+            4935 LOAD_FAST            (cmd_queue_data)
+            4938 COMPARE_OP           (in)
+            4941 POP_JUMP_IF_TRUE     (to 4956)
+            4944 LOAD_CONST           ("image is received")
+            4947 LOAD_FAST            (cmd_queue_data)
+            4950 COMPARE_OP           (in)
+            4953 POP_JUMP_IF_FALSE    (to 5078)
+
+1690:        4956 LOAD_FAST            (self)
+            4959 LOAD_ATTR            (back_record)
+            4962 LOAD_ATTR            (clear)
+            4965 CALL_FUNCTION        (0 positional, 0 named)
+            4968 POP_TOP
+
+1691:        4969 LOAD_FAST            (self)
+            4972 LOAD_ATTR            (only_ate_sram)
+            4975 LOAD_ATTR            (isChecked)
+            4978 CALL_FUNCTION        (0 positional, 0 named)
+            4981 POP_JUMP_IF_FALSE    (to 5078)
+
+1692:        4984 LOAD_GLOBAL          (print)
+            4987 LOAD_CONST           ("ate done")
+            4990 CALL_FUNCTION        (1 positional, 0 named)
+            4993 POP_TOP
+
+1693:        4994 LOAD_CONST           (True)
+            4997 LOAD_FAST            (self)
+            5000 STORE_ATTR           (download_done)
+
+1694:        5003 LOAD_CONST           (115200)
+            5006 LOAD_FAST            (self)
+            5009 LOAD_ATTR            (ser)
+            5012 STORE_ATTR           (baudrate)
+
+1695:        5015 LOAD_FAST            (self)
+            5018 LOAD_ATTR            (s1__box_3)
+            5021 LOAD_ATTR            (setCurrentIndex)
+            5024 LOAD_CONST           (0)
+            5027 CALL_FUNCTION        (1 positional, 0 named)
+            5030 POP_TOP
+
+1696:        5031 LOAD_FAST            (self)
+            5034 LOAD_ATTR            (send_timer)
+            5037 LOAD_ATTR            (stop)
+            5040 CALL_FUNCTION        (0 positional, 0 named)
+            5043 POP_TOP
+
+1697:        5044 LOAD_FAST            (self)
+            5047 LOAD_ATTR            (s2__receive_text)
+            5050 LOAD_ATTR            (append)
+            5053 LOAD_CONST           ("ate bin done\r\n")
+            5056 CALL_FUNCTION        (1 positional, 0 named)
+            5059 POP_TOP
+
+1698:        5060 LOAD_CONST           (True)
+            5063 LOAD_FAST            (self)
+            5066 STORE_ATTR           (down_load_process)
+
+1699:        5069 LOAD_CONST           (False)
+            5072 LOAD_FAST            (self)
+            5075 STORE_ATTR           (program_ate_flag)
+
+1701:        5078 LOAD_FAST            (self)
+            5081 DUP_TOP
+            5082 LOAD_ATTR            (data_num_received)
+            5085 LOAD_FAST            (num)
+            5088 INPLACE_ADD
+            5089 ROT_TWO
+            5090 STORE_ATTR           (data_num_received)
+
+1702:        5093 LOAD_FAST            (self)
+            5096 LOAD_ATTR            (lineEdit)
+            5099 LOAD_ATTR            (setText)
+            5102 LOAD_GLOBAL          (str)
+            5105 LOAD_FAST            (self)
+            5108 LOAD_ATTR            (data_num_received)
+            5111 CALL_FUNCTION        (1 positional, 0 named)
+            5114 CALL_FUNCTION        (1 positional, 0 named)
+            5117 POP_TOP
+
+1705:        5118 LOAD_FAST            (self)
+            5121 LOAD_ATTR            (s2__receive_text)
+            5124 LOAD_ATTR            (textCursor)
+            5127 CALL_FUNCTION        (0 positional, 0 named)
+            5130 STORE_FAST           (textCursor)
+
+1707:        5133 LOAD_FAST            (textCursor)
+            5136 LOAD_ATTR            (movePosition)
+            5139 LOAD_FAST            (textCursor)
+            5142 LOAD_ATTR            (End)
+            5145 CALL_FUNCTION        (1 positional, 0 named)
+            5148 POP_TOP
+
+1709:        5149 LOAD_FAST            (self)
+            5152 LOAD_ATTR            (s2__receive_text)
+            5155 LOAD_ATTR            (setTextCursor)
+            5158 LOAD_FAST            (textCursor)
+            5161 CALL_FUNCTION        (1 positional, 0 named)
+            5164 POP_TOP
+            5165 JUMP_FORWARD         (to 5168)
+
+1712:     >> 5168 LOAD_CONST           (None)
+            5171 RETURN_VALUE
