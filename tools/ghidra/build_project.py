@@ -133,6 +133,7 @@ def rename(addr, name):
 
 
 verified = [
+    # peripheral drivers (from firmware_static_analysis.md)
     (0x8FA9, "uart1_configure"),
     (0x9F7E, "uart1_read_dr"),
     (0x9F82, "uart1_write_dr"),
@@ -153,6 +154,24 @@ verified = [
     (0x9ECF, "tim4_clear_egr"),
     (0x9CD8, "reset_startup"),
     (0x993C, "clk_configure_all"),
+    # mode handler (Roadstm8true, 2026-11-09)
+    (0x816D, "mode_handler"),
+    (0x82B3, "button_bitmask_handler"),
+    (0x848B, "channel_index_get"),
+    (0x8485, "channel_pair_get"),
+    (0x828D, "channel_state_write"),
+    (0x8504, "channel_advance"),
+    # frame handler + hidden commands
+    (0x851A, "frame_handler"),
+    (0x8640, "cmd_0b_handler"),
+    (0x8689, "cmd_0d_handler"),
+    (0x860C, "cmd_19_handler"),
+    (0x86CB, "msg_post"),
+    (0x86D1, "msg_next"),
+    (0x86D8, "msg_peek"),
+    # EEPROM writers
+    (0x9927, "eeprom_write"),
+    (0x9AF3, "state_clear"),
 ]
 named = sum(1 for a, n in verified if rename(a, n))
 
@@ -183,6 +202,22 @@ plate(0x96CB, "Interrupt priority setup via ITC_SPR1/SPR2 (0x50A0/0x50A1).")
 plate(0x993C,
       "Clock tree configuration: ECKR, SWR=0xE1, SWCR, CKDIVR,\n"
       "CKDIVR=0x18 (CPUDIV=8, HSIDIV=1 -> CPU 2 MHz, f_master 16 MHz), PCKENR1=0xFF, PCKENR2=0xFF, CSSR, HSITRIMR.")
+plate(0x816D,
+      "Mode handler (Roadstm8true, 2026-11-09).\n"
+      "Converts incoming mode byte 1/3/5/7 -> internal 0/2/4/8 (off/toggle/momentary/pulse).\n"
+      "Dispatches on internal mode to sub_84b3/sub_84b9/sub_84c5/sub_8485 + sub_848b + sub_828d.\n"
+      "See docs/mode_timing.md. Timing constants still need bench measurement.")
+plate(0x851A,
+      "Frame handler. Validates 11-byte checksum, dispatches on DAT_021f (type).\n"
+      "Type 7: master power/parameter (6 bytes -> 12 nibbles at 0x9E85, post 0x1700).\n"
+      "Type 8: button bitmask (sub_82b3, post 0x1800).\n"
+      "Type 0x0B: cmd_0b_handler (sub_8640). Type 0x0D: cmd_0d_handler (sub_8689).\n"
+      "Type 0x19: cmd_19_handler (sub_860c). See docs/hidden_commands.md.")
+plate(0x8640, "Hidden command 0x0B handler. Updates DAT_0206, writes EEPROM via sub_9927, posts 0x1B.")
+plate(0x8689, "Hidden command 0x0D handler. Type 0 -> _DAT_02cb=10000; Type 1 -> reset state, DAT_0206=10.")
+plate(0x860C, "Hidden command 0x19 handler. Searches message queue for matching seq, clears it.")
+plate(0x9927, "EEPROM write helper. Called from sub_86e8 and cmd_0b_handler.")
+plate(0x9AF3, "State clear helper. Clears the per-channel state at param_1.")
 plate(0x8000,
       "STM8S003 vector area: 32 x 4-byte entries (0x8000-0x807F).\n"
       "Entry format: 82 00 <handler_hi> <handler_lo>.\n"

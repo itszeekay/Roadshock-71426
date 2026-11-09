@@ -1,0 +1,138 @@
+# Panel LED display protocol - nibble to RGB map
+
+Status: STM8 side fully decompiled (Ghidra, Roadstm8Panel project, 147/147
+functions). Color order per channel is still a bench measurement.
+
+## Frame (ASR -> STM8, 115200 8N1)
+
+9 bytes: `5A b1 b2 b3 b4 b5 b6 b7 EE`
+
+| byte | meaning |
+|---|---|
+| 0 | `0x5A` sync |
+| 1 | ignored by STM8 |
+| 2 | high nibble = ch0, low = ch1 |
+| 3 | high = ch2, low = ch3 |
+| 4 | high = ch4, low = ch5 |
+| 5 | high = ch6, low = ch7 |
+| 6 | ignored |
+| 7 | ignored |
+| 8 | `0xEE` tail |
+
+Validation is in `sub_844c`: `pcVar3[9] == 9`, `*pcVar3 == 0x5A`,
+`pcVar3[8] == 0xEE`. The length check uses the pointer returned from
+`sub_8398`.
+
+## Pin table
+
+24 records at flash `0x8AB4`, iterated from RAM `0x0010` (`sub_8c52` sets
+`_DAT_0008 = 0x0010`, `DAT_000a = 0x18` = 24, and calls `sub_8510` with mode
+`0xF0`). All pins are push-pull outputs, initial high, so the LEDs are
+active-low (common-anode).
+
+Record layout: `{port(2), mask(1)}`. Ports: `0x5000` PA, `0x5005` PB,
+`0x500A` PC, `0x500F` PD, `0x5014` PE, `0x5019` PF.
+
+| # | Port | Mask | LQFP-32 pin |
+|---:|---|---|---:|
+| 0 | PA | 0x02 | 2 |
+| 1 | PA | 0x04 | 3 |
+| 2 | PA | 0x08 | 7 |
+| 3 | PF | 0x10 | 8 |
+| 4 | PB | 0x80 | 9 |
+| 5 | PB | 0x40 | 10 |
+| 6 | PB | 0x20 | 11 |
+| 7 | PB | 0x10 | 12 |
+| 8 | PB | 0x08 | 13 |
+| 9 | PB | 0x04 | 14 |
+| 10 | PB | 0x02 | 15 |
+| 11 | PB | 0x01 | 16 |
+| 12 | PE | 0x20 | 17 |
+| 13 | PC | 0x02 | 18 |
+| 14 | PC | 0x04 | 19 |
+| 15 | PC | 0x08 | 20 |
+| 16 | PC | 0x10 | 21 |
+| 17 | PC | 0x20 | 22 |
+| 18 | PC | 0x40 | 23 |
+| 19 | PC | 0x80 | 24 |
+| 20 | PD | 0x01 | 25 |
+| 21 | PD | 0x04 | 27 |
+| 22 | PD | 0x08 | 28 |
+| 23 | PD | 0x10 | 29 |
+
+Grouped by channel (three consecutive records, pointer advance `+9`):
+
+| Channel | pin1 | pin2 | pin3 |
+|---|---|---|---|
+| ch0 | PA1 (2) | PA2 (3) | PA3 (7) |
+| ch1 | PF4 (8) | PB7 (9) | PB6 (10) |
+| ch2 | PB5 (11) | PB4 (12) | PB3 (13) |
+| ch3 | PB2 (14) | PB1 (15) | PB0 (16) |
+| ch4 | PE5 (17) | PC1 (18) | PC2 (19) |
+| ch5 | PC3 (20) | PC4 (21) | PC5 (22) |
+| ch6 | PC6 (23) | PC7 (24) | PD0 (25) |
+| ch7 | PD2 (27) | PD3 (28) | PD4 (29) |
+
+## Nibble dispatch (sub_844c)
+
+After splitting the four payload bytes into eight nibbles (`abStack_8`),
+`_DAT_000a` points at the nibble and `_DAT_0008` points at the channel's first
+pin record (`0x0010 + ch*9`). The per-channel loop ends with
+`_DAT_0008 = _DAT_0008 + 9`.
+
+Low-level setters (verified from assembly):
+
+| function | assembly | effect |
+|---|---|---|
+| `sub_8efd` | `LDW X,0x0008; INCW X; INCW X; LD A,(X); LDW X,[0x0008]` | returns pin1 mask in A, port in X |
+| `sub_8e7f` | `LDW X,0x0008; ADDW X,#5; LD A,(X); LDW X,[0x0008+3]` | returns pin2 mask in A, port in X |
+| `sub_8e72` | `LDW X,0x0008; ADDW X,#8; LD A,(X); LDW X,[0x0008+6]` | returns pin3 mask in A, port in X |
+| `sub_8f68` → `sub_8f31` | `OR A,0x0000; LD (X),A` | set pin high (off) |
+| `sub_8f65` → `sub_8f59` | `CPL A; AND A,(X); LD (X),A` | clear pin low (on) |
+
+Composed forms:
+
+| composed | calls | effect |
+|---|---|---|
+| `sub_8f44` | `sub_8efd` + `sub_8f68` | pin1 high (off) |
+| `sub_8f38` | `sub_8efd` + `sub_8f65` | pin1 low (on) |
+| `sub_8f3e` | `sub_8e7f` + `sub_8f68` | pin2 high (off) |
+
+Dispatch (assembly at 0x84AD-0x84F8, DEC-chain on the nibble):
+
+| nibble | calls | pin1 | pin2 | pin3 | lit |
+|---:|---|---|---|---|---|
+| 0 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | H | H | H | off |
+| 1 | `sub_8f38`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | L | H | H | pin1 only |
+| 2 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | H | H | H | off |
+| 3 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f65` | H | H | L | pin3 only |
+| 4 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | H | H | H | off |
+| 5 | `sub_8f44`, `sub_8e7f`+`sub_8f65`, `sub_8e72`+`sub_8f68` | H | L | H | pin2 only |
+| 6 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | H | H | H | off |
+| 7 | `sub_8f38`, `sub_8e7f`+`sub_8f65`, `sub_8e72`+`sub_8f68` | L | L | H | pin1 + pin2 |
+| 8-15 | (fall through, no writes) | - | - | - | unchanged |
+
+H = high (off), L = low (on, active-low). Only odd nibbles produce a non-off
+pattern; even nibbles are all-high (off). Nibbles 8-15 leave the channel
+unchanged.
+
+The patterns are: 1 = pin1, 5 = pin2, 3 = pin3, 7 = pin1+pin2. No pattern lights
+all three pins, and no pattern lights pin2+pin3 or pin1+pin3.
+
+## What is still open
+
+- Color map: send nibbles 0-7 to each channel, record the color; determines
+  the R/G/B pin order for each channel.
+- Bytes 1/6/7 of the frame: the STM8 ignores them; they may carry a command
+  or checksum in the ASR firmware.
+- The pin table copy from flash `0x8AB4` to RAM `0x0010` is not yet traced to a
+  single instruction; `sub_8c52` iterates from `0x0010`, so the copy must
+  happen earlier in startup. This does not affect the table contents.
+
+## Ghidra recording
+
+To be recorded in the Roadstm8Panel project (Ghidra 11.3.1):
+- `sub_844c` renamed to `display_frame_handler`
+- `sub_8f38` (pin1 low), `sub_8f44` (pin1 high), `sub_8f3e` (pin2 high)
+- `sub_8efd` (get pin1), `sub_8e7f` (get pin2), `sub_8e72` (get pin3)
+- `sub_8f65` (clear pin), `sub_8f68` (set pin)
