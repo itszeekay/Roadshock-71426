@@ -29,3 +29,7 @@ Thumbs.db
 .venv/
 venv/
 .env
+
+# curated ASR reference archive: these are deliberately published
+!reference/asr560x/drive/*.pdf
+!reference/asr560x/drive/DOGO_extract/*.pyc
