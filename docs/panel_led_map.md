@@ -26,15 +26,15 @@ ASR replacement; that is outside the J2 gateway scope (see `roadmap.md`).
 | 7 | ignored |
 | 8 | `0xEE` tail |
 
-Validation is in `sub_844c`: `pcVar3[9] == 9`, `*pcVar3 == 0x5A`,
+Validation is in `display_frame_handler` (0x844C): `pcVar3[9] == 9`, `*pcVar3 == 0x5A`,
 `pcVar3[8] == 0xEE`. The length check uses the pointer returned from
-`sub_8398`.
+`bank_8b` (0x8398).
 
 ## Pin table
 
-24 records at flash `0x8AB4`, iterated from RAM `0x0010` (`sub_8c52` sets
-`_DAT_0008 = 0x0010`, `DAT_000a = 0x18` = 24, and calls `sub_8510` with mode
-`0xF0`). All pins are push-pull outputs, initial high, so the LEDs are
+24 records at flash `0x8AB4`, iterated from RAM `0x0010` (`led_gpio_init`
+(0x8C52) sets the pin pointer to `0x0010`, count 24, and calls `gpio_init`
+with mode `0xF0`). All pins are push-pull outputs, initial high, so the LEDs are
 active-low (common-anode).
 
 Record layout: `{port(2), mask(1)}`. Ports: `0x5000` PA, `0x5005` PB,
@@ -80,12 +80,12 @@ Grouped by channel (three consecutive records, pointer advance `+9`):
 | ch6 | PC6 (23) | PC7 (24) | PD0 (25) |
 | ch7 | PD2 (27) | PD3 (28) | PD4 (29) |
 
-## Nibble dispatch (sub_844c)
+## Nibble dispatch (display_frame_handler, 0x844C)
 
 After splitting the four payload bytes into eight nibbles (`abStack_8`),
-`_DAT_000a` points at the nibble and `_DAT_0008` points at the channel's first
-pin record (`0x0010 + ch*9`). The per-channel loop ends with
-`_DAT_0008 = _DAT_0008 + 9`.
+the nibble pointer points at the nibble and the pin pointer points at the
+channel's first pin record (`0x0010 + ch*9`). The per-channel loop ends with
+the pin pointer advanced by 9.
 
 Low-level setters (verified from assembly):
 
@@ -133,13 +133,14 @@ all three pins, and no pattern lights pin2+pin3 or pin1+pin3.
 - Bytes 1/6/7 of the frame: the STM8 ignores them; they may carry a command
   or checksum in the ASR firmware.
 - The pin table copy from flash `0x8AB4` to RAM `0x0010` is not yet traced to a
-  single instruction; `sub_8c52` iterates from `0x0010`, so the copy must
+  single instruction; `led_gpio_init` iterates from `0x0010`, so the copy must
   happen earlier in startup. This does not affect the table contents.
 
 ## Ghidra recording
 
-To be recorded in the Roadstm8Panel project (Ghidra 11.3.1):
-- `sub_844c` renamed to `display_frame_handler`
-- `sub_8f38` (pin1 low), `sub_8f44` (pin1 high), `sub_8f3e` (pin2 high)
-- `sub_8efd` (get pin1), `sub_8e7f` (get pin2), `sub_8e72` (get pin3)
-- `sub_8f65` (clear pin), `sub_8f68` (set pin)
+Recorded in the Roadstm8Panel project (Ghidra 11.3.1, verified):
+- `display_frame_handler` (0x844C)
+- `pin1_set_low` (0x8F38), `pin1_set_high` (0x8F44), `pin2_set_high` (0x8F3E)
+- `get_pin1` (0x8EFD), `get_pin2` (0x8E7F), `get_pin3` (0x8E72)
+- `pin_clear` (0x8F65), `pin_set` (0x8F68)
+- `led_gpio_init` (0x8C52), `gpio_init` (0x8510)
