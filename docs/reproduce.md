@@ -205,6 +205,42 @@ was only waiting for a base.
 
 ---
 
+## 8. Panel LED color sweep
+
+[`tools/led_color_sweep.py`](../tools/led_color_sweep.py) drives the STM8 over
+the 115200 display link (Feather wired to STM8 PD5/PD6) and sends each nibble
+value 0-7 to each channel. It prints a copy-paste table for the color map.
+
+```bash
+python3 tools/led_color_sweep.py --port COM5
+python3 tools/led_color_sweep.py --port COM5 --channel 3
+```
+
+The nibble->pin pattern is already recovered (`docs/panel_led_map.md`); this
+tool only determines which pin is R/G/B per channel.
+
+Continuity printouts are in `tools/bench_probe.py`:
+
+```bash
+python3 tools/bench_probe.py --checklist all
+python3 tools/bench_probe.py --checklist display-uart
+```
+
+---
+
+## 9. Verify from scratch
+
+On a clean clone, this checks checksums, compile, Intel HEX line endings, and
+tool self-tests. It is the acceptance test for a reproduce run.
+
+```bash
+python3 tools/verify_builds.py
+```
+
+Expected: `checksums, compile, line endings: ok`.
+
+---
+
 ## Safety
 
 - 12 V automotive. Fuse outputs. Do not work live.

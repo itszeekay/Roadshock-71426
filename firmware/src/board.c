@@ -72,10 +72,9 @@ void board_init(void)
 
 void board_timer_init(void)
 {
-    /* TIM4: f_master/16 prescaler, 5 ms tick with 16 MHz clock
-     * 16 MHz / 16 = 1 MHz -> 5000 counts = 5 ms, but TIM4 is 8-bit:
-     * use prescaler 128 (0x07) -> 125 kHz, ARR 250 -> ~2 ms.
-     * We use 2 ms and count 5 in software for a 10 ms scheduler tick.      */
+    /* TIM4 tick: prescaler 128 (0x07) -> 125 kHz, ARR 250 -> ~2 ms.
+     * Polling UIF from the main loop (no interrupt), 2 ms per tick.
+     * ticks_from_ms() in main.c converts ms to 2 ms ticks. */
     TIM4_PSCR = 0x07;         /* /128 */
     TIM4_ARR  = 250;
     TIM4_CNTR = 250;
@@ -213,6 +212,9 @@ void pwm_set_duty(uint8_t channel, uint8_t percent)
         return;
     }
     if (percent > 100) percent = 100;
+    /* Edge cases: 0% -> CCR=0 (output stays low, channel is still in
+     * PWM mode); 100% -> CCR=ARR+1 (output stays high). Both are valid
+     * PWM states; switching to GPIO off requires out_set_mode(channel, 0). */
 
     arr = ((uint16_t)TIM1_ARRH << 8) | TIM1_ARRL;
     duty = ((uint32_t)(arr + 1u) * percent) / 100u;

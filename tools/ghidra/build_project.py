@@ -155,6 +155,10 @@ verified = [
     (0x9CD8, "reset_startup"),
     (0x993C, "clk_configure_all"),
     # mode handler (Roadstm8true, 2026-11-09)
+    (0x8F7E, "uart1_configure"),
+    (0x9B17, "uart1_init_2400"),
+    (0x9C1B, "flash_key_dispatch"),
+    (0x8146, "config_mode_handler"),
     (0x816D, "mode_handler"),
     (0x82B3, "button_bitmask_handler"),
     (0x848B, "channel_index_get"),
@@ -207,6 +211,25 @@ plate(0x816D,
       "Converts incoming mode byte 1/3/5/7 -> internal 0/2/4/8 (off/toggle/momentary/pulse).\n"
       "Dispatches on internal mode to sub_84b3/sub_84b9/sub_84c5/sub_8485 + sub_848b + sub_828d.\n"
       "See docs/mode_timing.md. Timing constants still need bench measurement.")
+plate(0x8F7E,
+      "UART1 configure (Roadstm8true, 2026-11-09). Caller is uart1_init_2400 at 0x9B17.\n"
+      "Caller sets DAT_0007=0x0C, DAT_0006=0x80, DAT_0005=0, DAT_0004=0, DAT_0002=0x960 (2400)\n"
+      "then CALLs this function. BRR1/BRR2 split via sub_99dc (>>4). Live value: 2400 baud\n"
+      "(BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/mode_timing.md.")
+plate(0x9B17,
+      "UART init for 2400 baud (Roadstm8true, 2026-11-09).\n"
+      "Sets the UART control masks and DAT_0002=0x960, then CALLs uart1_configure (0x8F7E).\n"
+      "Called from 0x8E9B. This resolves the formerly open static-caller question.")
+plate(0x9C1B,
+      "Flash key dispatch (Roadstm8true, 2026-11-09).\n"
+      "If A==0xFD, FLASH_KEYREG_A (0x5062) unlock sequence (0x56 then 0xAE).\n"
+      "Otherwise FLASH_KEYREG_B (0x5064) unlock sequence (0xAE then 0x56).\n"
+      "Confirms 0x5062/0x5064 are the flash unlock registers for this part.")
+plate(0x8146,
+      "Type-7 config mode handler (Roadstm8true, 2026-11-09).\n"
+      "Called from frame_handler with 12 nibbles (abStack_b) expanded from the 6-byte payload.\n"
+      "Copies the block via sub_9b92, then loops calling mode_handler logic per channel.\n"
+      "See docs/hidden_commands.md.")
 plate(0x851A,
       "Frame handler. Validates 11-byte checksum, dispatches on DAT_021f (type).\n"
       "Type 7: master power/parameter (6 bytes -> 12 nibbles at 0x9E85, post 0x1700).\n"

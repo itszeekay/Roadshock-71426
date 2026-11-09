@@ -31,7 +31,22 @@ and app. Its partition layout is documented in
 
 Vendor material in this repository remains the property of its respective
 owners. The decompiled C is a reconstruction produced from the author's own
-dumps; the STM8 SLEIGH module is an independent third-party project.
+dumps.
+
+## Third-party tools and licenses
+
+| Project | Use |
+|---|---|
+| Ghidra (NSA) | Decompilation and static analysis |
+| STM8 SLEIGH module | STM8 architecture for Ghidra (independent project) |
+| radare2 | Cross-check disassembly |
+| SDCC | Custom base firmware builds |
+| CircuitPython (RP2040) | Bench capture and impersonation |
+| pyserial | Host-side bench tools |
+| STM8 standard peripheral library | Reference for panel firmware build, not included |
+
+Third-party projects remain under their own licenses. This project has no
+affiliation with their maintainers.
 
 ## Trademarks
 

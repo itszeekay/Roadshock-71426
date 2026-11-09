@@ -11,7 +11,7 @@ returns.
 
 | type | handler | behavior |
 |---:|---|---|
-| 7 | inline | master power / parameter exchange. Expands the 6 payload bytes into 12 nibbles and stores them through a pointer initialised to `0x9E85`. Then calls `sub_8146` and posts to `x_8080` with `_DAT_0000 = 0x1700`. |
+| 7 | inline | master power / parameter exchange. Expands the 6 payload bytes into 12 nibbles and stores them through a pointer initialized to `0x9E85`. Then calls `sub_8146` and posts to `x_8080` with `_DAT_0000 = 0x1700`. |
 | 8 | `button_bitmask_handler` (0x82B3) | button bitmask. Calls `sub_82b3`, sets `_DAT_0000 = 0x1800`, then calls `sub_86c2`. |
 | 0x0B | `cmd_0b_handler` (0x8640) | reserved. See below. |
 | 0x0D | `cmd_0d_handler` (0x8689) | reserved. See below. |

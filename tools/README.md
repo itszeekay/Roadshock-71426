@@ -6,6 +6,9 @@ Python helpers for protocol work, dump validation, and Ghidra analysis.
 |---|---|
 | `protocol_ref.py` | frame builder/parser, reply model, `0x09` helper; self-test |
 | `validate_dump.py` | size / vector table / erased stats / Intel-HEX round trip |
+| `verify_builds.py` | checksum + compile + HEX + self-test verifier |
+| `led_color_sweep.py` | display-link nibble sweep for LED color mapping |
+| `bench_probe.py` | continuity checklist, safe capture, guarded hidden-command probe |
 | `pwm_test.py` | channel-6 frequency and duty sweep through the impersonator console |
 | `duty_sweep.py` | duty sweep only |
 | `read_serial.py` | read a serial console for N seconds |

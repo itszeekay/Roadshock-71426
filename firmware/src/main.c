@@ -224,7 +224,7 @@ void main(void)
             handle_frame(&f);
         }
 
-        /* 5 ms scheduler derived from the timer flag */
+        /* 2 ms scheduler from the TIM4 flag (board_timer_init) */
         if (board_tick_flag()) {
             board_tick_clear();
             channel_tick();
