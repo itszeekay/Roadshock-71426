@@ -15,6 +15,10 @@ SRC     := src/main.c src/board.c src/protocol.c
 OBJ     := $(SRC:src/%.c=build/%.rel)
 TARGET  := build/roadshock.ihx
 
+TESTSRC := src/main.c src/board.c src/protocol.c src/test_pattern.c
+TESTOBJ := $(TESTSRC:src/%.c=build/test_%.rel)
+TESTTARGET := build/testpattern.ihx
+
 all: $(TARGET)
 
 build:
@@ -23,9 +27,18 @@ build:
 build/%.rel: src/%.c | build
 	$(CC) $(CFLAGS) -c $< -o $@
 
+build/test_%.rel: src/%.c | build
+	$(CC) $(CFLAGS) -DTEST_PATTERN -c $< -o $@
+
 $(TARGET): $(OBJ)
 	$(CC) $(LDFLAGS) $(OBJ) -o $@
 	@echo "built $@"
+
+$(TESTTARGET): $(TESTOBJ)
+	$(CC) $(LDFLAGS) $(TESTOBJ) -o $@
+	@echo "built $@"
+
+testpattern: $(TESTTARGET)
 
 flash: $(TARGET)
 	stm8flash -c stlinkv2 -p stm8s003f3 -w $(TARGET)

@@ -38,13 +38,15 @@ Target: **STM8S003F3P6** (8 KB flash, 1 KB RAM). Built with **SDCC 4.5**
 | `src/main.c` | modes, frame handling, `0x09` |
 | `src/board.c` / `board.h` | clock, GPIO, TIM1 PWM, ACC sense |
 | `src/protocol.c` / `protocol.h` | UART 2400, polled RX, checksum, replies |
-| `src/test_pattern.c` | bench test pattern (not in the default build) |
+| `src/test_pattern.c` | bench test pattern (build with `make testpattern`) |
 
 ## Build
 
 ```bash
 cd firmware
 make
+# bench test pattern image (channel 6 blink + PWM ramp at ~1 kHz):
+make testpattern
 ```
 
 Output: `build/roadshock.ihx`, the application image.
