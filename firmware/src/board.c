@@ -3,8 +3,20 @@
  */
 #include "board.h"
 
-/* Channel -> port/mask. Matches the stock table recovered from the dump;
- * confirmed by continuity on the base board. */
+/* Channel -> port/mask.
+
+   Verified by wire-probe (multimeter continuity + scope):
+   - Channel 1  = PA3  (pin 2 of LQFP-32, confirmed with scope on TIM1_CH3)
+   - Channel 2  = PA2  (inferred by elimination; not yet wire-verified)
+   - Channels 3 = PC7  (verified)
+   - Channels 4 = PC6  (verified)
+   - Channels 5 = PC5  (verified)
+   - Channels 6 = PC4  (verified; also TIM1_CH4 for hardware PWM)
+   - Channels 7 = PC3  (verified)
+   - Channel 8  = PD2  (verified)
+
+   Before driving real loads, verify each channel with a multimeter or scope. */
+
 const uint8_t board_pin_count = 8;
 const uint8_t board_pin_port[8] = {
     PIN_PA, PIN_PA,                              /* ch1 PA3, ch2 PA2        */
