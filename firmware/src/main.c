@@ -64,7 +64,11 @@ static void channel_set(uint8_t n, uint8_t on)
  * 16 MHz / 128 prescaler = 125 kHz, ARR 250 -> ~2.008 ms per tick).
  * - Blink half period 100 ms = 100/2 = 50 ticks. A full blink cycle is a
  *   100 ms ON phase plus a 100 ms OFF phase = 200 ms = 5 Hz.
- * - Pulse on-time 250 ms = 250/2 = 125 ticks = 250 ms. */
+ * - Pulse on-time 250 ms = 250/2 = 125 ticks = 250 ms.
+ * These rates are assumed: the manual (docs/71426-manual.pdf) names the modes
+ * and their indicator colors but does not state timing, and the stock timing
+ * has not been measured yet. Treat both as placeholders pending a bench
+ * capture against the stock firmware. */
 #define BLINK_HALF_TICKS ticks_from_ms(100)
 #define PULSE_TICKS      ticks_from_ms(250)
 

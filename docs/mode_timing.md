@@ -4,115 +4,103 @@ Status: mode dispatch recovered from the base-board decompilation (Roadstm8true
 project, Ghidra 11.3.1, sha256 `a730e8b0bd32861a02fdfd75ada5a78f632b85e54de8cb0b6a3d2d85f1dcef62`,
 256/256 functions). Timing values still need bench confirmation.
 
-## Mode handler (mode_handler, 0x816D)
+## Manual (source of truth for names and colors)
 
-The handler does two things: convert the incoming mode byte, then dispatch on
-the internal mode.
+`docs/71426-manual.pdf` p.6 names four per-channel modes with indicator
+colors:
 
-### Conversion (0x817C-0x81A6)
+| Mode | Indicator color |
+|---|---|
+| Toggle | Red |
+| Momentary | Blue |
+| Pulse | Green |
+| Blinking | Yellow |
+
+The manual does not define hold behavior or timing. It also describes the
+Mode double-click procedure for changing a channel's mode. Keep the names and
+colors from the manual; treat timing and hold behavior as
+bench items.
+
+## Dispatchers (same state machine, three entry points)
+
+| Address | Name | Role |
+|---:|---|---|
+| 0x816D | `mode_handler` | single channel (stack param) |
+| 0x833B | `mode_apply_block` | block (pointer + index) |
+| 0x8146 | `config_mode_handler` | type-7 12-nibble buffer |
+
+The remaining firmware functions are around bank setters, save/restore
+pairs, IWDG/TIM/UART helpers, and unused interrupt-vector filler. Names for
+them are in `reverse/base_function_index.md` and the Ghidra project; the
+behavioral walkthrough in `docs/firmware.md` covers the state machine.
+
+### Conversion
+
+When the channel edit index is 0 or 4, the dispatchers convert the incoming
+mode byte:
 
 ```c
-DAT_0000 = *in_stack_00000001;
-if (DAT_0000 == 1)      DAT_0000 = 0;
-else if (DAT_0000 == 3) DAT_0000 = 2;
-else if (DAT_0000 == 5) DAT_0000 = 4;
-else if (DAT_0000 == 7) pcVar2 = sub_8490();  // falls through with DAT_0000 unchanged
-*pcVar2 = DAT_0000;
+if (value == 1) value = 0;
+else if (value == 3) value = 2;
+else if (value == 5) value = 4;
+else if (value == 7) value = 8;  // via set_6() which returns param + 1
 ```
 
-| incoming | internal | meaning |
-|---:|---:|---|
-| 1 | 0 | off |
-| 3 | 2 | toggle |
-| 5 | 4 | momentary |
-| 7 | 8 | internal for pulse path (see dispatch) |
+### Dispatch
 
-Note: 7 is not converted to a constant; it goes through `sub_8490`, which
-returns `param_1 + 1`. The dispatch below is on the converted value.
+The dispatch runs on the converted value:
 
-### Dispatch (0x81A7-0x82A5)
+| Converted value | Write via `channel_state_write` |
+|---:|---|
+| 0 | clears the state byte |
+| 1 | `0x10` or `*pb | 1` |
+| 2 | `0x20` or `*pb | 2` |
+| 3 | `0x30` or `*pb | 3` |
+| 4 | `0x40` or `*pb | 4` |
+| 5 | `0x50` or `*pb | 5` |
+| 6 | `0x60` or `*pb | 6` |
+| 7 | `0x70` or `*pb | 7` |
+| 8 | `0x80` or `*pb | 8` |
 
-```c
-cVar1 = *in_stack_00000001;
-if (cVar1 == 0) { sub_84b3(); ... }
-if (cVar1 == 1) { sVar3 = sub_84b9(); sub_828d(*pbVar4 | 1); }
-if (cVar1 == 2) { sVar3 = sub_84c5(); sub_828d(*pbVar4 | 2); }
-if (cVar1 == 3) { sVar3 = sub_84b9(); sub_828d(*pbVar4 | 3); }
-if (cVar1 == 4) { sVar3 = sub_84c5(); sub_828d(*pbVar4 | 4); }
-if (cVar1 == 5) { sVar3 = sub_8485(); sub_828d(*pbVar4 | 5); }
-if (cVar1 == 6) { sVar3 = sub_84c5(); sub_828d(*pbVar4 | 6); }
-if (cVar1 == 7) { sVar3 = sub_84a5(); sub_828d(*pbVar4 | 7); }
-if (cVar1 == 8) { sVar3 = sub_8485(); *pbVar4 |= 8; }
-```
+`channel_state_write` (0x828D) advances `ch_edit` and loops while
+`ch_edit < 0x0C`, walking all 12 channels.
 
-Each branch writes `0x10*N` or `*pb | N` via `sub_828d` (or `sub_845d` in
-`sub_82b3`). `sub_828d` advances `DAT_000e` and loops while `DAT_000e < 0x0C`.
+The four panel modes select four of these patterns. Which pattern is Toggle
+versus Momentary versus Pulse versus Blinking, and the exact hold/timing
+behavior, are inferred from the manual colors and the dispatch structure
+but are not proven without a stock bench capture.
 
-The four stock modes are:
+## What our firmware assumes (custom base)
 
-1. **Toggle** (internal 1): the output flips on every key event.
-2. **Momentary** (internal 2): the output follows the key state (on while held).
-3. **Pulse** (internal 3): the output turns on for a fixed duration, then off.
-4. **Blinking** (internal 4): the output toggles on a timer.
+`firmware/src/main.c` implements the four modes as:
 
-Reserved internal modes 5-8 exist in the dispatch but have no documented UI.
-They write `0x50`/`0x60`/`0x70`/`0x80` or `*pb | 5/6/7/8`.
+- **Toggle**: press flips the output on or off.
+- **Momentary**: on while held, off on release. This is the hold behavior the
+  user asked about; the manual does not call it "pulse".
+- **Pulse**: press turns the output on for a fixed time, then off. Our build
+  uses 250 ms. The stock duration has not been measured.
+- **Blinking**: the output toggles every 100 ms (200 ms full cycle, 5 Hz).
+  The stock rate has not been measured and may be slower; treat this as a
+  placeholder pending a bench capture.
 
-## Helpers (named in Ghidra)
-
-| address | renamed | behavior |
-|---:|---|---|
-| `sub_848b` | `channel_index_get` | returns `DAT_000e` |
-| `sub_8485` | `channel_pair_get` | returns `DAT_000e >> 1` |
-| `sub_84b9` | - | returns `DAT_000e >> 1` |
-| `sub_84c5` | - | returns `DAT_000e` (thunk) |
-| `sub_828d` | `channel_state_write` | writes byte, advances `DAT_000e`, loops while `< 0x0C` |
-| `sub_8504` | `channel_advance` | advances per-channel pointer, writes `5` |
-| `sub_82a8` | - | sets `DAT_000e = param_1` |
-
-## Frame handler (frame_handler, 0x851A)
-
-`frame_handler` validates the 11-byte checksum and dispatches on `DAT_021f`
-(type). See `docs/hidden_commands.md` for the hidden-command handlers.
-
-| type | handler | behavior |
-|---:|---|---|
-| 7 | inline | master power / parameter (6 bytes -> 12 nibbles at `0x9E85`, post `0x1700`) |
-| 8 | `button_bitmask_handler` (0x82B3) | button bitmask (post `0x1800`) |
-| 0x0B | `cmd_0b_handler` (0x8640) | reserved |
-| 0x0D | `cmd_0d_handler` (0x8689) | reserved |
-| 0x19 | `cmd_19_handler` (0x860C) | reserved |
-| other | `sub_86c8` | posts to message queue |
+None of these times come from the manual. They are placeholders chosen for
+the custom firmware and must be confirmed on hardware.
 
 ## EEPROM encoding (0x0D-0x14)
 
 Eight bytes, one per channel. Factory dump: `07 02 05 01 02 00 00 02`; after
 bench: `00 00 00 00 00 00 00 00`.
 
-The encoding is not yet fully decoded. Each byte likely encodes:
-
-- Low 3 bits: mode (0=off, 1=toggle, 2=momentary, 3=pulse, 4=blink)
-- High bits: rate/duration or parameters
-
-`eeprom_write` (0x9927) and `sub_86e8` write to EEPROM. `sub_86e8` calls
-`state_clear` (0x9AF3) then `eeprom_write` with `DAT_0002 = &UNK_03e8`.
+The encoding is not yet fully decoded. Each byte likely encodes the mode plus
+timing parameters. `eeprom_write` (0x9927) and `eeprom_sequencer` (0x86E8)
+write to EEPROM.
 
 ## Timing sources
 
-The blink/pulse timing is driven by the main loop (`x_8080`) and the TIM4
-tick. Relevant RAM:
-
-| RAM | purpose |
-|---|---|
-| `0x000E` | current channel/mode index (0-11) |
-| `0x000D` | channel index |
-| `0x02DF` | 12-entry `{ODR address, mask}` pin table |
-| `0x023E` | 32-byte RX frame buffer |
-| `0x025E` | RX frame length |
-
-The exact blink period and pulse duration are likely fixed constants in the
-mode handler or derived from the EEPROM settings. They need bench measurement
-(set each mode, measure the output).
+The blink/pulse timing in the stock firmware is driven by `tim4_isr`
+(0x9608) and `mode_tick` (0x8700), advancing scheduler state on the TIM4
+tick. The exact blink period, pulse duration, and hold behavior need a bench
+measurement: set each mode on the stock firmware and measure the output.
 
 ## What is still open
 
@@ -121,14 +109,3 @@ mode handler or derived from the EEPROM settings. They need bench measurement
 - Hidden command semantics (0x0B, 0x0D, 0x19) - likely manufacturer config,
   need hardware testing.
 - Bytes 1/6/7 of the display frame (ignored by STM8, may carry ASR command).
-
-## Ghidra recording
-
-Recorded in the Roadstm8true project via `tools/ghidra_scripts/build_project.py`
-(run with Ghidra 11.3.1 headless; verified with `ListAnnotations.java`):
-- `x_816d` -> `mode_handler`, `sub_851a` -> `frame_handler`
-- `sub_8640`/`sub_8689`/`sub_860c` -> `cmd_0b_handler`/`cmd_0d_handler`/`cmd_19_handler`
-- `sub_848b`/`sub_8485`/`sub_828d`/`sub_8504` -> `channel_index_get`/`channel_pair_get`/`channel_state_write`/`channel_advance`
-- `sub_86cb`/`sub_86d1`/`sub_86d8` -> `msg_post`/`msg_next`/`msg_peek`
-- `sub_9927`/`sub_9af3` -> `eeprom_write`/`state_clear`
-- Plate comments on each

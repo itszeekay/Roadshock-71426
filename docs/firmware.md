@@ -98,6 +98,46 @@ and EEPROM encoding are bench items; see `mode_timing.md`.
 - The master-off path (`DAT_01f9` set by type 7 with a zero payload byte, or
   `cmd_0d_handler` with `0x0D 1`) forces all outputs off.
 
+### RAM globals
+
+The decompiled C uses register-bank temporaries at `0x0000-0x000F` (compiler
+spill, e.g. `tmp_b0`, `tmp_ptr`, `ch_edit`) and application state above
+`0x0182`. The named application addresses are:
+
+| Address | Name | Meaning |
+|---:|---|---|
+| `0x0182` | `ch_state` | channel-state array (channels_apply walks 12 entries) |
+| `0x01BE` | `eeprom_tx` | EEPROM write buffer |
+| `0x01C3` | `sched_block` | scheduler state block |
+| `0x01F9` | `master_off` | master-off flag (type 7 with zero payload byte) |
+| `0x01FA` | `ch_state_base` | per-channel state base |
+| `0x0206` | `cfg_value` | config value for cmd 0x0B |
+| `0x021C` | `frame_sum` | RX checksum byte |
+| `0x021D` | `frame_base` | RX frame buffer base |
+| `0x021E` | `frame_dir` | frame direction |
+| `0x021F` | `frame_type` | frame type (7, 8, 0x0B, 0x0D, 0x19) |
+| `0x0220` | `frame_flag` | frame flag |
+| `0x023D` | `frame_len` | frame length |
+| `0x025F` | `acc_count` | ACC sample count |
+| `0x0260` | `acc_buf` | ACC sample buffer |
+| `0x02B8` | `pin_state_2b8` | pin-state area |
+| `0x02CD` | `queue_saved` | saved message-queue head |
+| `0x02CE` | `queue_head` | message-queue head |
+| `0x02CF` | `seq_counter` | sequence counter |
+| `0x02D1` | `tick_flag` | TIM4 tick flag |
+| `0x02D4` | `sched_flag` | sampler/reset flag |
+| `0x02D5` | `frame_ready` | completed-frame flag |
+| `0x02D6` | `block_count` | scheduler block count |
+| `0x02D7` | `mode_div` | mode divider (every 3rd tick) |
+| `0x02D9` | `acc_index` | ACC sample index |
+| `0x02DA` | `acc_data` | ACC sample data |
+| `0x02DB` | `sampler_on` | sampler enable |
+| `0x02DF` | `pin_table` | 12-entry `{ODR address, mask}` pin table |
+
+These names are recorded in `tools/ghidra/build_project.py` and appear in
+`reverse/base_firmware.c`. The `0x0000-0x000F` temporaries are compiler
+register-bank spill; application state starts at `0x0182`.
+
 ### EEPROM and queue
 
 - `eeprom_write` (0x9927) is called from `eeprom_sequencer` (0x86E8) and from
@@ -171,7 +211,9 @@ What it implements:
 - **Hardware PWM** on TIM1 (channel 6 = PC4 = TIM1_CH4).
 - Blink/pulse timing from the 2 ms TIM4 tick: blink half period 100 ms
   (50 ticks, 200 ms full cycle, 5 Hz); pulse on-time 250 ms (125 ticks).
-  See `firmware/src/main.c` for the calculation.
+  These rates are assumed: the manual names the modes and their indicator
+  colors but does not state timing, and the stock timing has not been
+  measured yet. See `firmware/src/main.c` for the calculation.
 - Custom type `0x09` for off / on / PWM with duty and frequency.
 
 Settings are RAM-only for now. The stock base stores per-channel settings in
