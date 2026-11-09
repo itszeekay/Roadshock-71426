@@ -12,7 +12,8 @@ Frame (11 bytes, both directions):
 Message types seen:
     0x07  master/parameter: flag 0x00 = off, 0x01 = on, other flags accepted
     0x08  button bitmask (flag 0x0C)
-    0x0B, 0x0D, 0x19  accepted by the dispatcher, not used by the panel
+    0x0B  config update (EEPROM), 0x0D  clear/reset, 0x19  queue search
+    (stock handlers recovered; see docs/hidden_commands.md; builders below)
 """
 from dataclasses import dataclass
 
@@ -98,6 +99,26 @@ def set_output(seq, channel: int, mode: int, duty: int = 0, hz: int = 1000) -> b
     payload = bytes([channel & 0xFF, mode & 0xFF, duty & 0xFF,
                      hz & 0xFF, (hz >> 8) & 0xFF, 0])
     return build(seq, 0x09, 0x00, payload)
+
+
+# ---- hidden-command builders (stock handlers, see docs/hidden_commands.md) --
+def hidden_0b(seq, value: int) -> bytes:
+    """Type 0x0B: config/state update (value 1..0x64, must differ).
+
+    Updates cfg_value, writes EEPROM, and posts a 0x1B reply.
+    Requires an explicit bench decision; see tools/bench_probe.py.
+    """
+    return build(seq, 0x0B, 0x00, bytes([value & 0xFF] + [0] * 5))
+
+
+def hidden_0d(seq, mode: int) -> bytes:
+    """Type 0x0D: 0 = set scheduler timer to 10000; 1 = reset state."""
+    return build(seq, 0x0D, 0x00, bytes([mode & 0xFF] + [0] * 5))
+
+
+def hidden_19(seq, seq_match: int = 0) -> bytes:
+    """Type 0x19: searches the message queue for a matching sequence."""
+    return build(seq, 0x19, 0x00, bytes([seq_match & 0xFF] + [0] * 5))
 
 
 def key_of_payload(payload: bytes):

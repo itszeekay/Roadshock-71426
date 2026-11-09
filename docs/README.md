@@ -1,5 +1,7 @@
 # Documentation
 
+MCUs in this project: base board **STM8S003F3P6** (TSSOP-20), button panel **STM8S003K3** (LQFP-32), panel main controller **ASR5601S** (QFN-48).
+
 | Document | Contents |
 |---|---|
 | [hardware.md](hardware.md) | Boards, identified ICs, connectors, power, programming headers, photos |
@@ -15,6 +17,7 @@
 | [bench-results.md](bench-results.md) | Everything verified on hardware, plus the dump text-mode trap |
 | [reproduce.md](reproduce.md) | Dump, build, flash, restore, capture, inject |
 | [roadmap.md](roadmap.md) | CAN gateway and PDU plan |
+| [safety.md](safety.md) | Electrical safety, flashing, RF, and liability |
 | [mode_timing.md](mode_timing.md) | Stock channel mode dispatch; timing and EEPROM open items |
 | [hidden_commands.md](hidden_commands.md) | Hidden protocol commands 0x0B/0x0D/0x19 and frame handler |
 | [panel_led_map.md](panel_led_map.md) | Display frame, pin table, nibble-to-pin patterns |
