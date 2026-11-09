@@ -40,6 +40,27 @@ Known decompiler artifacts:
 - `sub_8398`/`sub_83A2` are compiler register-bank helpers, not application
   logic.
 
+
+## Backend independence
+
+The analysis data (dumps under `dumps/`, reconstructions and indexes in this
+directory, `tools/triage_firmware.py` reports) is backend-agnostic. Ghidra is
+one possible backend for producing it; the annotations in
+`tools/ghidra/build_project.py` and `tools/ghidra/build_panel_project.py`
+are the replaceable layer. A different decompiler or a future Ghidra
+version can regenerate the same data from the same dumps without renaming
+anything in the data directory. See `tools/build_reconstruction.py` for the
+concatenation step.
+
+## Evidence discipline
+
+Every functional claim names its source: dump hash, function address, or
+captured frame. Where the decompilation disagrees on ambiguous points
+(register-bank spills, dispatch twins, 0xFF filler), the conservative reading
+is recorded in `docs/firmware.md` and `docs/mode_timing.md`, and bench or
+dump work is named as the decider rather than guessing. Uncertain items stay
+marked uncertain in the index roles.
+
 ## Licensing
 
 The decompiled output is provided for interoperability and research on hardware
