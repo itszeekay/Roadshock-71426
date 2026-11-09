@@ -5,6 +5,11 @@ MCU: **STM8S003K3** (button panel RGB LED display driver). Not the STM8S003F3P6 
 Status: STM8 side fully decompiled (Ghidra, Roadstm8Panel project, 147/147
 functions). Color order per channel is still a bench measurement.
 
+Scope: this is the STM8S003K3 behavior only. The 115200 display link is
+internal to the panel PCB (ASR to STM8); nothing on the 2400-baud J2 bus
+carries LED colors. Controlling the LEDs needs a display-link tap or an
+ASR replacement; that is outside the J2 gateway scope (see `roadmap.md`).
+
 ## Frame (ASR -> STM8, 115200 8N1)
 
 9 bytes: `5A b1 b2 b3 b4 b5 b6 b7 EE`

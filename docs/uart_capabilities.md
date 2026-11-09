@@ -31,11 +31,11 @@ These are verified in the decompilation and, for the first two, on the wire:
   anywhere in the image, and `outputs_init` (0x94D6) drives every pin with
   `gpio_init` (0x9541). No PWM output reaches the pins. Dimming over UART
   requires custom firmware (the TIM1 build in `firmware/src/`).
-- **Panel LEDs.** The 115200 display frames are internal to the panel PCB
-  (ASR to STM8). Nothing on the 2400-baud bus carries LED colors; the base
-  replies echo the request payload. LED control needs a display-link tap or
-  an ASR replacement, neither of which is part of the J2 gateway (see
-  `roadmap.md` and `panel_led_map.md`).
+- **Panel LEDs.** Not a base-board (STM8S003F3P6) capability. The LED driver
+  is the STM8S003K3 on the button panel; its display frames are documented in
+  `panel_led_map.md` under that MCU. Nothing on the 2400-baud bus carries LED
+  colors. LED control needs a display-link tap or an ASR replacement, neither
+  of which is part of the J2 gateway (see `roadmap.md`).
 - **Firmware replacement.** The STM8S003 has no UART bootloader. SWIM is the
   only programming interface. `frame_handler` has no path to
   `flash_unlock` (0x9CA7) or `flash_key_dispatch` (0x9C1B); only the boot
