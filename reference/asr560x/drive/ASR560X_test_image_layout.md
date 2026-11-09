@@ -9,6 +9,7 @@ carving the panel dump.
 |---|---|---|---|
 | `0x00000` | `0x10000000` | 28 KB | SP `0x20012000`, reset `0x10000D59` |
 | `0x07000` | `0x10007000` | 8 KB | `7F 7F FF FF`, then `FDB0` |
+| `0x08000` | `0x10008000` | tag inside OTA info | same `7F 7F FF FF`, then `FDB0`; this is DOGO's `ota_tag_addr` |
 | `0x09000` | `0x10009000` | 4 KB | `FF` (unused OTA backup) |
 | `0x0A000` | `0x1000A000` | 8 KB | ASCII `NVDS` |
 | `0x0C000` | `0x1000C000` | 4 KB | `FF` (empty coredump area) |
@@ -26,7 +27,8 @@ After the panel dump is rebuilt, compare it with this table:
 - The bootloader should start with a plausible stack pointer at `0x2000xxxx`
   and a reset vector inside `0x10000000..0x10007000`.
 - The OTA info block should contain `FDB0` near the start. In the test image the
-  first four bytes are `7F 7F FF FF`, then `FDB0`.
+  first four bytes are `7F 7F FF FF`, then `FDB0`, and the same eight bytes
+  appear again at `0x10008000`.
 - The NVDS block should contain ASCII `NVDS`.
 - The BLE ROM block should start with a version string such as `rom-1.0.0`.
 - The app block should start with a stack pointer and a reset vector inside the
