@@ -96,6 +96,7 @@ static void channel_press(uint8_t n)
     default:
         break;
     }
+    eeprom_save_state();
 }
 
 static void channel_release(uint8_t n)
@@ -107,6 +108,7 @@ static void channel_release(uint8_t n)
     if (ch[n].mode == MODE_MOMENTARY) {
         channel_set(n, 0);
     }
+    eeprom_save_state();
 }
 
 /* called every 2 ms TIM4 tick; see board_timer_init */
@@ -127,6 +129,29 @@ static void channel_tick(void)
             channel_set(n, c->phase);
             c->timer = BLINK_HALF_TICKS;
         }
+    }
+}
+
+/* Save channel state to EEPROM (addresses 0x0D..0x14 = 8 bytes) */
+static void eeprom_save_state(void)
+{
+    uint8_t i;
+    for (i = 0; i < 8; i++) {
+        uint8_t byte = ch[i].mode;       /* bits 0-1 */
+        byte |= (ch[i].on != 0) << 2;   /* bit 2 */
+        eeprom_write(0x0D + i, byte);
+    }
+}
+
+/* Load channel state from EEPROM (addresses 0x0D..0x14 = 8 bytes) */
+static void eeprom_load_state(void)
+{
+    uint8_t i;
+    for (i = 0; i < 8; i++) {
+        uint8_t b = eeprom_read(0x0D + i);
+        ch[i].mode = b & 0x03;
+        ch[i].on   = (b >> 2) & 0x01;
+        board_output(i, ch[i].on != 0);  /* apply loaded state to outputs */
     }
 }
 
@@ -152,6 +177,7 @@ static void set_master(uint8_t on)
             channel_set(n, 0);
         }
     }
+    eeprom_save_state();
 }
 
 static void handle_frame(const proto_frame_t *f)
@@ -201,6 +227,16 @@ static void handle_frame(const proto_frame_t *f)
         break;                        /* unknown types are ignored           */
     }
 
+    /* custom status frame: report current output state */
+    if (f->type == PROTO_TYPE_STATUS) {
+        uint8_t status[6] = {0};
+        for (uint8_t n = 0; n < 6; n++) {
+            status[n] = ch[n].on != 0 ? 1 : 0;
+        }
+        status[6 - 1] = master_on ? 1 : 0;  /* last byte: master state */
+        proto_send_status(f, status);
+    }
+
     /* always acknowledge like the stock firmware does */
     proto_send_reply(f);
 }
@@ -218,11 +254,8 @@ void main(void)
     memset(ch, 0, sizeof(ch));
     master_on = 1;
 
-    /* default modes: all toggle, matching the panel's default */
-    for (uint8_t n = 0; n < 8; n++) {
-        ch[n].mode = MODE_TOGGLE;
-        channel_set(n, 0);
-    }
+    /* Load channel state from EEPROM (addresses 0x0D..0x14) */
+    eeprom_load_state();
 
     for (;;) {
         board_watchdog_feed();

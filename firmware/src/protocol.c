@@ -110,3 +110,25 @@ void proto_send_reply(const proto_frame_t *req)
         UART1_DR = f[i];
     }
 }
+
+void proto_send_status(const proto_frame_t *req, const uint8_t *status)
+{
+    uint8_t f[12];
+    uint8_t n = PROTO_FRAME_LEN;
+
+    f[0] = req->seq;
+    f[1] = PROTO_DIR_BASE;
+    f[2] = PROTO_TYPE_STATUS;
+    f[3] = 0x00;
+
+    for (uint8_t i = 0; i < 6; i++) {
+        f[4 + i] = status[i];
+    }
+    f[n - 1] = proto_checksum(f, (uint8_t)(n - 1));
+
+    for (uint8_t i = 0; i < n; i++) {
+        while (!(UART1_SR & 0x80)) {
+        }                           /* wait TXE */
+        UART1_DR = f[i];
+    }
+}

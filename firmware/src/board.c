@@ -127,6 +127,42 @@ void board_watchdog_feed(void)
     IWDG_KR = 0xAA;
 }
 
+/* ----------------------------------------------------------- EEPROM
+ * The STM8S003F3P6 has 128 bytes of EEPROM at 0x4000-0x407F.
+ * The EEPROM is byte-addressable; each write takes ~10 ms.
+ * EEPROM write sequence (from stock firmware):
+ *   1. Write address to 0x5045 (EEPROM address register) and 0x5044 (page register)
+ *   2. Write data to 0x5040 (EEPROM data register) with FLASH_CR2 E1EE enabled
+ *   3. Wait for FLASH_IAPSR (0x505A) EEPROM write flag to clear
+ */
+
+void eeprom_write(uint16_t addr, uint8_t data)
+{
+    /* Set address: low byte to 0x5045, high byte to 0x5044 (page register) */
+    REG8(0x5045) = (uint8_t)(addr & 0xFF);
+    REG8(0x5044) = (uint8_t)((addr >> 8) & 0xFF);
+
+    /* Write data to data register; enable EEPROM write via FLASH_CR2 */
+    REG8(0x5040) = data;
+    REG8(0x505F) |= 0x02;               /* set CR2.E1EE (EEPROM write enable) */
+
+    /* Wait for write to complete (poll until FLASH_IAPSR.EEPROM_WR_FLAG clears) */
+    uint8_t timeout = 255;
+    while (timeout--) {
+        if ((REG8(0x505A) & 0x80) == 0) break;  /* EEPROM write flag cleared */
+    }
+}
+
+uint8_t eeprom_read(uint16_t addr)
+{
+    /* Set address */
+    REG8(0x5045) = (uint8_t)(addr & 0xFF);
+    REG8(0x5044) = (uint8_t)((addr >> 8) & 0xFF);
+
+    /* Read data from data register */
+    return REG8(0x5040);
+}
+
 /* ----------------------------------------------------------- hardware PWM
  * TIM1 (verified layout: four separate CCMR registers, one per channel)
  *   ch3 PC3 = CH3, ch4 PC6 = CH1, ch6 PC4 = CH4, ch7 PC7 = CH2

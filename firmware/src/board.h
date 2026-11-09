@@ -123,4 +123,11 @@ void board_watchdog_feed(void);
 uint8_t board_tick_flag(void);
 void board_tick_clear(void);
 
+/* EEPROM (128 bytes at 0x4000-0x407F) */
+void eeprom_write(uint16_t addr, uint8_t data);
+uint8_t eeprom_read(uint16_t addr);
+
+/* Status frame: type 0x0A (custom) */
+#define PROTO_TYPE_STATUS 0x0A
+
 #endif /* BOARD_H */
