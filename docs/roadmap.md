@@ -50,7 +50,7 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
 
 2. **Prove full panel control**
    - Identify the ASR display UART pins by continuity from STM8 PD5/PD6.
-   - Send 9-byte `0x5A` frames; map nibble → colour.
+   - Send 9-byte `0x5A` frames; map nibble → color.
    - Ship a host tool + Feather injector.
 
 3. **Gateway prototype**
@@ -89,7 +89,7 @@ not a firmware rewrite.
 ## Open decisions
 
 1. ASR display UART pins.
-2. Display-nibble colour map.
+2. Display-nibble color map.
 3. Exact stock mode timing rules.
 4. CAN controller for the PDU (MCP2515 vs CAN2040 vs ESP32 TWAI).
 5. Current sensing for the PDU (v1 or later).

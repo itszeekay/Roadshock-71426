@@ -2,7 +2,7 @@
 
 Status: Phase 0 is complete. The protocol is known well enough to run on the
 bench, but nothing has been read from the ASR yet. The remaining unknowns are
-behavioural, not structural:
+behavioral, not structural:
 
 1. Does the ASR5601S download monitor accept `coredump flash all`?
 2. Does the stream use the `:<label><hex>$` framing that DOGO parses?
@@ -199,7 +199,7 @@ and have identical SHA-256, covering the full part.
 
 ## Phase 4: verify and archive
 
-1. Compare the two reads. Any difference means retry; do not rationalise it.
+1. Compare the two reads. Any difference means retry; do not rationalize it.
 2. Check the vector table at `0x10000000` and carve the partitions using
    `docs/asr5601_reference_archive.md` and the Memory Layout page. The offsets
    have not been confirmed on hardware yet. The layout note from ASR's public

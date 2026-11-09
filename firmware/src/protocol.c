@@ -71,7 +71,7 @@ uint8_t proto_poll(proto_frame_t *f)
     if (f->sum_ok) {
         len = 0;
     } else {
-        /* shift one byte so the next frame can resynchronise */
+        /* shift one byte so the next frame can resynchronize */
         for (uint8_t i = 1; i < PROTO_FRAME_LEN; i++) {
             buf[i - 1] = fr[i];
         }

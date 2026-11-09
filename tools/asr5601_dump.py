@@ -260,7 +260,7 @@ def parse_capture(capture: pathlib.Path, outdir: pathlib.Path | None = None) -> 
     chunks = CHUNK_RE.findall(text)
     images = IMAGE_RE.findall(text)
     print("\nParsing %s" % capture)
-    print("  labelled chunks: %d" % len(chunks))
+    print("  labeled chunks: %d" % len(chunks))
     print("  bare hex blocks: %d" % len(images))
 
     if not chunks and not images:

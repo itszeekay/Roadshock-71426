@@ -25,7 +25,7 @@ All port names are STM8 port names. Package pin numbers are in brackets.
 | 17 | PC7 | output ch3 |
 | 18 | PD1 | SWIM |
 | 19 | PD2 | output ch8 |
-| 20 | PD3 | free (AIN4 if analogue is ever needed) |
+| 20 | PD3 | free (AIN4 if analog is ever needed) |
 
 The firmware's output table is 12 records of `{port address, mask}`; channels
 1–8 use the pins above and entries 8–11 are PB4 spares.
@@ -86,7 +86,7 @@ so the LEDs are active-low / common-anode).
 | 6 | PC6 | PC7 | PD0 |
 | 7 | PD2 | PD3 | PD4 |
 
-The R/G/B order within each triplet and the exact colour per display nibble
+The R/G/B order within each triplet and the exact color per display nibble
 still need a bench confirmation.
 
 ## ASR5601S (QFN-48)

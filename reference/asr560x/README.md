@@ -76,7 +76,7 @@ ASR's ASR582X FAQ documents the same DOGO tool's read path:
 
 DOGO parses the reply as `:<ten-character label><hex>$` and writes one file per
 label. The Read Image checkbox uses a separate `$<hex>$` capture and the
-Generate Bin button. Neither path needs a licence, because the command is typed
+Generate Bin button. Neither path needs a license, because the command is typed
 into the ordinary send box.
 
 The command is documented for the 582X family and has not yet been proven on
@@ -94,7 +94,7 @@ the 5601S. The probe order and fallbacks are in
 
 These documents, the DOGO executable, and the modules extracted from it are
 copyright ASR Microelectronics Co., Ltd. They remain ASR's property. They are
-included for preservation, interoperability and repair research, with no licence
+included for preservation, interoperability and repair research, with no license
 granted. If ASR or a rights holder asks for removal, the files will be removed.
 
 PDF author and creator metadata was stripped before publication. The visible

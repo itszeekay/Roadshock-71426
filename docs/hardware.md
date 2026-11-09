@@ -135,7 +135,7 @@ The panel PCB marking on U1 reads `ASR5601S`, `FD1A21G`, `P19K89-00`.
 - No light sensor path in the STM8 firmware (the ADC is unused).
 
 If an ambient-light sensor exists on the panel, it is on the ASR (which has
-ADC pins) or handled by analogue backlight circuitry. The ASR firmware has not
+ADC pins) or handled by analog backlight circuitry. The ASR firmware has not
 been dumped, so that remains **?**.
 
 ---

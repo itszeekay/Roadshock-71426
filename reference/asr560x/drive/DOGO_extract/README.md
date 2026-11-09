@@ -40,8 +40,8 @@ last-used paths, and shows a dialog if it is missing, but the chip table is
 compiled into `data.pyc`. The `5601S` entry is present with the addresses in
 `chip_table.txt`.
 
-The licence manager guards the download type, not the send box. A read command
-typed into the send box is ordinary ASCII and does not go through the licence
+The license manager guards the download type, not the send box. A read command
+typed into the send box is ordinary ASCII and does not go through the license
 check.
 
 ## Capture parsing

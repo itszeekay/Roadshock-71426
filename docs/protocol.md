@@ -146,9 +146,9 @@ From the STM8 `sub_844C`; H = high, L = low. LEDs are active-low, so **L = lit**
 | 8–15 | no change | | |
 
 Only odd nibbles produce a non-off pattern; even nibbles are all-high. The
-exact colour per nibble and the R/G/B pin order are **?** until confirmed on the
+exact color per nibble and the R/G/B pin order are **?** until confirmed on the
 bench. Sending a nibble and watching the LED is the fastest way to build the
-colour table.
+color table.
 
 ---
 

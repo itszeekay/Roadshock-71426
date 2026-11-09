@@ -37,7 +37,7 @@ button frames, so something scans them. The ASR is the only other IC that can.
 
 With the panel powered and the base disconnected, the backlight comes on but
 the RGB status LEDs do not react to the buttons. The ASR is the LED authority:
-it computes the colours and sends display frames to the STM8. Its UI seems to
+it computes the colors and sends display frames to the STM8. Its UI seems to
 wait for the base's startup frame (`0x1B`) and the replies to its own `07`/`08`
 frames before it advances the display. With no base, it sits in a "no link"
 state.
@@ -62,14 +62,14 @@ There are two very different levels of control.
 - Every button frame and every base reply is readable.
 - A MITM can modify or inject the base replies.
 - No known command on the 2400-baud bus sets an LED. The replies echo the
-  panel's request payload; they do not carry LED colours.
+  panel's request payload; they do not carry LED colors.
 - A J2-only gateway can read buttons and drive the base outputs, but it cannot
   flash an arbitrary status LED.
 
 ### The private display link
 
 - The ASR-to-STM8 link runs at 115200 and carries the 9-byte display frame.
-- Injecting that frame does set the eight LED colours (eight nibbles).
+- Injecting that frame does set the eight LED colors (eight nibbles).
 - This needs a tap on the private link (two wires), which is outside a J2-only
   build.
 - It is the reliable path for a CAN-driven "flash this light" feature.
@@ -84,7 +84,7 @@ LEDs.
   remaining black box.
 - Whether a hidden 2400-baud command can influence the LEDs (possible, but no
   evidence yet).
-- The exact colour mapping of the eight display nibbles (needs a bench test).
+- The exact color mapping of the eight display nibbles (needs a bench test).
 - Whether the ASR's display UART is UART2 or UART3 (identify by continuity
   from STM8 PD5/PD6).
 

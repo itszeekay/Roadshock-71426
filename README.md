@@ -123,7 +123,7 @@ base : 19 ff 18 00 62 40 20 02 00 00 f4
 ```
 
 - Four payload bytes = eight nibbles, one per RGB LED.
-- Each nibble selects a 3-pin pattern (colour).
+- Each nibble selects a 3-pin pattern (color).
 - The STM8 checks only `[0]==0x5A`, `[8]==0xEE`, length 9.
 
 See [`docs/protocol.md`](docs/protocol.md) and
@@ -186,7 +186,7 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 - The **ASR5601S firmware** has not been dumped. Its button/UI logic is the one
   remaining black box. SWD (P06/P07) is the reliable dump route. The J3 UART
   monitor also has a documented read candidate, `coredump flash all`, which is
-  a capture command and needs no licence. See
+  a capture command and needs no license. See
   [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
 - Bench verification of the four stock channel modes and the low-frequency TIM1
   prescaler fix. Both are built, but the prebuilt full image has not been
@@ -251,7 +251,7 @@ Findings are tagged where it matters:
 - **Inferred**: consistent with the evidence but not proven.
 - **Unknown**: not yet determined.
 
-The protocol, pin maps, dump integrity, PWM behaviour, and the STM8 display
+The protocol, pin maps, dump integrity, PWM behavior, and the STM8 display
 driver are verified. The custom firmware's four channel modes are implemented
 but not fully bench-verified, and the low-frequency prescaler fix is built but
 not yet flashed. The ASR firmware and any J2-only LED control are not verified.
@@ -266,10 +266,10 @@ liability for damage or injury.
 
 ---
 
-## Legal and licence
+## Legal and license
 
 Original code and documentation in this repository are released under the MIT
-licence (see [`LICENSE`](LICENSE)). Stock firmware dumps are provided for
+license (see [`LICENSE`](LICENSE)). Stock firmware dumps are provided for
 interoperability and research on hardware owned by the author; vendor firmware
 remains the property of its respective owners. No vendor source code, ASR BLE
 stack or ROM, or third-party datasheet is redistributed here. See

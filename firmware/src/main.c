@@ -2,7 +2,7 @@
  * Roadshock 8-gang panel - custom base-board firmware
  * Target: STM8S003F3P6 (8 KB flash, 1 KB RAM), TSSOP-20
  *
- * Behaviour implemented:
+ * Behavior implemented:
  *   - 2400 8N1 UART panel link (PD5 TX / PD6 RX)
  *   - frame: seq dir type flag p0..p5 sum   (sum = 8-bit sum of preceding bytes)
  *   - accepts panel type 0x08 flag 0x0C: button bitmask

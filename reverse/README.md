@@ -26,7 +26,7 @@ function indexes.
 
 These are **reconstructions**, not original source. Variables are named by
 address; register-bank helpers and SPL code can confuse the decompiler. Where
-the behaviour matters (protocol, pin table, display frame), the listing and the
+the behavior matters (protocol, pin table, display frame), the listing and the
 on-wire captures were used as the source of truth.
 
 Known decompiler artifacts:

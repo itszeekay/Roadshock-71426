@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Characterise channel 6: frequency sweep, duty steps, mode switching.
+"""Characterize channel 6: frequency sweep, duty steps, mode switching.
 
 The base board is driven through the CircuitPython impersonator's USB console
 (115200). Run the impersonator on the Feather first, then:

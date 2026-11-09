@@ -33,7 +33,7 @@ Full decompilation: **256 / 256 functions, 0 failures**
 - Per-channel settings live in the base EEPROM at `0x0D–0x14`.
 - No ADC, I2C or SPI use in the stock firmware.
 
-### Behaviour
+### Behavior
 
 - Key frames toggle channels; the base implements the per-channel mode logic
   itself (toggle / momentary / pulse / blinking).
@@ -52,7 +52,7 @@ The panel STM8 is **not** a button controller. It is an RGB LED driver:
 - 147 functions, but no GPIO input read and no button scan anywhere.
 - All 24 descriptor pins are configured as outputs (`GPIO_Init` mode `0xF0`,
   initial high = LED off).
-- UART1 is initialised at **115200** (`UART1_Init` baud parameter `0x0001C200`).
+- UART1 is initialized at **115200** (`UART1_Init` baud parameter `0x0001C200`).
 - RX is a **9-byte** frame `0x5A … 0xEE`; four payload bytes → 8 nibbles →
   8 groups of 3 pins.
 - 8 RGB LEDs, one per channel (see [pinouts.md](pinouts.md)).
@@ -72,7 +72,7 @@ The display decoder and pin grouping are in `sub_844C` / `sub_8C52` /
 - Pipeline: seed vectors → fill gaps → seed after returns → decompile every
   function → export listing.
 - The decompiled C is a reconstruction, not original source. Function names are
-  addresses; comments were added only where the behaviour is understood.
+  addresses; comments were added only where the behavior is understood.
 
 Function indexes:
 

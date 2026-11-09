@@ -6,8 +6,8 @@
 | [test-hardware.md](test-hardware.md) | Bench hardware, including the CAN Bus Feather used for early testing |
 | [pinouts.md](pinouts.md) | Base output map, panel RGB LED map, STM8 TSSOP-20/LQFP-32, ASR5601S QFN-48, Feather wiring |
 | [protocol.md](protocol.md) | 2400-baud frame format, message types, replies, checksum, display link |
-| [firmware.md](firmware.md) | Base and panel firmware behaviour, decompilation, custom firmware |
-| [panel.md](panel.md) | Panel architecture, ASR + STM8 split, buttons, LEDs, standalone behaviour |
+| [firmware.md](firmware.md) | Base and panel firmware behavior, decompilation, custom firmware |
+| [panel.md](panel.md) | Panel architecture, ASR + STM8 split, buttons, LEDs, standalone behavior |
 | [asr5601.md](asr5601.md) | ASR5601S pin map, J3, boot mode, dump options |
 | [asr5601_reference_archive.md](asr5601_reference_archive.md) | Curated ASR archive, embedded chip table, and the DOGO read path |
 | [asr5601_dump_plan.md](asr5601_dump_plan.md) | Step-by-step plan to dump the ASR over J3 |

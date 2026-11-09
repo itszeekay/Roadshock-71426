@@ -98,7 +98,7 @@ PWM formula: `f = 16 MHz / (prescaler × (ARR + 1))`.
 
 ## Panel display link
 
-- STM8 UART initialises at **115200** (`0x0001C200`).
+- STM8 UART initializes at **115200** (`0x0001C200`).
 - RX frame is **9 bytes**, `0x5A … 0xEE`.
 - 24 GPIOs = 8 groups of 3 = 8 RGB LEDs.
 - The STM8 has no button scan and no input reads.
@@ -127,5 +127,5 @@ testing.
 
 - ASR firmware.
 - J2-only LED override.
-- Exact display-nibble colour map.
+- Exact display-nibble color map.
 - PDU current sensing.

@@ -1,4 +1,4 @@
-85c6138d2871c1f6abaa59a01d8bf0f752bef02e8129398768c38acfada080d2 *./README.md
+600fbce232aaa11d6b15e0919f81bbef48092b1cf19aeeca012945eff7fe398a *./README.md
 b1a660e89c0a56425bc8257ac407a3b7e1f8e8175ffa194f38742f4e5bb25d99 *./SOURCES.md
 67a430bcf033ba4dece1c54879e2549d7a48ba10b423fb333d693979702c86cd *./docs-en/ASR560X/Download-Tool/560X_Programming.html
 64e0da826b6bde1273ed10042742e31f820d501ff1c98c766b522c2c7f2eff55 *./docs-en/ASR560X/FAQ/FAQs.html
@@ -26,7 +26,7 @@ f161dd467e8f813f3f28ef1941e56bd96619f8b1801808446516c56d8704093b *./docs-zh/ASR5
 ecbd11b24adc4cdb4a713b452fd93aba6953b3532ebebd582a76eea93490ac53 *./drive/ASR560X_test_image_layout.md
 1875d9432e46a5d18f62235dd9c79f367155027e70475619c909a95e3ca3a562 *./drive/ASR_IoT_Security_Application_Notes_V1.0.0_EN.pdf
 7e11461a1d85d60d4f5a61e68025252aa3e643441285b118db65b90a33860f89 *./drive/DOGO_VP2.3.8.exe
-36863fc7ceb46f7ae63c82ecf25427a5cc4e911c53acc3f081f2f84b51518778 *./drive/DOGO_extract/README.md
+ed10edc3153766c2ea1addacdb276cb1cbf0dd9b13edd5fd14a1b04a7254194d *./drive/DOGO_extract/README.md
 bd6fb47497239644c1253e8dcd1e6934a8b84e03370bbf13653154787bd75c2e *./drive/DOGO_extract/chip_table.txt
 a7288365d4c7c9bdf18d436ebab813b809340018004a47d736341f9c51104756 *./drive/DOGO_extract/data.pyc
 d5937d6f09aaa9dc3d55f1c25a29d71bfcb97488f13a6ecbfd995af717927a06 *./drive/DOGO_extract/dump_path.dis.txt

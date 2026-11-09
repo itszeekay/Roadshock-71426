@@ -73,8 +73,8 @@ The chip database is **inside the executable**, not in `config.ini`. The
 produces a dialog, not an empty chip table. `config/script.ini` is the unrelated
 multi-send macro list. Neither is needed for a read.
 
-The licence manager guards download types, not the send box. A read command
-typed as ordinary ASCII does not pass through the licence check.
+The license manager guards download types, not the send box. A read command
+typed as ordinary ASCII does not pass through the license check.
 
 ## The read command
 
@@ -113,7 +113,7 @@ unlabelled header to the right of the ASR, on the pin 36-43 side.
 | P06 / SWCLK | 37 | **no known pad** |
 | P07 / SWDIO | 36 | **no known pad**; `PZ20` is the only candidate |
 
-The ROM bootloader signal set is on a labelled header. SWD is not, which is why
+The ROM bootloader signal set is on a labeled header. SWD is not, which is why
 the DOGO read path matters more than the SWD fallback.
 
 Continuity checks still worth running with the board unpowered:

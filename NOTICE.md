@@ -3,7 +3,7 @@
 ## Original work
 
 The original code and documentation in this repository (custom firmware, tools,
-protocol description, pin maps, photos) are released under the MIT licence in
+protocol description, pin maps, photos) are released under the MIT license in
 [`LICENSE`](LICENSE).
 
 ## Stock firmware dumps
@@ -22,7 +22,7 @@ open an issue.
 the DOGO tool, included for preservation and interoperability research because
 ASR's original links are disappearing. It also contains Python modules extracted
 from that tool for protocol analysis. Copyright remains with ASR
-Microelectronics; no licence is granted. PDF author and creator metadata was
+Microelectronics; no license is granted. PDF author and creator metadata was
 stripped. If ASR or a rights holder asks for removal, the files will be removed.
 
 The rest of the repository contains no vendor source code. In particular it does
