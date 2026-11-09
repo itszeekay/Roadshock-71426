@@ -1,6 +1,6 @@
 # Hardware
 
-**Product:** ROADSHOCK Universal LED 8 Gang Switch Panel —
+**Product:** ROADSHOCK Universal LED 8 Gang Switch Panel,
 **Harbor Freight SKU 71426**.
 [Product page](https://www.harborfreight.com/universal-led-8-gang-switch-panel-71426.html) ·
 [owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf)
@@ -25,7 +25,7 @@ The base is the board with the fused outputs and the switch panel connector.
 | Input | PA1 = ACC/ignition sense |
 | Watchdog | IWDG in the stock image |
 | Programming | SWIM header (`V+`, `GND`, `SWIM`, optionally `RST`) |
-| Protection | ROP byte `0x00` — **unprotected** |
+| Protection | ROP byte `0x00` (**unprotected**) |
 
 Output map (verified from the firmware table and by measurement):
 
@@ -107,9 +107,8 @@ The panel contains two processors.
 | Display link | ASR5601S → STM8, 115200, 9-byte frames |
 
 The STM8 has **no button inputs**. All 24 of its GPIOs are outputs for the RGB
-LEDs. This is why the panel works when connected to the base but its status
-LEDs stay dark when the base is absent: the ASR is waiting for the base's
-startup/handshake.
+LEDs. The panel works when connected to the base, but its status LEDs stay dark
+when the base is absent because the ASR is waiting for the start-up handshake.
 
 ---
 
@@ -120,8 +119,8 @@ startup/handshake.
 | STM8S003F3P6 | TSSOP-20 | Base MCU |
 | STM8S003K3 | LQFP-32 | Panel RGB LED driver |
 | ASR5601S | QFN-48 | Panel controller / BLE SoC |
-| 16 MHz crystal | — | ASR clock |
-| 32.768 kHz crystal | — | Optional RTC (reference design) |
+| 16 MHz crystal | n/a | ASR clock |
+| 32.768 kHz crystal | n/a | Optional RTC (reference design) |
 
 The panel PCB marking on U1 reads `ASR5601S`, `FD1A21G`, `P19K89-00`.
 

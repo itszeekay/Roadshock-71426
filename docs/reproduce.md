@@ -84,7 +84,7 @@ make
 
 Outputs:
 
-- `roadshock.ihx` — application image.
+- `roadshock.ihx`: application image.
 - the full 8 KB image used for flashing.
 
 Prebuilt images are in `firmware/prebuilt/`.

@@ -1,6 +1,6 @@
 # Firmware
 
-## Base board — stock STM8S003F3P6
+## Base board: stock STM8S003F3P6
 
 Full decompilation: **256 / 256 functions, 0 failures**
 (`reverse/base_firmware.c`, `reverse/asm/base.lst`).
@@ -42,7 +42,7 @@ Full decompilation: **256 / 256 functions, 0 failures**
 
 ---
 
-## Button panel — STM8S003K3
+## Button panel: STM8S003K3
 
 Full decompilation: **147 / 147 functions, 0 failures**
 (`reverse/panel_firmware.c`, `reverse/asm/panel.lst`).

@@ -2,13 +2,13 @@
 
 All port names are STM8 port names. Package pin numbers are in brackets.
 
-## Base board — STM8S003F3P6 (TSSOP-20)
+## Base board: STM8S003F3P6 (TSSOP-20)
 
 | Pin | Name | Use on this board |
 |---:|---|---|
 | 1 | PD4 | free |
-| 2 | PD5 | UART1 TX — panel link |
-| 3 | PD6 | UART1 RX — panel link |
+| 2 | PD5 | UART1 TX (panel link) |
+| 3 | PD6 | UART1 RX (panel link) |
 | 4 | NRST | reset |
 | 5 | PA1 | **ACC / ignition sense** (input) |
 | 6 | PA2 | output ch2 |
@@ -19,7 +19,7 @@ All port names are STM8 port names. Package pin numbers are in brackets.
 | 11 | PB4 | spare (also in the output table) |
 | 12 | PB5 | free |
 | 13 | PC3 | output ch7 |
-| 14 | PC4 | output ch6 — **TIM1_CH4**, hardware PWM |
+| 14 | PC4 | output ch6, **TIM1_CH4**, hardware PWM |
 | 15 | PC5 | output ch5 |
 | 16 | PC6 | output ch4 |
 | 17 | PC7 | output ch3 |
@@ -33,7 +33,7 @@ The firmware's output table is 12 records of `{port address, mask}`; channels
 Per-channel fuse ratings (terminals 1–8): **30, 30, 20, 20, 10, 10, 5, 5 A**.
 Channels 1–2 use two **D30PW40A** MOSFETs in parallel; the others use one.
 
-## Button panel — STM8S003K3 (LQFP-32)
+## Button panel: STM8S003K3 (LQFP-32)
 
 | Pin | Name | Use |
 |---:|---|---|
@@ -66,8 +66,8 @@ Channels 1–2 use two **D30PW40A** MOSFETs in parallel; the others use one.
 | 27 | PD2 | RGB ch7 pin1 |
 | 28 | PD3 | RGB ch7 pin2 |
 | 29 | PD4 | RGB ch7 pin3 |
-| 30 | PD5 | UART1 TX — **115200 display link** |
-| 31 | PD6 | UART1 RX — **115200 display link** |
+| 30 | PD5 | UART1 TX (**115200 display link**) |
+| 31 | PD6 | UART1 RX (**115200 display link**) |
 | 32 | PD7 | unused |
 
 All 24 RGB pins are outputs (`GPIO_Init` mode `0xF0`, initial high = LED off,
@@ -126,7 +126,7 @@ left→right `48 … 37`; bottom edge `13 … 24`.
 
 ## Headers
 
-### J1 — STM8 SWIM
+### J1: STM8 SWIM
 
 | Pad | Signal |
 |---|---|
@@ -134,7 +134,7 @@ left→right `48 … 37`; bottom edge `13 … 24`.
 | `SWIM` | PD1 |
 | `RST` | NRST |
 
-### J3 — ASR5601S
+### J3: ASR5601S
 
 | Pad | Signal |
 |---|---|
@@ -147,7 +147,7 @@ left→right `48 … 37`; bottom edge `13 … 24`.
 
 `SEL1` (P01, pin 41) is not brought out; it has an internal pull-down.
 
-### J2 — base ↔ panel
+### J2: base ↔ panel
 
 Four wires: power, GND, and two 2400-baud signal wires. There is **no CAN and no
 address field** on this link.

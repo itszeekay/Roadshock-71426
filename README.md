@@ -1,4 +1,4 @@
-# ROADSHOCK Universal LED 8-Gang Switch Panel — Reverse Engineering
+# ROADSHOCK Universal LED 8-Gang Switch Panel: Reverse Engineering
 
 **Harbor Freight SKU 71426** ·
 [product page](https://www.harborfreight.com/universal-led-8-gang-switch-panel-71426.html) ·
@@ -85,8 +85,8 @@ Two processors with a clear split:
 | **ASR5601S** (U1) | Main panel controller: scans the 8 buttons, runs the UI, speaks the 2400-baud base link, optional BLE |
 | **STM8S003K3** (U2) | RGB LED display driver: 8 × RGB LEDs on 24 GPIOs, receives 115200 display frames |
 
-The STM8 has **no button inputs** — all 24 GPIOs are outputs. The buttons are on
-the ASR. This was the key discovery that explains the board.
+The STM8 has **no button inputs**. All 24 GPIOs are outputs. The buttons are on
+the ASR.
 
 The top side of the panel carries the 8 tactile buttons (K1–K8) and the RGB
 LEDs; the bottom side carries the ASR and the STM8.
@@ -141,10 +141,10 @@ See [`docs/protocol.md`](docs/protocol.md) and
 | 3 | PC7 | |
 | 4 | PC6 | |
 | 5 | PC5 | |
-| 6 | PC4 | TIM1_CH4 — used for hardware PWM |
+| 6 | PC4 | TIM1_CH4 (hardware PWM) |
 | 7 | PC3 | |
 | 8 | PD2 | |
-| — | PA1 | ACC/ignition sense (input) |
+| n/a | PA1 | ACC/ignition sense (input) |
 
 Entries 8–11 of the firmware table are PB4 spares.
 
@@ -168,10 +168,10 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 
 ## What works today
 
-- **Read the base firmware** — SWIM dump, 8 KB flash + 128 B EEPROM.
-- **Read the panel firmware** — same, ROP open.
+- **Read the base firmware**: SWIM dump, 8 KB flash + 128 B EEPROM.
+- **Read the panel firmware**: same, ROP open.
 - **Capture the 2400-baud bus** with a Feather RP2040 (listen-only or MITM).
-- **Injection** — button frames, master power, and our custom `0x09` PWM
+- **Injection**: button frames, master power, and our custom `0x09` PWM
   command.
 - **Hardware PWM** on channel 6 at 200–2000 Hz, 10–100 % duty
   (TIM1, verified on a scope).
@@ -233,9 +233,9 @@ Build, flash, and restore details are in
 
 Findings are tagged where it matters:
 
-- **Verified** — read from the firmware or measured on hardware.
-- **Inferred** — consistent with the evidence but not proven.
-- **Unknown** — not yet determined.
+- **Verified**: read from the firmware or measured on hardware.
+- **Inferred**: consistent with the evidence but not proven.
+- **Unknown**: not yet determined.
 
 The protocol, pin maps, dump integrity, PWM behaviour, and the STM8 display
 driver are verified. The ASR firmware and any J2-only LED control are not.

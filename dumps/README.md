@@ -32,7 +32,7 @@ panel: 8249 = 8192 + 57
 ```
 
 The corrected files are `raw.replace(b"\x0d\x0a", b"\x0a")`. The raw files are
-kept as evidence. Always validate after correcting — a corrupted image still
+kept as evidence. Always validate after correcting: a corrupted image still
 decodes as plausible code.
 
 ## Option bytes

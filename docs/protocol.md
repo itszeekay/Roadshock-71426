@@ -12,7 +12,7 @@ marked otherwise.
 
 ---
 
-## 1. Base ↔ panel — 2400 8N1
+## 1. Base ↔ panel: 2400 8N1
 
 ### Frame
 
@@ -38,7 +38,7 @@ The link is **full duplex**: two separate signal wires, idle high.
 |---|---|---|---|
 | `0x07` | panel → base | `0x00` / `0x01` | master power / parameter exchange |
 | `0x08` | panel → base | `0x0C` | live button bitmask |
-| `0x0B`, `0x0D`, `0x19` | — | — | accepted by the dispatcher, not sent by the stock panel |
+| `0x0B`, `0x0D`, `0x19` | n/a | n/a | accepted by the dispatcher, not sent by the stock panel |
 
 ### Replies
 
@@ -109,7 +109,7 @@ The stock base does not implement it. Payload:
 
 ---
 
-## 2. ASR → STM8 display link — 115200 8N1
+## 2. ASR → STM8 display link: 115200 8N1
 
 The STM8 is a pure RGB LED driver. The ASR sends 9-byte frames:
 
