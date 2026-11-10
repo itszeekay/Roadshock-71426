@@ -144,6 +144,10 @@ nylon bristle brush and a small amount of IPA.
 | `SWIM` | PD1 |
 | `RST` | NRST |
 
+Pad pitch not yet measured. The button panel J3 pads are approximately 1.27 mm
+pitch; use that as a rough reference when designing a pogo fixture. See
+[`pogo_fixture.md`](pogo_fixture.md) for the fixture design.
+
 ### Button panel headers
 
 J1, J2, and J3 are on the button panel. The panel is not potted.

@@ -31,7 +31,9 @@ The base is the board with the fused outputs and the switch panel connector.
 The base board is potted with silicone from the factory. To access the SWIM
 programming header, peel the potting up by hand and remove it from the board.
 Use a stiff nylon bristle brush and a small amount of IPA to clean residue off
-the chips for reading. The button panel is not potted.
+the chips for reading. A pogo fixture can replace hand peeling for repeatable
+flashing; see [`pogo_fixture.md`](pogo_fixture.md). The button panel is not
+potted.
 
 Output map (verified from the firmware table and by measurement):
 

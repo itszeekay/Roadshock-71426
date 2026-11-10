@@ -19,22 +19,29 @@ cd firmware
 make
 ```
 
-The build produces:
+`make` compiles the sources into `build/roadshock.ihx` (the application image). It does **not**
+create the full 8 KB flash image; that file lives in `firmware/prebuilt/roadshock_full.ihx` and must be
+flashed separately via `make flash-full`:
 
-- `build/roadshock.ihx`: application image.
-- The full 8 KB image used for flashing is the prebuilt
-  `firmware/prebuilt/roadshock_full.ihx`. The Makefile does not generate it.
+```bash
+make flash-full   # or: stm8flash -c stlinkv2 -p stm8s003f3 -w firmware/prebuilt/roadshock_full.ihx
+```
 
 Prebuilt images are in `firmware/prebuilt/`.
 
 ## Step 2: Flash the Custom Firmware
 
+Flash the application image built by `make`:
+
 ```bash
-stm8flash -c stlinkv2 -p stm8s003f3 -s flash -w firmware/prebuilt/roadshock_full.ihx
+make flash   # or: stm8flash -c stlinkv2 -p stm8s003f3 -w build/roadshock.ihx
 ```
 
-Or `make flash-full` from `firmware/`. `make flash` writes the application image
-built by `make`.
+Or flash the full 8 KB prebuilt image:
+
+```bash
+make flash-full   # or: stm8flash -c stlinkv2 -p stm8s003f3 -w firmware/prebuilt/roadshock_full.ihx
+```
 
 To run: disconnect `RST` / remove the ST-Link. The MCU is held in reset while
 `RST` is wired.

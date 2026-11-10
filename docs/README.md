@@ -24,6 +24,7 @@ MCUs in this project: base board **STM8S003F3P6** (TSSOP-20), button panel **STM
 | [mode_timing.md](mode_timing.md) | Stock channel mode dispatch; timing and EEPROM open items |
 | [hidden_commands.md](hidden_commands.md) | Hidden protocol commands 0x0B/0x0D/0x19 and frame handler |
 | [panel_led_map.md](panel_led_map.md) | Display frame, pin table, nibble-to-pin patterns |
+| [pogo_fixture.md](pogo_fixture.md) | Design for a pogo pin fixture to access the base board SWIM header through the potting |
 
 Confidence tags used throughout:
 
