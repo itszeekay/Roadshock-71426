@@ -12,18 +12,18 @@ Target: **STM8S003F3P6** (8 KB flash, 1 KB RAM). Built with **SDCC 4.5**
 - UART1 **2400 8N1**, stock frame format.
 - Accepts panel `0x08 0x0C` (buttons) and `0x07` (master power).
 - Replies with the stock `18` (11-byte) / `17` (12-byte) frames.
-- **Hardware PWM** on TIM1 (channel 6 = PC4 = TIM1_CH4).
+- **Hardware PWM** on TIM1 (channels 3, 4, 6, 7) and TIM2 (channels 1, 5).
 - Custom `0x09` command for off / steady on / PWM with duty and frequency.
+- EEPROM persistence of per-channel settings (mode, on/off, delayed-off, double-tap).
+- Custom `0x0A` status frame returns channel states + master.
+- Custom `0x0D` wiper control (off, slow PWM, fast PWM, intermittent momentary).
 - Fails safe: a PWM request on a channel without a timer channel falls back to
   off.
 
 ## Not implemented yet
 
-- EEPROM persistence of per-channel settings (the stock base stores them at
-  `0x0D–0x14`; ours does not yet).
 - CAN (the STM8 has no CAN controller; the gateway/PDU plan uses a companion
   MCU).
-- A factual status frame for the gateway/panel.
 
 ## Bench verification pending
 
