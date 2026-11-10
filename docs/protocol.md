@@ -141,7 +141,7 @@ The custom type `0x0D` (WIPER) provides wiper control:
   - `1` = slow PWM (50 Hz)
   - `2` = fast PWM (100 Hz)
   - `3` = intermittent momentary (500 ms on, auto-off)
-  - `4` = wash (800 ms on, auto-off; intended for 4-sweep wash cycle)
+  - `4` = wash (800 ms single pulse, auto-off; longer sweep for wash cycles)
   - `5` = swipe (300 ms on, auto-off)
 - `duty`: 0-63 PWM duty cycle (for actions 1 and 2 only)
 

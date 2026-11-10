@@ -514,8 +514,10 @@ static void handle_frame(const proto_frame_t *f)
     }
     case PROTO_TYPE_WIPER: {
         /* payload: [action, duty]
-         * action: 0 = off, 1 = slow PWM, 2 = fast PWM, 3 = intermittent momentary,
-         *         4 = wash (on-off-on-off, 4 sweeps), 5 = swipe (single fast sweep)
+         * action: 0 = off, 1 = slow PWM, 2 = fast PWM,
+         *         3 = intermittent momentary (500 ms single pulse),
+         *         4 = wash (800 ms single pulse),
+         *         5 = swipe (300 ms single pulse)
          * duty: 0-100 PWM duty cycle (for actions 1 & 2 only)
          * Wiper output uses channel 5 (PC5/TIM2_CH1, 10 A fuse). */
         uint8_t wiper_action = f->payload[0];
@@ -547,10 +549,7 @@ static void handle_frame(const proto_frame_t *f)
             ch[n].mode = 3;  /* MODE_PULSE */
             break;
         }
-        case 4: { /* wash: 4 sweeps with pauses between */
-            /* First sweep: momentary on for 800 ms, off for 200 ms, repeat 4x */
-            /* Use MODE_PULSE with timer as the "on" time; the off time
-             * is implicit (coast). For simplicity, do 4 quick sweeps. */
+        case 4: { /* wash: longer single pulse, intended to cover a wash sweep */
             channel_set(n, 1);
             ch[n].timer = ticks_from_ms(800);
             ch[n].mode = 3;  /* MODE_PULSE */
