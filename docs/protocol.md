@@ -41,6 +41,16 @@ The link is **full duplex**: two separate signal wires, idle high.
 | `0x07` | panel → base | `0x00` / `0x01` | master power / parameter exchange |
 | `0x08` | panel → base | `0x0C` | live button bitmask |
 | `0x0B`, `0x0D`, `0x19` | n/a | n/a | accepted by the dispatcher, not sent by the stock panel |
+| `0x09` | ECU → base | n/a | configure one output (custom) |
+| `0x0A` | base → ECU | n/a | status report (custom) |
+| `0x0B` | ECU → base | n/a | force on/off (custom) |
+| `0x0C` | ECU → base | n/a | one-time option byte write (custom) |
+| `0x0D` | ECU → base | n/a | wiper control (custom) |
+| `0x0E` | ECU → base | n/a | flasher config (custom) |
+| `0x0F` | ECU → base | n/a | input bitmask (custom) |
+| `0x10` | ECU → base | n/a | pulse mode (custom) |
+| `0x11` | ECU → base | n/a | counter value (custom) |
+| `0x12` | ECU → base | n/a | starter disable (custom) |
 
 ### Replies
 
@@ -101,27 +111,116 @@ The stock base sends one unsolicited frame during init:
 The stock base does not implement it. Payload:
 
 ```
-[channel, mode, duty, freq_lo, freq_hi, 0]
+[channel, mode, duty, freq_lo, freq_hi, delay_secs]
 ```
 
-- `mode`: `0` = off, `1` = steady on, `2` = PWM
-- `duty`: 0-100
-- `freq`: 50-2000 Hz (16-bit little-endian in `freq_lo`/`freq_hi`);
-  bench-tested at 200-2000 Hz
-- Reply: `0x19` (type `0x09 | 0x10`), 11 bytes.
+- `channel`: 1-8 (which output channel to configure)
+- `mode`: `0` = off, `1` = steady on, `2` = PWM, `3` = PWM with soft start
+- `duty`: 0-100 (PWM duty cycle, or soft-start target duty when mode = 3)
+- `freq_lo`/`freq_hi`: PWM frequency in Hz (16-bit little-endian; mode 2 only)
+  - When mode = 3, `freq_lo` = soft_start_ticks (number of 2 ms ticks to ramp)
+  - When mode = 3, `freq_hi` = 0 (unused)
+- `delay_secs`: 0-255 seconds of run-on after release (fan/pump); 0 = no delay
+  - Only used with delayed-off enabled (flags bit0)
+
+For mode 3 (PWM with soft start), the CCR register is set to 0 and the duty
+ramps up 1% per 2 ms tick until reaching `duty` or the ramp completes.
+
+Reply: `0x19` (type `0x09 | 0x10`), 11 bytes.
 
 ### Custom type `0x0D` (our firmware only)
 
 The custom type `0x0D` (WIPER) provides wiper control:
 
 ```
-[channel, action, duty]
+[action, duty]
 ```
 
-- `channel`: 1-8 (which output channel to control)
-- `action`: `0` = off, `1` = slow PWM, `2` = fast PWM, `3` = intermittent momentary
-- `duty`: 0-100 PWM duty cycle (for actions 1 & 2 only)
+- `action`:
+  - `0` = off
+  - `1` = slow PWM (50 Hz)
+  - `2` = fast PWM (100 Hz)
+  - `3` = intermittent momentary (500 ms on, auto-off)
+  - `4` = wash (800 ms on, auto-off; intended for 4-sweep wash cycle)
+  - `5` = swipe (300 ms on, auto-off)
+- `duty`: 0-63 PWM duty cycle (for actions 1 and 2 only)
 
+Wiper output uses channel 5 (PC5/TIM2_CH1, 10 A fuse).
+
+### Custom type `0x0E` (our firmware only)
+
+The custom type `0x0E` (FLASH) configures a configurable flasher:
+
+```
+[channel, flash_on_lo, flash_on_hi, flash_off_lo, flash_off_hi, single]
+```
+
+- `channel`: 1-8
+- `flash_on_lo`/`flash_on_hi`: on phase duration in 2 ms ticks (16-bit LE)
+- `flash_off_lo`/`flash_off_hi`: off phase duration in 2 ms ticks (16-bit LE)
+- `single`: 0 = continuous flashing, 1 = single flash (off after one full cycle)
+
+Reply: `0x1E` (type `0x0E | 0x10`), 11 bytes.
+
+### Custom type `0x0F` (our firmware only)
+
+The custom type `0x0F` (INPUT) sends the input bitmask from the middle ECU:
+
+```
+[mask]
+```
+
+- `mask`: 8-bit bitmask of active digital inputs (bit n corresponds to channel n)
+- Channels with the `input_drive` flag set will follow the corresponding
+  bitmask bit (1 = on, 0 = off).
+
+Reply: `0x1F` (type `0x0F | 0x10`), 11 bytes.
+
+### Custom type `0x10` (our firmware only)
+
+The custom type `0x10` (PULSE) arms a pulse on a channel:
+
+```
+[channel, dur_lo, dur_hi]
+```
+
+- `channel`: 1-8
+- `dur_lo`/`dur_hi`: pulse on-time in milliseconds (16-bit LE)
+- The channel turns on for the specified duration, then automatically turns off.
+
+Reply: `0x20` (type `0x10 | 0x10`), 11 bytes.
+
+### Custom type `0x11` (our firmware only)
+
+The custom type `0x11` (CNT) sends a counter value for speed mapping:
+
+```
+[channel, cnt_lo, cnt_hi]
+```
+
+- `channel`: 1-8
+- `cnt_lo`/`cnt_hi`: 16-bit counter value from the middle ECU (e.g. wheel speed)
+  - `0` = off
+  - `> 0` = PWM duty = `cnt_val * 100 / 65535` (clamped to 0-100%)
+  - Fixed frequency: 100 Hz for PWM channels
+
+Reply: `0x21` (type `0x11 | 0x10`), 11 bytes.
+
+### Custom type `0x12` (our firmware only)
+
+The custom type `0x12` (START) controls starter disable:
+
+```
+[cranking, disable_mask]
+```
+
+- `cranking`: 0 = not cranking, 1 = engine cranking
+- `disable_mask`: 8-bit bitmask of channels to disable while cranking
+  - Bit n corresponds to channel n
+  - When `cranking = 1`, channels with their bit set in `disable_mask` are
+    forced off
+
+Reply: `0x22` (type `0x12 | 0x10`), 11 bytes.
 ---
 
 ## 2. ASR → STM8 display link: 115200 8N1

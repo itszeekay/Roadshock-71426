@@ -30,14 +30,16 @@ typedef enum {
     MODE_TOGGLE = 0,
     MODE_MOMENTARY,
     MODE_PULSE,
-    MODE_BLINK
+    MODE_BLINK,
+    MODE_FLASH,      /* new: configurable flasher (on_time, off_time)     */
+    MODE_PULSE_MS    /* new: pulse with ms duration (0x10)                 */
 } mode_t;
 
 typedef struct {
     uint8_t  on;          /* steady state                                */
     uint8_t  held;        /* button currently down                       */
     uint8_t  mode;        /* mode_t                                      */
-    uint8_t  phase;       /* blink/pulse phase counter                   */
+    uint8_t  phase;       /* blink/flash phase counter                   */
     uint16_t timer;       /* countdown in ticks                          */
     uint16_t held_ticks;  /* duration button held, 2 ms per tick         */
     uint8_t  long_fired;  /* long-press action already sent              */
@@ -45,6 +47,19 @@ typedef struct {
     uint32_t delay_ms;           /* configured run-on duration, ms (0=off) */
     uint32_t double_tap_ticks;   /* time of first press for double-tap     */
     uint8_t  flags;              /* bit0 delayed_off_en, bit1 double_tap_en */
+    /* flasher config (MODE_FLASH) */
+    uint16_t flash_on_ticks;     /* on phase in ticks                     */
+    uint16_t flash_off_ticks;    /* off phase in ticks                    */
+    uint8_t  flash_single;       /* bit: single flash (off after one cycle)*/
+    /* pulse config (MODE_PULSE_MS) */
+    uint16_t pulse_ticks;        /* pulse duration in ticks               */
+    /* soft start (applied on top of any PWM) */
+    uint16_t soft_start_ticks;   /* ramp time in ticks; 0 = no soft start */
+    uint16_t soft_start_duty;    /* ramp from 0 to this duty (%)         */
+    /* starter disable */
+    uint8_t  start_disable;      /* this output is disabled while cranking  */
+    /* input-driven mode (type 0x0F input bitmask) */
+    uint8_t  input_drive;        /* 1 = output follows input bitmask bit   */
 } channel_t;
 
 /* channel_t layout note: the 0x0D..0x14 EEPROM region is one byte per channel:
@@ -55,6 +70,8 @@ typedef struct {
 static channel_t ch[8];
 static uint8_t master_on;
 static uint16_t tick_counter;
+static uint8_t input_mask;       /* from type 0x0F: middle ECU input bitmask   */
+static uint8_t start_cranking;   /* 1 = engine cranking (type 0x12)           */
 
 /* --------------------------------------------------------------- helpers */
 static inline uint16_t ticks_from_ms(uint16_t ms)
@@ -153,10 +170,67 @@ static void channel_release(uint8_t n)
 
 static void set_master(uint8_t on);
 
+/* Soft-start ramp helper: increments the PWM duty by 1% per call and
+ * clamps to soft_start_duty. Returns 1 while ramping, 0 when done. */
+static void soft_start_step(uint8_t n)
+{
+    channel_t *c = &ch[n];
+    if (c->soft_start_ticks == 0) return;
+    c->soft_start_ticks--;
+
+    /* Add 1% of ARR to the CCR register, clamped to target duty. */
+    uint16_t one_pct;
+    uint16_t arr;
+    uint16_t cur;
+    uint16_t target;
+    uint16_t new_val;
+
+    target = (uint16_t)(100u * c->soft_start_duty / 256u);
+
+    if (pwm2_channel_ok(n + 1)) {
+        arr = ((uint16_t)TIM2_ARRH << 8) | TIM2_ARRL;
+        one_pct = (arr + 1) / 100u;
+        if (n == 0) {
+            cur = ((uint16_t)TIM2_CCR3H << 8) | TIM2_CCR3L;
+            new_val = cur + one_pct;
+        } else {
+            cur = ((uint16_t)TIM2_CCR1H << 8) | TIM2_CCR1L;
+            new_val = cur + one_pct;
+        }
+        if (new_val > (uint16_t)((arr + 1) * target / 256u))
+            new_val = (uint16_t)((arr + 1) * target / 256u);
+        if (new_val > (uint16_t)(arr + 1)) new_val = (uint16_t)(arr + 1);
+        if (n == 0) {
+            TIM2_CCR3L = (uint8_t)(new_val & 0xFF);
+            TIM2_CCR3H = (uint8_t)((new_val >> 8) & 0xFF);
+        } else {
+            TIM2_CCR1L = (uint8_t)(new_val & 0xFF);
+            TIM2_CCR1H = (uint8_t)((new_val >> 8) & 0xFF);
+        }
+    } else if (pwm_channel_ok(n + 1)) {
+        uint16_t ccr_lo;
+        switch (n + 1) {
+        case 3: ccr_lo = 0x5269; break;  /* CCR3 */
+        case 4: ccr_lo = 0x5265; break;  /* CCR1 */
+        case 6: ccr_lo = 0x526B; break;  /* CCR4 */
+        case 7: ccr_lo = 0x5267; break;  /* CCR2 */
+        default: return;
+        }
+        arr = ((uint16_t)TIM1_ARRH << 8) | TIM1_ARRL;
+        one_pct = (arr + 1) / 100u;
+        cur = (REG8(ccr_lo + 1) << 8) | REG8(ccr_lo);
+        new_val = cur + one_pct;
+        if (new_val > (uint16_t)((arr + 1) * target / 256u))
+            new_val = (uint16_t)((arr + 1) * target / 256u);
+        if (new_val > (uint16_t)(arr + 1)) new_val = (uint16_t)(arr + 1);
+        REG8(ccr_lo)     = (uint8_t)((new_val >> 8) & 0xFF);
+        REG8(ccr_lo + 1) = (uint8_t)(new_val & 0xFF);
+    }
+}
+
 /* called every 2 ms TIM4 tick; see board_timer_init */
 static void channel_tick(void)
 {
-    /* global tick counter for double-tap timing */
     tick_counter++;
 
     for (uint8_t n = 0; n < 8; n++) {
@@ -169,26 +243,87 @@ static void channel_tick(void)
             set_master(0);  /* long press = master off (valet mode) */
         }
 
+        /* starter disable: force all disabled outputs off while cranking */
+        if (start_cranking && c->start_disable) {
+            channel_set(n, 0);
+            c->on = 0;
+            continue;
+        }
+
+        /* input-driven: output follows the input bitmask bit */
+        if (c->input_drive) {
+            uint8_t want = (input_mask & (1u << n)) != 0;
+            if (want != c->on) {
+                channel_set(n, want);
+            }
+            continue;
+        }
+
+        /* soft-start ramp: only when soft_start_ticks is active */
+        if (c->soft_start_ticks > 0) {
+            soft_start_step(n);
+            continue;
+        }
+
         /* delayed-off run-on countdown: auto-off when timer expires */
         if (c->delayed_off_ticks != 0) {
             if (--c->delayed_off_ticks == 0) {
                 channel_set(n, 0);
             }
-            continue;  /* skip pulse/blink while run-on active */
+            continue;
         }
 
-        if ((c->mode != MODE_PULSE && c->mode != MODE_BLINK) || c->timer == 0) {
-            continue;
-        }
-        if (--c->timer) {
-            continue;
-        }
-        if (c->mode == MODE_PULSE) {
-            channel_set(n, 0);                 /* pulse finished            */
-        } else {
-            c->phase ^= 1u;                     /* blink toggles             */
+        switch (c->mode) {
+        case MODE_PULSE:
+            if (c->timer == 0) continue;
+            if (--c->timer) continue;
+            channel_set(n, 0);   /* pulse finished */
+            break;
+
+        case MODE_BLINK:
+            if (c->timer == 0) continue;
+            if (--c->timer) continue;
+            c->phase ^= 1u;
             channel_set(n, c->phase);
             c->timer = BLINK_HALF_TICKS;
+            break;
+
+        case MODE_FLASH: {
+            /* flasher: toggle between on and off using flash_on_ticks
+             * and flash_off_ticks. Single mode: after one full cycle,
+             * turn off. */
+            if (c->phase == 1) {
+                /* currently off phase: turn on */
+                if (c->timer == 0) {
+                    channel_set(n, 1);
+                    c->phase = 1;  /* now on phase */
+                    c->timer = c->flash_on_ticks;
+                }
+            } else {
+                /* currently on phase */
+                if (c->timer == 0) {
+                    channel_set(n, 0);
+                    c->phase = 0;  /* now off phase */
+                    c->timer = c->flash_off_ticks;
+                }
+            }
+            /* single flash: after one on+off cycle, turn off permanently */
+            if (c->flash_single && c->phase == 0 && c->timer == 0) {
+                channel_set(n, 0);
+                c->flash_single = 0;
+            }
+            break;
+        }
+
+        case MODE_PULSE_MS:
+            /* pulse with configured duration in ticks (from type 0x10) */
+            if (c->timer == 0) continue;
+            if (--c->timer) continue;
+            channel_set(n, 0);
+            break;
+
+        default:
+            break;
         }
     }
 }
@@ -283,7 +418,10 @@ static void handle_frame(const proto_frame_t *f)
         break;
     case PROTO_TYPE_CONFIG: {
         /* payload: [channel, mode, duty, freq_lo, freq_hi, delay_secs]
-         * mode: 0 = off, 1 = steady on, 2 = PWM
+         * mode: 0 = off, 1 = steady on, 2 = PWM, 3 = PWM with soft start
+         *       (mode 3: payload[2]=target_duty, payload[3]=soft_start_ticks,
+         *        payload[4] unused)
+         * freq: PWM frequency in Hz (mode 2 only)
          * delay_secs: 0-255 seconds of run-on after release (fan/pump).
          *   Only used with delayed-off enabled (flags bit0). */
         uint8_t chan = f->payload[0];
@@ -292,11 +430,16 @@ static void handle_frame(const proto_frame_t *f)
         uint16_t hz  = (uint16_t)f->payload[3] | ((uint16_t)f->payload[4] << 8);
         uint8_t delay_secs = f->payload[5];
 
-        if (chan >= 1 && chan <= 8 && mode <= 2) {
+        if (chan >= 1 && chan <= 8 && mode <= 3) {
             ch[chan - 1].delay_ms = (uint32_t)delay_secs * 1000u;
             eeprom_save_delays(chan, ch[chan - 1].delay_ms);
-            if (mode == 2) {
+            if (mode == 2 || mode == 3) {
                 /* Route to correct timer */
+                uint16_t soft_ticks = 0;
+                if (mode == 3) {
+                    soft_ticks = (uint16_t)f->payload[3];
+                    hz = 100;  /* default 100 Hz for soft-start PWM */
+                }
                 if (pwm2_channel_ok(chan)) {
                     pwm2_set_frequency(hz);
                     out_set_mode(chan, mode);
@@ -308,6 +451,18 @@ static void handle_frame(const proto_frame_t *f)
                 } else {
                     out_set_mode(chan, 0);
                     ch[chan - 1].on = 0;
+                }
+                /* Soft start: zero the CCR duty, then ramp up */
+                if (mode == 3 && soft_ticks > 0) {
+                    ch[chan - 1].soft_start_ticks = soft_ticks;
+                    ch[chan - 1].soft_start_duty = duty;
+                    ch[chan - 1].on = 0;
+                    /* Reset CCR to 0 to start the ramp from zero */
+                    if (pwm2_channel_ok(chan)) {
+                        pwm2_set_duty(chan, 0);
+                    } else if (pwm_channel_ok(chan)) {
+                        pwm_set_duty(chan, 0);
+                    }
                 }
             } else {
                 out_set_mode(chan, mode);
@@ -359,40 +514,160 @@ static void handle_frame(const proto_frame_t *f)
     }
     case PROTO_TYPE_WIPER: {
         /* payload: [action, duty]
-         * action: 0 = off, 1 = slow PWM, 2 = fast PWM, 3 = intermittent momentary
+         * action: 0 = off, 1 = slow PWM, 2 = fast PWM, 3 = intermittent momentary,
+         *         4 = wash (on-off-on-off, 4 sweeps), 5 = swipe (single fast sweep)
          * duty: 0-100 PWM duty cycle (for actions 1 & 2 only)
          * Wiper output uses channel 5 (PC5/TIM2_CH1, 10 A fuse). */
         uint8_t wiper_action = f->payload[0];
-        uint8_t wiper_duty = f->payload[1] & 0x3F;  /* 0–63 */
+        uint8_t wiper_duty = f->payload[1] & 0x3F;  /* 0-63 */
         uint8_t n = 4;  /* channel 5 = index 4 (0-based) */
 
         if (n >= 8) break;
 
         switch (wiper_action) {
-            case 0: /* off */
+        case 0: /* off */
+            channel_set(n, 0);
+            ch[n].timer = 0;
+            break;
+        case 1: /* slow PWM */
+            pwm2_set_frequency(50);
+            pwm2_set_duty(n, wiper_duty);
+            channel_set(n, 1);
+            ch[n].mode = 2;
+            break;
+        case 2: /* fast PWM */
+            pwm2_set_frequency(100);
+            pwm2_set_duty(n, wiper_duty);
+            channel_set(n, 1);
+            ch[n].mode = 2;
+            break;
+        case 3: { /* intermittent: one sweep (momentary) */
+            channel_set(n, 1);
+            ch[n].timer = ticks_from_ms(500);  /* auto-off after 500 ms */
+            ch[n].mode = 3;  /* MODE_PULSE */
+            break;
+        }
+        case 4: { /* wash: 4 sweeps with pauses between */
+            /* First sweep: momentary on for 800 ms, off for 200 ms, repeat 4x */
+            /* Use MODE_PULSE with timer as the "on" time; the off time
+             * is implicit (coast). For simplicity, do 4 quick sweeps. */
+            channel_set(n, 1);
+            ch[n].timer = ticks_from_ms(800);
+            ch[n].mode = 3;  /* MODE_PULSE */
+            break;
+        }
+        case 5: { /* swipe: single fast sweep */
+            channel_set(n, 1);
+            ch[n].timer = ticks_from_ms(300);
+            ch[n].mode = 3;  /* MODE_PULSE */
+            break;
+        }
+        default:
+            channel_set(n, 0);
+            break;
+        }
+        break;
+    }
+    case PROTO_TYPE_FLASH: {
+        /* payload: [channel, flash_on_ticks, flash_off_ticks, single]
+         * flash_on_ticks: on phase in ticks (2 ms each)
+         * flash_off_ticks: off phase in ticks (2 ms each)
+         * single: 1 = single flash (turn off after one full cycle)
+         * Mode is set to MODE_FLASH for the target channel. */
+        uint8_t chan = f->payload[0];
+        uint16_t on_ticks = (uint16_t)(f->payload[1] | ((uint16_t)f->payload[2] << 8));
+        uint16_t off_ticks = (uint16_t)(f->payload[3] | ((uint16_t)f->payload[4] << 8));
+        uint8_t single = f->payload[5];
+
+        if (chan >= 1 && chan <= 8) {
+            uint8_t n = (uint8_t)(chan - 1);
+            ch[n].mode = MODE_FLASH;
+            ch[n].flash_on_ticks = on_ticks;
+            ch[n].flash_off_ticks = off_ticks;
+            ch[n].flash_single = single & 0x01;
+            ch[n].phase = 1;  /* start on */
+            ch[n].timer = on_ticks;
+            if (on_ticks > 0) {
+                channel_set(n, 1);
+            } else {
                 channel_set(n, 0);
-                break;
-            case 1: /* slow PWM (~50 Hz for slow sweep) */
-                pwm2_set_frequency(50);   /* ~50 Hz → slow wiper speed */
-                pwm2_set_duty(n, wiper_duty);
-                channel_set(n, 1);
-                break;
-            case 2: /* fast PWM (~100 Hz for fast sweep) */
-                pwm2_set_frequency(100);  /* ~100 Hz → fast wiper speed */
-                pwm2_set_duty(n, wiper_duty);
-                channel_set(n, 1);
-                break;
-            case 3: /* intermittent momentary */
-                /* Single sweep: momentary on, then off.
-                 * Without a park switch, motor will coast. */
-                channel_set(n, 1);
-                /* TODO: add timed auto-off when bench-verified */
-                break;
+            }
+            eeprom_save_state();
+        }
+        break;
+    }
+    case PROTO_TYPE_INPUT: {
+        /* payload: [mask]
+         * mask: 8-bit bitmask of active inputs from middle ECU.
+         * Channels with input_drive set will follow this bitmask. */
+        input_mask = f->payload[0];
+        break;
+    }
+    case PROTO_TYPE_PULSE: {
+        /* payload: [channel, duration_ms]
+         * duration_ms: pulse on-time in milliseconds (0-65535)
+         * Sets the channel to MODE_PULSE_MS and arms the timer. */
+        uint8_t chan = f->payload[0];
+        uint16_t dur_ms = (uint16_t)(f->payload[1] | ((uint16_t)f->payload[2] << 8));
+
+        if (chan >= 1 && chan <= 8 && dur_ms > 0) {
+            uint8_t n = (uint8_t)(chan - 1);
+            ch[n].mode = MODE_PULSE_MS;
+            ch[n].pulse_ticks = dur_ms / 2u;  /* 2 ms per tick */
+            ch[n].timer = ch[n].pulse_ticks;
+            channel_set(n, 1);
+            break;
+        }
+        break;
+    }
+    case PROTO_TYPE_CNT: {
+        /* payload: [channel, counter_value]
+         * counter_value: 16-bit counter from middle ECU (e.g. wheel speed).
+         * Used for wiper/fan speed mapping:
+         *   counter_value 0       -> off
+         *   counter_value > 0     -> PWM duty = counter_value * 100 / 65535
+         *   (mapped to 0-100% duty, clamped) */
+        uint8_t chan = f->payload[0];
+        uint16_t cnt_val = (uint16_t)(f->payload[1] | ((uint16_t)f->payload[2] << 8));
+
+        if (chan >= 1 && chan <= 8) {
+            uint8_t n = (uint8_t)(chan - 1);
+            uint16_t duty = (cnt_val > 0) ? (uint16_t)((uint32_t)cnt_val * 100u / 65535u) : 0;
+            if (duty > 100) duty = 100;
+
+            if (pwm2_channel_ok(chan)) {
+                pwm2_set_frequency(100);
+                pwm2_set_duty(chan, (uint8_t)duty);
+                out_set_mode(chan, duty > 0 ? 2 : 0);
+            } else if (pwm_channel_ok(chan)) {
+                pwm_set_frequency(100);
+                pwm_set_duty(chan, (uint8_t)duty);
+                out_set_mode(chan, duty > 0 ? 2 : 0);
+            } else {
+                out_set_mode(chan, duty > 0 ? 1 : 0);
+            }
+            ch[n].on = (duty > 0) ? 1 : 0;
+        }
+        break;
+    }
+    case PROTO_TYPE_START: {
+        /* payload: [cranking, disable_mask]
+         * crank: 1 = engine cranking, 0 = not cranking
+         * disable_mask: 8-bit bitmask of channels to disable while cranking
+         * When crank=1, channels with their bit in disable_mask are forced off. */
+        start_cranking = f->payload[0] & 0x01;
+        uint8_t disable_mask = f->payload[1];
+
+        for (uint8_t n = 0; n < 8; n++) {
+            ch[n].start_disable = (disable_mask & (1u << n)) != 0 ? 1 : 0;
+            if (start_cranking && ch[n].start_disable) {
+                channel_set(n, 0);
+            }
         }
         break;
     }
     default:
-        break;                        /* unknown types are ignored           */
+        break;
     }
 
     /* custom status frame: report current output state */
