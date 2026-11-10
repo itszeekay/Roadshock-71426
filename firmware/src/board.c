@@ -41,6 +41,11 @@ void board_init(void)
     CLK_PCKENR1 = 0xFF;       /* all peripheral clocks on          */
     CLK_PCKENR2 = 0xFF;
 
+    /* Enable AFR0 (TIM2_CH1 -> PC5) for channel 5 hardware PWM.
+     * Option byte 0x4803, bit 0. Write once; persists across flashes.
+     * Safe to write on every boot - idempotent. */
+    optbyte_set_afr(AFR0_BIT);
+
     /* PA1 = ACC sense input, pull-up, no interrupt */
     PA_DDR &= (uint8_t)~0x02;
     PA_CR1 |= 0x02;
@@ -285,12 +290,17 @@ void out_set_mode(uint8_t channel, uint8_t mode)
     }
 }
 
-/* ----------------------------------------------------------- TIM2 PWM (channel 1 only - PA3 = TIM2_CH3 default) */
+/* ----------------------------------------------------------- TIM2 PWM (channel 1 = PA3/TIM2_CH3, channel 5 = PC5/TIM2_CH1 with AFR0) */
 static uint8_t tim2_ch_of(uint8_t channel, uint8_t *idx)
 {
-    /* Only channel 1 (PA3) has TIM2_CH3 by default without remap */
+    /* Channel 1: PA3 = TIM2_CH3 (default)
+     * Channel 5: PC5 = TIM2_CH1 (requires AFR0 bit in option byte 0x4803) */
     if (channel == 1) {
-        *idx = 3;  /* TIM2_CH3 */
+        *idx = 3;  /* TIM2_CH3 -> CCR3 */
+        return 1;
+    }
+    if (channel == 5) {
+        *idx = 1;  /* TIM2_CH1 -> CCR1 */
         return 1;
     }
     return 0;
@@ -341,11 +351,16 @@ void pwm2_set_duty(uint8_t channel, uint8_t percent)
     arr = ((uint16_t)TIM2_ARRH << 8) | TIM2_ARRL;
     duty = ((uint32_t)(arr + 1u) * percent) / 100u;
 
-    if (idx == 3) {  /* TIM2_CH3 -> CCR3 */
+    if (idx == 3) {  /* TIM2_CH3 -> CCR3 (channel 1) */
         TIM2_CCR3H = (uint8_t)(duty >> 8);
         TIM2_CCR3L = (uint8_t)(duty & 0xFF);
         TIM2_CCMR3 = 0x68;                /* PWM1 mode + preload */
         TIM2_CCER1 |= 0x10;               /* CC3E enable */
+    } else if (idx == 1) {  /* TIM2_CH1 -> CCR1 (channel 5 with AFR0) */
+        TIM2_CCR1H = (uint8_t)(duty >> 8);
+        TIM2_CCR1L = (uint8_t)(duty & 0xFF);
+        TIM2_CCMR1 = 0x68;                /* PWM1 mode + preload */
+        TIM2_CCER1 |= 0x01;               /* CC1E enable */
     }
     TIM2_CR1 |= 0x01;  /* CEN */
 }
