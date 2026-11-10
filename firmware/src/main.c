@@ -49,8 +49,8 @@ typedef struct {
 
 /* channel_t layout note: the 0x0D..0x14 EEPROM region is one byte per channel:
  * bits 0-1 = mode, bit 2 = on, bit 3 = delayed_off_en, bit 4 = double_tap_en.
- * The per-channel run-on duration lives in a separate uint16_t delay_ms field
- * held in RAM; values are persisted via the config command (type 0x09). */
+ * The per-channel run-on duration (ms) lives in a separate uint32_t delay_ms field
+ * held in RAM; values are persisted via the config command (type 0x09) to bytes 0x15..0x1C. */
 
 static channel_t ch[8];
 static uint8_t master_on;
@@ -84,7 +84,6 @@ static void channel_set(uint8_t n, uint8_t on)
 #define BLINK_HALF_TICKS ticks_from_ms(100)
 #define PULSE_TICKS      ticks_from_ms(250)
 #define LONG_PRESS_TICKS ticks_from_ms(800)
-#define DELAYED_OFF_TICKS ticks_from_ms(3000)   /* fan/pump run-on after release */
 #define DOUBLE_TAP_WINDOW_TICKS 500            /* within this many ticks = double tap */
 
 static void channel_press(uint8_t n)
@@ -168,6 +167,14 @@ static void channel_tick(void)
         if (c->held && c->held_ticks >= LONG_PRESS_TICKS && !c->long_fired) {
             c->long_fired = 1;
             set_master(0);  /* long press = master off (valet mode) */
+        }
+
+        /* delayed-off run-on countdown: auto-off when timer expires */
+        if (c->delayed_off_ticks != 0) {
+            if (--c->delayed_off_ticks == 0) {
+                channel_set(n, 0);
+            }
+            continue;  /* skip pulse/blink while run-on active */
         }
 
         if ((c->mode != MODE_PULSE && c->mode != MODE_BLINK) || c->timer == 0) {
@@ -321,6 +328,8 @@ static void handle_frame(const proto_frame_t *f)
             } else {
                 channel_set(n, !ch[n].on);
             }
+            ch[n].double_tap_ticks = 0;  /* clear any pending double-tap */
+            eeprom_save_state();
         }
         break;
     }

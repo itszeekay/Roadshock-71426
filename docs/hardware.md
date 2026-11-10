@@ -37,6 +37,30 @@ Output map (verified from the firmware table and by measurement):
 
 The firmware table has 12 entries; entries 8–11 are PB4 spares.
 
+### Hardware PWM (TIM1) per channel
+
+The STM8S003F3P6 has one advanced timer (TIM1) with four independent compare/capture
+channels. Only four of the eight output pins connect to TIM1 channels:
+
+| Channel | Pin | TIM1 channel | Notes |
+|---|---|---|---|
+| 1 | PA3 | — | GPIO only (no TIM1) |
+| 2 | PA2 | — | GPIO only (no TIM1) |
+| 3 | PC7 | CH2 | Independent frequency & duty |
+| 4 | PC6 | CH1 | Independent frequency & duty |
+| 5 | PC5 | — | GPIO only (no TIM1) |
+| 6 | PC4 | CH4 | Independent frequency & duty |
+| 7 | PC3 | CH3 | Independent frequency & duty |
+| 8 | PD2 | — | GPIO only (no TIM1) |
+
+**Key implications:**
+- **Frequency is shared per TIM1 timer**: all four PWM channels run at the same
+  frequency (set by ARR/PSC). Individual duty cycles are per-channel (CCRx).
+- **Channels 1, 2, 5, 8**: cannot do hardware PWM — software PWM only (via 2 ms tick).
+- **Channels 3, 4, 6, 7**: full hardware PWM (50–2000 Hz, 0–100% duty).
+- The custom firmware `PROTO_TYPE_CONFIG` (type 0x09) with `mode=2` enables PWM
+  on supported channels. On unsupported channels it falls back to steady on/off.
+
 ### Output stage
 
 Each gang is high-side switched by a **P-channel D30PW40A** (TO-263 / D2PAK,
