@@ -86,8 +86,8 @@ LEDs.
 
 ## What is still unknown
 
-- The ASR firmware has not been dumped. Its button and UI logic is the
-  remaining black box.
+- The ASR firmware has not been dumped. Its button and UI logic is not yet
+  understood.
 - Whether a hidden 2400-baud command can influence the LEDs (possible, but no
   evidence yet).
 - The exact color mapping of the eight display nibbles (needs a bench test).

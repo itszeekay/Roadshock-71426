@@ -184,8 +184,8 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 
 ## What is still open
 
-- The **ASR5601S firmware** has not been dumped. Its button/UI logic is the one
-  remaining black box. SWD (P06/P07) is the reliable dump route. The J3 UART
+- The **ASR5601S firmware** has not been dumped. Its button/UI logic is not yet
+  understood. SWD (P06/P07) is the reliable dump route. The J3 UART
   monitor also has a documented read candidate, `coredump flash all`, which is
   a capture command and needs no license. See
   [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
