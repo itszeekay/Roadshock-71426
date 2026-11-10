@@ -1,44 +1,58 @@
-# Firmware Comparison: Stock vs. Custom Base Board
+# Roadshock 71426: Configuration Options
 
-Three ways to run the panel:
+You can run your Roadshock panel in one of three ways, depending on how much control you need.
 
-| Capability | Stock (no middle MCU) | Middle MCU + stock firmware | Middle MCU + custom firmware |
-|------------|----------------------|----------------------------|------------------------------|
-| **Channel modes** | Toggle, Momentary, Pulse, Blink | Same | Same, but settings persist after power loss |
-| **Change modes** | Panel Mode button only | Type 0x07 config frames | Same |
-| **Master on/off** | Panel power button | Type 0x07 flag 0/1 | Same |
-| **Button control** | Physical buttons only | Type 0x08 synthetic presses | Same |
-| **PWM / dimming** | No | No | **Yes** — 6 channels (1,3,4,5,6,7), independent duty |
-| **Status feedback** | LED colors only | No | **Type 0x0A** — 6 channel states + master |
-| **Long-press valet** | No | No | **800 ms hold** → master off |
-| **Delayed-off (fan run-on)** | No | No | **Configurable 0–255 s** per channel |
-| **Double-tap latch** | No | No | **Two quick presses** → momentary becomes toggle |
-| **Force override** | No | No | **Type 0x0B** — immediate on/off/toggle |
-| **ACC/ignition sense** | Resets MCU on loss | Outputs off, no reset | Outputs off, no reset |
+## Feature Overview
 
-## What each configuration gives you
+| Feature | Stock Panel | Panel + Smart Controller | Panel + Custom Firmware |
+| :--- | :---: | :---: | :---: |
+| **Simple Operation** | ✅ | ✅ | ✅ |
+| **Remote Control (App/Web)** | ❌ | ⚠️ *Limited* | ✅ **Full** |
+| **Advanced Auto-Functions** | ❌ | ❌ | ✅ **Yes** |
+| **System Diagnostics** | ❌ | ❌ | ✅ **Real-time** |
 
-**Stock (panel only)** — Works out of the box. Four modes via Mode button. No external control.
+---
 
-**Middle MCU + stock firmware** — External MCU can inject button presses and power commands over the 2400 baud link. No PWM, no status, no persistence.
+## The Three Configurations
 
-**Middle MCU + custom firmware** — Full control: PWM on 6 channels, status reporting, persistent settings, valet mode, fan run-on timers, double-tap latching, force override. Flash once via SWIM (`roadshock_full.ihx`).
+### 1. Stock (No Modifications)
+*Use this if you just want the panel to work exactly as it came out of the box.*
+- **Experience:** Reliable, simple 12 V power distribution.
+- **Limitation:** Fixed functionality. No remote access, no dimming, no automation.
 
-## Hardware PWM availability (custom firmware)
+### 2. Panel + Smart Controller (Stock Firmware)
+*Use this if you want remote control but don't want to flash the panel.*
+- **Experience:** Add a middle MCU (like an ESP32) to send basic commands.
+- **Capabilities:** Turn channels on/off and cycle modes remotely.
+- **Limitation:** You are limited to the stock firmware's capabilities; no status feedback, no PWM dimming, no advanced logic.
 
-| Channel | Fuse | Hardware PWM | Frequency Group |
-|---------|------|--------------|-----------------|
-| 1 | 30 A | ✅ TIM2 | B (independent) |
-| 2 | 30 A | ❌ | — |
-| 3 | 20 A | ✅ TIM1 | A (shared) |
-| 4 | 20 A | ✅ TIM1 | A (shared) |
-| 5 | 10 A | ✅ TIM2 (AFR0) | B (shared with ch 1) |
-| 6 | 10 A | ✅ TIM1 | A (shared) |
-| 7 | 5 A | ✅ TIM1 | A (shared) |
-| 8 | 5 A | ❌ | — |
+### 3. Panel + Custom Firmware (Recommended)
+*Use this to unlock the full potential of your hardware.*
+- **Experience:** A smart power distribution system.
+- **Capabilities:**
+    - **Smooth Dimming (PWM):** Control LED brightness or motor speed on 6 channels.
+    - **Smart Auto-Functions:** 
+        - *Valet Mode:* Hold any button to kill all power.
+        - *Fan/Pump Run-on:* Set a timer for pumps or fans to run after engine shutdown.
+        - *Smart Latching:* Double-tap to toggle functions.
+    - **Full Diagnostics:** Real-time status feedback for every channel.
+    - **Total Control:** Override any channel instantly.
 
-Group A (TIM1): Channels 3,4,6,7 share one frequency (50–2000 Hz), 4 independent duties.
-Group B (TIM2): Channels 1,5 share one frequency (1 Hz–20 kHz), 2 independent duties.
-Channels 2,8: GPIO only (software PWM available, coarse).
+---
 
-See `docs/startup_guide.md` for wiring recommendations and protocol details.
+## Hardware PWM Compatibility
+
+To ensure smooth performance, we've optimized 6 channels for hardware-accelerated control (dimming/speed):
+
+| Channel | Best Use |
+| :--- | :--- |
+| **1 & 5** | **Independent Speed/Ramp Control** (e.g., Radiator fans, Fuel pumps) |
+| **3, 4, 6, 7** | **Dimming / Brightness Control** (e.g., LED light bars) |
+| **2 & 8** | On/Off only (High-power devices) |
+
+---
+
+## How to get started
+If you choose **Option 3**, simply flash the panel once using our provided firmware image via the SWIM header. No further hardware mods or proprietary apps are required.
+
+*For wiring guides, protocol documentation for developers, and flashing instructions, see `docs/startup_guide.md`.*
