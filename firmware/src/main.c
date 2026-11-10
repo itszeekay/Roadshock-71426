@@ -41,10 +41,14 @@ typedef struct {
     uint16_t timer;       /* countdown in ticks                          */
     uint16_t held_ticks;  /* duration button held, 2 ms per tick         */
     uint8_t  long_fired;  /* long-press action already sent              */
+    uint32_t delayed_off_ticks;  /* countdown to auto-off after release    */
+    uint32_t double_tap_ticks;   /* time of first press for double-tap     */
+    uint8_t  flags;              /* bit0 delayed_off_en, bit1 double_tap_en */
 } channel_t;
 
 static channel_t ch[8];
 static uint8_t master_on;
+static uint16_t tick_counter;
 
 /* --------------------------------------------------------------- helpers */
 static inline uint16_t ticks_from_ms(uint16_t ms)
@@ -74,6 +78,8 @@ static void channel_set(uint8_t n, uint8_t on)
 #define BLINK_HALF_TICKS ticks_from_ms(100)
 #define PULSE_TICKS      ticks_from_ms(250)
 #define LONG_PRESS_TICKS ticks_from_ms(800)
+#define DELAYED_OFF_TICKS ticks_from_ms(3000)   /* fan/pump run-on after release */
+#define DOUBLE_TAP_WINDOW_TICKS 500            /* within this many ticks = double tap */
 
 static void channel_press(uint8_t n)
 {
@@ -83,6 +89,22 @@ static void channel_press(uint8_t n)
     ch[n].held = 1;
     ch[n].held_ticks = 0;
     ch[n].long_fired = 0;
+    /* start delayed-off countdown on every press (cancel run-on if active) */
+    if (ch[n].delayed_off_ticks > 0) {
+        ch[n].delayed_off_ticks = 0;
+        channel_set(n, 0);
+    }
+    /* double-tap detection for momentary latch toggle */
+    if ((ch[n].flags & 0x02) && ch[n].double_tap_ticks != 0 &&
+        (tick_counter - ch[n].double_tap_ticks) < DOUBLE_TAP_WINDOW_TICKS) {
+        /* second press within window: toggle latch */
+        channel_set(n, !ch[n].on);
+        ch[n].double_tap_ticks = 0;
+        eeprom_save_state();
+        return;
+    }
+    ch[n].double_tap_ticks = tick_counter;
+    /* configure mode action below */
     switch (ch[n].mode) {
     case MODE_TOGGLE:
         channel_set(n, !ch[n].on);
@@ -113,7 +135,11 @@ static void channel_release(uint8_t n)
     ch[n].held_ticks = 0;
     ch[n].long_fired = 0;
     if (ch[n].mode == MODE_MOMENTARY) {
-        channel_set(n, 0);
+        if ((ch[n].flags & 0x01) && ch[n].on) {  /* delayed_off_en and output is on */
+            ch[n].delayed_off_ticks = DELAYED_OFF_TICKS;  /* start run-on timer */
+        } else {
+            channel_set(n, 0);
+        }
     }
     eeprom_save_state();
 }
@@ -123,6 +149,9 @@ static void set_master(uint8_t on);
 /* called every 2 ms TIM4 tick; see board_timer_init */
 static void channel_tick(void)
 {
+    /* global tick counter for double-tap timing */
+    tick_counter++;
+
     for (uint8_t n = 0; n < 8; n++) {
         channel_t *c = &ch[n];
 
@@ -154,8 +183,9 @@ static void eeprom_save_state(void)
 {
     uint8_t i;
     for (i = 0; i < 8; i++) {
-        uint8_t byte = ch[i].mode;       /* bits 0-1 */
-        byte |= (ch[i].on != 0) << 2;   /* bit 2 */
+        uint8_t byte = ch[i].mode;          /* bits 0-1 */
+        byte |= (ch[i].on != 0) << 2;      /* bit 2 */
+        byte |= (ch[i].flags & 0x03) << 3; /* bit 3 delayed_off_en, bit 4 double_tap_en */
         eeprom_write(0x0D + i, byte);
     }
 }
@@ -166,9 +196,10 @@ static void eeprom_load_state(void)
     uint8_t i;
     for (i = 0; i < 8; i++) {
         uint8_t b = eeprom_read(0x0D + i);
-        ch[i].mode = b & 0x03;
-        ch[i].on   = (b >> 2) & 0x01;
-        board_output(i, ch[i].on != 0);  /* apply loaded state to outputs */
+        ch[i].mode   = b & 0x03;
+        ch[i].on     = (b >> 2) & 0x01;
+        ch[i].flags  = (b >> 3) & 0x03;    /* bits 3-4: delayed_off_en, double_tap_en */
+        board_output(i, ch[i].on != 0);    /* apply loaded state to outputs */
     }
 }
 
