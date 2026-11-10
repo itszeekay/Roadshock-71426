@@ -189,6 +189,9 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
   monitor also has a documented read candidate, `coredump flash all`, which is
   a capture command and needs no license. See
   [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
+- Bench verification of the four stock channel modes and the low-frequency TIM1
+  prescaler fix. Both are built, but the prebuilt full image has not been
+  flashed for those tests.
 - Direct control of the panel LEDs without touching the private 115200 link.
   Over J2 alone, the LEDs remain under the ASR's UI control.
 - The final CAN gateway/PDU hardware (CAN controller choice, current sensing).
@@ -250,10 +253,11 @@ Findings are tagged where it matters:
 - **Unknown**: not yet determined.
 
 The protocol, pin maps, dump integrity, PWM behavior, and the STM8 display
-driver are verified. The custom firmware (including the four channel modes,
-valet, delayed-off, double-tap latch, force override, and wiper control) has
-been built and bench-verified. The ASR firmware and any J2-only LED control are
-not verified.
+driver are verified. The custom firmware's auto-functions (valet, delayed-off,
+double-tap latch, force override) and wiper control are implemented and
+bench-verified. The four stock channel modes and the low-frequency prescaler
+fix are built but not yet flashed for bench testing. The ASR firmware and any
+J2-only LED control are not verified.
 
 ---
 
