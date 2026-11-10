@@ -81,6 +81,27 @@
 #define TIM1_CCR4L   REG8(0x526C)
 #define TIM1_BKR     REG8(0x526D)
 
+#define TIM2_CR1     REG8(0x5300)
+#define TIM2_IER     REG8(0x5303)
+#define TIM2_SR1     REG8(0x5304)
+#define TIM2_SR2     REG8(0x5305)
+#define TIM2_EGR     REG8(0x5306)
+#define TIM2_CCMR1   REG8(0x5307)
+#define TIM2_CCMR2   REG8(0x5308)
+#define TIM2_CCMR3   REG8(0x5309)
+#define TIM2_CCER1   REG8(0x530A)
+#define TIM2_CNTRH   REG8(0x530C)
+#define TIM2_CNTRL   REG8(0x530D)
+#define TIM2_PSCR    REG8(0x530E)
+#define TIM2_ARRH    REG8(0x530F)
+#define TIM2_ARRL    REG8(0x5310)
+#define TIM2_CCR1H   REG8(0x5311)
+#define TIM2_CCR1L   REG8(0x5312)
+#define TIM2_CCR2H   REG8(0x5313)
+#define TIM2_CCR2L   REG8(0x5314)
+#define TIM2_CCR3H   REG8(0x5315)
+#define TIM2_CCR3L   REG8(0x5316)
+
 #define TIM4_CR1     REG8(0x5340)
 #define TIM4_IER     REG8(0x5344)
 #define TIM4_SR1     REG8(0x5345)
@@ -113,11 +134,14 @@ void board_init(void);
 void board_timer_init(void);
 void board_output(uint8_t channel, uint8_t on);
 
-/* hardware PWM (TIM1 channels 1..4) */
+/* hardware PWM (TIM1 channels 1..4, TIM2 channels 1..3) */
 void pwm_set_frequency(uint16_t hz);
 void pwm_set_duty(uint8_t channel, uint8_t percent);   /* channel 1..8 */
+void pwm2_set_frequency(uint16_t hz);
+void pwm2_set_duty(uint8_t channel, uint8_t percent);  /* channel 1..8 (TIM2 only) */
 void out_set_mode(uint8_t channel, uint8_t mode);      /* 0=off 1=on 2=pwm */
 uint8_t pwm_channel_ok(uint8_t channel);
+uint8_t pwm2_channel_ok(uint8_t channel);
 uint8_t board_acc_sense(void);
 void board_watchdog_feed(void);
 uint8_t board_tick_flag(void);

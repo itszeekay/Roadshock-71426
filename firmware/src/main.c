@@ -295,17 +295,22 @@ static void handle_frame(const proto_frame_t *f)
         if (chan >= 1 && chan <= 8 && mode <= 2) {
             ch[chan - 1].delay_ms = (uint32_t)delay_secs * 1000u;
             eeprom_save_delays(chan, ch[chan - 1].delay_ms);
-            if (mode == 2 && !pwm_channel_ok(chan)) {
-                out_set_mode(chan, 0);              /* no timer channel */
-                ch[chan - 1].on = 0;
-            } else {
-                if (mode == 2) {
+            if (mode == 2) {
+                /* Route to correct timer */
+                if (pwm2_channel_ok(chan)) {
+                    pwm2_set_frequency(hz);
+                    out_set_mode(chan, mode);
+                    pwm2_set_duty(chan, duty);
+                } else if (pwm_channel_ok(chan)) {
                     pwm_set_frequency(hz);
-                }
-                out_set_mode(chan, mode);
-                if (mode == 2) {
+                    out_set_mode(chan, mode);
                     pwm_set_duty(chan, duty);
+                } else {
+                    out_set_mode(chan, 0);
+                    ch[chan - 1].on = 0;
                 }
+            } else {
+                out_set_mode(chan, mode);
                 ch[chan - 1].on = (mode != 0);
             }
         }

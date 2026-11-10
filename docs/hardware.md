@@ -37,29 +37,37 @@ Output map (verified from the firmware table and by measurement):
 
 The firmware table has 12 entries; entries 8–11 are PB4 spares.
 
-### Hardware PWM (TIM1) per channel
+### Hardware PWM (TIM1 + TIM2) per channel
 
-The STM8S003F3P6 has one advanced timer (TIM1) with four independent compare/capture
-channels. Only four of the eight output pins connect to TIM1 channels:
+The STM8S003F3P6 has two 16-bit timers with PWM output:
 
-| Channel | Pin | TIM1 channel | Notes |
-|---|---|---|---|
-| 1 | PA3 | — | GPIO only (no TIM1) |
-| 2 | PA2 | — | GPIO only (no TIM1) |
-| 3 | PC7 | CH2 | Independent frequency & duty |
-| 4 | PC6 | CH1 | Independent frequency & duty |
-| 5 | PC5 | — | GPIO only (no TIM1) |
-| 6 | PC4 | CH4 | Independent frequency & duty |
-| 7 | PC3 | CH3 | Independent frequency & duty |
-| 8 | PD2 | — | GPIO only (no TIM1) |
+| Channel | Pin | TIM1 channel | TIM2 channel | Notes |
+|---|---|---|---|---|
+| 1 | PA3 | — | **CH3 (default)** | **HW PWM** (independent freq & duty) |
+| 2 | PA2 | — | — | GPIO only (OSCOUT) |
+| 3 | PC7 | CH2 | — | **HW PWM** (shared TIM1 freq) |
+| 4 | PC6 | CH1 | — | **HW PWM** (shared TIM1 freq) |
+| 5 | PC5 | — | CH1 (AFR0) | HW PWM if remapped |
+| 6 | PC4 | CH4 | — | **HW PWM** (shared TIM1 freq) |
+| 7 | PC3 | CH3 | — | **HW PWM** (shared TIM1 freq) |
+| 8 | PD2 | — | CH3 (AFR1) | HW PWM if remapped |
 
-**Key implications:**
-- **Frequency is shared per TIM1 timer**: all four PWM channels run at the same
-  frequency (set by ARR/PSC). Individual duty cycles are per-channel (CCRx).
-- **Channels 1, 2, 5, 8**: cannot do hardware PWM — software PWM only (via 2 ms tick).
-- **Channels 3, 4, 6, 7**: full hardware PWM (50–2000 Hz, 0–100% duty).
-- The custom firmware `PROTO_TYPE_CONFIG` (type 0x09) with `mode=2` enables PWM
-  on supported channels. On unsupported channels it falls back to steady on/off.
+**TIM1 (channels 3,4,6,7):**
+- Four channels share one frequency (ARR/PSC)
+- Individual duty cycles via CCRx
+- Frequency range 50–2000 Hz (gate driver limit)
+
+**TIM2 (channel 1 by default, 5/8 with AFR remap):**
+- Completely independent timer
+- Own frequency (1 Hz – 20+ kHz) and duty
+- Channel 1 (PA3) works immediately; no remap needed
+- Channels 5/8 need option byte AFR0/AFR1 set (one-time)
+
+**Custom firmware support:**
+- `PROTO_TYPE_CONFIG` (type 0x09) with `mode=2` enables PWM
+- TIM1 channels: shared freq, per-channel duty
+- TIM2 channel 1: independent freq + duty
+- Unsupported channels fall back to steady on/off
 
 ### Output stage
 

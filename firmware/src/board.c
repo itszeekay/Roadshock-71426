@@ -284,3 +284,68 @@ void out_set_mode(uint8_t channel, uint8_t mode)
         board_output((uint8_t)(channel - 1), mode != 0);
     }
 }
+
+/* ----------------------------------------------------------- TIM2 PWM (channel 1 only - PA3 = TIM2_CH3 default) */
+static uint8_t tim2_ch_of(uint8_t channel, uint8_t *idx)
+{
+    /* Only channel 1 (PA3) has TIM2_CH3 by default without remap */
+    if (channel == 1) {
+        *idx = 3;  /* TIM2_CH3 */
+        return 1;
+    }
+    return 0;
+}
+
+uint8_t pwm2_channel_ok(uint8_t channel)
+{
+    uint8_t idx;
+    return tim2_ch_of(channel, &idx);
+}
+
+void pwm2_set_frequency(uint16_t hz)
+{
+    uint32_t pscr = 1;
+    uint32_t div;
+    uint16_t arr;
+
+    if (hz < 1)    hz = 1;
+    if (hz > 20000) hz = 20000;  /* TIM2 16-bit, can go higher */
+
+    /* Raise prescaler until ARR fits in 16 bits */
+    while ((16000000UL / (pscr * hz)) > 65536UL && pscr < 65536UL) {
+        pscr <<= 1;
+    }
+    div = 16000000UL / (pscr * (uint32_t)hz);
+    if (div == 0) div = 1;
+    arr = (uint16_t)(div - 1u);
+
+    TIM2_PSCR  = (uint8_t)(pscr - 1u);    /* 8-bit prescaler */
+    TIM2_ARRH  = (uint8_t)(arr >> 8);
+    TIM2_ARRL  = (uint8_t)(arr & 0xFF);
+    TIM2_EGR   = 0x01;                    /* UG: update generation */
+    TIM2_CNTRH = 0;
+    TIM2_CNTRL = 0;
+}
+
+void pwm2_set_duty(uint8_t channel, uint8_t percent)
+{
+    uint8_t idx;
+    uint16_t arr;
+    uint32_t duty;
+
+    if (!tim2_ch_of(channel, &idx)) {
+        return;
+    }
+    if (percent > 100) percent = 100;
+
+    arr = ((uint16_t)TIM2_ARRH << 8) | TIM2_ARRL;
+    duty = ((uint32_t)(arr + 1u) * percent) / 100u;
+
+    if (idx == 3) {  /* TIM2_CH3 -> CCR3 */
+        TIM2_CCR3H = (uint8_t)(duty >> 8);
+        TIM2_CCR3L = (uint8_t)(duty & 0xFF);
+        TIM2_CCMR3 = 0x68;                /* PWM1 mode + preload */
+        TIM2_CCER1 |= 0x10;               /* CC3E enable */
+    }
+    TIM2_CR1 |= 0x01;  /* CEN */
+}
