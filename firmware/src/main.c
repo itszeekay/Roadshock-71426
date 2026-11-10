@@ -42,9 +42,15 @@ typedef struct {
     uint16_t held_ticks;  /* duration button held, 2 ms per tick         */
     uint8_t  long_fired;  /* long-press action already sent              */
     uint32_t delayed_off_ticks;  /* countdown to auto-off after release    */
+    uint16_t delay_ms;           /* configured run-on duration, ms (0=off) */
     uint32_t double_tap_ticks;   /* time of first press for double-tap     */
     uint8_t  flags;              /* bit0 delayed_off_en, bit1 double_tap_en */
 } channel_t;
+
+/* channel_t layout note: the 0x0D..0x14 EEPROM region is one byte per channel:
+ * bits 0-1 = mode, bit 2 = on, bit 3 = delayed_off_en, bit 4 = double_tap_en.
+ * The per-channel run-on duration lives in a separate uint16_t delay_ms field
+ * held in RAM; values are persisted via the config command (type 0x09). */
 
 static channel_t ch[8];
 static uint8_t master_on;
@@ -136,7 +142,7 @@ static void channel_release(uint8_t n)
     ch[n].long_fired = 0;
     if (ch[n].mode == MODE_MOMENTARY) {
         if ((ch[n].flags & 0x01) && ch[n].on) {  /* delayed_off_en and output is on */
-            ch[n].delayed_off_ticks = DELAYED_OFF_TICKS;  /* start run-on timer */
+            ch[n].delayed_off_ticks = ticks_from_ms(ch[n].delay_ms);
         } else {
             channel_set(n, 0);
         }
@@ -190,6 +196,29 @@ static void eeprom_save_state(void)
     }
 }
 
+/* Persist per-channel run-on delay (ms) for channels that have delayed-off
+ * enabled. Layout: byte 0x15 + n*2 = delay low, byte 0x15 + n*2 + 1 = delay high. */
+static void eeprom_save_delays(uint8_t chan, uint16_t ms)
+{
+    if (chan < 1 || chan > 8) {
+        return;
+    }
+    uint8_t n = (uint8_t)(chan - 1);
+    eeprom_write(0x15 + n * 2, (uint8_t)(ms & 0xFF));
+    eeprom_write(0x15 + n * 2 + 1, (uint8_t)((ms >> 8) & 0xFF));
+}
+
+static void eeprom_load_delays(uint8_t chan)
+{
+    if (chan < 1 || chan > 8) {
+        return;
+    }
+    uint8_t n = (uint8_t)(chan - 1);
+    uint16_t lo = eeprom_read(0x15 + n * 2);
+    uint16_t hi = eeprom_read(0x15 + n * 2 + 1);
+    ch[n].delay_ms = (uint16_t)((hi << 8) | lo);
+}
+
 /* Load channel state from EEPROM (addresses 0x0D..0x14 = 8 bytes) */
 static void eeprom_load_state(void)
 {
@@ -199,6 +228,8 @@ static void eeprom_load_state(void)
         ch[i].mode   = b & 0x03;
         ch[i].on     = (b >> 2) & 0x01;
         ch[i].flags  = (b >> 3) & 0x03;    /* bits 3-4: delayed_off_en, double_tap_en */
+        eeprom_load_delays(i + 1);
+        ch[i].delay_ms = ch[i].delay_ms;    /* persist across boots */
         board_output(i, ch[i].on != 0);    /* apply loaded state to outputs */
     }
 }
@@ -247,14 +278,19 @@ static void handle_frame(const proto_frame_t *f)
         set_master(f->flag != 0);
         break;
     case PROTO_TYPE_CONFIG: {
-        /* payload: [channel, mode, duty, freq_lo, freq_hi, 0]
-         * mode: 0 = off, 1 = steady on, 2 = PWM */
+        /* payload: [channel, mode, duty, freq_lo, freq_hi, delay_secs]
+         * mode: 0 = off, 1 = steady on, 2 = PWM
+         * delay_secs: 0-255 seconds of run-on after release (fan/pump).
+         *   Only used with delayed-off enabled (flags bit0). */
         uint8_t chan = f->payload[0];
         uint8_t mode = f->payload[1];
         uint8_t duty = f->payload[2];
         uint16_t hz  = (uint16_t)f->payload[3] | ((uint16_t)f->payload[4] << 8);
+        uint8_t delay_secs = f->payload[5];
 
         if (chan >= 1 && chan <= 8 && mode <= 2) {
+            ch[chan - 1].delay_ms = (uint16_t)(delay_secs * 1000u);
+            eeprom_save_delays(chan, ch[chan - 1].delay_ms);
             if (mode == 2 && !pwm_channel_ok(chan)) {
                 out_set_mode(chan, 0);              /* no timer channel */
                 ch[chan - 1].on = 0;
@@ -267,6 +303,26 @@ static void handle_frame(const proto_frame_t *f)
                     pwm_set_duty(chan, duty);
                 }
                 ch[chan - 1].on = (mode != 0);
+            }
+        }
+        break;
+    }
+    case PROTO_TYPE_FORCE: {
+        /* payload: [channel, action]
+         * action: 0 = off, 1 = on, 2 = toggle
+         * Overrides normal state machine; cleared by next panel event. */
+        uint8_t chan = f->payload[0];
+        uint8_t action = f->payload[1];
+        if (chan >= 1 && chan <= 8 && action <= 2) {
+            uint8_t n = (uint8_t)(chan - 1);
+            if (action == 0) {
+                channel_set(n, 0);
+                ch[n].delayed_off_ticks = 0;
+            } else if (action == 1) {
+                channel_set(n, 1);
+                ch[n].delayed_off_ticks = 0;
+            } else {
+                channel_set(n, !ch[n].on);
             }
         }
         break;
