@@ -134,6 +134,10 @@ puts UART0/1/2/3 on several pins; the display-link candidates are listed in
 
 ### J1: STM8 SWIM
 
+The SWIM header is under the factory silicone potting. Peel the potting up by hand,
+remove it, then clean residue with a stiff nylon bristle brush and a small amount
+of IPA. The button panel is not potted.
+
 | Pad | Signal |
 |---|---|
 | `+` | V+ (3.3 V / 5 V) |
