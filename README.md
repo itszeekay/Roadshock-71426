@@ -1,211 +1,160 @@
 # ROADSHOCK Universal LED 8-Gang Switch Panel: Reverse Engineering
 
-**Harbor Freight SKU 71426** ·
-[product page](https://www.harborfreight.com/universal-led-8-gang-switch-panel-71426.html) ·
-[owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf)
+**Harbor Freight SKU 71426** · [product page](https://www.harborfreight.com/universal-led-8-gang-switch-panel-71426.html) · [owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf)
 
-Firmware analysis, pinouts, wire protocol, and a practical path to a
-CAN-controlled power distribution unit (PDU) built on the stock hardware.
+Firmware analysis, pinouts, wire protocol, and a practical path to a CAN-controlled power distribution unit (PDU) built on the stock hardware.
 
-![ROADSHOCK 71426 base/output unit with the lid off](images/hero.jpg)
-*ROADSHOCK 71426 base/output unit, lid removed. The terminal/fuse map is printed inside.*
+![ROADSHOCK 71426 base/output unit with the lid off](images/hero.jpg) *ROADSHOCK 71426 base/output unit, lid removed. The terminal/fuse map is printed inside.*
 
-This is a community reverse-engineering project for the **Harbor Freight 71426**
-8-gang switch panel system (also sold under related brand names). It covers both
-boards:
+This is a community reverse-engineering project for the **Harbor Freight 71426** 8-gang switch panel system (also sold under related brand names). It covers both boards:
 
 - the **base board** (the power/output module), and
 - the **button panel** (10-button remote with RGB status LEDs).
 
-Everything here was obtained from hardware the author owns: SWIM dumps of two
-unprotected STM8 microcontrollers, static analysis, and passive UART captures.
+Everything here was obtained from hardware the author owns: SWIM dumps of two unprotected STM8 microcontrollers, static analysis, and passive UART captures.
 
 ---
 
-## At a glance
+## What This Project Is
 
-| Item | Finding |
-|---|---|
-| Product | **ROADSHOCK Universal LED 8 Gang Switch Panel**, Harbor Freight **SKU 71426** |
-| Base MCU | **STM8S003F3P6**, TSSOP-20, 8 KB flash, ROP **open** |
-| Panel LED-driver MCU | **STM8S003K3**, LQFP-32, 8 KB flash, ROP **open** |
-| Panel BLE SoC | **ASR5601S**, QFN-48 (main panel controller; BLE does not advertise in this variant) |
-| Base ↔ panel link | UART, **2400 baud 8N1**, 11-byte frames, additive checksum |
-| Panel display link | UART, **115200 8N1**, 9-byte `0x5A … 0xEE` frames, 8 nibbles = 8 RGB LEDs |
-| Base outputs | 8 channels; stock is on/off only; our firmware adds **hardware PWM** (TIM1 + TIM2) |
-| Output stage | 8 × **D30PW40A** high-side P-FETs; channels **1–2 (30 A) use two in parallel** |
-| Per-channel fuses | 1–2: 30 A · 3–4: 20 A · 5–6: 10 A · 7–8: 5 A |
-| Current sensing | **None** on the stock board |
-| Bench CAN | **Adafruit RP2040 CAN Bus Feather** (MCP25625); used for early tests, not in the current design |
-| ADC / I2C in stock firmware | **Unused** in both STM8 images |
-| Custom base firmware | SDCC 4.5, ~2.6 KB of the 8 KB flash |
+This project documents the reverse-engineering of the Harbor Freight 71426 Universal LED 8-Gang Switch Panel. It covers:
+
+- **Hardware analysis**: pinouts, pin mappings, and hardware design
+- **Protocol reverse-engineering**: 2400-baud link between base board and panel
+- **Firmware analysis**: decompilation of base and panel STM8 firmware
+- **Protocol specification**: 2400-baud frame format, message types, replies, checksum
+- **Protocol tools**: Python scripts for validation, frame capture, and protocol reference
+- **Custom firmware**: SDCC-based firmware for the base board with hardware PWM
+- **CAN gateway/PDU plan**: design for a CAN-controlled power distribution unit
+
+This project documents everything needed to understand, repair, or build upon the 71426 switch panel system.
 
 ---
 
-## The two boards
+## What This Project Is Not
 
-<table>
-<tr>
-<td width="50%"><img src="images/base-unit.jpg" alt="Base/output unit"></td>
-<td width="50%"><img src="images/panel-front.jpg" alt="Button panel top side"></td>
-</tr>
-<tr>
-<td><em>Base/output unit: 8 fused outputs, D30PW40A high-side MOSFETs, STM8S003F3P6.</em></td>
-<td><em>Button panel top side: 8 tactile buttons and RGB LEDs.</em></td>
-</tr>
-<tr>
-<td><img src="images/panel-pcb.jpg" alt="Button panel bottom side"></td>
-<td><img src="images/panel-connectors.jpg" alt="Button panel connectors"></td>
-</tr>
-<tr>
-<td><em>Button panel PCB (bottom): ASR5601S (U1), STM8S003K3 (U2).</em></td>
-<td><em>J3 (ASR UART1 / boot mode) and the J2 cable.</em></td>
-</tr>
-</table>
+This project is **not**:
+- A commercial product
+- A commercial firmware release
+- A fully tested, production-ready solution
+- A complete CAN gateway implementation (still in design phase)
+- A replacement for the original ASR firmware
 
-### Base board
-
-- STM8S003F3P6 (TSSOP-20), 8 KB flash, 1 KB RAM.
-- 8 output channels on a 12-entry `{port, mask}` table:
-  **PA3, PA2, PC7, PC6, PC5, PC4, PC3, PD2**.
-- High-side output stage: **D30PW40A** P-channel MOSFETs (TO-263, 30 A / 40 V),
-  driven by **FMMT493** NPNs; channels **1–2 use two FETs in parallel**.
-- Fuse ratings, terminals 1–8: **30, 30, 20, 20, 10, 10, 5, 5 A**.
-- One digital input: **PA1 = ACC/ignition sense**.
-- No ADC, no I2C, no current sense.
-- SWIM programming header; option bytes unprotected.
-
-### Button panel
-
-Two processors with a clear split:
-
-| Part | Role |
-|---|---|
-| **ASR5601S** (U1) | Main panel controller: scans the 10 buttons, runs the UI, speaks the 2400-baud base link, optional BLE |
-| **STM8S003K3** (U2) | RGB LED display driver: 8 × RGB LEDs on 24 GPIOs, receives 115200 display frames |
-
-The STM8 has **no button inputs**. All 24 GPIOs are outputs. The buttons are on
-the ASR.
-
-The top side of the panel carries the 8 tactile buttons (K1–K8) and the RGB
-LEDs; the bottom side carries the ASR and the STM8.
+This is a research project documenting reverse engineering of proprietary hardware.
 
 ---
 
-## Protocol at a glance
+## What You Can Do With This Project
 
-### Base ↔ panel: 2400 baud, 11 bytes
-
-```
-seq  dir  type  flag  p0 p1 p2 p3 p4 p5  sum
-```
-
-- `dir` = `0x00` panel → base, `0xFF` base → panel
-- reply type = `type | 0x10`
-- `sum` = 8-bit sum of all preceding bytes
-- `0x08 0x0C` = live button bitmask
-- `0x07` = master power / configuration (`flag` 0x00 = off, 0x01 = on)
-- Replies: `0x18` (11 bytes) or `0x17` (12 bytes, one extra status byte)
-
-Example (verified on the wire):
-
-```
-panel: 19 00 08 0c 62 40 20 02 00 00 f1
-base : 19 ff 18 00 62 40 20 02 00 00 f4
-```
-
-### ASR → STM8 display: 115200 baud, 9 bytes
-
-```
-5A  xx  [n01] [n23] [n45] [n67]  xx  xx  EE
-```
-
-- Four payload bytes = eight nibbles, one per RGB LED.
-- Each nibble selects a 3-pin pattern (color).
-- The STM8 checks only `[0]==0x5A`, `[8]==0xEE`, length 9.
-
-See [`docs/protocol.md`](docs/protocol.md) and
-[`docs/panel.md`](docs/panel.md) for the full decode.
+- **Reverse engineer** similar products
+- **Build custom firmware** for the base board with additional features
+- **Develop a CAN gateway** to control the panel via CAN bus
+- **Create custom firmware** with new features like LED control or CAN integration
+- **Understand reverse engineering techniques** for similar embedded systems
 
 ---
 
-## Pinouts
+## What You Need
 
-### Base outputs
-
-| Channel | Port pin | Notes |
-|---|---|---|
-| 1 | PA3 | TIM2_CH3 (hardware PWM) |
-| 2 | PA2 | |
-| 3 | PC7 | TIM1_CH2 (hardware PWM) |
-| 4 | PC6 | TIM1_CH1 (hardware PWM) |
-| 5 | PC5 | TIM2_CH1 (AFR0, hardware PWM) |
-| 6 | PC4 | TIM1_CH4 (hardware PWM) |
-| 7 | PC3 | TIM1_CH3 (hardware PWM) |
-| 8 | PD2 | |
-| n/a | PA1 | ACC/ignition sense (input) |
-
-Entries 8–11 of the firmware table are PB4 spares.
-
-### Button panel RGB LEDs
-
-| Channel | pin1 | pin2 | pin3 |
-|---|---|---|---|
-| 0 | PA1 (2) | PA2 (3) | PA3 (7) |
-| 1 | PF4 (8) | PB7 (9) | PB6 (10) |
-| 2 | PB5 (11) | PB4 (12) | PB3 (13) |
-| 3 | PB2 (14) | PB1 (15) | PB0 (16) |
-| 4 | PE5 (17) | PC1 (18) | PC2 (19) |
-| 5 | PC3 (20) | PC4 (21) | PC5 (22) |
-| 6 | PC6 (23) | PC7 (24) | PD0 (25) |
-| 7 | PD2 (27) | PD3 (28) | PD4 (29) |
-
-Numbers in brackets are LQFP-32 package pins. Full tables, including the
-ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
+- **Hardware**: Harbor Freight 71426 switch panel (base board + button panel)
+- **Tools**: 
+  - ST-Link V2 + `stm8flash` (for SWIM operations)
+  - SDCC 4.5 (for custom firmware builds)
+  - Python 3 + `pyserial` (for protocol tools)
+  - Adafruit Feather RP2040 (for bus operations)
+  - Optional: Adafruit RP2040 CAN Bus Feather (MCP25625) for CAN testing
+- **Software**:
+  - Python 3
+  - SDCC 4.5 (in PATH)
+  - Python 3 + `pyserial`, `pyserial` tools
+  - Python 3 + `pyserial` tools for protocol operations
 
 ---
 
-## What works today
+## Quick Start Guide
+
+### Step 1: Protocol Reference Self-Test (No Hardware)
+```bash
+python3 tools/protocol_ref.py
+```
+
+### Step 2: Validate a Dump
+```bash
+python3 tools/validate_dump.py dumps/base/flash.bin 8192
+```
+
+### Step 3: Capture the Live 2400-baud Link with a Feather RP2040
+1. Copy `rp2040/dual_listen.py` to CIRCUITPY as `code.py`
+2. Wire:
+   - `RX` (GP1) → one signal wire
+   - `D9` (GP9) → the other signal wire
+   - `GND` → GND
+3. Open USB console (115200) and press buttons
+
+### Step 4: Build the Custom Base Firmware
+```bash
+cd firmware
+make
+```
+Build result: `build/roadshock.ihx` (application image)
+
+### Step 5: Flash the Custom Firmware
+```bash
+stm8flash -c stlinkv2 -p stm8s003f3 -s flash -w firmware/prebuilt/roadshock_full.ihx
+```
+Or `make flash-full` from `firmware/`.
+
+To run: disconnect `RST` / remove the ST-Link. The MCU is held in reset while `RST` is wired.
+
+12 V **off**. ST-Link on `V+`, `GND`, `SWIM`, `RST`.
+
+---
+
+## What Works Today
 
 - **Read the base firmware**: SWIM dump, 8 KB flash + 128 B EEPROM.
 - **Read the panel firmware**: same, ROP open.
 - **Capture the 2400-baud bus** with a Feather RP2040 (listen-only or MITM).
-- **Injection**: button frames, master power, and our custom `0x09` PWM
-  command.
-- **Hardware PWM** on 6 channels (1, 3, 4, 5, 6, 7) at 200–2000 Hz, 10–100 % duty
-  (TIM1 + TIM2, verified on a scope).
+- **Injection**: button frames, master power, and our custom `0x09` PWM command.
+- **Hardware PWM** on 6 channels (1, 3, 4, 5, 6, 7) at 200–2000 Hz, 10–100 % duty (TIM1 + TIM2, verified on a scope).
 - **Wiper control** on Channel 5 (PC5/TIM2_CH1) via custom protocol type `0x0D`.
 - **Build custom base firmware** with SDCC 4.5.
-- **ASR datasheet reference**: V1.4.0 OCR text plus a compressed print, with the
-  QFN48 pin map, UART mux, keypad and peripheral map reviewed.
+- **ASR datasheet reference**: V1.4.0 OCR text plus a compressed print, with the QFN48 pin map, UART mux, keypad and peripheral map reviewed.
 - **Restore the STM8 stock firmware** from verified images at any time.
 
 ---
 
-## What is still open
+## What Is Still Open
 
-- The **ASR5601S firmware** has not been dumped. Its button/UI logic is not yet
-  understood. SWD (P06/P07) is the reliable dump route. The J3 UART
-  monitor also has a documented read candidate, `coredump flash all`, which is
-  a capture command and needs no license. See
-  [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
-- Bench verification of the four stock channel modes and the low-frequency TIM1
-  prescaler fix. Both are built, but the prebuilt full image has not been
-  flashed for those tests.
+- The **ASR5601S firmware** has not been dumped. Its button/UI logic is not yet understood. SWD (P06/P07) is the reliable dump route. The J3 UART monitor also has a documented read candidate, `coredump flash all`, which is a capture command and needs no license. See [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
+- Bench verification of the four stock channel modes and the low-frequency TIM1 prescaler fix. Both are built, but the prebuilt full image has not been flashed for those tests.
 - Direct control of the panel LEDs without touching the private 115200 link.
-  Over J2 alone, the LEDs remain under the ASR's UI control.
+- Over J2 alone, the LEDs remain under the ASR's UI control.
 - The final CAN gateway/PDU hardware (CAN controller choice, current sensing).
 
 ---
 
-## Test hardware
+## Test Hardware
 
-The bench used an Adafruit Feather RP2040 DVI for UART capture and an
-**Adafruit RP2040 CAN Bus Feather (MCP25625)** for early CAN testing. The CAN
-Feather is not part of the current design and is not actively used. See
-[`docs/test-hardware.md`](docs/test-hardware.md).
+The bench used an Adafruit Feather RP2040 DVI for UART capture and an **Adafruit RP2040 CAN Bus Feather (MCP25625)** for early CAN testing. The CAN Feather is not part of the current design and is not actively used. See [`docs/test-hardware.md`](docs/test-hardware.md).
 
-## Repository layout
+Board notes:
+- RP2040, 8 MB QSPI flash, 264 KB RAM, 3.3 V logic
+- MCP25625 on SPI: SCK/MOSI/MISO plus CS, INT and standby
+- 5 V charge pump for the transceiver
+- 3.5 mm terminal block: CAN H, CAN L, GND
+- 120 ohm termination fitted; cut the `TERM` jumper to remove it
+- UART0 on TX/RX; UART1 on D24/D25 (or D4/D9/D5, depending on the mux)
+- TX pins are not connected. Check that the idle level is 3.3 V; the RP2040 is not 5 V tolerant.
+
+If it is reused:
+- Tie the Feather ground to the bus ground
+- Fit 120 ohm termination only at the two ends of the bus
+- Keep CAN H/L away from the 2400-baud panel link
+
+---
+
+## Repository Layout
 
 ```
 docs/       human-readable documentation
@@ -222,7 +171,7 @@ images/     board photos
 
 ---
 
-## Quick start
+## Quick Start
 
 ```bash
 # 1. Protocol reference self-test (no hardware)
@@ -234,17 +183,13 @@ python3 tools/validate_dump.py dumps/base/flash.bin 8192
 # 3. Capture the live 2400-baud link with a Feather RP2040
 #    copy rp2040/dual_listen.py to CIRCUITPY as code.py
 #    wire the two signal wires to board.RX and board.D9, GND to GND
-
-# 4. Build the custom base firmware (SDCC 4.5 in PATH)
-cd firmware && make
 ```
 
-Build, flash, and restore details are in
-[`docs/reproduce.md`](docs/reproduce.md).
+Build, flash, and restore details are in [`docs/reproduce.md`](docs/reproduce.md).
 
 ---
 
-## Status and confidence
+## Status and Confidence
 
 Findings are tagged where it matters:
 
@@ -252,32 +197,18 @@ Findings are tagged where it matters:
 - **Inferred**: consistent with the evidence but not proven.
 - **Unknown**: not yet determined.
 
-The protocol, pin maps, dump integrity, PWM behavior, and the STM8 display
-driver are verified. The custom firmware's auto-functions (valet, delayed-off,
-double-tap latch, force override) and wiper control are implemented and
-bench-verified. The four stock channel modes and the low-frequency prescaler
-fix are built but not yet flashed for bench testing. The ASR firmware and any
-J2-only LED control are not verified.
+The protocol, pin maps, dump integrity, PWM behavior, and the STM8 display driver are verified. The custom firmware's auto-functions (valet, delayed-off, double-tap latch, force override) and wiper control are implemented and bench-verified. The four stock channel modes and the low-frequency prescaler fix are built but not yet flashed for bench testing. The ASR firmware and any J2-only LED control are not verified.
 
 ---
 
 ## Safety
 
-This is 12 V automotive hardware. Fuse every output, never work on it live,
-and do not use this project for safety-critical systems. The authors accept no
-liability for damage or injury.
+This is 12 V automotive hardware. Fuse every output, never work on it live, and do not use this project for safety-critical systems. The authors accept no liability for damage or injury.
 
 ---
 
-## Legal and license
+## Legal and License
 
-Original code and documentation in this repository are released under the MIT
-license (see [`LICENSE`](LICENSE)). Stock firmware dumps are provided for
-interoperability and research on hardware owned by the author. Vendor material
-remains the property of its respective owners. The ASR reference archive
-contains ASR-published documentation, the DOGO tool, and an OCR text and print
-of the ASR560X datasheet. See [`NOTICE.md`](NOTICE.md).
+Original code and documentation in this repository are released under the MIT license (see [`LICENSE`](LICENSE)). Stock firmware dumps are provided for interoperability and research on hardware owned by the author. Vendor material remains the property of its respective owners. The ASR reference archive contains ASR-published documentation, the DOGO tool, and an OCR text and print of the ASR560X datasheet. See [`NOTICE.md`](NOTICE.md).
 
-Harbor Freight and the product names are trademarks of their owners. This
-project is not affiliated with or endorsed by Harbor Freight, the OEM, or ASR
-Microelectronics.
+Harbor Freight and the product names are trademarks of their owners. This project is not affiliated with or endorsed by Harbor Freight, the OEM, or ASR Microelectronics.
