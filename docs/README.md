@@ -10,6 +10,7 @@ MCUs in this project: base board **STM8S003F3P6** (TSSOP-20), button panel **STM
 | [protocol.md](protocol.md) | 2400-baud frame format, message types, replies, checksum, display link |
 | [firmware.md](firmware.md) | Base and panel firmware behavior, decompilation, custom firmware |
 | [channel_guide.md](channel_guide.md) | Channel-by-channel capabilities, PWM suitability, and wiring recommendations |
+| [wiper_control.md](wiper_control.md) | Wiper motor wiring, park switch by vehicle, safety notes, PWM frequency |
 | [panel.md](panel.md) | Panel architecture, ASR + STM8 split, buttons, LEDs, standalone behavior |
 | [asr5601.md](asr5601.md) | ASR5601S pin map, J3, boot mode, dump options |
 | [asr5601_datasheet.md](asr5601_datasheet.md) | Datasheet review: corrected pin map, UART mux, keypad, memory map, 5 V I/O |
