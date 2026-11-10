@@ -29,7 +29,7 @@ Target: **STM8S003F3P6** (8 KB flash, 1 KB RAM). Built with **SDCC 4.5**
 
 - The four modes are implemented but have not all been exercised on hardware.
 - The prescaler fix is built into the prebuilt full image but has not been
-  flashed; 50–199 Hz has not been re-measured.
+  flashed; 50-199 Hz has not been re-measured.
 
 ## Source
 
@@ -87,9 +87,9 @@ Remove `RST`/the ST-Link to run.
 [channel, mode, duty, freq_lo, freq_hi, 0]
 ```
 
-- `mode`: `0` off, `1` steady on, `2` PWM
-- `duty`: 0–100
-- `freq`: 50–2000 Hz, 16-bit little-endian
+- `mode`: `0` off, `1` steady on, `2` PWM, `3` PWM with soft start
+- `duty`: 0-100
+- `freq`: 50-2000 Hz, 16-bit little-endian (mode 2 only)
 - Reply: `0x19`
 
 ## PWM notes
