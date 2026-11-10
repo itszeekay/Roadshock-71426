@@ -110,6 +110,18 @@ The stock base does not implement it. Payload:
   bench-tested at 200–2000 Hz
 - Reply: `0x19` (type `0x09 | 0x10`), 11 bytes.
 
+### Custom type `0x0D` (our firmware only)
+
+The custom type `0x0D` (WIPER) provides wiper control:
+
+```
+[channel, action, duty]
+```
+
+- `channel`: 1–8 (which output channel to control)
+- `action`: `0` = off, `1` = slow PWM, `2` = fast PWM, `3` = intermittent momentary
+- `duty`: 0–100 PWM duty cycle (for actions 1 & 2 only)
+
 ---
 
 ## 2. ASR → STM8 display link: 115200 8N1

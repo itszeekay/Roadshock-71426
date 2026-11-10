@@ -51,6 +51,7 @@ Stock restore: `restore/base_flash.raw.bin`
 | LED light bars (dim) | **3, 4, 6, 7 (Group A)** | Share freq, independent brightness |
 | Aux fans (if 2+) | **1 + 5 (Group B)** | Enable `PWM_ENABLE_CH5` for 2nd fan |
 | Water pump (on/off) | 2 or 5 | High current, simple on/off |
+| Wiper PWM | **5 (Group B)** | 10 A fuse, independent TIM2 freq |
 | Ignition/ECU power | 7 or 8 | Low current, GPIO |
 | Compressor clutch | 5 or 8 | On/off |
 

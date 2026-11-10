@@ -1,58 +1,53 @@
 # Roadshock 71426: Configuration Options
 
-You can run your Roadshock panel in one of three ways, depending on how much control you need.
+Three ways to run the panel. Stock is the default; the other two add a microcontroller.
 
-## Feature Overview
+## 1. Stock (no modifications)
+- Panel works exactly as it came from the factory.
+- Four modes via the Mode button: toggle, momentary, pulse, blink.
+- No remote control, no dimming, no automation.
 
-| Feature | Stock Panel | Panel + Smart Controller | Panel + Custom Firmware |
-| :--- | :---: | :---: | :---: |
-| **Simple Operation** | ✅ | ✅ | ✅ |
-| **Remote Control (App/Web)** | ❌ | ⚠️ *Limited* | ✅ **Full** |
-| **Advanced Auto-Functions** | ❌ | ❌ | ✅ **Yes** |
-| **System Diagnostics** | ❌ | ❌ | ✅ **Real-time** |
+## 2. Panel + Smart Controller (stock firmware on the middle MCU)
+- Add a separate microcontroller (ESP32, RP2040, etc.) to send commands over the 2400 baud link.
+- Can turn channels on/off and cycle modes remotely.
+- **Limited to:** No PWM dimming, no status feedback, no auto-functions, no persistence after power loss.
 
----
-
-## The Three Configurations
-
-### 1. Stock (No Modifications)
-*Use this if you just want the panel to work exactly as it came out of the box.*
-- **Experience:** Reliable, simple 12 V power distribution.
-- **Limitation:** Fixed functionality. No remote access, no dimming, no automation.
-
-### 2. Panel + Smart Controller (Stock Firmware)
-*Use this if you want remote control but don't want to flash the panel.*
-- **Experience:** Add a middle MCU (like an ESP32) to send basic commands.
-- **Capabilities:** Turn channels on/off and cycle modes remotely.
-- **Limitation:** You are limited to the stock firmware's capabilities; no status feedback, no PWM dimming, no advanced logic.
-
-### 3. Panel + Custom Firmware (Recommended)
-*Use this to unlock the full potential of your hardware.*
-- **Experience:** A smart power distribution system.
-- **Capabilities:**
-    - **Smooth Dimming (PWM):** Control LED brightness or motor speed on 6 channels.
-    - **Smart Auto-Functions:** 
-        - *Valet Mode:* Hold any button to kill all power.
-        - *Fan/Pump Run-on:* Set a timer for pumps or fans to run after engine shutdown.
-        - *Smart Latching:* Double-tap to toggle functions.
-    - **Full Diagnostics:** Real-time status feedback for every channel.
-    - **Total Control:** Override any channel instantly.
+## 3. Panel + Custom Firmware (flash once via SWIM header)
+- Full control. All 6 PWM-capable channels work. Settings persist.
+- **Hardware PWM on 6 channels:**
+  - Channels 1 & 5: Independent speed/ramp control (radiator fans, fuel pumps) - Group B (TIM2)
+  - Channels 3, 4, 6, 7: Dimming/brightness control (LED light bars) - Group A (TIM1)
+  - Channels 2 & 8: GPIO only (software PWM available but coarse - not for smooth control)
+- **Auto-functions (all persist after power loss):**
+  - Valet mode: Hold any button ~0.8 s → all outputs off
+  - Delayed-off (fan/run-on): Configurable 0–255 s; channel stays on after release, then auto-off
+  - Double-tap latch: Two presses <1 s → momentary function becomes toggle
+  - Force override: Immediately on/off/toggle any channel; clears on next panel event
+- **Status feedback:** Request current state of all 6 channels + master at any time
 
 ---
 
-## Hardware PWM Compatibility
+**Choose option 3 if you want dimming, auto-functions, or remote status.** Otherwise stock works fine for basic on/off.
 
-To ensure smooth performance, we've optimized 6 channels for hardware-accelerated control (dimming/speed):
+*See `docs/startup_guide.md` for wiring, flashing, and protocol details.*
 
-| Channel | Best Use |
-| :--- | :--- |
-| **1 & 5** | **Independent Speed/Ramp Control** (e.g., Radiator fans, Fuel pumps) |
-| **3, 4, 6, 7** | **Dimming / Brightness Control** (e.g., LED light bars) |
-| **2 & 8** | On/Off only (High-power devices) |
+**Real-world use cases:**
+- Radiator fan control (variable speed)
+- Fuel pump priming and run-on
+- LED light bar dimming
+- Water pump on/off
+- Auxiliary fan control
+- Ignition/ECU power
+- Compressor clutch control
 
----
+**Real-world use cases:**
+- Radiator fan control (variable speed)
+- Fuel pump priming and run-on
+- LED light bar dimming
+- Water pump on/off
+- Auxiliary fan control
+- Ignition/ECU power
+- Compressor clutch control
+- Windshield wiper speed control (slow/fast PWM, intermittent wipe)
 
-## How to get started
-If you choose **Option 3**, simply flash the panel once using our provided firmware image via the SWIM header. No further hardware mods or proprietary apps are required.
-
-*For wiring guides, protocol documentation for developers, and flashing instructions, see `docs/startup_guide.md`.*
+**Wiper control:** The custom firmware adds dedicated wiper control via the custom protocol type `0x0D` (off, slow PWM, fast PWM, intermittent momentary). The wiper output is driven on Channel 5 (PC5/TIM2_CH1, 10 A fuse), which uses hardware PWM with an independent frequency. The high-speed winding of the wiper motor is PWM driven; the low-speed winding is left disconnected. Park-position feedback is not available on the base board. The middle ECU polls the park switch through a GPIO and resistor divider and sends `type 0x0D action=0` to turn Channel 5 off when park is detected.

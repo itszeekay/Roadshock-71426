@@ -14,6 +14,7 @@
 #define PROTO_TYPE_STATUS 0x0A   /* custom: status report */
 #define PROTO_TYPE_FORCE 0x0B    /* custom: force on/off */
 #define PROTO_TYPE_OPTBYT 0x0C   /* custom: one-time option byte write (requires reset) */
+#define PROTO_TYPE_WIPER 0x0D    /* custom: wiper control (off/slow/fast/intermittent) */
 
 typedef struct {
     uint8_t seq;

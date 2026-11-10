@@ -357,6 +357,40 @@ static void handle_frame(const proto_frame_t *f)
         }
         break;
     }
+    case PROTO_TYPE_WIPER: {
+        /* payload: [action, duty]
+         * action: 0 = off, 1 = slow PWM, 2 = fast PWM, 3 = intermittent momentary
+         * duty: 0-100 PWM duty cycle (for actions 1 & 2 only)
+         * Wiper output uses channel 5 (PC5/TIM2_CH1, 10 A fuse). */
+        uint8_t wiper_action = f->payload[0];
+        uint8_t wiper_duty = f->payload[1] & 0x3F;  /* 0–63 */
+        uint8_t n = 4;  /* channel 5 = index 4 (0-based) */
+
+        if (n >= 8) break;
+
+        switch (wiper_action) {
+            case 0: /* off */
+                channel_set(n, 0);
+                break;
+            case 1: /* slow PWM (~50 Hz for slow sweep) */
+                pwm2_set_frequency(50);   /* ~50 Hz → slow wiper speed */
+                pwm2_set_duty(n, wiper_duty);
+                channel_set(n, 1);
+                break;
+            case 2: /* fast PWM (~100 Hz for fast sweep) */
+                pwm2_set_frequency(100);  /* ~100 Hz → fast wiper speed */
+                pwm2_set_duty(n, wiper_duty);
+                channel_set(n, 1);
+                break;
+            case 3: /* intermittent momentary */
+                /* Single sweep: momentary on, then off.
+                 * Without a park switch, motor will coast. */
+                channel_set(n, 1);
+                /* TODO: add timed auto-off when bench-verified */
+                break;
+        }
+        break;
+    }
     default:
         break;                        /* unknown types are ignored           */
     }
