@@ -19,8 +19,8 @@ The base board is potted with silicone from the factory. To access the SWIM
 header, peel the potting up by hand, remove it, then clean residue with a stiff
 nylon bristle brush and a small amount of IPA. The button panel is not potted.
 
-The SWIM header (J1) has four pads: `V+`, `GND`, `SWIM`, `RST`. The pad pitch
-has not been measured; the panel J3 pads are approximately 1.27 mm pitch.
+The base board SWIM header has four pads: `V+`, `GND`, `SWIM`, `RST`. The pad
+pitch has not been measured; the panel J3 pads are approximately 1.27 mm pitch.
 Wire the ST-Link to the SWIM header: `V+`, `GND`, `SWIM`, and `RST` for reliable
 flashing. **Power the board from 12 V only with the ST-Link's 3.3 V
 disconnected.**

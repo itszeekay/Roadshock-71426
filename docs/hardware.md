@@ -38,9 +38,9 @@ Output map (verified from the firmware table and by measurement):
 | Ch | Pin | Ch | Pin |
 |---|---|---|---|
 | 1 | PA3 | 5 | PC5 |
-| 2 | PA2 | 6 | PC4 (TIM1_CH4) |
+| 2 | PA2 | 6 | PC4 |
 | 3 | PC7 | 7 | PC3 |
-| 8 | PD2 | 8 | PD2 |
+| 4 | PC6 | 8 | PD2 |
 
 The firmware table has 12 entries; entries 8–11 are PB4 spares.
 

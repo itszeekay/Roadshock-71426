@@ -132,11 +132,11 @@ puts UART0/1/2/3 on several pins; the display-link candidates are listed in
 
 ## Headers
 
-### J1: STM8 SWIM
+### Base board SWIM header (no designator)
 
-The SWIM header is under the factory silicone potting. Peel the potting up by hand,
-remove it, then clean residue with a stiff nylon bristle brush and a small amount
-of IPA. The button panel is not potted.
+The base board is potted with silicone from the factory. To access the SWIM
+header, peel the potting up by hand, remove it, then clean residue with a stiff
+nylon bristle brush and a small amount of IPA.
 
 | Pad | Signal |
 |---|---|
@@ -144,7 +144,23 @@ of IPA. The button panel is not potted.
 | `SWIM` | PD1 |
 | `RST` | NRST |
 
-### J3: ASR5601S
+### Button panel headers
+
+J1, J2, and J3 are on the button panel. The panel is not potted.
+
+#### J1: panel STM8 SWIM
+
+| Pad | Signal |
+|---|---|
+| `+` | V+ (3.3 V / 5 V) |
+| `SWIM` | PD1 |
+| `RST` | NRST |
+
+#### J2: base ↔ panel
+
+Four wires: power, GND, and two 2400-baud signal wires.
+
+#### J3: ASR5601S
 
 | Pad | Signal |
 |---|---|
@@ -156,11 +172,6 @@ of IPA. The button panel is not potted.
 | `SEL0` | ASR P00 (pin 40) |
 
 `SEL1` (P01, pin 41) is not brought out; it has an internal pull-down.
-
-### J2: base ↔ panel
-
-Four wires: power, GND, and two 2400-baud signal wires. There is **no CAN and no
-address field** on this link.
 
 ## Feather RP2040 wiring
 
