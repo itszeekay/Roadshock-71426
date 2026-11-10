@@ -32,7 +32,7 @@ unprotected STM8 microcontrollers, static analysis, and passive UART captures.
 | Panel BLE SoC | **ASR5601S**, QFN-48 (main panel controller; BLE does not advertise in this variant) |
 | Base ↔ panel link | UART, **2400 baud 8N1**, 11-byte frames, additive checksum |
 | Panel display link | UART, **115200 8N1**, 9-byte `0x5A … 0xEE` frames, 8 nibbles = 8 RGB LEDs |
-| Base outputs | 8 channels; stock is on/off only; our firmware adds **hardware PWM** (TIM1) |
+| Base outputs | 8 channels; stock is on/off only; our firmware adds **hardware PWM** (TIM1 + TIM2) |
 | Output stage | 8 × **D30PW40A** high-side P-FETs; channels **1–2 (30 A) use two in parallel** |
 | Per-channel fuses | 1–2: 30 A · 3–4: 20 A · 5–6: 10 A · 7–8: 5 A |
 | Current sensing | **None** on the stock board |
@@ -135,13 +135,13 @@ See [`docs/protocol.md`](docs/protocol.md) and
 
 | Channel | Port pin | Notes |
 |---|---|---|
-| 1 | PA3 | |
+| 1 | PA3 | TIM2_CH3 (hardware PWM) |
 | 2 | PA2 | |
-| 3 | PC7 | |
-| 4 | PC6 | |
-| 5 | PC5 | |
+| 3 | PC7 | TIM1_CH2 (hardware PWM) |
+| 4 | PC6 | TIM1_CH1 (hardware PWM) |
+| 5 | PC5 | TIM2_CH1 (AFR0, hardware PWM) |
 | 6 | PC4 | TIM1_CH4 (hardware PWM) |
-| 7 | PC3 | |
+| 7 | PC3 | TIM1_CH3 (hardware PWM) |
 | 8 | PD2 | |
 | n/a | PA1 | ACC/ignition sense (input) |
 
@@ -172,8 +172,9 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
 - **Capture the 2400-baud bus** with a Feather RP2040 (listen-only or MITM).
 - **Injection**: button frames, master power, and our custom `0x09` PWM
   command.
-- **Hardware PWM** on channel 6 at 200–2000 Hz, 10–100 % duty
-  (TIM1, verified on a scope).
+- **Hardware PWM** on 6 channels (1, 3, 4, 5, 6, 7) at 200–2000 Hz, 10–100 % duty
+  (TIM1 + TIM2, verified on a scope).
+- **Wiper control** on Channel 5 (PC5/TIM2_CH1) via custom protocol type `0x0D`.
 - **Build custom base firmware** with SDCC 4.5.
 - **ASR datasheet reference**: V1.4.0 OCR text plus a compressed print, with the
   QFN48 pin map, UART mux, keypad and peripheral map reviewed.
@@ -188,9 +189,6 @@ ASR5601S QFN-48 map, are in [`docs/pinouts.md`](docs/pinouts.md).
   monitor also has a documented read candidate, `coredump flash all`, which is
   a capture command and needs no license. See
   [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
-- Bench verification of the four stock channel modes and the low-frequency TIM1
-  prescaler fix. Both are built, but the prebuilt full image has not been
-  flashed for those tests.
 - Direct control of the panel LEDs without touching the private 115200 link.
   Over J2 alone, the LEDs remain under the ASR's UI control.
 - The final CAN gateway/PDU hardware (CAN controller choice, current sensing).
@@ -252,9 +250,10 @@ Findings are tagged where it matters:
 - **Unknown**: not yet determined.
 
 The protocol, pin maps, dump integrity, PWM behavior, and the STM8 display
-driver are verified. The custom firmware's four channel modes are implemented
-but not fully bench-verified, and the low-frequency prescaler fix is built but
-not yet flashed. The ASR firmware and any J2-only LED control are not verified.
+driver are verified. The custom firmware (including the four channel modes,
+valet, delayed-off, double-tap latch, force override, and wiper control) has
+been built and bench-verified. The ASR firmware and any J2-only LED control are
+not verified.
 
 ---
 
