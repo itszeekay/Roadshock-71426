@@ -162,6 +162,6 @@ uint8_t optbyte_read(uint16_t addr);
 
 void optbyte_set_afr(uint8_t afr_bits);   /* writes AFR byte, requires reset */
 
-/* Status frame: type 0x0A (custom) — declared in protocol.h */
+/* Status frame: type 0x0A (custom) - declared in protocol.h */
 
 #endif /* BOARD_H */

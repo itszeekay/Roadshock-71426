@@ -43,14 +43,14 @@ The STM8S003F3P6 has two 16-bit timers with PWM output:
 
 | Channel | Pin | TIM1 channel | TIM2 channel | Notes |
 |---|---|---|---|---|
-| 1 | PA3 | — | **CH3 (default)** | **HW PWM** (independent freq & duty) |
-| 2 | PA2 | — | — | GPIO only (OSCOUT) |
-| 3 | PC7 | CH2 | — | **HW PWM** (shared TIM1 freq) |
-| 4 | PC6 | CH1 | — | **HW PWM** (shared TIM1 freq) |
-| 5 | PC5 | — | CH1 (AFR0) | HW PWM if remapped |
-| 6 | PC4 | CH4 | — | **HW PWM** (shared TIM1 freq) |
-| 7 | PC3 | CH3 | — | **HW PWM** (shared TIM1 freq) |
-| 8 | PD2 | — | CH3 (AFR1) | HW PWM if remapped |
+| 1 | PA3 | - | **CH3 (default)** | **HW PWM** (independent freq & duty) |
+| 2 | PA2 | - | - | GPIO only (OSCOUT) |
+| 3 | PC7 | CH2 | - | **HW PWM** (shared TIM1 freq) |
+| 4 | PC6 | CH1 | - | **HW PWM** (shared TIM1 freq) |
+| 5 | PC5 | - | CH1 (AFR0) | HW PWM if remapped |
+| 6 | PC4 | CH4 | - | **HW PWM** (shared TIM1 freq) |
+| 7 | PC3 | CH3 | - | **HW PWM** (shared TIM1 freq) |
+| 8 | PD2 | - | CH3 (AFR1) | HW PWM if remapped |
 
 **TIM1 (channels 3,4,6,7):**
 - Four channels share one frequency (ARR/PSC)

@@ -17,13 +17,13 @@ Stock restore: `restore/base_flash.raw.bin`
 | Ch | Terminal | Fuse | Pin | Hardware PWM | Timer / Channel | Freq Group | Duty Cycle | Notes |
 |----|----------|------|-----|--------------|-----------------|------------|------------|-------|
 | **1** | 1 | 30 A | **PA3** | ✅ **Yes** | TIM2_CH3 (default) | **B** | Independent | Best for fan/fuel-pump ramp |
-| **2** | 2 | 30 A | PA2 | ❌ No | — | — | — | GPIO only (no timer AF) |
+| **2** | 2 | 30 A | PA2 | ❌ No | - | - | - | GPIO only (no timer AF) |
 | **3** | 3 | 20 A | PC7 | ✅ Yes | TIM1_CH2 | **A** | Independent | Shared freq with 4,6,7 |
 | **4** | 4 | 20 A | PC6 | ✅ Yes | TIM1_CH1 | **A** | Independent | Shared freq with 3,6,7 |
 | **5** | 5 | 10 A | PC5 | ✅ **With AFR0** | TIM2_CH1 (remap) | **B** | Independent | Same freq as Ch 1 |
 | **6** | 6 | 10 A | PC4 | ✅ Yes | TIM1_CH4 | **A** | Independent | Shared freq with 3,4,7 |
 | **7** | 7 | 5 A | PC3 | ✅ Yes | TIM1_CH3 | **A** | Independent | Shared freq with 3,4,6 |
-| **8** | 8 | 5 A | PD2 | ❌ No | — | — | — | GPIO only (AFR1 steals Ch 1) |
+| **8** | 8 | 5 A | PD2 | ❌ No | - | - | - | GPIO only (AFR1 steals Ch 1) |
 
 **All 8 outputs are 12 V high-side switched.** The table above only shows which have hardware PWM for smooth duty control.
 
