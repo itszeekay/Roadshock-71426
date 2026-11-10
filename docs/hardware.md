@@ -44,7 +44,7 @@ Output map (verified from the firmware table and by measurement):
 | 3 | PC7 | 7 | PC3 |
 | 4 | PC6 | 8 | PD2 |
 
-The firmware table has 12 entries; entries 8–11 are PB4 spares.
+The firmware table has 12 entries; entries 8-11 are PB4 spares.
 
 ### Hardware PWM (TIM1 + TIM2) per channel
 
@@ -64,11 +64,11 @@ The STM8S003F3P6 has two 16-bit timers with PWM output:
 **TIM1 (channels 3,4,6,7):**
 - Four channels share one frequency (ARR/PSC)
 - Individual duty cycles via CCRx
-- Frequency range 50–2000 Hz (gate driver limit)
+- Frequency range 50-2000 Hz (gate driver limit)
 
 **TIM2 (channel 1 by default, 5/8 with AFR remap):**
 - Completely independent timer
-- Own frequency (1 Hz – 20+ kHz) and duty
+- Own frequency (1 Hz-20+ kHz) and duty
 - Channel 1 (PA3) works immediately; no remap needed
 - Channels 5/8 need option byte AFR0/AFR1 set (one-time)
 
@@ -83,7 +83,7 @@ The STM8S003F3P6 has two 16-bit timers with PWM output:
 Each gang is high-side switched by a **P-channel D30PW40A** (TO-263 / D2PAK, 30 A / 40 V), driven through a SOT-23 **FMMT493** NPN (marking `493`) with a gate pull-up. MCU high → NPN on → gate low → P-FET on; the channels are active-high.
 
 **Channels 1 and 2 (the 30 A outputs) use two D30PW40A devices in parallel.**
-Channels 3–4 (20 A), 5–6 (10 A) and 7–8 (5 A) use one each.
+Channels 3-4 (20 A), 5-6 (10 A) and 7-8 (5 A) use one each.
 
 The terminal label inside the lid gives the order:
 

@@ -489,12 +489,12 @@ plate(0x816D,
       "Mode handler (Roadstm8true, 2026-11-09).\n"
       "Converts incoming mode byte 1/3/5/7 -> internal 0/2/4/8 (off/toggle/momentary/pulse).\n"
       "Dispatches on internal mode to sub_84b3/sub_84b9/sub_84c5/sub_8485 + sub_848b + sub_828d.\n"
-      "See docs/mode_timing.md. Timing constants still need bench measurement.")
+      "See docs/protocol.md, section Stock channel modes. Timing constants still need bench measurement.")
 plate(0x8F7E,
       "UART1 configure (Roadstm8true, 2026-11-09). Caller is uart1_init_2400 at 0x9B17.\n"
       "Caller sets DAT_0007=0x0C, DAT_0006=0x80, DAT_0005=0, DAT_0004=0, DAT_0002=0x960 (2400)\n"
       "then CALLs this function. BRR1/BRR2 split via sub_99dc (>>4). Live value: 2400 baud\n"
-      "(BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/mode_timing.md.")
+      "(BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/protocol.md, section Stock channel modes.")
 plate(0x8FB5, "UART1 configure with explicit params (CR1/BRR/CR2/CR3 from args).")
 plate(0x8E5C,
       "System init. Calls uart1_init_2400, clk_set_divider, uart1_set_control_bits,\n"

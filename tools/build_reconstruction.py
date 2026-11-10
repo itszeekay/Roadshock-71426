@@ -39,7 +39,7 @@ HEADER_BASE = """/*
  * uart1_init_2400, mode_handler, frame_handler, cmd_0b_handler,
  * cmd_0d_handler, cmd_19_handler, config_mode_handler, etc.) were
  * assigned from call sites and confirmed against assembly; see
- * tools/ghidra/build_project.py and docs/mode_timing.md,
+ * tools/ghidra/build_project.py and docs/protocol.md (section "Stock channel modes"),
  * docs/hidden_commands.md. Generic names
  * (sub_*, FUN_*, gap_*, vec_*) are Ghidra defaults for code that has
  * not been given a role yet.

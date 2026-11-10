@@ -43,7 +43,8 @@ Two loops run concurrently:
   through installed callback pointers, and `mode_tick` (0x8700) divides that
   loop rate by 3 (`mode_div`). Blink/pulse pacing is therefore a function of
   main-loop throughput (UART polling), not a clocked timer. Exact periods
-  need a bench measurement (see `mode_timing.md`).
+  need a bench measurement (see [protocol.md](protocol.md), section "Stock
+channel modes").
 
 ### Frame handler
 
@@ -78,7 +79,8 @@ Each internal branch writes `0x10*N` or `*pb | N` through
 `ch_edit < 0x0C`. The type-7 parameter path runs the same logic over 12
 nibbles via `config_mode_handler`. The four stock modes (toggle / momentary /
 pulse / blinking) are implemented by this dispatch. Exact blink/pulse timing
-and EEPROM encoding are bench items; see `mode_timing.md`.
+and EEPROM encoding are bench items; see [protocol.md](protocol.md), section
+"Stock channel modes".
 
 ### Outputs
 

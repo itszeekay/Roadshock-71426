@@ -64,12 +64,12 @@ PA1 is the ACC/ignition input.
 
 - High-side **P-channel D30PW40A** (TO-263 / D2PAK, 30 A / 40 V), driven by a
   SOT-23 **FMMT493** NPN (marking `493`) with a gate pull-up; active-high.
-- **Channels 1–2 (30 A)** are fitted with **two D30PW40A in parallel**;
-  channels 3–4 (20 A), 5–6 (10 A) and 7–8 (5 A) use one each.
+- **Channels 1-2 (30 A)** are fitted with **two D30PW40A in parallel**;
+  channels 3-4 (20 A), 5-6 (10 A) and 7-8 (5 A) use one each.
 - Terminal label inside the lid: **1-2 = 30 A, 3-4 = 20 A, 5-6 = 10 A,
-  7–8 = 5 A**.
+  7-8 = 5 A**.
 - The manual's per-circuit list is 5, 5, 10, 10, 20, 20, 30, 30 for buttons
-  1–8; the lid label gives the physical order with terminal 1 at 30 A.
+  1-8; the lid label gives the physical order with terminal 1 at 30 A.
 
 ## Protocol
 
@@ -88,13 +88,13 @@ Verified from live captures:
 - Stock on/off works.
 - TIM1 hardware PWM on channel 6 (PC4 = TIM1_CH4) works.
 - Measured: 200, 500, 1000, 1500, 2000 Hz.
-- Duty: 10–100 % and odd values (3, 7, 13, 17, 37, 42, 61, 77, 89, 97).
+- Duty: 10-100 % and odd values (3, 7, 13, 17, 37, 42, 61, 77, 89, 97).
 - The advanced timer needs `BKR.MOE = 1`; without it the output never reaches
   the pin.
 - TIM1 has four separate `CCMR` registers, unlike TIM2.
 - The current source includes a TIM1 prescaler fix for low frequencies. It is
   built into `firmware/prebuilt/roadshock_full.ihx` but not yet flashed;
-  50–199 Hz has not been re-measured.
+  50-199 Hz has not been re-measured.
 
 PWM formula: `f = 16 MHz / (prescaler × (ARR + 1))`.
 

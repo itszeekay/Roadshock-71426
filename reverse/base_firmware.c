@@ -13,7 +13,7 @@
  * uart1_init_2400, mode_handler, frame_handler, cmd_0b_handler,
  * cmd_0d_handler, cmd_19_handler, config_mode_handler, etc.) were
  * assigned from call sites and confirmed against assembly; see
- * tools/ghidra/build_project.py and docs/mode_timing.md,
+ * tools/ghidra/build_project.py and docs/protocol.md (section "Stock channel modes"),
  * docs/hidden_commands.md. Generic names
  * (sub_*, FUN_*, gap_*, vec_*) are Ghidra defaults for code that has
  * not been given a role yet.
@@ -570,7 +570,7 @@ void config_mode_handler(void)
 /* Mode handler (Roadstm8true, 2026-11-09).
    Converts incoming mode byte 1/3/5/7 -> internal 0/2/4/8 (off/toggle/momentary/pulse).
    Dispatches on internal mode to sub_84b3/sub_84b9/sub_84c5/sub_8485 + sub_848b + sub_828d.
-   See docs/mode_timing.md. Timing constants still need bench measurement. */
+   See docs/protocol.md (section "Stock channel modes"). Timing constants still need bench measurement. */
 
 void mode_handler(short param_1,undefined1 param_2)
 
@@ -2836,7 +2836,7 @@ void link_service_loop(void)
 /* UART1 configure (Roadstm8true, 2026-11-09). Caller is uart1_init_2400 at 0x9B17.
    Caller sets DAT_0007=0x0C, DAT_0006=0x80, DAT_0005=0, DAT_0004=0, DAT_0002=0x960 (2400)
    then CALLs this function. BRR1/BRR2 split via sub_99dc (>>4). Live value: 2400 baud
-   (BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/mode_timing.md. */
+   (BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/protocol.md (section "Stock channel modes"). */
 
 void uart1_configure(void)
 

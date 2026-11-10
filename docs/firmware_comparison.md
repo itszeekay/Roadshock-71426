@@ -20,7 +20,7 @@ Three ways to run the panel. Stock is the default; the other two add a microcont
   - Channels 2 & 8: GPIO only (software PWM available but coarse - not for smooth control)
 - **Auto-functions (all persist after power loss):**
   - Valet mode: Hold any button ~0.8 s → all outputs off
-  - Delayed-off (fan/run-on): Configurable 0–255 s; channel stays on after release, then auto-off
+  - Delayed-off (fan/run-on): Configurable 0-255 s; channel stays on after release, then auto-off
   - Double-tap latch: Two presses <1 s → momentary function becomes toggle
   - Force override: Immediately on/off/toggle any channel; clears on next panel event
 - **Status feedback:** Request current state of all 6 channels + master at any time

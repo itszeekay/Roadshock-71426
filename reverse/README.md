@@ -57,7 +57,7 @@ concatenation step.
 Every functional claim names its source: dump hash, function address, or
 captured frame. Where the decompilation disagrees on ambiguous points
 (register-bank spills, dispatch twins, 0xFF filler), the conservative reading
-is recorded in `docs/firmware.md` and `docs/mode_timing.md`, and bench or
+is recorded in `docs/firmware.md` and `docs/protocol.md (section "Stock channel modes")`, and bench or
 dump work is named as the decider rather than guessing. Uncertain items stay
 marked uncertain in the index roles.
 

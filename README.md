@@ -73,63 +73,29 @@ This is a research project documenting reverse engineering of proprietary hardwa
 
 ## Quick Start
 
-If you want to flash the custom firmware on your own hardware, follow the steps below in order.
+If you want to flash the custom firmware on your own hardware, follow
+[`docs/startup_guide.md`](docs/startup_guide.md). It walks you through:
 
-### Before you start
+1. What you are building (base board vs button panel)
+2. Accessing the potted SWIM header
+3. Building the custom firmware with `make`
+4. Flashing with `stm8flash`
+5. Restoring stock if needed
+6. Configuring a channel over the 2400-baud link
+7. Testing the output
+8. What the firmware does with each setting
 
-- Have a Harbor Freight 71426 unit with the base board and button panel.
-- Have an ST-Link V2 (or compatible) and `stm8flash` installed.
-- Have SDCC 4.5 installed with `sdcc` on your PATH.
-- Read [`docs/reproduce.md`](docs/reproduce.md) for the full set of tools you may need.
+Other entry points:
 
-### Access the base board SWIM header
-
-The base board is potted with factory silicone. You must peel the potting up by
-hand to reach the SWIM header, which has no reference designator. Clean any
-residue off the SWIM header pads with a stiff nylon bristle brush and a small
-amount of IPA. The button panel is not potted; J1 (panel STM8 SWIM), J2 (base
-to panel), and J3 (ASR UART1) are accessible without removing potting.
-
-### Build the custom firmware
-
-```bash
-cd firmware
-make
-```
-
-This compiles the sources into `build/roadshock.ihx`.
-
-### Flash the base board
-
-1. **Power off.** The unit must not be powered.
-2. Connect the ST-Link to the base board SWIM header:
-   - `V+` pad to `V+` pad
-   - `GND` pad to `GND` pad
-   - `SWIM` pad to `SWIM` pad
-   - `RST` pad to `RST` pad
-3. Keep the ST-Link 3.3 V disconnected.
-4. Flash the prebuilt full image:
-
-   ```bash
-   make flash-full
-   ```
-
-   Or directly:
-
-   ```bash
-   stm8flash -c stlinkv2 -p stm8s003f3 -w firmware/prebuilt/roadshock_full.ihx
-   ```
-
-5. To run the firmware, remove the `RST` connection or pull the ST-Link.
-   The MCU is held in reset while `RST` is wired.
-
-After flashing, the base board runs the custom firmware. The panel LEDs should
-light up and respond to button presses when the unit is powered with the panel
-connected via J2.
-
-For detailed flash, restore, and verification steps, see
-[`docs/reproduce.md`](docs/reproduce.md). For PWM configuration and protocol
-details, see [`docs/startup_guide.md`](docs/startup_guide.md).
+- **Full reproduce run** (dump, build, flash, restore, capture):
+  [`docs/reproduce.md`](docs/reproduce.md)
+- **Protocol reference** (frame format, all message types, replies):
+  [`docs/protocol.md`](docs/protocol.md)
+- **Channel capabilities** (which channels have hardware PWM, frequency
+  groups, wiring assignments): [`docs/channel_guide.md`](docs/channel_guide.md)
+- **Wiper control** (park switch, type 0x0D):
+  [`docs/wiper_control.md`](docs/wiper_control.md)
+- **Reading guide for all docs** (by goal): [`docs/README.md`](docs/README.md)
 
 ---
 # What Works Today
@@ -138,7 +104,7 @@ details, see [`docs/startup_guide.md`](docs/startup_guide.md).
 - **Read the panel firmware**: same, ROP open.
 - **Capture the 2400-baud bus** with a Feather RP2040 (listen-only or MITM).
 - **Injection**: button frames, master power, and our custom `0x09` PWM command.
-- **Hardware PWM** on 6 channels (1, 3, 4, 5, 6, 7) at 200–2000 Hz, 10–100 % duty (TIM1 + TIM2, verified on a scope).
+- **Hardware PWM** on 6 channels (1, 3, 4, 5, 6, 7) at 200-2000 Hz, 10-100 % duty (TIM1 + TIM2, verified on a scope).
 - **Wiper control** on Channel 5 (PC5/TIM2_CH1) via custom protocol type `0x0D`.
 - **Build custom base firmware** with SDCC 4.5.
 - **ASR datasheet reference**: V1.4.0 OCR text plus a compressed print, with the QFN48 pin map, UART mux, keypad and peripheral map reviewed.
