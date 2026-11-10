@@ -151,6 +151,17 @@ void board_tick_clear(void);
 void eeprom_write(uint16_t addr, uint8_t data);
 uint8_t eeprom_read(uint16_t addr);
 
+/* Option bytes (0x4800-0x480F) - for AFR remap */
+void optbyte_write(uint16_t addr, uint8_t data);
+uint8_t optbyte_read(uint16_t addr);
+
+/* AFR configuration (call once, then power cycle) */
+#define AFR_ADDR  0x4803
+#define AFR0_BIT  0x01  /* TIM2_CH1 -> PC5 (enable ch 5 PWM) */
+#define AFR1_BIT  0x02  /* TIM2_CH3 -> PD2 (steals from ch 1) */
+
+void optbyte_set_afr(uint8_t afr_bits);   /* writes AFR byte, requires reset */
+
 /* Status frame: type 0x0A (custom) — declared in protocol.h */
 
 #endif /* BOARD_H */

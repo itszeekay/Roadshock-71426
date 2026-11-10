@@ -12,28 +12,65 @@ Stock restore: `restore/base_flash.raw.bin`
 
 ---
 
-## Hardware PWM Quick Reference
+## Hardware PWM Assignment (All 8 Channels)
 
-| Channel | Terminal | Fuse | Pin | Timer | Best For |
-|---------|----------|------|-----|-------|----------|
-| **1** | 1 | 30 A | **PA3** | **TIM2 (independent)** | **Variable-speed fans, fuel pump ramp, soft-start** |
-| **2** | 2 | 30 A | PA2 | — | High-current on/off only (crystal pin) |
-| **3** | 3 | 20 A | PC7 | TIM1 CH2 (Group A) | LED dimming, PWM loads sharing freq |
-| **4** | 4 | 20 A | PC6 | TIM1 CH1 (Group A) | LED dimming, PWM loads sharing freq |
-| **5** | 5 | 10 A | PC5 | — | GPIO only (SPI SCK) |
-| **6** | 6 | 10 A | PC4 | TIM1 CH4 (Group A) | LED dimming, PWM loads sharing freq |
-| **7** | 7 | 5 A | PC3 | TIM1 CH3 (Group A) | LED dimming, PWM loads sharing freq |
-| **8** | 8 | 5 A | PD2 | — | GPIO only |
+| Ch | Terminal | Fuse | Pin | Hardware PWM | Timer / Channel | Freq Group | Duty Cycle | Notes |
+|----|----------|------|-----|--------------|-----------------|------------|------------|-------|
+| **1** | 1 | 30 A | **PA3** | ✅ **Yes** | TIM2_CH3 (default) | **B** | Independent | Best for fan/fuel-pump ramp |
+| **2** | 2 | 30 A | PA2 | ❌ No | — | — | — | GPIO only (no timer AF) |
+| **3** | 3 | 20 A | PC7 | ✅ Yes | TIM1_CH2 | **A** | Independent | Shared freq with 4,6,7 |
+| **4** | 4 | 20 A | PC6 | ✅ Yes | TIM1_CH1 | **A** | Independent | Shared freq with 3,6,7 |
+| **5** | 5 | 10 A | PC5 | ✅ **With AFR0** | TIM2_CH1 (remap) | **B** | Independent | Same freq as Ch 1 |
+| **6** | 6 | 10 A | PC4 | ✅ Yes | TIM1_CH4 | **A** | Independent | Shared freq with 3,4,7 |
+| **7** | 7 | 5 A | PC3 | ✅ Yes | TIM1_CH3 | **A** | Independent | Shared freq with 3,4,6 |
+| **8** | 8 | 5 A | PD2 | ❌ No | — | — | — | GPIO only (AFR1 steals Ch 1) |
+
+**All 8 outputs are 12 V high-side switched.** The table above only shows which have hardware PWM for smooth duty control.
 
 ---
 
-## PWM Groups
+## Frequency Groups
 
-**Group A (TIM1):** Channels 3, 4, 6, 7 share **one frequency** (50–2000 Hz). Each has **independent duty cycle** (0–100%). Use when multiple loads need the same PWM frequency but different intensities.
+| Group | Timer | Channels | Frequency | Duty Cycles |
+|-------|-------|----------|-----------|-------------|
+| **A** | TIM1 (advanced) | **3, 4, 6, 7** | **1 shared** (50–2000 Hz) | **4 independent** |
+| **B** | TIM2 (general) | **1** (+ 5 with AFR0) | **1 shared** (1 Hz–20 kHz) | **2 independent** |
 
-**Group B (TIM2):** Channel 1 has its **own independent frequency** (1 Hz – 20 kHz). Use for fan speed curves, fuel pump priming ramps, soft-start profiles.
+- **Independent duty cycle = each channel has its own CCR register.**
+- **Shared frequency = all channels in a group run at the same PWM frequency (set by ARR/PSC).**
 
-**Channels 2, 5, 8:** GPIO only — on/off. Software PWM via 2 ms tick (~500 Hz max, coarse duty steps).
+---
+
+## Build Options (Compile-Time)
+
+| Option | Macro | Effect | Default |
+|--------|-------|--------|---------|
+| Enable Ch 5 PWM | `PWM_ENABLE_CH5` | Sets AFR0 option byte at startup; Ch 5 uses TIM2_CH1 | **OFF** |
+| Swap Ch 1 → Ch 8 | `PWM_SWAP_CH1_CH8` | Sets AFR1; moves TIM2_CH3 from PA3 (Ch 1) to PD2 (Ch 8) | **OFF** |
+
+**To enable:**
+```bash
+make CFLAGS="-DPWM_ENABLE_CH5"     # enables channel 5 hardware PWM
+make CFLAGS="-DPWM_SWAP_CH1_CH8"   # moves TIM2 to channel 8 (loses ch 1 PWM)
+```
+
+**Why use these?**
+- `PWM_ENABLE_CH5`: Need 3rd hardware PWM channel (e.g., 2 fans + fuel pump). Cost: Ch 5 shares Group B frequency with Ch 1.
+- `PWM_SWAP_CH1_CH8`: Channel 1 is 30 A, Channel 8 is 5 A. Only use if you need hardware PWM on a low-current output and can sacrifice Ch 1. **Not recommended** for typical builds.
+
+---
+
+## Typical Assignments (Recommended)
+
+| Function | Channel | Reason |
+|----------|---------|--------|
+| Radiator fan (variable) | **1 (Group B)** | Independent freq for smooth ramp |
+| Fuel pump (prime + run) | **1 (Group B)** | Soft-start, independent freq |
+| LED light bars (dim) | **3, 4, 6, 7 (Group A)** | Share freq, independent brightness |
+| Aux fans (if 2+) | **1 + 5 (Group B)** | Enable `PWM_ENABLE_CH5` for 2nd fan |
+| Water pump (on/off) | 2 or 5 | High current, simple on/off |
+| Ignition/ECU power | 7 or 8 | Low current, GPIO |
+| Compressor clutch | 5 or 8 | On/off |
 
 ---
 
@@ -49,27 +86,15 @@ Stock restore: `restore/base_flash.raw.bin`
 
 ---
 
-## Typical Assignments
-
-| Function | Channel | Why |
-|----------|---------|-----|
-| Radiator fan (variable) | **1 (TIM2)** | Independent freq for smooth ramp/curve |
-| Fuel pump (prime + run) | **1 (TIM2)** | Soft-start, independent from fan freq |
-| LED light bars (dimming) | 3, 4, 6, 7 (TIM1) | Share freq, independent brightness |
-| Water pump (on/off) | 2 or 5 | High current, simple on/off |
-| Ignition/ECU power | 7 or 8 | Low current, GPIO |
-| Aux lights | 3, 4, 6, 7 (TIM1) | PWM dimming |
-| Compressor clutch | 5 or 8 | On/off |
-
----
-
-## Software PWM Limitations
+## Software PWM (Channels 2, 5*, 8)
 
 - Runs on 2 ms scheduler tick (~500 Hz base)
 - Duty steps = multiples of 2 ms → coarse at low frequencies
 - CPU must service tick; no hardware offload
 - **Avoid for:** fan speed control, fuel pump ramp, any smooth curve
 - **OK for:** simple blink, slow dimming where precision doesn't matter
+
+*Channel 5 gets hardware PWM if `PWM_ENABLE_CH5` is set.
 
 ---
 

@@ -349,3 +349,38 @@ void pwm2_set_duty(uint8_t channel, uint8_t percent)
     }
     TIM2_CR1 |= 0x01;  /* CEN */
 }
+
+/* ----------------------------------------------------------- Option bytes (AFR remap) */
+/* Option bytes at 0x4800-0x480F. AFR byte at 0x4803.
+ * Write sequence: unlock -> write -> lock. Requires power cycle to take effect. */
+static void opt_unlock(void)
+{
+    REG8(0x505A) = 0x56;   /* FLASH_DUKR key 1 */
+    REG8(0x505A) = 0xAE;   /* FLASH_DUKR key 2 */
+}
+
+static void opt_lock(void)
+{
+    REG8(0x505A) &= (uint8_t)~0x01;  /* clear DUL bit */
+}
+
+uint8_t optbyte_read(uint16_t addr)
+{
+    return REG8(addr);
+}
+
+void optbyte_write(uint16_t addr, uint8_t data)
+{
+    opt_unlock();
+    REG8(addr) = data;
+    /* wait for write */
+    uint8_t timeout = 255;
+    while (timeout-- && (REG8(0x505A) & 0x04) == 0) { }
+    opt_lock();
+}
+
+void optbyte_set_afr(uint8_t afr_bits)
+{
+    /* AFR byte at 0x4803: bit0 = AFR0 (TIM2_CH1 -> PC5), bit1 = AFR1 (TIM2_CH3 -> PD2) */
+    optbyte_write(0x4803, afr_bits);
+}

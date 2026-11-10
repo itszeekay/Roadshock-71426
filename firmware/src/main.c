@@ -338,6 +338,25 @@ static void handle_frame(const proto_frame_t *f)
         }
         break;
     }
+    case PROTO_TYPE_OPTBYT: {
+        /* payload: [action, value]
+         * action: 0 = read AFR, 1 = write AFR (requires power cycle)
+         * value: AFR bits (bit0=AFR0 TIM2_CH1->PC5, bit1=AFR1 TIM2_CH3->PD2)
+         * Reply via status frame with current AFR value. */
+        uint8_t action = f->payload[0];
+        if (action == 0) {
+            uint8_t afr = optbyte_read(0x4803);
+            uint8_t status[6] = {0};
+            status[0] = afr;  /* current AFR value */
+            proto_send_status(f, status);
+        } else if (action == 1) {
+            uint8_t afr = f->payload[1] & 0x03;
+            optbyte_set_afr(afr);
+            /* trigger reset via WWDG (window watchdog) to force reload */
+            CLK_CKDIVR |= 0x80;  /* not a real reset; user must power cycle */
+        }
+        break;
+    }
     default:
         break;                        /* unknown types are ignored           */
     }
