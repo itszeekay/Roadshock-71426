@@ -39,6 +39,8 @@ typedef struct {
     uint8_t  mode;        /* mode_t                                      */
     uint8_t  phase;       /* blink/pulse phase counter                   */
     uint16_t timer;       /* countdown in ticks                          */
+    uint16_t held_ticks;  /* duration button held, 2 ms per tick         */
+    uint8_t  long_fired;  /* long-press action already sent              */
 } channel_t;
 
 static channel_t ch[8];
@@ -71,6 +73,7 @@ static void channel_set(uint8_t n, uint8_t on)
  * capture against the stock firmware. */
 #define BLINK_HALF_TICKS ticks_from_ms(100)
 #define PULSE_TICKS      ticks_from_ms(250)
+#define LONG_PRESS_TICKS ticks_from_ms(800)
 
 static void channel_press(uint8_t n)
 {
@@ -78,6 +81,8 @@ static void channel_press(uint8_t n)
         return;
     }
     ch[n].held = 1;
+    ch[n].held_ticks = 0;
+    ch[n].long_fired = 0;
     switch (ch[n].mode) {
     case MODE_TOGGLE:
         channel_set(n, !ch[n].on);
@@ -105,17 +110,29 @@ static void channel_release(uint8_t n)
         return;
     }
     ch[n].held = 0;
+    ch[n].held_ticks = 0;
+    ch[n].long_fired = 0;
     if (ch[n].mode == MODE_MOMENTARY) {
         channel_set(n, 0);
     }
     eeprom_save_state();
 }
 
+static void set_master(uint8_t on);
+
 /* called every 2 ms TIM4 tick; see board_timer_init */
 static void channel_tick(void)
 {
     for (uint8_t n = 0; n < 8; n++) {
         channel_t *c = &ch[n];
+
+        /* long-press detection: count held duration on all modes */
+        c->held_ticks = c->held ? (uint16_t)(c->held_ticks + 1) : 0;
+        if (c->held && c->held_ticks >= LONG_PRESS_TICKS && !c->long_fired) {
+            c->long_fired = 1;
+            set_master(0);  /* long press = master off (valet mode) */
+        }
+
         if ((c->mode != MODE_PULSE && c->mode != MODE_BLINK) || c->timer == 0) {
             continue;
         }
