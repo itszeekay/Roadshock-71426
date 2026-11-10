@@ -25,6 +25,16 @@ The Roadshock panel supports wiper control with a single output and PWM. This is
 | **Honda CRX Si (1990)** | 5-pin (B/HI/LO/AS/E) | **B** (common +12V) shorted to **AS** (park switch) or **HI** | B ⇔ AS (or B ⇔ HI) continuous | Resistor divider from terminal B (or AS) to middle ECU GPIO |
 | **BMW E36 M3 (1995)** | 5-wire (X333) | **Pin 1 = Wiper in park** | Pin 1 ⇔ ground continuous | Resistor divider from X333 pin 1 to middle ECU GPIO |
 
+**Middle ECU wiring example:**
+```
+Wiper motor park pin ── Resistor divider (10k top, 4.7k bottom) ── Middle ECU GPIO (3.3 V logic)
+                                │
+                            to ground (or to park-switch pin contact)
+```
+- GPIO reads ~3–4 V when wiper is parked, ~0 V otherwise
+- Middle ECU polls GPIO and sends `type 0x0D action=0` to Roadshock Channel 5 when park is detected
+- No base-board hardware changes required; only a resistor divider on the middle ECU side
+
 ## Safety Notes
 
 - Leave the low-speed winding disconnected (open circuit)
