@@ -39,15 +39,6 @@ Three ways to run the panel. Stock is the default; the other two add a microcont
 - Auxiliary fan control
 - Ignition/ECU power
 - Compressor clutch control
-
-**Real-world use cases:**
-- Radiator fan control (variable speed)
-- Fuel pump priming and run-on
-- LED light bar dimming
-- Water pump on/off
-- Auxiliary fan control
-- Ignition/ECU power
-- Compressor clutch control
 - Windshield wiper speed control (slow/fast PWM, intermittent wipe)
 
 **Wiper control:** The custom firmware adds dedicated wiper control via the custom protocol type `0x0D` (off, slow PWM, fast PWM, intermittent momentary). The wiper output is driven on Channel 5 (PC5/TIM2_CH1, 10 A fuse), which uses hardware PWM with an independent frequency. The high-speed winding of the wiper motor is PWM driven; the low-speed winding is left disconnected. Park-position feedback is not available on the base board. The middle ECU polls the park switch through a GPIO and resistor divider and sends `type 0x0D action=0` to turn Channel 5 off when park is detected.

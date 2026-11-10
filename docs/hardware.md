@@ -99,5 +99,3 @@ The Roadshock panel has 8 high-side outputs with varying PWM capabilities:
 - Hardware PWM channels support 50-2000 Hz frequency with independent duty cycles
 - 6 channels support independent duty cycles (TIM1 Group A), 2 channels share frequency (TIM2 Group B)
 - All channels are 12 V high-side switched
-
-This hardware foundation supports full wiper control with minimal wiring and firmware changes.
