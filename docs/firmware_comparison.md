@@ -10,7 +10,7 @@ The middle MCU (Feather RP2040, ESP32, or carrier) can run three configurations.
 | **Mode selection** | Panel Mode button | Type 0x07 config frames | Same |
 | **Master on/off** | Panel button | Type 0x07 flag 0/1 | Same |
 | **Button events** | Panel buttons | Type 0x08 flag 0x0C | Same, plus synthetic presses |
-| **PWM / dimming** | No | No | **Type 0x09**: TIM1 freq 50-2000 Hz, duty 0-100 on ch 3,4,6,7; **TIM2 independent freq+duty on ch 1** |
+| **PWM / dimming** | No | No | **Type 0x09**: TIM1 freq 50-2000 Hz, duty 0-100 on ch 3,4,6,7; **TIM2 independent freq+duty on ch 1, 5** |
 | **Status reporting** | No | No | **Type 0x0A**: 6-channel state + master |
 | **Long-press valet** | No | No | **800 ms** hold → master off |
 | **Delayed-off run-on** | No | No | **Configurable** (type 0x09 delay_secs) |

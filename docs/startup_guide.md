@@ -34,29 +34,11 @@ Stock restore: `restore/base_flash.raw.bin`
 | Group | Timer | Channels | Frequency | Duty Cycles |
 |-------|-------|----------|-----------|-------------|
 | **A** | TIM1 (advanced) | **3, 4, 6, 7** | **1 shared** (50–2000 Hz) | **4 independent** |
-| **B** | TIM2 (general) | **1** (+ 5 with AFR0) | **1 shared** (1 Hz–20 kHz) | **2 independent** |
+| **B** | TIM2 (general) | **1, 5** | **1 shared** (1 Hz–20 kHz) | **2 independent** |
 
 - **Independent duty cycle = each channel has its own CCR register.**
 - **Shared frequency = all channels in a group run at the same PWM frequency (set by ARR/PSC).**
-
----
-
-## Build Options (Compile-Time)
-
-| Option | Macro | Effect | Default |
-|--------|-------|--------|---------|
-| Enable Ch 5 PWM | `PWM_ENABLE_CH5` | Sets AFR0 option byte at startup; Ch 5 uses TIM2_CH1 | **OFF** |
-| Swap Ch 1 → Ch 8 | `PWM_SWAP_CH1_CH8` | Sets AFR1; moves TIM2_CH3 from PA3 (Ch 1) to PD2 (Ch 8) | **OFF** |
-
-**To enable:**
-```bash
-make CFLAGS="-DPWM_ENABLE_CH5"     # enables channel 5 hardware PWM
-make CFLAGS="-DPWM_SWAP_CH1_CH8"   # moves TIM2 to channel 8 (loses ch 1 PWM)
-```
-
-**Why use these?**
-- `PWM_ENABLE_CH5`: Need 3rd hardware PWM channel (e.g., 2 fans + fuel pump). Cost: Ch 5 shares Group B frequency with Ch 1.
-- `PWM_SWAP_CH1_CH8`: Channel 1 is 30 A, Channel 8 is 5 A. Only use if you need hardware PWM on a low-current output and can sacrifice Ch 1. **Not recommended** for typical builds.
+- **Channel 5 (PC5) gets hardware PWM via AFR0**, which is enabled by default in `board_init()`. No build flags needed.
 
 ---
 
@@ -86,7 +68,7 @@ make CFLAGS="-DPWM_SWAP_CH1_CH8"   # moves TIM2 to channel 8 (loses ch 1 PWM)
 
 ---
 
-## Software PWM (Channels 2, 5*, 8)
+## Software PWM (Channels 2, 8)
 
 - Runs on 2 ms scheduler tick (~500 Hz base)
 - Duty steps = multiples of 2 ms → coarse at low frequencies
@@ -94,7 +76,7 @@ make CFLAGS="-DPWM_SWAP_CH1_CH8"   # moves TIM2 to channel 8 (loses ch 1 PWM)
 - **Avoid for:** fan speed control, fuel pump ramp, any smooth curve
 - **OK for:** simple blink, slow dimming where precision doesn't matter
 
-*Channel 5 gets hardware PWM if `PWM_ENABLE_CH5` is set.
+*Channels 1, 3, 4, 5, 6, 7 have hardware PWM. Channels 2 and 8 are GPIO only.*
 
 ---
 
