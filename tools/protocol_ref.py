@@ -91,14 +91,55 @@ def build_reply(req) -> bytes:
     return body + bytes([checksum(body)])
 
 
-def set_output(seq, channel: int, mode: int, duty: int = 0, hz: int = 1000) -> bytes:
+def set_output(seq, channel: int, mode: int, duty: int = 0, hz: int = 1000, delay_secs: int = 0) -> bytes:
     """Custom type 0x09: configure one output.
 
-    mode: 0 = off, 1 = steady on, 2 = PWM (duty 0..100, hz 50..2000)
+    mode: 0 = off, 1 = steady on, 2 = PWM (duty 0..100, hz 50..2000),
+          3 = PWM with soft start (duty = target, hz = soft_start_ticks in 2 ms units)
     """
     payload = bytes([channel & 0xFF, mode & 0xFF, duty & 0xFF,
-                     hz & 0xFF, (hz >> 8) & 0xFF, 0])
+                     hz & 0xFF, (hz >> 8) & 0xFF, delay_secs & 0xFF])
     return build(seq, 0x09, 0x00, payload)
+
+
+def set_flasher(seq, channel: int, on_ticks: int, off_ticks: int, single: bool = False) -> bytes:
+    """Custom type 0x0E: configurable flasher.
+
+    on_ticks / off_ticks in 2 ms units. single = True turns off after one cycle.
+    """
+    payload = bytes([channel & 0xFF,
+                    on_ticks & 0xFF, (on_ticks >> 8) & 0xFF,
+                    off_ticks & 0xFF, (off_ticks >> 8) & 0xFF,
+                    1 if single else 0])
+    return build(seq, 0x0E, 0x00, payload)
+
+
+def set_input_mask(seq, mask: int) -> bytes:
+    """Custom type 0x0F: input bitmask from middle ECU."""
+    payload = bytes([mask & 0xFF] + [0] * 5)
+    return build(seq, 0x0F, 0x00, payload)
+
+
+def set_pulse(seq, channel: int, dur_ms: int) -> bytes:
+    """Custom type 0x10: pulse with ms duration."""
+    payload = bytes([channel & 0xFF, dur_ms & 0xFF, (dur_ms >> 8) & 0xFF, 0, 0, 0])
+    return build(seq, 0x10, 0x00, payload)
+
+
+def set_counter(seq, channel: int, cnt_val: int) -> bytes:
+    """Custom type 0x11: counter value for speed mapping (0..65535)."""
+    payload = bytes([channel & 0xFF, cnt_val & 0xFF, (cnt_val >> 8) & 0xFF, 0, 0, 0])
+    return build(seq, 0x11, 0x00, payload)
+
+
+def set_starter_disable(seq, cranking: bool, disable_mask: int) -> bytes:
+    """Custom type 0x12: starter disable.
+
+    cranking: 1 = engine cranking, 0 = not cranking
+    disable_mask: bit n corresponds to channel n
+    """
+    payload = bytes([(1 if cranking else 0) & 0xFF, disable_mask & 0xFF, 0, 0, 0, 0])
+    return build(seq, 0x12, 0x00, payload)
 
 
 # ---- hidden-command builders (stock handlers, see docs/hidden_commands.md) --
@@ -170,3 +211,18 @@ if __name__ == "__main__":
         f = parse(fr)
         assert f.type == ty and f.sum_ok
     print("hidden builders ok, e.g. 0x0B:", hidden_0b(0x10, 5).hex(" "))
+
+    # custom builders (0x09, 0x0E, 0x0F, 0x10, 0x11, 0x12)
+    for fr, ty, note in [
+        (set_output(0x10, 5, 2, 75, 100, 0), 0x09, "PWM"),
+        (set_output(0x10, 5, 3, 80, 50, 0), 0x09, "soft start"),
+        (set_flasher(0x10, 5, 100, 120, True), 0x0E, "flasher"),
+        (set_input_mask(0x10, 0x05), 0x0F, "input mask"),
+        (set_pulse(0x10, 5, 500), 0x10, "pulse 500 ms"),
+        (set_counter(0x10, 5, 4000), 0x11, "counter 4000"),
+        (set_starter_disable(0x10, True, 0x1F), 0x12, "starter disable"),
+    ]:
+        assert len(fr) == 11 and checksum(fr[:-1]) == fr[-1]
+        f = parse(fr)
+        assert f.type == ty and f.sum_ok
+    print("custom builders ok, e.g. 0x09 PWM:", set_output(0x10, 5, 2, 75, 100, 0).hex(" "))

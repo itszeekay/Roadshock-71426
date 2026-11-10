@@ -13,10 +13,17 @@ Target: **STM8S003F3P6** (8 KB flash, 1 KB RAM). Built with **SDCC 4.5**
 - Accepts panel `0x08 0x0C` (buttons) and `0x07` (master power).
 - Replies with the stock `18` (11-byte) / `17` (12-byte) frames.
 - **Hardware PWM** on TIM1 (channels 3, 4, 6, 7) and TIM2 (channels 1, 5).
-- Custom `0x09` command for off / steady on / PWM with duty and frequency.
+- Custom `0x09` command: off / steady on / PWM with duty and frequency, plus
+  soft start (mode 3).
 - EEPROM persistence of per-channel settings (mode, on/off, delayed-off, double-tap).
 - Custom `0x0A` status frame returns channel states + master.
-- Custom `0x0D` wiper control (off, slow PWM, fast PWM, intermittent momentary).
+- Custom `0x0D` wiper control: off, slow PWM, fast PWM, intermittent momentary
+  (500 ms), wash (800 ms), swipe (300 ms).
+- Custom `0x0E` flasher config (on/off ticks, single-shot).
+- Custom `0x0F` input bitmask (channels with `input_drive` follow it).
+- Custom `0x10` pulse (ms duration on a single channel).
+- Custom `0x11` counter value (16-bit, maps to 0-100 % at 100 Hz).
+- Custom `0x12` starter disable (bitmask of channels forced off while cranking).
 - Fails safe: a PWM request on a channel without a timer channel falls back to
   off.
 
@@ -27,9 +34,14 @@ Target: **STM8S003F3P6** (8 KB flash, 1 KB RAM). Built with **SDCC 4.5**
 
 ## Bench verification pending
 
-- The four modes are implemented but have not all been exercised on hardware.
+- The four stock modes (toggle, momentary, pulse, blinking) have not all been
+  exercised on hardware.
 - The prescaler fix is built into the prebuilt full image but has not been
   flashed; 50-199 Hz has not been re-measured.
+- Wiper wash and swipe actions (0x0D actions 4 and 5) are implemented but not
+  yet verified on hardware.
+- Flasher (0x0E), input bitmask (0x0F), pulse (0x10), counter (0x11), and
+  starter-disable (0x12) are implemented but not yet verified on hardware.
 
 ## Source
 
@@ -84,12 +96,16 @@ Remove `RST`/the ST-Link to run.
 ## Type `0x09` payload
 
 ```
-[channel, mode, duty, freq_lo, freq_hi, 0]
+[channel, mode, duty, freq_lo, freq_hi, delay_secs]
 ```
 
+- `channel`: 1-8
 - `mode`: `0` off, `1` steady on, `2` PWM, `3` PWM with soft start
-- `duty`: 0-100
-- `freq`: 50-2000 Hz, 16-bit little-endian (mode 2 only)
+- `duty`: 0-100 (for mode 2: duty cycle; for mode 3: target duty)
+- `freq_lo`/`freq_hi`: 16-bit little-endian. Mode 2: frequency in Hz. Mode 3:
+  soft-start tick count (2 ms each).
+- `delay_secs`: 0-255 seconds of run-on after release (fan/pump); 0 = no delay.
+  Only used with delayed-off enabled (flags bit0).
 - Reply: `0x19`
 
 ## PWM notes

@@ -2,10 +2,8 @@
  * board.h - STM8S003F3P6 register map and board wiring for the Roadshock
  *           8-gang base board (custom firmware).
  *
- * PIN MAP: the eight gate drivers are spread over PA/PB/PC/PD. The exact
- * channel order was not recoverable from the stock image (see
- * docs/hardware_pinout.md). Fill the table below once the map is confirmed;
- * nothing else in the firmware needs to change.
+ * PIN MAP: the eight gate drivers are spread over PA/PB/PC/PD. The map
+ * is in board.c and was confirmed by wire-probe (multimeter + scope).
  */
 #ifndef BOARD_H
 #define BOARD_H

@@ -51,6 +51,20 @@ harness on the vehicle.
 - Recommended PWM frequency: 50-100 Hz for wipers
 - Motor draws roughly 4 A (low) to 6 A (high); the 10 A fuse on Channel 5 is sufficient
 
+## Wiper actions
+
+| Action | Behavior |
+|---:|---|
+| 0 | off |
+| 1 | slow PWM (50 Hz, 0-63 % duty) |
+| 2 | fast PWM (100 Hz, 0-63 % duty) |
+| 3 | intermittent momentary (500 ms on, auto-off) |
+| 4 | wash (800 ms on, auto-off; intended for a 4-sweep wash cycle) |
+| 5 | swipe (300 ms on, auto-off) |
+
+The `type 0x0D` payload is `[action, duty]`. Duty only applies to actions 1
+and 2.
+
 ## Implementation Notes
 
 - Wiper control uses `PROTO_TYPE_WIPER` (0x0D) in the custom base firmware

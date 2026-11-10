@@ -129,6 +129,13 @@ and returns.
 | 0x9927 | `eeprom_write` | writes state to EEPROM |
 | 0x9AF3 | `state_clear` | clears the per-channel state at `param_1` |
 
+## Scope note
+
+This document covers only the stock base firmware. The custom firmware reuses
+the same frame format but adds new handlers for types `0x09`, `0x0A`, `0x0B`,
+`0x0C`, `0x0D`, `0x0E`, `0x0F`, `0x10`, `0x11`, and `0x12`. See
+[protocol.md](protocol.md) for the custom types and their payloads.
+
 ## What is still open
 
 - Exact semantics of 0x0B, 0x0D, 0x19 need hardware testing.
