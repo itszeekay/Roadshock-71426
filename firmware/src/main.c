@@ -42,7 +42,7 @@ typedef struct {
     uint16_t held_ticks;  /* duration button held, 2 ms per tick         */
     uint8_t  long_fired;  /* long-press action already sent              */
     uint32_t delayed_off_ticks;  /* countdown to auto-off after release    */
-    uint16_t delay_ms;           /* configured run-on duration, ms (0=off) */
+    uint32_t delay_ms;           /* configured run-on duration, ms (0=off) */
     uint32_t double_tap_ticks;   /* time of first press for double-tap     */
     uint8_t  flags;              /* bit0 delayed_off_en, bit1 double_tap_en */
 } channel_t;
@@ -141,8 +141,10 @@ static void channel_release(uint8_t n)
     ch[n].held_ticks = 0;
     ch[n].long_fired = 0;
     if (ch[n].mode == MODE_MOMENTARY) {
-        if ((ch[n].flags & 0x01) && ch[n].on) {  /* delayed_off_en and output is on */
-            ch[n].delayed_off_ticks = ticks_from_ms(ch[n].delay_ms);
+        if ((ch[n].flags & 0x01) && ch[n].on && ch[n].delay_ms != 0) {
+            /* delayed_off_en set, output on, delay configured:
+             * start the run-on countdown (2 ms per tick) */
+            ch[n].delayed_off_ticks = ch[n].delay_ms / 2u;
         } else {
             channel_set(n, 0);
         }
@@ -196,16 +198,14 @@ static void eeprom_save_state(void)
     }
 }
 
-/* Persist per-channel run-on delay (ms) for channels that have delayed-off
- * enabled. Layout: byte 0x15 + n*2 = delay low, byte 0x15 + n*2 + 1 = delay high. */
-static void eeprom_save_delays(uint8_t chan, uint16_t ms)
+/* Persist per-channel run-on delay in seconds (0-255).
+ * Layout: byte 0x15 + n = delay in seconds for channel n (0-7). */
+static void eeprom_save_delays(uint8_t chan, uint32_t ms)
 {
     if (chan < 1 || chan > 8) {
         return;
     }
-    uint8_t n = (uint8_t)(chan - 1);
-    eeprom_write(0x15 + n * 2, (uint8_t)(ms & 0xFF));
-    eeprom_write(0x15 + n * 2 + 1, (uint8_t)((ms >> 8) & 0xFF));
+    eeprom_write(0x15 + (uint8_t)(chan - 1), (uint8_t)(ms / 1000u));
 }
 
 static void eeprom_load_delays(uint8_t chan)
@@ -213,10 +213,8 @@ static void eeprom_load_delays(uint8_t chan)
     if (chan < 1 || chan > 8) {
         return;
     }
-    uint8_t n = (uint8_t)(chan - 1);
-    uint16_t lo = eeprom_read(0x15 + n * 2);
-    uint16_t hi = eeprom_read(0x15 + n * 2 + 1);
-    ch[n].delay_ms = (uint16_t)((hi << 8) | lo);
+    uint8_t secs = eeprom_read(0x15 + (uint8_t)(chan - 1));
+    ch[chan - 1].delay_ms = (uint32_t)secs * 1000u;
 }
 
 /* Load channel state from EEPROM (addresses 0x0D..0x14 = 8 bytes) */
@@ -229,7 +227,6 @@ static void eeprom_load_state(void)
         ch[i].on     = (b >> 2) & 0x01;
         ch[i].flags  = (b >> 3) & 0x03;    /* bits 3-4: delayed_off_en, double_tap_en */
         eeprom_load_delays(i + 1);
-        ch[i].delay_ms = ch[i].delay_ms;    /* persist across boots */
         board_output(i, ch[i].on != 0);    /* apply loaded state to outputs */
     }
 }
@@ -289,7 +286,7 @@ static void handle_frame(const proto_frame_t *f)
         uint8_t delay_secs = f->payload[5];
 
         if (chan >= 1 && chan <= 8 && mode <= 2) {
-            ch[chan - 1].delay_ms = (uint16_t)(delay_secs * 1000u);
+            ch[chan - 1].delay_ms = (uint32_t)delay_secs * 1000u;
             eeprom_save_delays(chan, ch[chan - 1].delay_ms);
             if (mode == 2 && !pwm_channel_ok(chan)) {
                 out_set_mode(chan, 0);              /* no timer channel */
