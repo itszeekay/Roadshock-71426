@@ -7,13 +7,41 @@ are documented there and are not usable on this unit.
 The procedure is read-only. It sends `init`, `halt`, `mdw` and `dump_image`
 and nothing else.
 
+## Bench record for this panel
+
+![Panel with the SWD wires soldered to the vias](../images/asr_swd_wires_overview.jpg)
+*Panel out of its case with the two SWD wires soldered to the vias on the traces from U1 pins 36 and 37, plus ground.*
+
+![Macro of U1 and the SWD vias](../images/asr_swd_via_macro.jpg)
+*U1, the ASR5601S, and the via area next to PZ20 where the SWD wires attach.*
+
+What was actually done:
+
+- Panel powered from J2 at 3.3 V with no base board connected.
+- Two thin wires soldered to the vias on the traces from U1 pin 37 (`P06`,
+  SWCLK) and pin 36 (`P07`, SWDIO). Both vias have no other connection, so they
+  are dedicated test points.
+- The J3 pad labelled `RST` is not the ASR reset. No reset wire was used.
+  Download mode was entered with a jumper from J3 `SEL0` to J3 `+3.3` and a
+  power cycle, which leaves the ROM monitor running and the application stopped.
+- ST-Link V2 clone, VTREF taken from the board 3.3 V rail, common ground.
+- OpenOCD 0.12, adapter speed requested at 1000 kHz and settled at 950 kHz.
+  DPIDR `0x0bc11477`, Cortex-M0+ r0p1.
+- Two independent 1 MB reads, byte-identical
+  (`b7b92dab982a262b6e2dc295bf7b2781ce070091b58d6b82c5a0596a9ba163fb`).
+
+Why SWD instead of UART: the ROM monitor at 115200 accepts `init` but rejects
+`get_chip_type`, `help` and `coredump` with status `87`, and the application log
+port at 921600 answers `ERROR` to every text command. Neither exposes a read
+command on this unit.
+
 ## What you need
 
 | Item | Notes |
 |---|---|
 | ST-Link V2 | any common clone works, firmware V2J24 or newer |
 | OpenOCD 0.12 | `winget install xpack-dev-tools.openocd-xpack` |
-| Two fine wires | soldered to QFN pins 36 and 37 |
+| Two fine wires | soldered to the vias on the traces from QFN pins 36 and 37 |
 | Ground wire | any board ground |
 | 3.3 V feed to J2 | the panel powers itself |
 
@@ -21,8 +49,8 @@ and nothing else.
 
 | ST-Link pin | Panel connection |
 |---|---|
-| `SWCLK` | U1 pin 37, `P06` |
-| `SWDIO` | U1 pin 36, `P07` |
+| `SWCLK` | U1 pin 37, `P06`, or its via |
+| `SWDIO` | U1 pin 36, `P07`, or its via |
 | `GND` | board ground |
 | `3.3V` (VTREF) | board 3.3 V rail, sense only |
 
@@ -35,18 +63,20 @@ the ST-Link only senses that rail.
 
 ## Step 1: prepare the target
 
-1. Solder the wires with the panel unpowered.
+1. Solder the wires with the panel unpowered. The vias are easier to solder
+   than the 0.4 mm QFN pads.
 2. Check continuity from each wire to its QFN pin, and check that the two
    wires do not short to each other or to ground.
-3. Power the panel through J2.
-4. Check the idle level on both wires. Both should sit near 3.3 V.
+3. Fit the `SEL0` to `+3.3` jumper.
+4. Power the panel through J2, which starts the ROM monitor instead of the
+   application.
+5. Check the idle level on both wires. Both should sit near 3.3 V.
 
-The ASR application may reassign `P06` and `P07`, which would remove SWD after
-boot. Two ways to avoid that:
-
-- Attach quickly after a power cycle, before the application starts.
-- Or fit the `SEL0` to `+3.3` jumper and power-cycle, which leaves the chip in
-  the ROM download monitor and keeps the application from running.
+The application reassigns `P06` and `P07` to UART3, the LED display link, which
+removes SWD after boot. The reliable sequence is the `SEL0` to `+3.3` jumper
+plus a power cycle: the chip stays in the ROM download monitor and never starts
+the application. Attaching quickly after a normal power cycle is not reliable
+because the remap happens early in the boot.
 
 ## Step 2: probe the debug port
 
