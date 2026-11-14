@@ -105,11 +105,11 @@ jumps to it. The details are in [asr5601_monitor.md](asr5601_monitor.md).
 
 ## What is still open
 
-- Flash write path. The monitor has no `erase` or `burn`; those are DOGO host
-  strings. The viable route is a RAM image through `boot`, which then uses the
-  ROM flash routines. The image digest algorithm is not reproduced yet.
+- Application region programming. Erase and program are proven on the ATE
+  sector; the same stub has not been pointed at the application region yet.
 - Runtime pinout: read `0x40110068` to `0x40110074` after pin mux init.
-- BLE name and services: set at runtime, NVDS is blank.
+- BLE services: the advertising name is known, the service list needs a live
+  scan.
 
 There is no factory restore image for this chip. The verified dump in
 [`dumps/asr/`](../dumps/asr/) is the restore path, so do not erase or program

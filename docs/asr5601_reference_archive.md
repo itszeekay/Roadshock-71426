@@ -124,18 +124,17 @@ Continuity checks still worth running with the board unpowered:
 Measured: `PZ20` has no continuity to pins 36 or 37, so it is not an SWD
 breakout.
 
-## Next steps
+## Status
 
-1. Run `tools/asr5601_dump.py --probe` at 115200 with `SEL0=1` and confirm
-   `1F2E3D00` and the `>>>` prompt. This proves the link and writes nothing.
-2. Send `get_chip_type`, `help` and `?`, one at a time, and record the command
-   vocabulary.
-3. Send `coredump flash all`, capture the stream, and let the tool rebuild
-   `flash.bin`. Read twice and compare SHA-256, the same rule used for the STM8
-   images.
-4. Use SWD. The monitor has no bulk read command (`rdreg` only returns single
-   words) and `PZ20` does not carry P06/P07, so the SWD wires go to pins 36 and
-   37; see [asr5601_swd_dump.md](asr5601_swd_dump.md).
+Completed: the ROM monitor was probed and its command set recovered
+(`init`, `boot`, `wrreg`, `rdreg`), the flash was read over SWD, RAM boot was
+proven, and erase plus program were proven on the ATE sector.
+
+Open: runtime pinout, a live BLE service scan, and programming the application
+region.
+
+See [asr5601_dump.md](asr5601_dump.md), [asr5601_monitor.md](asr5601_monitor.md)
+and [asr5601_swd_dump.md](asr5601_swd_dump.md).
 
 Do not run `Flash Erase` or `Burn` before a verified dump exists. There is no
 factory restore image for the ASR.
