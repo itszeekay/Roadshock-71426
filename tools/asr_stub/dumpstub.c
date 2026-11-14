@@ -54,7 +54,9 @@ void reset_handler(void)
 
     print("DUMP END\r\n");
 
-    *(volatile u32 *)AIRCR = 0x05FA0004u;
+    /* Do not reset here. A reset discards the last UART bytes before they
+       leave the chip. Stay in this loop so the link drains; the host stops
+       on DUMP END and the panel is power-cycled afterwards. */
     for (;;) {
     }
 }

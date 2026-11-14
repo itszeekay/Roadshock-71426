@@ -84,11 +84,13 @@ through J2 or the ST-Link. No SWD wires.
 
    This sends the dump stub in `tools/asr_stub/dumpstub.bin` with `boot`, then
    asks the Feather to stream the received text over USB. The host writes it to
-   `dump.txt` and stops when `DUMP END` arrives.
+   `dump.txt` and stops when `DUMP END` arrives. The stub then halts in a loop
+   instead of resetting, so the final UART bytes drain; power-cycle the panel to
+   leave the stub.
 4. Rebuild and verify:
 
    ```
-   python tools/asr5601_j3_dump.py dump.txt --out dumps/asr/j3_flash.bin        --compare dumps/asr/asr_flash.bin
+   python tools/asr5601_j3_dump.py dump.txt --out dumps/asr/j3_flash.bin --compare dumps/asr/asr_flash.bin
    ```
 
    The capture is 32 hex characters per line between `DUMP START` and
