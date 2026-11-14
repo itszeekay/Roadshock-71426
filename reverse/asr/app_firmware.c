@@ -11580,9 +11580,9 @@ void FUN_1004d9f0(uint param_1)
   return;
 }
 
-// FUNC 0x1004da58  FUN_1004da58
+// FUNC 0x1004da58  tim4_enable
 
-void FUN_1004da58(int param_1)
+void tim4_enable(int param_1)
 
 {
   if (param_1 == 1) {
@@ -11594,17 +11594,17 @@ void FUN_1004da58(int param_1)
   return;
 }
 
-// FUNC 0x1004da74  FUN_1004da74
+// FUNC 0x1004da74  tim4_status
 
-undefined4 FUN_1004da74(void)
+undefined4 tim4_status(void)
 
 {
   return *(undefined4 *)(DAT_1004da7c + 0x2c);
 }
 
-// FUNC 0x1004da80  FUN_1004da80
+// FUNC 0x1004da80  tim4_count
 
-uint FUN_1004da80(void)
+uint tim4_count(void)
 
 {
   int iVar1;
@@ -11643,9 +11643,9 @@ void FUN_1004dacc(int param_1)
   return;
 }
 
-// FUNC 0x1004dae4  FUN_1004dae4
+// FUNC 0x1004dae4  tim4_configure
 
-void FUN_1004dae4(undefined4 *param_1)
+void tim4_configure(undefined4 *param_1)
 
 {
   char cVar1;
@@ -13232,9 +13232,9 @@ undefined4 mode_query(uint param_1)
   return uVar1;
 }
 
-// FUNC 0x1005023c  FUN_1005023c
+// FUNC 0x1005023c  tick_ms_read
 
-undefined4 FUN_1005023c(void)
+undefined4 tick_ms_read(void)
 
 {
   ushort uVar1;
@@ -15343,9 +15343,9 @@ LAB_10051458:
   return;
 }
 
-// FUNC 0x1005147c  FUN_1005147c
+// FUNC 0x1005147c  periodic_ui_update
 
-undefined8 FUN_1005147c(uint param_1,undefined4 param_2)
+undefined8 periodic_ui_update(uint param_1,undefined4 param_2)
 
 {
   byte *pbVar1;

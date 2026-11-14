@@ -86,6 +86,12 @@ public class ApplyAsrNames extends GhidraScript {
         {0x1004FD78L, "base_frame_send", "Builds an 11-byte base-link frame: seq, dir, type 0x08, flag, 6 payload bytes, checksum"},
         {0x10050354L, "base_frame_process", "Processes 5 base frame payload bytes into per-channel mode and color values"},
         {0x100519ECL, "led_frame_remap", "Remaps a single nibble to its encoder-encoded byte value"},
+        {0x1005147CL, "periodic_ui_update", "100 ms periodic UI update handler (message 0x2D); advances per-channel phase counter and re-emits the LED frame when not in blink mode"},
+        {0x1005023CL, "tick_ms_read", "Reads the millisecond counter from the TIM4 hardware timer and returns elapsed ms"},
+        {0x1004DAE4L, "tim4_configure", "Configures the TIM4 hardware timer for 15 ms ticks"},
+        {0x1004DA58L, "tim4_enable", "Enable/disable TIM4 interrupt"},
+        {0x1004DA74L, "tim4_status", "Returns the TIM4 status word"},
+        {0x1004DA80L, "tim4_count", "Returns the TIM4 counter value"},
     };
 
     private static final Object[][] DATA = new Object[][] {
