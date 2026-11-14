@@ -63,8 +63,7 @@ Status of each operation over J3 alone:
 | Read and write single words (`rdreg`, `wrreg`) | proven |
 | Run a RAM stub (`boot`) | proven |
 | Erase and program flash | proven on the ATE sector |
-| Full flash dump | designed, not yet exercised: a RAM stub reads
-  `0x10000000` to `0x100FFFFF` and streams it over UART1 |
+| Full flash dump | designed, not yet exercised: a RAM stub reads the whole part and streams it over UART1 |
 
 A J3-only dump is slower than SWD, because it shares the 115200 monitor link,
 but it removes the soldering step. SWD remains the faster fallback and the
