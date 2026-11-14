@@ -26,7 +26,7 @@ parts, an SWD dump of the ASR5601S, static analysis, and passive UART captures.
 |---|---|
 | Base firmware | dumped, decompiled, custom SDCC firmware with hardware PWM and wiper control; stock restore path verified |
 | Panel LED firmware | dumped and decompiled; 115200 display frame and nibble to color map recovered |
-| ASR5601S firmware | 1 MB dump verified twice over SWD and once over J3 alone; 375 application and 101 bootloader functions decompiled |
+| ASR5601S firmware | 1 MB dump verified twice over SWD and once over J3 alone; 346 application and 101 bootloader functions decompiled |
 | ASR programming | ROM monitor documented; RAM stub erase and program proven on the ATE sector |
 | 2400-baud link | frame format, message types, replies and checksum documented; capture, impersonation and injection work |
 | Middle ECU | ESP32-S2 plus SN65HVD230 design; firmware not started |

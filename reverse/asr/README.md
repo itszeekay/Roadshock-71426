@@ -5,7 +5,7 @@ Image: `dumps/asr/asr_flash.bin`. The application occupies `0x10048000` to
 
 | File | Contents |
 |---|---|
-| `app_firmware.c` | application reconstruction, 375 functions in address order |
+| `app_firmware.c` | application reconstruction, 346 functions in address order |
 | `boot_firmware.c` | bootloader reconstruction, 101 functions |
 | `app_index.md` | function index: peripherals, strings, calls |
 | `app_symbols.md` | vector table and BL targets |
@@ -21,7 +21,9 @@ Image: `dumps/asr/asr_flash.bin`. The application occupies `0x10048000` to
   - bootloader at `0x10000000`
   - project `Asr5601s`, kept outside the public repository
 - Annotations: `tools/ghidra/ApplyAsrNames.java` names the verified functions
-  and seeds the application interrupt vectors.
+  and seeds the application interrupt vectors. It currently names 72 of the 346
+  application functions and 10 data objects; the remaining routines keep their
+  `FUN_` names until their role is established.
 - Decompile: `tools/ghidra/DecompileTree.java` writes one file per function.
 - Concatenation: `tools/build_asr_reconstruction.py` builds the two `.c` files.
 - Cross-check: `tools/asr_disasm.py` produces the capstone listings, which are
