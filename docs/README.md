@@ -72,6 +72,8 @@ MCUs in this project: base board **STM8S003F3P6** (TSSOP-20), button panel
 - [bench-results.md](bench-results.md): everything verified on hardware, plus
   the dump text-mode trap
 - [roadmap.md](roadmap.md): CAN gateway and PDU plan
+- [expansion_features.md](expansion_features.md): proposed use cases and
+  features beyond the current build; none are implemented
 - [safety.md](safety.md): electrical safety, flashing, RF, and liability
 
 ## Confidence tags
