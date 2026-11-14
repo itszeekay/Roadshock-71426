@@ -103,6 +103,8 @@ Other entry points:
 - **Read the base firmware**: SWIM dump, 8 KB flash + 128 B EEPROM.
 - **Read the ASR5601S firmware**: SWD dump, 1 MB, two identical reads, hash recorded.
 - **Analyze the ASR firmware**: 360 application functions and 101 bootloader functions decompiled; UART map, keypad, LED path and base link documented.
+- **Write the ASR flash over J3**: the ROM monitor loads a RAM stub that erases and programs the ATE partition, verified by read-back. Source in `tools/asr_stub`.
+- **ASR BLE name**: `Controller8 Wired-XXXXXX`, from the advertising template at `0x10059122`.
 - **Read the panel firmware**: same, ROP open.
 - **Capture the 2400-baud bus** with a Feather RP2040 (listen-only or MITM).
 - **Injection**: button frames, master power, and our custom `0x09` PWM command.
@@ -116,9 +118,8 @@ Other entry points:
 
 ## What Is Still Open
 
-- **ASR write path**: the ROM monitor accepts `erase` and `burn`, and a verified dump now exists, but the ATE write test has not been run yet. See [`docs/asr5601_dump.md`](docs/asr5601_dump.md).
-- **ASR runtime pinout**: the pin mux classes are decoded; the definitive per-pin table needs a register read from the running application.
-- **ASR BLE name and services**: set at runtime, the NVDS block is blank.
+- **ASR runtime pinout**: the pin mux class numbers are not recoverable from the image; the runtime read is blocked because the application repurposes the SWD pins.
+- **ASR BLE services**: no static GATT table; the list needs a live scan. The advertising name is known.
 - Bench verification of the four stock channel modes and the low-frequency TIM1 prescaler fix. Both are built, but the prebuilt full image has not been flashed for those tests.
 - Direct control of the panel LEDs without touching the private 115200 link; the ASR owns that link (UART3 on P06/P07).
 - Over J2 alone, the LEDs remain under the ASR's UI control.
