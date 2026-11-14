@@ -17,7 +17,7 @@ ulonglong FUN_1004d5c0(int param_1,uint param_2)
   local_20 = 0;
   uVar4 = 0;
   while ((uVar4 & 0xff) < param_2) {
-    FUN_1004c918(*(undefined1 *)(param_1 + uVar4),3);
+    pinmux_set(*(undefined1 *)(param_1 + uVar4),3);
     puVar2 = DAT_1004d678;
     uVar3 = (uint)*(byte *)(param_1 + uVar4);
     if (uVar3 < 0x10) {

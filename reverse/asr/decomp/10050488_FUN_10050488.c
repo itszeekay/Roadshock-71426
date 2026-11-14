@@ -39,7 +39,7 @@ LAB_100504b6:
   puVar2[4] = 0xff;
   FUN_10050354(*puVar2,puVar2[1],puVar2[2],0,0xff);
   param_1 = (uint)(byte)puVar2[2];
-  FUN_1004bf28(DAT_1005052c,*puVar1,*puVar2,puVar2[1]);
+  log_printf(DAT_1005052c,*puVar1,*puVar2,puVar2[1]);
 LAB_1005050c:
   return CONCAT44(local_14,param_1);
 }

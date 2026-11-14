@@ -12,7 +12,7 @@ void FUN_100507a0(undefined4 param_1)
   int unaff_r4;
   
   do {
-    FUN_1004bf28(param_1);
+    log_printf(param_1);
     uVar4 = FUN_10051294();
     cVar1 = *(char *)(unaff_r4 + 0x24);
     if (cVar1 != '\0') {

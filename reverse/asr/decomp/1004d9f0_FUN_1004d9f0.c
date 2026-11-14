@@ -6,7 +6,7 @@ void FUN_1004d9f0(uint param_1)
   uint *puVar1;
   uint uVar2;
   
-  FUN_1004c918(param_1,3);
+  pinmux_set(param_1,3);
   puVar1 = DAT_1004da44;
   if (param_1 < 0x10) {
     uVar2 = 1 << (param_1 & 0xff);

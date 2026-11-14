@@ -16,8 +16,8 @@ undefined4 FUN_1004e640(uint param_1,undefined4 param_2,undefined4 param_3,uint 
   undefined1 auStack_2c [24];
   
   puVar9 = PTR_s_app_ble_complete_event_handler_1004e7a0;
-  FUN_1004bf28(PTR_s_APP_COMPLETE___s_opt_id__04X_sta_1004e7a4,
-               PTR_s_app_ble_complete_event_handler_1004e7a0,param_1,param_2,param_3,param_4);
+  log_printf(PTR_s_APP_COMPLETE___s_opt_id__04X_sta_1004e7a4,
+             PTR_s_app_ble_complete_event_handler_1004e7a0,param_1,param_2,param_3,param_4);
   puVar5 = PTR_s_app_ble_start_advertising_1004e7dc;
   puVar4 = PTR_s_APP___s_1004e7c0;
   puVar7 = PTR_s_app_ble_set_adv_data_1004e7bc;
@@ -48,7 +48,7 @@ undefined4 FUN_1004e640(uint param_1,undefined4 param_2,undefined4 param_3,uint 
         FUN_100550f4();
         return 0;
       }
-      FUN_1004bf28(PTR_s_APP___s_1004e7c0,PTR_s_app_ble_set_adv_data_1004e7bc);
+      log_printf(PTR_s_APP___s_1004e7c0,PTR_s_app_ble_set_adv_data_1004e7bc);
       FUN_10056de8(auStack_2c,PTR_s_0123456789ABCDEF_1004e7c4,0x11);
       iVar6 = DAT_1004e7cc;
       uVar8 = *(uint *)(DAT_1004e7c8 + 4);
@@ -64,10 +64,10 @@ undefined4 FUN_1004e640(uint param_1,undefined4 param_2,undefined4 param_3,uint 
       *(undefined1 *)(iVar6 + 0x17) = uVar2;
       iVar6 = FUN_10053788(0x1a);
       if (iVar6 != 0) {
-        FUN_1004bf28(PTR_s_APP___s_ERROR__02X_1004e7d0,puVar7);
+        log_printf(PTR_s_APP___s_ERROR__02X_1004e7d0,puVar7);
       }
       puVar9 = PTR_s_app_ble_set_scan_response_data_1004e7d4;
-      FUN_1004bf28(puVar4,PTR_s_app_ble_set_scan_response_data_1004e7d4);
+      log_printf(puVar4,PTR_s_app_ble_set_scan_response_data_1004e7d4);
       FUN_10056de8(auStack_2c,PTR_DAT_1004e7d8,4);
       param_4 = FUN_100537bc(4,auStack_2c);
       puVar7 = PTR_s_APP___s_ERROR__02X_1004e7d0;
@@ -90,7 +90,7 @@ undefined4 FUN_1004e640(uint param_1,undefined4 param_2,undefined4 param_3,uint 
       if (param_1 != 0x1a9) {
         return 0;
       }
-      FUN_1004bf28(PTR_s_APP___s_1004e7c0,PTR_s_app_ble_start_advertising_1004e7dc);
+      log_printf(PTR_s_APP___s_1004e7c0,PTR_s_app_ble_start_advertising_1004e7dc);
       param_4 = FUN_100536d4(0);
       puVar7 = PTR_s_APP___s_ERROR__02X_1004e7d0;
       puVar9 = puVar5;
@@ -100,7 +100,7 @@ undefined4 FUN_1004e640(uint param_1,undefined4 param_2,undefined4 param_3,uint 
       return 0;
     }
   }
-  FUN_1004bf28(puVar7,puVar9,param_4);
+  log_printf(puVar7,puVar9,param_4);
   return 0;
 }
 

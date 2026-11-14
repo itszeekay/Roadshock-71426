@@ -30,7 +30,7 @@ void FUN_10050ec4(void)
       FUN_10053930(0x2e);
       FUN_10053918(0x2e,DAT_10050fb4);
       uVar4 = FUN_10053944(0x2f);
-      FUN_1004bf28(DAT_10050fb8,uVar4);
+      log_printf(DAT_10050fb8,uVar4);
     }
     if (*(char *)(in_stack_00000010 + 1) == '\x01') {
       *(undefined1 *)(unaff_r4 + 0xc) = 0;
@@ -85,7 +85,7 @@ void FUN_10050ec4(void)
         else {
           FUN_10053930(0x33);
         }
-        FUN_1004bf28(DAT_100512b0,2);
+        log_printf(DAT_100512b0,2);
       }
       goto LAB_100511a0;
     }
@@ -123,7 +123,7 @@ void FUN_10050ec4(void)
       puVar10 = PTR_s_temp_all_restore_100512bc;
     }
   }
-  FUN_1004bf28(puVar10);
+  log_printf(puVar10);
 LAB_100511a0:
   iVar2 = DAT_100512c0;
   *(undefined1 *)((uint)*(byte *)(in_stack_00000010 + 1) * 0xc + DAT_100512c0) = 0;

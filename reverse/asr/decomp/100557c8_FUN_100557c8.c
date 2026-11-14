@@ -3,8 +3,8 @@
 undefined4 FUN_100557c8(void)
 
 {
-  FUN_1004bf28(DAT_100557dc);
-  FUN_1004bf28(DAT_100557e0);
+  log_printf(DAT_100557dc);
+  log_printf(DAT_100557e0);
   return 0xffffffff;
 }
 

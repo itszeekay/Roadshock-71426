@@ -62,7 +62,7 @@ void FUN_1004d6e0(uint param_1,uint param_2)
     uVar2 = 0x23;
   }
   else {
-    FUN_1004d690(4);
+    mic_pins_config(4);
     FUN_1004cb20(0x17,0xb,1);
     FUN_1004cb20(0x17,0x16,1,0);
     if (param_2 == 2) {

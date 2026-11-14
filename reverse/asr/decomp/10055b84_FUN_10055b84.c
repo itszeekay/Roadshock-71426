@@ -12,12 +12,12 @@ undefined4 FUN_10055b84(undefined1 *param_1)
   undefined4 local_38 [9];
   
   local_39 = 0;
-  FUN_1004bf28(DAT_10055c50,DAT_10055c4c);
+  log_printf(DAT_10055c50,DAT_10055c4c);
   uVar1 = DAT_10055c58;
   pbVar5 = DAT_10055c4c;
   while (*pbVar5 != 0) {
     if ((0x5e < *pbVar5 - 0x20) || (pbVar5 = pbVar5 + 1, pbVar5 == DAT_10055c54)) {
-      FUN_1004bf28(PTR_s_bl_ver_isn_t_str_10055c70);
+      log_printf(PTR_s_bl_ver_isn_t_str_10055c70);
       return 0xffffffff;
     }
   }
@@ -50,13 +50,13 @@ undefined4 FUN_10055b84(undefined1 *param_1)
           else {
             *param_1 = 1;
           }
-          FUN_1004bf28(PTR_s_bl_first_ver__s_10055c64,local_38[0]);
+          log_printf(PTR_s_bl_first_ver__s_10055c64,local_38[0]);
           return 0;
         }
       }
     }
   }
-  FUN_1004bf28(puVar4,local_39);
+  log_printf(puVar4,local_39);
   return 0xffffffff;
 }
 

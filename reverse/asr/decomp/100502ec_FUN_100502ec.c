@@ -15,7 +15,7 @@ void FUN_100502ec(void)
     FUN_10053930(0x2d);
     FUN_10051564();
   }
-  FUN_1004bf28(DAT_10050328);
+  log_printf(DAT_10050328);
   return;
 }
 

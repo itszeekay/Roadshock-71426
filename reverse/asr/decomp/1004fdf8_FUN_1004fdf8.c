@@ -28,7 +28,7 @@ undefined8 FUN_1004fdf8(undefined4 param_1,undefined4 param_2,undefined4 param_3
   }
   else {
     if (3 < bVar1) {
-      FUN_100516d8(DAT_1004fe3c);
+      led_frame_send(DAT_1004fe3c);
       goto LAB_1004fe36;
     }
     local_10 = 0x11;
@@ -38,7 +38,7 @@ undefined8 FUN_1004fdf8(undefined4 param_1,undefined4 param_2,undefined4 param_3
   local_d = local_10;
   local_c = local_10;
   local_b = local_10;
-  FUN_100516d8(&local_10);
+  led_frame_send(&local_10);
   FUN_10053918(0x36,200);
 LAB_1004fe36:
   return CONCAT26(uStack_a,CONCAT15(local_b,CONCAT14(local_c,CONCAT13(local_d,CONCAT12(local_e,

@@ -15,7 +15,7 @@ void FUN_100556b4(void)
   *(undefined4 *)(puVar2 + 4) = 0;
   puVar2[1] = 0;
   uVar3 = (**(code **)(iVar1 + 0x14))();
-  FUN_1004bf28(DAT_100556e4,uVar3);
+  log_printf(DAT_100556e4,uVar3);
   return;
 }
 

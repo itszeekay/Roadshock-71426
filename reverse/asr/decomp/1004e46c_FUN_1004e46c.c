@@ -16,7 +16,7 @@ void FUN_1004e46c(void)
   undefined1 local_16;
   
   uVar1 = DAT_1004e528;
-  FUN_1004bf28(DAT_1004e528,DAT_1004e52c);
+  log_printf(DAT_1004e528,DAT_1004e52c);
   FUN_10051b94(5);
   FUN_100533bc(DAT_1004e530);
   FUN_10051e64(DAT_1004e534);
@@ -25,7 +25,7 @@ void FUN_1004e46c(void)
   FUN_100533d4(DAT_1004e540);
   FUN_10055110(DAT_1004e544);
   uVar2 = DAT_1004e548;
-  FUN_1004bf28(uVar1,DAT_1004e548);
+  log_printf(uVar1,DAT_1004e548);
   FUN_10056f28(local_3c,0,0x2a);
   local_3a = 0x96;
   local_21 = 3;
@@ -36,11 +36,11 @@ void FUN_1004e46c(void)
   local_3c[0] = 10;
   iVar3 = FUN_1005359c(local_3c);
   if (iVar3 != 0) {
-    FUN_1004bf28(DAT_1004e54c,uVar2);
+    log_printf(DAT_1004e54c,uVar2);
   }
   puVar4 = (undefined1 *)FUN_100539d4();
-  FUN_1004bf28(DAT_1004e550,puVar4[5],puVar4[4],puVar4[3],puVar4[2],puVar4[1],*puVar4);
-  FUN_1004bf28(DAT_1004e554);
+  log_printf(DAT_1004e550,puVar4[5],puVar4[4],puVar4[3],puVar4[2],puVar4[1],*puVar4);
+  log_printf(DAT_1004e554);
   iVar3 = DAT_1004e558;
   FUN_10053958(DAT_1004e558);
   FUN_10053958(iVar3 + 8);

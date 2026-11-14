@@ -35,7 +35,7 @@ undefined8 FUN_10051b04(undefined4 param_1,undefined4 param_2,undefined4 param_3
       iVar3 = iVar3 + 1;
     } while (iVar3 != 6);
   }
-  FUN_100516d8(local_20);
+  led_frame_send(local_20);
   return CONCAT44(local_20[1],local_20[0]);
 }
 

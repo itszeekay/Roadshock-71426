@@ -121,7 +121,7 @@ void FUN_10054214(void)
   if ((*DAT_10054708 == 0) || (*(char *)(*DAT_10054708 + 0x18) == '\0')) {
     FUN_10056f08();
   }
-  FUN_1004bf28(DAT_1005470c);
+  log_printf(DAT_1005470c);
   return;
 }
 

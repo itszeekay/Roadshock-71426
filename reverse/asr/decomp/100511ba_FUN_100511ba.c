@@ -19,7 +19,7 @@ void FUN_100511ba(void)
   iVar2 = DAT_100512c0;
   if (*(char *)(DAT_100512c4 + 0x11) == '\x03') {
     pcVar9 = (char *)(DAT_100512c0 + 0x30);
-    FUN_1004bf28(DAT_100512c8,*(undefined1 *)(DAT_100512c0 + 0xc),*pcVar9);
+    log_printf(DAT_100512c8,*(undefined1 *)(DAT_100512c0 + 0xc),*pcVar9);
     if (*DAT_100512cc == '\0') {
       if (*(char *)(iVar2 + 0xc) == '\0') goto LAB_10051224;
       iVar6 = *(int *)(iVar2 + 0x10);
@@ -64,7 +64,7 @@ LAB_10051224:
         FUN_10051674();
         FUN_10050354(*(undefined1 *)(iVar6 + 8),*(undefined1 *)(iVar6 + 9),
                      *(undefined1 *)(iVar6 + 10),*(undefined1 *)(iVar6 + 0xb));
-        FUN_100516d8(DAT_100512e4);
+        led_frame_send(DAT_100512e4);
         FUN_10051564();
         cVar1 = *DAT_100512e8;
         *DAT_100512e8 = cVar1 + '\x01';

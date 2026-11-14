@@ -7,13 +7,13 @@ undefined4 FUN_10055a18(void)
   int iVar2;
   undefined *puVar3;
   
-  FUN_1004bf28(DAT_10055a7c);
+  log_printf(DAT_10055a7c);
   piVar1 = DAT_10055a80;
   FUN_10055b42(DAT_10055a80 + 4,DAT_10055a80 + 4);
   puVar3 = DAT_10055a84;
   if (*piVar1 == piVar1[2] + 0x80) {
     if (piVar1[2] != *(int *)(DAT_10055a88 + 0x50)) {
-      FUN_1004bf28(PTR_s_image_length_compare_fail____d____10055a8c,*(int *)(DAT_10055a88 + 0x50));
+      log_printf(PTR_s_image_length_compare_fail____d____10055a8c,*(int *)(DAT_10055a88 + 0x50));
       return 0xffffffff;
     }
     puVar3 = PTR_s_image_crc_compare_fail_10055a90;
@@ -23,7 +23,7 @@ undefined4 FUN_10055a18(void)
       return 0;
     }
   }
-  FUN_1004bf28(puVar3);
+  log_printf(puVar3);
   return 0xffffffff;
 }
 

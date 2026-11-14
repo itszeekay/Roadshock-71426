@@ -45,7 +45,7 @@ void FUN_10050530(byte *param_1,int param_2)
       uVar16 = DAT_1005085c;
       puVar22 = DAT_10050858;
       *DAT_10050858 = 0;
-      FUN_1004bf28(uVar16);
+      log_printf(uVar16);
       FUN_1005129e();
     }
     if ((puVar22 == (undefined1 *)0xe) && (*param_1 != 0)) {
@@ -63,7 +63,7 @@ LAB_100505a8:
   if (param_1 + param_2 * 2 == param_1) {
     FUN_1005129e();
   }
-  FUN_1004bf28(DAT_10050870,DAT_1005086c,*param_1);
+  log_printf(DAT_10050870,DAT_1005086c,*param_1);
   iVar12 = DAT_10050f74;
   iVar11 = DAT_10050f68;
   iVar17 = DAT_10050c00;
@@ -279,7 +279,7 @@ LAB_1005079a:
         uVar16 = DAT_100508b0;
         *(undefined1 *)(iVar23 + 0x18) = 1;
         do {
-          FUN_1004bf28(uVar16);
+          log_printf(uVar16);
           uVar16 = FUN_10051294();
           iVar15 = iVar23;
 LAB_100507a8:
@@ -405,7 +405,7 @@ LAB_1005066a:
       }
       FUN_10053930(0x2a);
       FUN_10053918(0x2a,DAT_10050878);
-      FUN_1004bf28(DAT_1005087c,*(undefined1 *)(iVar23 + 0x13));
+      log_printf(DAT_1005087c,*(undefined1 *)(iVar23 + 0x13));
 LAB_1005072e:
       uVar16 = DAT_100508ac;
       *(undefined1 *)(DAT_10050874 + 0xc) = 1;

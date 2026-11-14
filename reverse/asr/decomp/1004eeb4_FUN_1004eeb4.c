@@ -13,7 +13,7 @@ bool FUN_1004eeb4(undefined4 param_1,short param_2)
   
   uVar2 = *DAT_1004f05c;
   uVar3 = (uint)(ushort)(param_2 + ~uVar2);
-  FUN_1004bf28(DAT_1004f064,DAT_1004f060,uVar3);
+  log_printf(DAT_1004f064,DAT_1004f060,uVar3);
   bVar1 = uVar3 - 1 < 0x12;
   if (bVar1) {
     FUN_10056ee8();

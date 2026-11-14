@@ -24,7 +24,7 @@ undefined8 FUN_10051588(int param_1,int param_2)
       uVar3 = FUN_10051578(uVar9 >> 0x10 & 0xff);
       uVar4 = FUN_10051578(uVar9 >> 8 & 0xff);
       local_18 = FUN_10051578(uVar9 & 0xff);
-      FUN_1004bf28(PTR_s__s_02d_02d_02d_10051648,PTR_DAT_10051644,uVar3,uVar4);
+      log_printf(PTR_s__s_02d_02d_02d_10051648,PTR_DAT_10051644,uVar3,uVar4);
       goto LAB_1005163a;
     }
     if ((*(char *)(param_1 + 5) == '=') && (param_2 == 0xe)) {
@@ -51,7 +51,7 @@ undefined8 FUN_10051588(int param_1,int param_2)
     }
   }
 LAB_10051636:
-  FUN_1004bf28(puVar6);
+  log_printf(puVar6);
   local_18 = param_1;
 LAB_1005163a:
   return CONCAT44(param_2,local_18);

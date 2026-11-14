@@ -17,7 +17,7 @@ undefined8 FUN_10050448(undefined4 param_1,undefined4 param_2)
   bVar1 = *(byte *)(iVar2 + 0xc);
   FUN_10050354(*(undefined1 *)(iVar2 + 8),*(undefined1 *)(iVar2 + 9),*(undefined1 *)(iVar2 + 10),
                *(undefined1 *)(iVar2 + 0xb));
-  FUN_1004bf28(DAT_10050484);
+  log_printf(DAT_10050484);
   return CONCAT44(param_2,(uint)bVar1);
 }
 

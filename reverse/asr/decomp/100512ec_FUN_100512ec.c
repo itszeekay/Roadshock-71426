@@ -40,7 +40,7 @@ void FUN_100512ec(void)
         if ((*(char *)(DAT_1005146c + 0x12) == '\0') && (iVar9 == 0xd)) {
           return;
         }
-        FUN_1004bf28(DAT_10051470,iVar9);
+        log_printf(DAT_10051470,iVar9);
         bVar3 = true;
       }
     }
