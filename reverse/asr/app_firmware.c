@@ -4945,11 +4945,12 @@ undefined4 pin_config(byte *param_1)
   return 0xffffffff;
 }
 
-// FUNC 0x1004ce00  nvic_enable_irq
+// FUNC 0x1004ce00  gpio_pin_irq_enable
 
-/* Sets one NVIC enable bit for IRQ 0..30 */
+/* Sets the interrupt enable bit for a GPIO pin descriptor: 0..15 on one block, 16..30 on the other
+    */
 
-undefined4 nvic_enable_irq(byte *param_1)
+undefined4 gpio_pin_irq_enable(byte *param_1)
 
 {
   int iVar1;
@@ -4979,11 +4980,11 @@ LAB_1004ce28:
   return uVar2;
 }
 
-// FUNC 0x1004ce38  nvic_disable_irq
+// FUNC 0x1004ce38  gpio_pin_irq_disable
 
-/* Clears one NVIC enable bit for IRQ 0..30 */
+/* Clears the interrupt enable bit for a GPIO pin descriptor */
 
-undefined4 nvic_disable_irq(byte *param_1)
+undefined4 gpio_pin_irq_disable(byte *param_1)
 
 {
   int iVar1;
@@ -6379,7 +6380,7 @@ void FUN_1004ea70(int param_1)
 void FUN_1004eab0(void)
 
 {
-  nvic_disable_irq(DAT_1004eabc);
+  gpio_pin_irq_disable(DAT_1004eabc);
   return;
 }
 
@@ -6388,7 +6389,7 @@ void FUN_1004eab0(void)
 void FUN_1004eac0(void)
 
 {
-  nvic_enable_irq(DAT_1004eacc);
+  gpio_pin_irq_enable(DAT_1004eacc);
   return;
 }
 
@@ -6397,7 +6398,7 @@ void FUN_1004eac0(void)
 void FUN_1004ead0(void)
 
 {
-  nvic_disable_irq(DAT_1004eadc);
+  gpio_pin_irq_disable(DAT_1004eadc);
   return;
 }
 
@@ -6406,7 +6407,7 @@ void FUN_1004ead0(void)
 void FUN_1004eae0(void)
 
 {
-  nvic_enable_irq(DAT_1004eaec);
+  gpio_pin_irq_enable(DAT_1004eaec);
   return;
 }
 
@@ -6415,7 +6416,7 @@ void FUN_1004eae0(void)
 void FUN_1004eaf0(void)
 
 {
-  nvic_disable_irq(DAT_1004eafc);
+  gpio_pin_irq_disable(DAT_1004eafc);
   return;
 }
 
@@ -6424,7 +6425,7 @@ void FUN_1004eaf0(void)
 void FUN_1004eb00(void)
 
 {
-  nvic_enable_irq(DAT_1004eb0c);
+  gpio_pin_irq_enable(DAT_1004eb0c);
   return;
 }
 
