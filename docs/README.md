@@ -45,6 +45,7 @@ Pick the path that matches what you want to do.
 - [asr5601_swd_dump.md](asr5601_swd_dump.md) - step-by-step SWD read of the ASR
   flash with an ST-Link and OpenOCD, including wiring and verification
 - [asr5601_firmware.md](asr5601_firmware.md) - what the ASR firmware does: UARTs, base link, keypad, LED path
+- [asr5601_monitor.md](asr5601_monitor.md) - ROM download monitor commands, status codes and word access over J3
 - [middle_ecu_features.md](middle_ecu_features.md) - what an ESP32 between J2 and the base can do, by effort
 - [panel_led_map.md](panel_led_map.md) - display frame, pin table, nibble-to-pin
   patterns
@@ -84,6 +85,7 @@ Pick the path that matches what you want to do.
 | [asr5601_dump.md](asr5601_dump.md) | ASR dump record: requirements, UART findings, result |
 | [asr5601_swd_dump.md](asr5601_swd_dump.md) | SWD read of the ASR flash over OpenOCD |
 | [asr5601_firmware.md](asr5601_firmware.md) | Panel firmware behaviour: UARTs, base link, keypad, LEDs |
+| [asr5601_monitor.md](asr5601_monitor.md) | ROM monitor: handshake, commands, status codes, RAM boot |
 | [middle_ecu_features.md](middle_ecu_features.md) | Middle ECU feature list with feasibility |
 | [panel_led_map.md](panel_led_map.md) | Display frame, pin table, nibble-to-pin patterns |
 | [bench-results.md](bench-results.md) | Everything verified on hardware, plus the dump text-mode trap |

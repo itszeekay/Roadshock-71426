@@ -28,6 +28,11 @@ table at `0x10000000` is valid (`SP=0x20012000`, reset `0x100014C5`).
 | `asr_flash_run2.bin` | 1048576 | `b7b92dab982a262b6e2dc295bf7b2781ce070091b58d6b82c5a0596a9ba163fb` |
 | `asr_flash_run1_trimmed.bin` | 375316 | `a3caf7345b50200ffd8924eb8a8a9f77ef088bd19fc486cb7c5489496ca86fde` |
 | `asr_flash_run2_trimmed.bin` | 375316 | `a3caf7345b50200ffd8924eb8a8a9f77ef088bd19fc486cb7c5489496ca86fde` |
+| `asr_rom.bin` | 8192 | `79ca9db092b1b622c905589ca4c0accf008f1ae51bcc456d07cbce96d19b3dfc` |
+
+The mask ROM at `0x00000000` is 8 KB. It is mirrored four times through the
+64 KB read window, so only the first 8 KB is stored. It contains the download
+monitor described in [../../docs/asr5601_monitor.md](../../docs/asr5601_monitor.md).
 
 The two independent reads are byte-identical. The trimmed files drop the
 trailing `0xFF`, which starts at offset `0x5BA14`.

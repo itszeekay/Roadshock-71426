@@ -69,9 +69,10 @@ not accepted.
   0 V and has no pull-up, unlike `RSTN` pin 44. No reset wire was used.
 - The J3 pad labelled `SEL0` is the real boot strap. Tying it to `+3.3` stops
   the application from starting, which is how the ROM monitor was reached.
-- P06 and P07 are SWD at reset, but the application reassigns them to UART3,
-  the LED display link. SWD therefore only works while the application is not
-  running, which the `SEL0` strap guarantees.
+- P06 and P07 are SWD at reset. The application repurposes them in its pin
+  setup, so SWD only works while the application is not running, which the
+  `SEL0` strap guarantees. The display link is not involved; UART3 is on
+  P13/P14.
 - `PZ20`, previously assumed to be a possible SWD header, is a 6-pin part
   marked `331`, a 330 ohm resistor network. It has no continuity to pins 36 or
   37. The SWD wires go to the vias on those two traces.
@@ -95,16 +96,21 @@ explicit `5601S` entry:
 | Bootloader size | 32768 bytes |
 
 The host side parses `:<10-char label><hex>$` lines for the coredump path and
-`$<hex>$` blocks for the read-image path. None of that applies here because the
-monitor has no read command.
+`$<hex>$` blocks for the read-image path. None of that applies here.
+
+The ROM monitor itself was dumped later. It implements only `init`, `boot`,
+`wrreg` and `rdreg`, with a line protocol. `rdreg` and `wrreg` give 32-bit read
+and write to almost any address over J3 alone. `boot` loads a RAM image and
+jumps to it. The details are in [asr5601_monitor.md](asr5601_monitor.md).
 
 ## What is still open
 
-- Write path on J3: burn a pattern into the blank ATE partition at `0x100F0000`,
-  read it back over SWD, then erase it. Not yet run.
+- Flash write path. The monitor has no `erase` or `burn`; those are DOGO host
+  strings. The viable route is a RAM image through `boot`, which then uses the
+  ROM flash routines. The image digest algorithm is not reproduced yet.
 - Runtime pinout: read `0x40110068` to `0x40110074` after pin mux init.
 - BLE name and services: set at runtime, NVDS is blank.
 
 There is no factory restore image for this chip. The verified dump in
-[`dumps/asr/`](../dumps/asr/) is the restore path, so do not erase anything
-until the ATE test passes.
+[`dumps/asr/`](../dumps/asr/) is the restore path, so do not erase or program
+anything with an untested image.
