@@ -51,21 +51,32 @@ The practical rules for a middle ECU:
 
 ### Message types
 
-| Type | Direction | Flag | Meaning |
-|---|---|---|---|
-| `0x07` | panel → base | `0x00` / `0x01` | master power / parameter exchange |
-| `0x08` | panel → base | `0x0C` | live button bitmask |
-| `0x0B`, `0x0D`, `0x19` | n/a | n/a | accepted by the dispatcher, not sent by the stock panel |
-| `0x09` | ECU → base | n/a | configure one output (custom) |
-| `0x0A` | base → ECU | n/a | status report (custom) |
-| `0x0B` | ECU → base | n/a | force on/off (custom) |
-| `0x0C` | ECU → base | n/a | one-time option byte write (custom) |
-| `0x0D` | ECU → base | n/a | wiper control (custom) |
-| `0x0E` | ECU → base | n/a | flasher config (custom) |
-| `0x0F` | ECU → base | n/a | input bitmask (custom) |
-| `0x10` | ECU → base | n/a | pulse mode (custom) |
-| `0x11` | ECU → base | n/a | counter value (custom) |
-| `0x12` | ECU → base | n/a | starter disable (custom) |
+Stock types, panel to base:
+
+| Type | Flag | Meaning |
+|---|---|---|
+| `0x07` | `0x00` / `0x01` | master power / parameter exchange |
+| `0x08` | `0x0C` | live button bitmask |
+| `0x0B`, `0x0D`, `0x19` | n/a | accepted by the stock dispatcher, not sent by the stock panel; see [hidden_commands.md](hidden_commands.md) |
+
+Custom types, our base firmware:
+
+| Type | Direction | Meaning |
+|---|---|---|
+| `0x09` | ECU → base | configure one output |
+| `0x0A` | base → ECU | status report |
+| `0x0B` | ECU → base | force on/off |
+| `0x0C` | ECU → base | one-time option byte write |
+| `0x0D` | ECU → base | wiper control |
+| `0x0E` | ECU → base | flasher config |
+| `0x0F` | ECU → base | input bitmask |
+| `0x10` | ECU → base | pulse mode |
+| `0x11` | ECU → base | counter value |
+| `0x12` | ECU → base | starter disable |
+
+`0x0B` and `0x0D` reuse types the stock base accepted as hidden commands. The
+stock and custom meanings are different; do not mix firmware and host
+assumptions.
 
 ### Replies
 
