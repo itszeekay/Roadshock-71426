@@ -11,7 +11,7 @@
 # the ROM monitor if the Feather is already running when the panel powers up,
 # which means the Feather must be powered from USB, not from J3 +3.3.
 # Set it to False to keep SEL0 high-Z at boot and drive it by command instead.
-SEL0_AT_BOOT = True
+SEL0_AT_BOOT = False
 #
 # Commands on the USB console:
 #   help
