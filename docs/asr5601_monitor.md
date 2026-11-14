@@ -96,9 +96,18 @@ jumps to it.
 | size | `0x81` to `0x16000` |
 
 The verifier compares the first bytes against `ASR SONATA BLE DL NON` or
-`ASR SONATA BLE DL SEC`, expects the payload length at offset `0x20`, a 32-byte
-key at offset `0x30`, and a 4-byte digest at offset `0x4C`. The total size is
+`ASR SONATA BLE DL SEC`, expects the payload length at offset `0x20`, a key at
+offset `0x30`, and a 4-byte digest at offset `0x4C`. The total size is
 `0x80 + payload length`.
+
+The payload is decrypted in place with RC4, using the key at `0x30` repeated to
+256 bytes for the key schedule. The digest is CRC32 of the decrypted payload:
+polynomial `0x04C11DB7`, initial value `0xFFFFFFFF`, most significant bit first,
+no final XOR.
+
+The key length and the digest offset overlap in the code as read, so the exact
+header layout still needs confirmation before an image is sent. A wrong image
+fails the verify step and prints `1F2E3D85`; it does not touch flash.
 
 That path allows running a supplied image from RAM. It is the route to a
 J3-only flash programmer, because a RAM stub can then use the ROM flash
