@@ -76,10 +76,24 @@ The ROM monitor has no `erase` or `burn`. The working route is:
 
 What is not done yet: the stub itself. The bootloader does not program flash
 directly; it calls RAM-resident routines through pointers at `0x10004E6C`
-(`0x20000331`) and `0x10004ECC` (`0x2000002D`). Those routines are copied into
-RAM during boot. The next step is to locate their source bytes and the flash
-controller sequence, then call them from a RAM stub and test on the ATE
-partition first.
+(`0x20000331`) and `0x10004ECC` (`0x2000002D`).
+
+Those routines are copied into RAM by the bootloader reset handler:
+
+| Destination | Source in flash | Size |
+|---|---|---|
+| `0x20000000` | `0x10000120` | `0x620` |
+| `0x20000620` | `0x100053E8` | `0x848` |
+
+The first block holds the flash routines. A RAM stub can copy `0x620` bytes from
+`0x10000120` to `0x20000000` and call the same entry points the bootloader uses.
+
+The reset handler also writes `0x40006000` = 1, `0x40006004` = 2 and
+`0x40006008` = 2 before use, which is likely a flash or bus configuration step.
+Reproduce that order in the stub.
+
+The next step is to recover the call signatures from the bootloader OTA path,
+then program the ATE partition first and verify by reading it back.
 
 ## Application image header
 
