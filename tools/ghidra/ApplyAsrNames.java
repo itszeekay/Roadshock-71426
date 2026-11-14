@@ -31,6 +31,12 @@ public class ApplyAsrNames extends GhidraScript {
         {0x1004F728L, "uart0_rx_callback", "Feeds received UART0 bytes into the 0x20003481 ring buffer"},
         {0x1004F788L, "uart1_rx_callback", "Feeds received UART1 log bytes into a second ring buffer"},
         {0x1004E888L, "uart3_write", "Writes a buffer to UART3, the display link"},
+        {0x1004DD24L, "keypad_irq", "Matrix scan interrupt: compares state and calls the key callback with row, column, pressed"},
+        {0x100505B4L, "key_event_handler", "Per-key actions: modes, backlight settings, multi-press work mode, temp all off/restore"},
+        {0x10051B04L, "led_update", "Encodes 6 color bytes and sends the 9-byte UART3 LED frame"},
+        {0x10051734L, "led_nibble_encode_a", "Odd to even nibble remap"},
+        {0x1005187CL, "led_nibble_encode_b", "Even to odd nibble encode"},
+        {0x1004F710L, "rx_buffer_toggle", "Flips the receive buffer selector"},
         {0x100516D8L, "led_frame_send", "Builds 5A 00 <6 bytes> EE and sends it to UART3"},
     };
 
@@ -76,7 +82,8 @@ public class ApplyAsrNames extends GhidraScript {
         0x1004AFA0L, 0x1004C0A4L, 0x20001070L, 0x1004C76AL, 0x1004C760L,
         0x1004C774L, 0x1004C77EL, 0x1004CB80L, 0x1004CBB4L, 0x1004CEE8L,
         0x1004C4ACL, 0x1004CF34L, 0x1004DD24L, 0x1004DBE0L, 0x1004DBF4L,
-        0x1004E1A0L, 0x1004F728L, 0x1004F788L, 0x1004C4E8L
+        0x1004E1A0L, 0x1004F728L, 0x1004F788L, 0x1004C4E8L,
+        0x1004DD24L, 0x100505B4L, 0x10051B04L, 0x10051734L, 0x1005187CL, 0x1004F710L
     };
 
     private void seedVectors() {

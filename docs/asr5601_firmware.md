@@ -82,6 +82,39 @@ The first byte being treated as a length is the key open question: either the
 panel's wire frame is length-prefixed ahead of the 11-byte frame, or this queue
 serves a second, length-prefixed protocol on the same pins.
 
+## Buttons
+
+The keypad is a hardware matrix, not individual GPIO inputs.
+
+| Item | Value |
+|---|---|
+| peripheral | KEYPAD block, `0x40015000` |
+| interrupt | IRQ19, `0x1004DD24` (`keypad_irq`) |
+| matrix | 4 rows by 5 columns, 20 possible keys |
+| callback | row, column, pressed |
+| log | `keypad irq`, `col = %ld,row = %ld,press stat:%d` |
+
+The IRQ enables the block, copies the current matrix state, then compares it
+against the previous state and calls a callback for every bit that changed.
+The key index is the matrix position, and the panel firmware supports keys 1
+through 14 even though this unit has 10 physical buttons.
+
+The event handler at `0x100505B4` (`key_event_handler`) maps a key to an
+action. Behaviour found so far, from strings and branches:
+
+| Behaviour | Evidence |
+|---|---|
+| Per-key press logging | `key1 press` through `key14 press` |
+| Work mode entry by repeated key 13 | `KEY13 %d times press,enter setting work mode` |
+| Backlight setting mode | `enter backlight setting mode`, `BL mode:release key` |
+| Backlight color cycle timer | `BL_RGB_CHANGE_TIMER:%d,BL_SET_MODE_TIMER clear;BL_SET_MODE_TIMER set` |
+| Temporary all-off | `temp all off`, `temp all restore` |
+| Per-channel control mode | `snv_data.current_control_mode[id]=%d` |
+
+The handler keeps a per-channel state block with offsets `0x11`, `0x18`, `0x30`
+and `0x48`; these select the control mode, the mode index and the timers for
+each of the eight channels.
+
 ## LED pipeline
 
 `led_frame_send` builds the 9-byte UART3 frame:
@@ -101,8 +134,19 @@ bytes 2 to 5 into eight 3-bit RGB groups, as documented in
 | `0x1004FE88` | same, plus `0x1004EAC0` |
 | `0x10051B04` | calls `0x10051734` and `0x1005187C` |
 
-`0x1005187C` and `0x10051734` are the next layer up, where the color and blink
-state is computed. That is where the per-button color table lives.
+`led_update` at `0x10051B04` is the next layer up. It takes six color bytes,
+writes the LED frame, and alternates between two nibble encodings on every
+call using a toggle at `0x20003904`:
+
+| Function | Role |
+|---|---|
+| `0x10051734` | odd to even nibble remap |
+| `0x1005187C` | even to odd nibble encode |
+
+The two encodings match the STM8 side, which maps odd nibbles to colors and
+treats even nibbles as off. The color table itself is fed from a message
+handler, not a direct call, so the caller has to be found through the message
+system rather than the call graph.
 
 ## BLE
 
