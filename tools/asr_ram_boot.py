@@ -9,9 +9,11 @@ header plus payload. The verifier:
   - RC4 decrypts the payload with the key at 0x30
   - compares CRC32 of the decrypted payload with the word at 0x4C
 
-This tool builds such an image for a small Thumb stub and prints the bytes.
+After verification the ROM sets VTOR to the image base, disables interrupts and
+calls the word at base + 4. The payload therefore starts with a vector table:
+[0] stack pointer, [4] entry point.
 
-    python tools/asr_ram_boot.py --stub marker
+    python tools/asr_ram_boot.py --hexfile image.hex
 """
 import argparse
 import struct
@@ -48,54 +50,61 @@ def rc4(key: bytes, data: bytes) -> bytes:
     return bytes(out)
 
 
-# Thumb stub: write a marker to RAM, then SYSRESETREQ back into the monitor.
-# ldr r0,lit; ldr r1,lit; str r1,[r0]; ldr r0,lit; ldr r1,lit; str r1,[r0]; b .
+# Payload: vector table, then a stub that writes a marker to RAM and resets.
+# 0x00 SP 0x20015000
+# 0x04 entry 0x20010009 (thumb)
+# 0x08 ldr r0,=0x20000100 ; ldr r1,=0xDEADBEEF ; str r1,[r0]
+# 0x0E ldr r0,=0xE000ED0C ; ldr r1,=0x05FA0004 ; str r1,[r0] ; b .
+# 0x18 literals
 MARKER_STUB = bytes.fromhex(
-    "0c48"      # ldr r0, [pc, #0x0c]
-    "1049"      # ldr r1, [pc, #0x10]
-    "0160"      # str r1, [r0]
-    "1048"      # ldr r0, [pc, #0x10]
-    "1049"      # ldr r1, [pc, #0x10]
-    "0160"      # str r1, [r0]
-    "fee7"      # b .
-    "00bf"      # nop
-    "00010020"  # 0x20000100
-    "efbeadde"  # 0xDEADBEEF
-    "0ced00e0"  # 0xE000ED0C AIRCR
-    "0400fa05"  # 0x05FA0004 VECTKEY | SYSRESETREQ
+    "00500120"
+    "09000120"
+    "0348"
+    "0449"
+    "0160"
+    "0448"
+    "0449"
+    "0160"
+    "fee7"
+    "00bf"
+    "00010020"
+    "efbeadde"
+    "0ced00e0"
+    "0400fa05"
 )
 
 
-def build(stub: bytes, load: int, key: bytes) -> bytes:
+def build(stub: bytes, key: bytes, secure: bool = False) -> bytes:
     header = bytearray(HEADER_LEN)
     header[0:len(MAGIC)] = MAGIC
     struct.pack_into("<I", header, 0x20, len(stub))
 
-    digest = crc32_msb(stub)
-    header[0x30:0x50] = key
-    struct.pack_into("<I", header, 0x4C, digest)
+    if secure:
+        header[0:len(MAGIC)] = b"ASR SONATA BLE DL SEC"
+        digest = crc32_msb(stub)
+        header[0x30:0x50] = key
+        struct.pack_into("<I", header, 0x4C, digest)
+        return bytes(header) + rc4(key, stub)
 
-    return bytes(header) + rc4(key, stub)
+    # Non-secure: payload is taken as-is, no decryption and no digest check.
+    return bytes(header) + stub
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--load", default="0x20010000")
     p.add_argument("--key", default="00112233445566778899aabbccddeeff"
                                      "00112233445566778899aabbccddeeff")
-    p.add_argument("--stub", choices=["marker"], default="marker")
+    p.add_argument("--secure", action="store_true", help="use the DL SEC path with RC4 and CRC32")
     p.add_argument("--hexfile", default=None)
     args = p.parse_args()
 
-    stub = MARKER_STUB
     key = bytes.fromhex(args.key)
-    img = build(stub, int(args.load, 0), key)
+    img = build(MARKER_STUB, key, args.secure)
 
-    print("load    %s" % args.load)
-    print("payload %d bytes" % len(stub))
+    print("payload %d bytes" % len(MARKER_STUB))
     print("total   %d bytes" % len(img))
-    print("crc32   0x%08X" % crc32_msb(stub))
-    print("stub    %s" % stub.hex())
+    print("crc32   0x%08X" % crc32_msb(MARKER_STUB))
+    print("stub    %s" % MARKER_STUB.hex())
     print("image   %s" % img.hex())
 
     if args.hexfile:

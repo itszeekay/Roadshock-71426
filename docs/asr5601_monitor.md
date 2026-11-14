@@ -111,18 +111,23 @@ fails the verify step and prints `1F2E3D85`; it does not touch flash.
 
 ### Measured attempt
 
-A 32-byte Thumb stub was built with the format above
-(`tools/asr_ram_boot.py`) and sent at `0x20010000`. The monitor answered
-`1F2E3D04` and `1F2E3D05`, so the header, RC4 payload and CRC32 were accepted.
+Two paths exist in the verifier, and they behave differently:
 
-The core then ended at `PC 0xFFFFFFFE`, and the payload at `0x20010000` was
-still in its encrypted form. The jump target is therefore not the address
-argument as assumed, and the payload is not decrypted at that address. A soft
-reset through SWD brought the monitor back; no power cycle was needed.
+| Header magic | Path | Payload |
+|---|---|---|
+| `ASR SONATA BLE DL NON` | non-secure, taken as-is | plaintext, no digest check |
+| `ASR SONATA BLE DL SEC` | secure | RC4 with the key at `0x30`, CRC32 compared at `0x4C` |
 
-So the verify path is understood, but the jump context is not. Further work
-needs the code at `0x100000F8` and the exact field at the header offset that
-holds the entry point.
+After verification the ROM sets `VTOR` to the image base, disables interrupts,
+and calls the word at **base + 4**. The payload therefore starts with a vector
+table: stack pointer at `0`, entry at `4`.
+
+A 40-byte Thumb stub was sent at `0x20010000` with the `DL NON` magic. It wrote
+`0xDEADBEEF` to `0x20000100`, then triggered `SYSRESETREQ`. The monitor came
+back and `rdreg 0x20000100` returned `0xDEADBEEF`.
+
+That is confirmed code execution over J3 alone, with no SWD. `tools/asr_ram_boot.py`
+builds such an image.
 
 That path allows running a supplied image from RAM. It is the route to a
 J3-only flash programmer, because a RAM stub can then use the ROM flash
