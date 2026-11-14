@@ -194,6 +194,9 @@ system rather than the call graph.
   `0x1000D000`. The application calls it; the ROM is not rebuilt here.
 - The NVDS block at `0x1000A000` contains only the tag, so the device name and
   bonding data are set at runtime or were never provisioned.
+- There is no static GATT or service table in the application. The stack
+  registers services at runtime, so the service list has to be read from a live
+  scan rather than from the image.
 - Application strings include `ASR BLE 560X`, `APP  %s, Name:`,
   `APP_CB: %s, manuf_name =0x%04X`, BLE MAC logging, and the OTA handlers
   (`otas_disable_handler`, `ota get version`, `ota set boot`).
