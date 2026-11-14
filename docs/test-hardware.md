@@ -50,5 +50,5 @@ If it is reused:
 ## What is not test hardware
 
 - The stock base and panel boards.
-- The ASR5601S, which has not been dumped.
+- The ASR5601S, which has been dumped and analyzed; see [asr5601_firmware.md](asr5601_firmware.md).
 - Any vehicle wiring or ECU.

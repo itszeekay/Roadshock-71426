@@ -86,13 +86,16 @@ LEDs.
 
 ## What is still unknown
 
-- The ASR firmware has not been dumped. Its button and UI logic is not yet
-  understood.
+- The ASR firmware has been dumped and analyzed; see
+  [asr5601_firmware.md](asr5601_firmware.md). Remaining details are the runtime
+  pin map and the BLE service list.
 - Whether a hidden 2400-baud command can influence the LEDs (possible, but no
   evidence yet).
-- The exact color mapping of the eight display nibbles (needs a bench test).
-- Which UART2/UART3 pin pair carries the display link. The datasheet pin mux
-  narrows the candidates to P00/P01, P08/P09, P19/P20, P27, P29 (UART2) or
+- The exact color mapping of the eight display nibbles. The nibbles and their
+  mode mapping are recovered in [asr5601_firmware.md](asr5601_firmware.md); the
+  colour names still need a bench check.
+- Which UART2/UART3 pin pair carries the display link. The dump shows UART3 on
+  P13/P14. The datasheet pin mux also lists
   P06/P07, P10, P13/P14, P25/P26 (UART3); identify by continuity from STM8
   PD5/PD6.
 

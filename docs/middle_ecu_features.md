@@ -178,3 +178,10 @@ Prior art:
 Known pitfalls: counterfeit transceiver boards, the `RS` slope pin left
 floating, missing common ground, and termination fitted on more than the two
 bus ends.
+
+## Integration target
+
+The bridge is intended to run alongside the EPIC EFI I/O expander firmware
+(`github.com/ggurov/MEGA_EPIC_CANBUS`). The protocol mapping and the variable
+hashes are kept in the local archive, not in this repository, because that
+firmware is still in flux. See that repository for the current interface.
