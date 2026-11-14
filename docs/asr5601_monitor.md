@@ -109,6 +109,21 @@ The key length and the digest offset overlap in the code as read, so the exact
 header layout still needs confirmation before an image is sent. A wrong image
 fails the verify step and prints `1F2E3D85`; it does not touch flash.
 
+### Measured attempt
+
+A 32-byte Thumb stub was built with the format above
+(`tools/asr_ram_boot.py`) and sent at `0x20010000`. The monitor answered
+`1F2E3D04` and `1F2E3D05`, so the header, RC4 payload and CRC32 were accepted.
+
+The core then ended at `PC 0xFFFFFFFE`, and the payload at `0x20010000` was
+still in its encrypted form. The jump target is therefore not the address
+argument as assumed, and the payload is not decrypted at that address. A soft
+reset through SWD brought the monitor back; no power cycle was needed.
+
+So the verify path is understood, but the jump context is not. Further work
+needs the code at `0x100000F8` and the exact field at the header offset that
+holds the entry point.
+
 That path allows running a supplied image from RAM. It is the route to a
 J3-only flash programmer, because a RAM stub can then use the ROM flash
 routines. The image digest algorithm has not been reproduced yet.
