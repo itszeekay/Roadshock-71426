@@ -92,8 +92,35 @@ The reset handler also writes `0x40006000` = 1, `0x40006004` = 2 and
 `0x40006008` = 2 before use, which is likely a flash or bus configuration step.
 Reproduce that order in the stub.
 
-The next step is to recover the call signatures from the bootloader OTA path,
-then program the ATE partition first and verify by reading it back.
+The bootloader's flash API, recovered from its erase and write paths:
+
+| Wrapper (flash) | Target (RAM) | Signature | Role |
+|---|---|---|---|
+| `0x10004E70` | `0x20000298` | `()` | flash init, called from reset |
+| `0x10004EC0` | `0x2000002C` | `()` | read lock state |
+| `0x10004EB0` | `0x20000000` | `()` | unlock |
+| `0x10004EA0` | `0x20000014` | `()` | lock |
+| `0x10004E80` | `0x200002B8` | `(0x2520, addr)` | erase 4 KB sector at `addr` |
+| `0x10004E60` | `0x20000330` | `(addr, len, data)` | program, 256-byte chunks |
+
+The wrappers preserve all argument registers and tail-call into RAM, so a stub
+can call them directly once the first block is copied.
+
+Region table at `0x10004FF8`, 0x14 bytes per entry:
+
+| Entry | Base | Size | Contents |
+|---|---|---|---|
+| 0 | `0x10000000` | `0x8000` | bootloader |
+| 1 | `0x10048000` | `0x1C000` | application |
+| 3 | `0x10064000` | `0x1C000` | OTA or ATE |
+| 5 | `0x10007000` | `0x2000` | OTA info |
+
+The ATE partition at `0x100F0000` is not in the table, so the high-level erase
+that enforces these bounds cannot reach it. A stub must call the low-level erase
+directly with the ATE address, after checking the address range itself.
+
+Next step: build that stub, erase and program the ATE sector, verify by reading
+it back, then extend to the application region.
 
 ## Application image header
 

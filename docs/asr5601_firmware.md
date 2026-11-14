@@ -200,6 +200,16 @@ system rather than the call graph.
 - Advertising is configured through the `app_ble_*` functions
   (`app_ble_set_adv_data`, `app_ble_start_advertising`,
   `app_ble_config_legacy_advertising`).
+- The advertising data template is in flash at `0x10059122` and is copied into
+  RAM at `0x2000080A` by the startup RAM copy. It is a 26-byte buffer:
+
+  ```
+  19 09 "Controller8 Wired-xxxxxx"
+  ```
+
+  `0x19` is the AD length, `0x09` is "complete local name", and the last six
+  characters are overwritten at runtime with six hex digits taken from the BLE
+  MAC. So the advertised name is `Controller8 Wired-XXXXXX`.
 
 ## Flashing over J3
 
