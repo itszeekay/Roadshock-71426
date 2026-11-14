@@ -29,6 +29,47 @@ Layout:
 | `0x48000` | application |
 | `0xF0000` | ATE partition, blank |
 
+## Why SWD first, and why J3 is enough now
+
+SWD was used for the first read for one reason: at that point there was no way
+to read bulk flash over UART. The ROM monitor has no read command, and the
+application console rejects text. SWD gave a fast, verified 1 MB image, which
+was required before any write, because the part has no factory restore file.
+
+That constraint no longer applies. The monitor can load a RAM image with
+`boot`, and a RAM stub runs with full access to the chip. The write path was
+proven over J3 alone: erase and program of the ATE sector, verified by
+read-back.
+
+So for any future unit, including another variant of this panel, the intended
+minimum connection is **J3 only**:
+
+| J3 pad | Use |
+|---|---|
+| `GND` | common ground |
+| `+3.3` | sense only, the panel powers itself |
+| `TX` / `RX` | ROM monitor at 115200 |
+| `SEL0` | held high to enter the monitor |
+| `RST` | not used; the strap is sampled at power-on, so a power cycle replaces it |
+
+The sequence is: hold `SEL0` high, power-cycle, talk to the monitor at 115200,
+then `boot` a RAM stub for whatever is needed.
+
+Status of each operation over J3 alone:
+
+| Operation | Status |
+|---|---|
+| Enter the ROM monitor | proven |
+| Read and write single words (`rdreg`, `wrreg`) | proven |
+| Run a RAM stub (`boot`) | proven |
+| Erase and program flash | proven on the ATE sector |
+| Full flash dump | designed, not yet exercised: a RAM stub reads
+  `0x10000000` to `0x100FFFFF` and streams it over UART1 |
+
+A J3-only dump is slower than SWD, because it shares the 115200 monitor link,
+but it removes the soldering step. SWD remains the faster fallback and the
+method used for the verified image in `dumps/asr/`.
+
 ## What was required
 
 | Item | Use |

@@ -73,3 +73,20 @@ state that does not exist in the RAM-only context.
 Use the panel's own UI instead: with the stock base connected, double-click
 Mode on a channel and watch the indicator color. The mode order and the
 nibbles are documented in `docs/asr5601_firmware.md`.
+
+## Planned: dump stub
+
+A read-side equivalent of this stub, not yet written or tested:
+
+1. Runs from RAM through the ROM monitor `boot` command.
+2. Reads `0x10000000` to `0x100FFFFF` directly; the flash is memory-mapped.
+3. Formats the bytes as ASCII hex and prints them through the ROM monitor's
+   print routine at `0x000009B0`, so it uses the monitor's own 115200 UART.
+4. The host captures the text and rebuilds the binary.
+
+At 115200 the text is about 2 MB, so expect several minutes. Validate it on a
+unit that also has a SWD dump and compare SHA-256 before trusting it on an
+unknown variant.
+
+This is the piece that would make J3-only workflows complete. Flash erase and
+program over J3 are already proven.
