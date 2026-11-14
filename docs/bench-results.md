@@ -1,6 +1,6 @@
 # Bench results
 
-MCUs: base **STM8S003F3P6**, panel **STM8S003K3**; ASR5601S dump still open.
+MCUs: base **STM8S003F3P6**, panel **STM8S003K3** (LED driver) and **ASR5601S** (panel main controller). The ASR is dumped; see [asr5601_firmware.md](asr5601_firmware.md).
 
 Everything here was measured on real hardware or read from the dumped images.
 
@@ -127,7 +127,7 @@ testing.
 
 ## Open
 
-- ASR firmware.
 - J2-only LED override.
-- Exact display-nibble color map.
+- Exact display-nibble colour names (the nibble-to-mode mapping is recovered; see [asr5601_firmware.md](asr5601_firmware.md)).
 - PDU current sensing.
+- ASR runtime pin map and BLE service list.

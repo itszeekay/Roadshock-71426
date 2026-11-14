@@ -97,8 +97,8 @@ not a firmware rewrite.
 1. Exact stock mode timing rules.
 2. CAN controller for the PDU (MCP2515 vs CAN2040 vs ESP32 TWAI).
 3. Current sensing for the PDU (v1 or later).
-4. ASR firmware dump (J3) for button/UI understanding; not required for the
-   J2 gateway.
+4. ASR firmware is dumped and analyzed; the runtime pin map and BLE service
+   list remain open and are not required for the J2 gateway.
 
 ## Out of scope
 

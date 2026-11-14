@@ -126,10 +126,28 @@ unchanged.
 The patterns are: 1 = pin1, 5 = pin2, 3 = pin3, 7 = pin1+pin2. No pattern lights
 all three pins, and no pattern lights pin2+pin3 or pin1+pin3.
 
+## Color map
+
+The ASR side supplies nibbles `1`, `3`, `5`, `7` for the four channel modes, and
+the owner's manual names those modes toggle red, momentary blue, pulse green and
+blinking yellow. Combined with the pattern table above:
+
+| Nibble | Pins lit | Colour |
+|---|---|---|
+| 1 | pin1 | red |
+| 3 | pin3 | blue |
+| 5 | pin2 | green |
+| 7 | pin1 + pin2 | yellow |
+
+Nibble 7 lights pin1 and pin2, and red plus green is yellow, which is
+self-consistent. That gives pin1 = red, pin2 = green, pin3 = blue.
+
+The chain from the firmware is in
+[asr5601_firmware.md](asr5601_firmware.md). Bench confirmation with a known LED
+is still worthwhile but no longer the only source.
+
 ## What is still open
 
-- Color map: send nibbles 0-7 to each channel, record the color; determines
-  the R/G/B pin order for each channel.
 - Bytes 1/6/7 of the frame: the STM8 ignores them; they may carry a command
   or checksum in the ASR firmware.
 - The pin table copy from flash `0x8AB4` to RAM `0x0010` is not yet traced to a

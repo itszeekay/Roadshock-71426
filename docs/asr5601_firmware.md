@@ -221,6 +221,9 @@ Nibbles 2, 4 and 6 appear only as the off phase of the alternating encoder. The
 all-channel helpers use `0x11`, which is red on every LED, or `0x00` for all
 off.
 
+This is consistent with the STM8 pattern table: nibble 7 lights pin1 and pin2,
+and red plus green is yellow. See [panel_led_map.md](panel_led_map.md).
+
 ## BLE
 
 - The BLE stack is ASR's `ASONATA_BLE_NONOS_V1.4.1`, resident in the ROM at
