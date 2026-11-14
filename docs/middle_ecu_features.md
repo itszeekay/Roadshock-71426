@@ -142,3 +142,39 @@ on the other side.
 Ready-made builders are in `tools/protocol_ref.py`, including `startup_frame`,
 `build_reply`, the custom `0x09` to `0x12` builders and the hidden command
 builders.
+
+## Hardware for the middle ECU
+
+| Board | Bluetooth | CAN controller |
+|---|---|---|
+| ESP32-S2 | no radio for Bluetooth, Wi-Fi only | **TWAI (CAN 2.0)** |
+| ESP32-S3 | BLE | TWAI |
+| ESP32-C3 | BLE | TWAI |
+| ESP32 classic | BLE and Bluetooth Classic | TWAI |
+
+The ESP32-S2 does have a TWAI controller even though it has no Bluetooth. With
+an SN65HVD230 transceiver it needs no extra CAN chip: `TWAI TX` to `D`, `TWAI
+RX` to `R`, `3V3` and `GND` to the module, `CANH`/`CANL` to the bus, and 120
+ohm at the two physical ends. TX and RX are routable through the GPIO matrix.
+
+If a board without TWAI is used, an MCP2515 over SPI works. The MCP2515 runs at
+3.3 V and pairs directly with the SN65HVD230. Avoid 5 V MCP2515 or MCP25625
+boards unless they include level shifting, because the ESP32 is not 5 V
+tolerant.
+
+Start in `TWAI_MODE_LISTEN_ONLY` to confirm reception without influencing the
+bus. The TWAI controller needs the transceiver to loop TX back to RX, which the
+SN65HVD230 does.
+
+Prior art:
+
+- espressif/arduino-esp32 issue #8199, ESP32-S2 Mini with an SN65HVD230: TWAI
+  worked after the transceiver modules were replaced; the original SN65HVD230
+  boards were suspected faulty.
+- ESP-IDF TWAI guide for ESP32-S2.
+- ESP32-S2 Technical Reference Manual, chapter 29.
+- `MagnusThome/RejsaCAN-ESP32` and `miwagner/ESP32-Arduino-CAN`.
+
+Known pitfalls: counterfeit transceiver boards, the `RS` slope pin left
+floating, missing common ground, and termination fitted on more than the two
+bus ends.

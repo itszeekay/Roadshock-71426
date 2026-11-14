@@ -133,9 +133,9 @@ breakout.
 3. Send `coredump flash all`, capture the stream, and let the tool rebuild
    `flash.bin`. Read twice and compare SHA-256, the same rule used for the STM8
    images.
-4. Use SWD. The monitor has no read command and `PZ20` does not carry P06/P07,
-   so the SWD wires go to pins 36 and 37; see
-   [asr5601_swd_dump.md](asr5601_swd_dump.md).
+4. Use SWD. The monitor has no bulk read command (`rdreg` only returns single
+   words) and `PZ20` does not carry P06/P07, so the SWD wires go to pins 36 and
+   37; see [asr5601_swd_dump.md](asr5601_swd_dump.md).
 
 Do not run `Flash Erase` or `Burn` before a verified dump exists. There is no
 factory restore image for the ASR.

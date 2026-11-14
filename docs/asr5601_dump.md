@@ -55,9 +55,9 @@ Bench results:
 | ROM monitor, `SEL0` high, 115200 | prints `1F2E3D00`; accepts `init`; rejects `get_chip_type`, `help`, `version` and `coredump` with status `87` |
 | Application console, `SEL0` low, 921600 | answers `ERROR` to every text command tried, including bare CRLF |
 
-The ROM monitor only accepts the commands DOGO uses for writing: `init`,
-`erase`, `burn` and `boot`. There is no read command. The application console
-rejects all text input. That closed the UART path.
+The ROM monitor implements `init`, `boot`, `wrreg` and `rdreg`, with no bulk
+flash read command. The application console rejects all text input. That closed
+the bulk UART read path.
 
 The read command `coredump flash all` comes from ASR's ASR582X FAQ and is issued
 on the application's UART1 log port. It was tried on both links here and was
