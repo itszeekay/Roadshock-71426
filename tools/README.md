@@ -107,3 +107,14 @@ pipeline, not as a polished application.
 - Python 3
 - `pyserial` for the serial tools
 - Ghidra + JDK for the Ghidra scripts
+
+## ASR5601S tools
+
+| File | Purpose |
+|---|---|
+| `asr5601_swd_dump.py` | SWD probe and flash read with OpenOCD |
+| `openocd/asr5601_swd.cfg` | generic Cortex-M0+ target for the ASR |
+| `asr_disasm.py` | capstone listing, symbols and strings |
+| `asr_index.py` | function index from the Ghidra decomp |
+| `asr_ram_boot.py` | build and encode a RAM boot image for the ROM monitor |
+| `asr_stub/` | tested RAM stub that erases and programs flash |

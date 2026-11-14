@@ -14,7 +14,7 @@ Image: `dumps/asr/asr_flash.bin`. The application occupies `0x10048000` to
 
 ## Method
 
-- Dump read over SWD; see [../docs/asr5601_swd_dump.md](../docs/asr5601_swd_dump.md).
+- Dump read over SWD; see [the SWD dump guide](../../docs/asr5601_swd_dump.md).
 - Ghidra 11.3.1, raw binary loader, language `ARM:LE:32:Cortex`.
   - application at `0x10048000`
   - bootloader at `0x10000000`
