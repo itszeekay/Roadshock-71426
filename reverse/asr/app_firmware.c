@@ -11103,9 +11103,9 @@ void FUN_1004cf34(void)
   return;
 }
 
-// FUNC 0x1004cf6c  FUN_1004cf6c
+// FUNC 0x1004cf6c  led_update_core
 
-void FUN_1004cf6c(byte *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void led_update_core(byte *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   ushort uVar1;
@@ -11142,9 +11142,9 @@ void FUN_1004cf6c(byte *param_1,undefined4 param_2,undefined4 param_3,undefined4
   return;
 }
 
-// FUNC 0x1004d0ec  FUN_1004d0ec
+// FUNC 0x1004d0ec  led_channel_schedule_cancel
 
-undefined4 FUN_1004d0ec(byte *param_1)
+undefined4 led_channel_schedule_cancel(byte *param_1)
 
 {
   uint *puVar1;
@@ -11159,16 +11159,16 @@ undefined4 FUN_1004d0ec(byte *param_1)
     *DAT_1004d13c = DAT_1004d138;
     *DAT_1004d140 = DAT_1004d144 & *DAT_1004d140;
     *puVar1 = *puVar1 & ~(1 << (uint)*param_1);
-    FUN_1004cf6c();
+    led_update_core();
     uVar2 = 0;
     puVar1[1] = 0;
   }
   return uVar2;
 }
 
-// FUNC 0x1004d148  FUN_1004d148
+// FUNC 0x1004d148  led_channel_schedule_set
 
-undefined4 FUN_1004d148(byte *param_1)
+undefined4 led_channel_schedule_set(byte *param_1)
 
 {
   undefined4 uVar1;
@@ -11183,9 +11183,9 @@ undefined4 FUN_1004d148(byte *param_1)
   return uVar1;
 }
 
-// FUNC 0x1004d16c  FUN_1004d16c
+// FUNC 0x1004d16c  led_channel_payload_update
 
-undefined4 FUN_1004d16c(byte *param_1)
+undefined4 led_channel_payload_update(byte *param_1)
 
 {
   undefined4 uVar1;
@@ -11200,9 +11200,9 @@ undefined4 FUN_1004d16c(byte *param_1)
   return uVar1;
 }
 
-// FUNC 0x1004d190  FUN_1004d190
+// FUNC 0x1004d190  led_channel_payload_send
 
-undefined4 FUN_1004d190(byte *param_1)
+undefined4 led_channel_payload_send(byte *param_1)
 
 {
   undefined4 uVar1;
@@ -11211,7 +11211,7 @@ undefined4 FUN_1004d190(byte *param_1)
     uVar1 = 0xffffffff;
   }
   else {
-    uVar1 = FUN_1004d16c();
+    uVar1 = led_channel_payload_update();
   }
   return uVar1;
 }
@@ -12277,9 +12277,9 @@ void uart0_base_link_init(void)
   return;
 }
 
-// FUNC 0x1004e968  FUN_1004e968
+// FUNC 0x1004e968  led_channel3_send_now
 
-void FUN_1004e968(int param_1)
+void led_channel3_send_now(int param_1)
 
 {
   undefined1 *puVar1;
@@ -12294,18 +12294,18 @@ void FUN_1004e968(int param_1)
   *(undefined4 *)(puVar1 + 4) = uVar3;
   *(undefined4 *)(puVar1 + 8) = uVar2;
   if (param_1 == 0) {
-    FUN_1004d190(puVar1);
+    led_channel_payload_send(puVar1);
   }
   else {
-    FUN_1004d0ec();
-    FUN_1004d148(puVar1);
+    led_channel_schedule_cancel();
+    led_channel_schedule_set(puVar1);
   }
   return;
 }
 
-// FUNC 0x1004e9a8  FUN_1004e9a8
+// FUNC 0x1004e9a8  led_channel4_send_now
 
-void FUN_1004e9a8(int param_1)
+void led_channel4_send_now(int param_1)
 
 {
   undefined1 *puVar1;
@@ -12321,18 +12321,18 @@ void FUN_1004e9a8(int param_1)
   *(undefined4 *)(puVar1 + 4) = uVar3;
   *(undefined4 *)(puVar1 + 8) = uVar2;
   if (param_1 == 0) {
-    FUN_1004d190(puVar1);
+    led_channel_payload_send(puVar1);
   }
   else {
-    FUN_1004d0ec();
-    FUN_1004d148(puVar1);
+    led_channel_schedule_cancel();
+    led_channel_schedule_set(puVar1);
   }
   return;
 }
 
-// FUNC 0x1004e9f0  FUN_1004e9f0
+// FUNC 0x1004e9f0  led_channel0_send_now
 
-void FUN_1004e9f0(int param_1)
+void led_channel0_send_now(int param_1)
 
 {
   undefined1 *puVar1;
@@ -12347,18 +12347,18 @@ void FUN_1004e9f0(int param_1)
   *(undefined4 *)(puVar1 + 4) = uVar3;
   *(undefined4 *)(puVar1 + 8) = uVar2;
   if (param_1 == 0) {
-    FUN_1004d190(puVar1);
+    led_channel_payload_send(puVar1);
   }
   else {
-    FUN_1004d0ec();
-    FUN_1004d148(puVar1);
+    led_channel_schedule_cancel();
+    led_channel_schedule_set(puVar1);
   }
   return;
 }
 
-// FUNC 0x1004ea30  FUN_1004ea30
+// FUNC 0x1004ea30  led_channel1_send_now
 
-void FUN_1004ea30(int param_1)
+void led_channel1_send_now(int param_1)
 
 {
   undefined1 *puVar1;
@@ -12373,18 +12373,18 @@ void FUN_1004ea30(int param_1)
   *(undefined4 *)(puVar1 + 4) = uVar3;
   *(undefined4 *)(puVar1 + 8) = uVar2;
   if (param_1 == 0) {
-    FUN_1004d190(puVar1);
+    led_channel_payload_send(puVar1);
   }
   else {
-    FUN_1004d0ec();
-    FUN_1004d148(puVar1);
+    led_channel_schedule_cancel();
+    led_channel_schedule_set(puVar1);
   }
   return;
 }
 
-// FUNC 0x1004ea70  FUN_1004ea70
+// FUNC 0x1004ea70  led_channel2_send_now
 
-void FUN_1004ea70(int param_1)
+void led_channel2_send_now(int param_1)
 
 {
   undefined1 *puVar1;
@@ -12399,11 +12399,11 @@ void FUN_1004ea70(int param_1)
   *(undefined4 *)(puVar1 + 4) = uVar3;
   *(undefined4 *)(puVar1 + 8) = uVar2;
   if (param_1 == 0) {
-    FUN_1004d190(puVar1);
+    led_channel_payload_send(puVar1);
   }
   else {
-    FUN_1004d0ec();
-    FUN_1004d148(puVar1);
+    led_channel_schedule_cancel();
+    led_channel_schedule_set(puVar1);
   }
   return;
 }
@@ -13285,28 +13285,28 @@ undefined4 tick_ms_read(void)
   return 0xffffffff;
 }
 
-// FUNC 0x100502d4  FUN_100502d4
+// FUNC 0x100502d4  led_channels_flush
 
-void FUN_100502d4(void)
+void led_channels_flush(void)
 
 {
-  FUN_1004e9f0(0);
-  FUN_1004ea30(0);
-  FUN_1004ea70(0);
+  led_channel0_send_now(0);
+  led_channel1_send_now(0);
+  led_channel2_send_now(0);
   return;
 }
 
-// FUNC 0x100502ec  FUN_100502ec
+// FUNC 0x100502ec  setting_mode_exit
 
-void FUN_100502ec(void)
+void setting_mode_exit(void)
 
 {
   int iVar1;
   
   iVar1 = DAT_10050320;
   if (*(char *)(DAT_10050320 + 0x12) == '\x01') {
-    FUN_100502d4();
-    FUN_1004e9a8(4);
+    led_channels_flush();
+    led_channel4_send_now(4);
     *(undefined1 *)(iVar1 + 0x12) = 0;
     FUN_1004ead0();
     *DAT_10050324 = 0;
@@ -13317,9 +13317,9 @@ void FUN_100502ec(void)
   return;
 }
 
-// FUNC 0x1005032c  FUN_1005032c
+// FUNC 0x1005032c  setting_mode_exit_confirm
 
-void FUN_1005032c(void)
+void setting_mode_exit_confirm(void)
 
 {
   int iVar1;
@@ -13363,32 +13363,32 @@ void FUN_10050354(uint param_1,uint param_2,uint param_3,undefined4 param_4,unde
   uVar4 = FUN_100486fc(uVar4,DAT_10050440);
   FUN_10048930(uVar4,uVar3);
   uVar2 = FUN_10048224();
-  FUN_1004e9f0(uVar2);
+  led_channel0_send_now(uVar2);
   uVar4 = FUN_10048ea8(uVar6 + (param_2 - uVar5 & 0xff) & 0xff);
   uVar4 = FUN_10048930(uVar4,DAT_10050444);
   uVar4 = FUN_100486fc(uVar4,DAT_10050440);
   FUN_10048930(uVar4,uVar3);
   uVar2 = FUN_10048224();
-  FUN_1004ea70(uVar2);
+  led_channel2_send_now(uVar2);
   uVar4 = FUN_10048ea8(uVar6 + (param_3 - uVar5 & 0xff) & 0xff);
   uVar4 = FUN_10048930(uVar4,DAT_10050444);
   uVar4 = FUN_100486fc(uVar4,DAT_10050440);
   FUN_10048930(uVar4,uVar3);
   uVar2 = FUN_10048224();
-  FUN_1004ea30(uVar2);
+  led_channel1_send_now(uVar2);
   uVar4 = FUN_10048ea8(param_4);
   uVar4 = FUN_10048930(uVar4,DAT_10050444);
   uVar4 = FUN_100486fc(uVar4,DAT_10050440);
   FUN_10048930(uVar4,uVar3);
   uVar2 = FUN_10048224();
-  FUN_1004e968(uVar2);
-  FUN_1004e9a8(param_5);
+  led_channel3_send_now(uVar2);
+  led_channel4_send_now(param_5);
   return;
 }
 
-// FUNC 0x10050448  FUN_10050448
+// FUNC 0x10050448  ui_state_reset
 
-undefined8 FUN_10050448(undefined4 param_1,undefined4 param_2)
+undefined8 ui_state_reset(undefined4 param_1,undefined4 param_2)
 
 {
   byte bVar1;
@@ -13409,9 +13409,9 @@ undefined8 FUN_10050448(undefined4 param_1,undefined4 param_2)
   return CONCAT44(param_2,(uint)bVar1);
 }
 
-// FUNC 0x10050488  FUN_10050488
+// FUNC 0x10050488  ui_countdown
 
-undefined8 FUN_10050488(uint param_1,uint param_2)
+undefined8 ui_countdown(uint param_1,uint param_2)
 
 {
   ushort *puVar1;
@@ -13455,9 +13455,9 @@ LAB_1005050c:
   return CONCAT44(local_14,param_1);
 }
 
-// FUNC 0x10050530  FUN_10050530
+// FUNC 0x10050530  key_event_dispatch
 
-void FUN_10050530(byte *param_1,int param_2)
+void key_event_dispatch(byte *param_1,int param_2)
 
 {
   char cVar1;
@@ -14905,9 +14905,9 @@ LAB_10050ae0:
   return;
 }
 
-// FUNC 0x100507a0  FUN_100507a0
+// FUNC 0x100507a0  key_log_loop
 
-void FUN_100507a0(undefined4 param_1)
+void key_log_loop(undefined4 param_1)
 
 {
   char cVar1;
@@ -14964,9 +14964,9 @@ LAB_100507ea:
   } while( true );
 }
 
-// FUNC 0x10050ea2  FUN_10050ea2
+// FUNC 0x10050ea2  key_event_handler_temp_off
 
-void FUN_10050ea2(void)
+void key_event_handler_temp_off(void)
 
 {
   int iVar1;
@@ -14987,9 +14987,9 @@ void FUN_10050ea2(void)
   return;
 }
 
-// FUNC 0x10050ec4  FUN_10050ec4
+// FUNC 0x10050ec4  temp_all_off
 
-void FUN_10050ec4(void)
+void temp_all_off(void)
 
 {
   char cVar1;
@@ -15203,18 +15203,18 @@ LAB_10051224:
   return;
 }
 
-// FUNC 0x10051294  FUN_10051294
+// FUNC 0x10051294  key_event_tick
 
-void FUN_10051294(void)
+void key_event_tick(void)
 
 {
   key_event_handler();
   return;
 }
 
-// FUNC 0x1005129e  FUN_1005129e
+// FUNC 0x1005129e  key_event_noop
 
-void FUN_1005129e(void)
+void key_event_noop(void)
 
 {
   return;
@@ -15412,9 +15412,9 @@ LAB_100514f2:
   return CONCAT44(param_2,local_10);
 }
 
-// FUNC 0x1005152c  FUN_1005152c
+// FUNC 0x1005152c  key_event_post
 
-undefined8 FUN_1005152c(undefined4 param_1,undefined3 param_2,undefined4 param_3)
+undefined8 key_event_post(undefined4 param_1,undefined3 param_2,undefined4 param_3)
 
 {
   int *piVar1;
@@ -15433,9 +15433,9 @@ undefined8 FUN_1005152c(undefined4 param_1,undefined3 param_2,undefined4 param_3
   return CONCAT44(uStack_14,param_1);
 }
 
-// FUNC 0x10051564  FUN_10051564
+// FUNC 0x10051564  key_event_post_500ms
 
-void FUN_10051564(void)
+void key_event_post_500ms(void)
 
 {
   app_msg_cancel(0x31);
@@ -15443,9 +15443,9 @@ void FUN_10051564(void)
   return;
 }
 
-// FUNC 0x10051578  FUN_10051578
+// FUNC 0x10051578  hex_decode
 
-uint FUN_10051578(uint param_1)
+uint hex_decode(uint param_1)
 
 {
   return (param_1 >> 4) * 10 + (param_1 & 0xf) & 0xff;
@@ -15512,9 +15512,9 @@ LAB_1005163a:
   return CONCAT44(param_2,local_18);
 }
 
-// FUNC 0x10051654  FUN_10051654
+// FUNC 0x10051654  key_event_post_100ms
 
-void FUN_10051654(void)
+void key_event_post_100ms(void)
 
 {
   int iVar1;
