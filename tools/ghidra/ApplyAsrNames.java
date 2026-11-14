@@ -81,6 +81,11 @@ public class ApplyAsrNames extends GhidraScript {
         {0x1004FE88L, "all_leds_set", "Sends 0x11 (red) to all eight LEDs, then posts 0x36 to start the flash loop"},
         {0x1004FDF8L, "all_leds_blink", "Alternates an all-off frame and 0x11 (all red) every 200 ms; global only, no per-channel flash"},
         {0x100501FCL, "mode_query", "Searches the per-channel mode list for a value"},
+        {0x100538E8L, "post_task_msg", "Allocates a queue entry and posts message with payload to the task queue"},
+        {0x100539D4L, "post_msg_payload", "Allocates a queue entry and posts message with payload to the task queue"},
+        {0x1004FD78L, "base_frame_send", "Builds an 11-byte base-link frame: seq, dir, type 0x08, flag, 6 payload bytes, checksum"},
+        {0x10050354L, "base_frame_process", "Processes 5 base frame payload bytes into per-channel mode and color values"},
+        {0x100519ECL, "led_frame_remap", "Remaps a single nibble to its encoder-encoded byte value"},
     };
 
     private static final Object[][] DATA = new Object[][] {

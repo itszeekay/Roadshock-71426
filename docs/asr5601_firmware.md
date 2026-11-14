@@ -28,10 +28,12 @@ application uses three UARTs, each with a different job.
 
 Evidence:
 
-- `uart0_base_link_init` at `0x1004E8A4` sets pins P02/P03, baud `0x960` = 2400,
-  index 0, and enables the UART0 interrupt.
-- `uart1_log_init` at `0x1004E7F0` sets pins P04/P05 and baud `0xE1000` =
-  921600.
+- `uart0_base_link_init` at `0x1004E8A4` sets pins P02/P03, calls
+  `uart_init` with index 0, and enables the UART0 interrupt.
+- `uart1_log_init` at `0x1004E7F0` sets pins P04/P05, calls `uart_init` with
+  index 1, and enables the UART1 interrupt.
+- `uart_apply_baud` at `0x1004C544` (used by `uart3_init`) writes the baud rate
+  divisor pair `0x1C200` (115200).
 - `led_frame_send` at `0x100516D8` writes through `uart3_write` at `0x1004E888`,
   which targets `0x40018000`.
 - The UART3 setup at `0x1004E854` configures pins P13 and P14 with class 16.
@@ -96,10 +98,10 @@ through 14.
 
 | Item | Value |
 |---|---|
-| UART0 RX callback | `0x1004F728` |
+| UART0 RX callback | `uart0_rx_callback` at `0x1004F728` |
 | RX ring buffer | `0x20003481`, index at `0x20003470` |
 | buffer slot size | `0x20` |
-| byte dispatcher | `0x1004E1A0` |
+| byte dispatcher | `app_msg_dispatch` at `0x1004E1A0` |
 
 The hardware ISR `0x1004C760` calls the generic UART handler `0x1004C4E8(0)`,
 which reads the data register and calls the registered callback. The callback
@@ -134,17 +136,72 @@ that burst. The other events dispatch to timer, LED and UI functions:
 | `0x36` | `0x1004FDF8` | `all_leds_blink`: all-off and all-red every 200 ms |
 | `0x37` | `0x1004F7BC` | `key_highlight_clear` |
 
-The LED messages are reached from the key handler, not from the base link.
-Outgoing frames are built by `tx_frame_enqueue` at `0x1004FCF8`, which fills a
-20-entry queue with a sequence number, direction, type, flag, payload and a
-`sum8_checksum` over the frame, and gives each entry its own timer.
+### Base frame structure
 
-Frames are delimited by an idle gap, not by a length field. The base firmware
-confirms the same scheme from the other end: its UART1 receive ISR accumulates
-bytes into a 32-byte buffer, a timeout marks the burst as complete, and
-`frame_handler` validates the checksum over the received count. The 11-byte
-frame is the application format; the transport is gap-delimited and the
-checksum rejects anything malformed.
+The base board sends frames to the panel over UART0. The `0x28` handler in
+`app_msg_dispatch` reads two bytes from the ring buffer: the byte value and the
+offset index. It accumulates the byte values into a 16-byte buffer at
+`0x1004E2B8`, one byte per call. The offset counts up to 1; when it reaches
+1, the handler resets the offset to 0 and calls `FUN_100538E8(0xB)` to post
+the base-frame-complete notification to the task queue.
+
+The notification handler (message `0x0B`) triggers the LED mask apply path:
+
+1. `led_mask_apply` (`0x1004F0B0`) reads the 6-byte LED mask from the base
+   frame accumulator at `0x1004F428`.
+2. For each nibble that is not 8 (off), it writes the nibble into the 12-nibble
+   payload at `DAT_1004F420 + 0x57`, then calls `led_encode_b_send` to update
+   the stored payload byte.
+3. If the animation flag at `DAT_1004F420 + 0x12` is clear, it calls
+   `base_frame_process` (`0x10050354`) with the 5 payload bytes, which
+   decodes the base frame into per-channel mode and color values.
+4. `base_frame_process` calls `led_frame_send` to send the updated frame to
+   the STM8.
+5. `base_frame_process` sets the animation flag, posts message `0x2D` (100 ms
+   periodic UI update), and calls `led_mask_apply` again to apply the new mask.
+
+### LED mask apply path
+
+The full path from base frame to LED output:
+
+1. **UART0 RX** (`uart0_rx_callback`, `0x1004F728`): appends bytes to the 32-byte
+   ring buffer.
+2. **Event `0x28`** posted to the task queue.
+3. **`app_msg_dispatch`** (`0x1004E1A0`): reads two bytes from the ring buffer,
+   copies them into the 16-byte accumulator at `0x1004E2B8`. When offset = 1,
+   calls `FUN_100538E8(0xB)`.
+4. **`FUN_100538E8(0xB)`** posts message `0x0B` (base frame complete) to the
+   task queue.
+5. **`led_mask_apply`** (`0x1004F0B0`): reads the 6-byte LED mask from
+   `DAT_1004F428`, applies each nibble to the 12-nibble payload at
+   `DAT_1004F420 + 0x57`, and calls `FUN_1004FD78` (base frame send) to re-send
+   the updated frame.
+6. **`led_update`** (`0x10051B04`): alternates between two nibble encoders
+   (`led_nibble_encode_a` at `0x10051734` and `led_nibble_encode_b` at
+   `0x1005187C`) and sends the 9-byte UART3 frame.
+7. **`led_frame_send`** (`0x100516D8`): builds `5A 00 <6 bytes> EE` and calls
+   `uart3_write` (`0x1004E888`).
+8. **UART3 TX** at 115200 on P13/P14 to the STM8S003K3 display driver.
+
+The encoder alternation at `0x20003904` toggles between two nibble encodings
+on each `led_update` call. The odd nibble is the visible color (red=1, blue=3,
+green=5, yellow=7), and the even nibble is always 8 (off).
+
+### Base-disconnected behavior
+
+When the base is disconnected:
+
+- The base stops sending frames on UART0.
+- The UART0 RX callback no longer appends bytes to the ring buffer.
+- Event `0x28` is no longer posted, so `app_msg_dispatch` is not called.
+- `FUN_100538E8(0xB)` is not called, so message `0x0B` is not posted.
+- `led_mask_apply` is not triggered, so the LED mask accumulator at
+  `0x1004F428` is not updated.
+- The `0x2D` periodic UI update timer (`FUN_1005147C`, 100 ms) still runs but
+  does not re-send the LED frame unless the base frame data is ready
+  (`DAT_1004E2C8` is non-zero).
+- The LEDs stop updating. The panel does not enter a fail-safe or default
+  state; it simply stops sending frames to the STM8.
 
 ## Buttons
 
