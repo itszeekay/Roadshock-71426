@@ -22,7 +22,7 @@ of the final product.
 (MCP2515-compatible controller plus transceiver), Adafruit product 5724.
 
 It was used during early bench testing of the CAN side. It is **not part of the
-current design and is not actively used**. The gateway/PDU CAN work is still at
+current design and is not actively used**. The gateway/PDM CAN work is still at
 the prototype stage and the final controller choice is open.
 
 Board notes:
@@ -36,7 +36,7 @@ Board notes:
 
 Why it is not in the current design:
 
-- The final gateway or PDU may use this Feather, an MCP2515 module, CAN2040
+- The final gateway or PDM may use this Feather, an MCP2515 module, CAN2040
   (PIO), or an ESP32 with TWAI. No decision has been made.
 - `rp2040/can_gateway.ino` is a skeleton built around the MCP2515 library. It
   has not been validated on a vehicle.

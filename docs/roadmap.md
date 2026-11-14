@@ -1,4 +1,4 @@
-# Roadmap: CAN gateway and PDU
+# Roadmap: CAN gateway and PDM
 
 MCUs: base **STM8S003F3P6**, button panel **STM8S003K3** (LED driver) + **ASR5601S** (panel main controller).
 
@@ -24,7 +24,7 @@ link, and there is no J2 path to intercept or inject display frames.
 
 LED override would require hardware modification: wiring to the STM8 PD5/PD6
 pins and the ASR display UART, or replacing the ASR. That is out of scope for
-the gateway and PDU work. The bridge scope is the 2400-baud bus: button
+the gateway and PDM work. The bridge scope is the 2400-baud bus: button
 events in, channel commands out, and output state back to CAN.
 
 The middle MCU is a **bridge with two serial ports plus CAN**:
@@ -47,7 +47,7 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
 
 - **Gateway**: pass-through/translate the stock link, read buttons, drive the
   base. LED state is not part of the gateway; the LEDs remain under the ASR UI.
-- **PDU**: same bridge, but the base runs our firmware and reports real output
+- **PDM**: same bridge, but the base runs our firmware and reports real output
   state; the bridge is the CAN authority.
 
 ## Phases
@@ -73,7 +73,7 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
      part of the current design.
    - Implement the CAN ID map (below, without the LED entry).
 
-4. **PDU variant**
+4. **PDM variant**
    - Custom base firmware as the output authority.
    - Decide current sensing (stock board has none).
    - Same bridge, no pass-through.
@@ -87,9 +87,9 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
 |---|---|---|
 | `0x100` | panel/ECU to gateway | 8-channel button bitmask (mirrors `08 0C`) |
 | `0x101` | panel/ECU to gateway | master power (mirrors `07 00/01`) |
-| `0x110 + n` | ECU to PDU | channel n: mode, duty |
-| `0x120` | ECU to PDU | status request |
-| `0x121 + n` | PDU to ECU | channel n: actual state, duty, fault |
+| `0x110 + n` | ECU to PDM | channel n: mode, duty |
+| `0x120` | ECU to PDM | status request |
+| `0x121 + n` | PDM to ECU | channel n: actual state, duty, fault |
 
 Keep the mapping in one table so a different ECU protocol is a config change,
 not a firmware rewrite.
@@ -97,9 +97,9 @@ not a firmware rewrite.
 ## Open decisions
 
 1. Exact stock mode timing rules.
-2. CAN controller for the PDU: ESP32-S2 TWAI is the current choice; MCP2515 and
+2. CAN controller for the PDM: ESP32-S2 TWAI is the current choice; MCP2515 and
    CAN2040 remain alternatives.
-3. Current sensing for the PDU (v1 or later).
+3. Current sensing for the PDM (v1 or later).
 4. ASR firmware is dumped and analyzed; the runtime pin map and BLE service
    list remain open and are not required for the J2 gateway.
 
@@ -107,4 +107,4 @@ not a firmware rewrite.
 
 - Panel LED override via the internal 115200 display link. That would require
   hardware modification (panel-internal wiring or ASR replacement) and is not
-  part of the gateway or PDU.
+  part of the gateway or PDM.

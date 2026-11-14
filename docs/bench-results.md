@@ -132,5 +132,5 @@ testing.
 - A direct bench check of the inferred display colors, red, blue, green and
   yellow. The nibble-to-mode mapping is recovered; see
   [asr5601_firmware.md](asr5601_firmware.md).
-- PDU current sensing.
+- PDM current sensing.
 - ASR runtime pin map and BLE service list.

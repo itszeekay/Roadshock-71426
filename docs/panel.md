@@ -79,7 +79,7 @@ There are two very different levels of control.
   build.
 - It is the reliable path for a CAN-driven "flash this light" feature.
 
-For the gateway or PDU, the display-link tap is a deliberate design addition.
+For the gateway or PDM, the display-link tap is a deliberate design addition.
 Without it, the gateway can only observe the panel. With it, it can control the
 LEDs.
 

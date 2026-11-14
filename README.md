@@ -2,7 +2,7 @@
 
 **Harbor Freight SKU 71426** · [product page](https://www.harborfreight.com/universal-led-8-gang-switch-panel-71426.html) · [owner's manual](https://manuals.harborfreight.com/manuals/71000-71999/71426-193175548276.pdf)
 
-Firmware analysis, pinouts, wire protocol, and a practical path to a CAN-controlled power distribution unit (PDU) built on the stock hardware.
+Firmware analysis, pinouts, wire protocol, and a practical path to a CAN-controlled power distribution module (PDM) built on the stock hardware.
 
 ![ROADSHOCK 71426 base/output unit with the lid off](images/hero.jpg) *ROADSHOCK 71426 base/output unit, lid removed. The terminal/fuse map is printed inside.*
 

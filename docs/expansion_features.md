@@ -4,7 +4,7 @@ This page collects candidate features and use cases for the platform beyond what
 
 ## What the platform is good for
 
-The base board is a fused, high-side switched 8-channel 12 V PDU with a 10-button panel. Stock applications are auxiliary lights and accessories for off-road vehicles, trucks, SUVs, UTVs, and boats.
+The base board is a fused, high-side switched 8-channel 12 V PDM with a 10-button panel. Stock applications are auxiliary lights and accessories for off-road vehicles, trucks, SUVs, UTVs, and boats.
 
 - **Off-road / overlanding:** LED bars, ditch lights, rock lights, winch, compressor, aux fans, fuel pump.
 - **Marine:** Bilge pump, navigation lights, horn, cabin lights, wiper with park switch.
@@ -123,6 +123,6 @@ Common requirement: a center-off toggle plus a 12 V input to achieve three posit
 
 ## Summary
 
-The platform is a solid, fused 8-channel PDU with a button panel. The middle ECU adds CAN, programmable inputs, and diagnostics. Community needs: output feedback, input-driven logic, CAN integration, datalogging. All proposed features are scoped for future development.
+The platform is a solid, fused 8-channel PDM with a button panel. The middle ECU adds CAN, programmable inputs, and diagnostics. Community needs: output feedback, input-driven logic, CAN integration, datalogging. All proposed features are scoped for future development.
 
 **Key open items:** runtime pinout of the ASR, BLE service list, application-region programming, bench tests.

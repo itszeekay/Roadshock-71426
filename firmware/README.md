@@ -29,7 +29,7 @@ Target: **STM8S003F3P6** (8 KB flash, 1 KB RAM). Built with **SDCC 4.5**
 
 ## Not implemented yet
 
-- CAN (the STM8 has no CAN controller; the gateway/PDU plan uses a companion
+- CAN (the STM8 has no CAN controller; the gateway/PDM plan uses a companion
   MCU).
 
 ## Bench verification pending
