@@ -132,3 +132,9 @@ builds such an image.
 That path allows running a supplied image from RAM. It is the route to a
 J3-only flash programmer, because a RAM stub can then use the ROM flash
 routines. The image digest algorithm has not been reproduced yet.
+
+## Related
+
+- `tools/asr_ram_boot.py` builds and sends RAM images.
+- `tools/asr_stub/` is a tested stub that erases and programs flash through the
+  ROM routines. It was verified on the ATE sector at `0x100F0000`.

@@ -34,7 +34,7 @@ against those ROM entry points and replaces only the application region.
 |---|---|---|
 | ASR BLE NONOS SDK | headers, linker scripts, ROM API declarations | ASR distributes it from its site and Drive links |
 | ARM toolchain | build the application | GCC 5.4 2016q3, the exact version bundled with the SDK |
-| Flash programming stub | write the application region | the ROM has flash routines; a RAM stub can call them |
+| Flash programming stub | write the application region | **done**, proven on the ATE sector; source in `tools/asr_stub` |
 | Application image header | the bootloader verifies the app before jumping | reuse the stock header as the template |
 | BLE configuration | name, services, advertising | NVDS is blank on this unit |
 | Test plan | verify radio and panel behaviour | needs a phone and the panel wired to a base or an emulator |
@@ -74,9 +74,9 @@ The ROM monitor has no `erase` or `burn`. The working route is:
    uses for OTA writes.
 4. Verify by reading the region back, then reset.
 
-What is not done yet: the stub itself. The bootloader does not program flash
-directly; it calls RAM-resident routines through pointers at `0x10004E6C`
-(`0x20000331`) and `0x10004ECC` (`0x2000002D`).
+The stub is written and tested. The bootloader does not program flash directly;
+it calls RAM-resident routines through pointers at `0x10004E6C` (`0x20000331`)
+and `0x10004ECC` (`0x2000002D`).
 
 Those routines are copied into RAM by the bootloader reset handler:
 
@@ -119,8 +119,12 @@ The ATE partition at `0x100F0000` is not in the table, so the high-level erase
 that enforces these bounds cannot reach it. A stub must call the low-level erase
 directly with the ATE address, after checking the address range itself.
 
-Next step: build that stub, erase and program the ATE sector, verify by reading
-it back, then extend to the application region.
+Result on the panel: the write build produced `a0 a1 a2 ... af` for 256 bytes at
+`0x100F0000`, and the erase-only build returned the sector to `0xFF`. Both were
+verified over SWD. Source and instructions are in `tools/asr_stub/README.md`.
+
+Next step: repeat the same test on the application region, then program a
+minimal application.
 
 ## Application image header
 

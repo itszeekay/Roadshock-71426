@@ -16,6 +16,7 @@ calls the word at base + 4. The payload therefore starts with a vector table:
     python tools/asr_ram_boot.py --hexfile image.hex
 """
 import argparse
+import pathlib
 import struct
 
 MAGIC = b"ASR SONATA BLE DL NON"
@@ -95,16 +96,20 @@ def main():
     p.add_argument("--key", default="00112233445566778899aabbccddeeff"
                                      "00112233445566778899aabbccddeeff")
     p.add_argument("--secure", action="store_true", help="use the DL SEC path with RC4 and CRC32")
+    p.add_argument("--payload", default=None, help="raw payload binary instead of the built-in marker stub")
     p.add_argument("--hexfile", default=None)
     args = p.parse_args()
 
     key = bytes.fromhex(args.key)
-    img = build(MARKER_STUB, key, args.secure)
+    payload = MARKER_STUB
+    if args.payload:
+        payload = pathlib.Path(args.payload).read_bytes()
+    img = build(payload, key, args.secure)
 
-    print("payload %d bytes" % len(MARKER_STUB))
+    print("payload %d bytes" % len(payload))
     print("total   %d bytes" % len(img))
-    print("crc32   0x%08X" % crc32_msb(MARKER_STUB))
-    print("stub    %s" % MARKER_STUB.hex())
+    print("crc32   0x%08X" % crc32_msb(payload))
+    print("stub    %s" % payload.hex())
     print("image   %s" % img.hex())
 
     if args.hexfile:
