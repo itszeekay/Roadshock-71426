@@ -38,8 +38,8 @@ The mask ROM at `0x00000000` is 8 KB. It is mirrored four times through the
 64 KB read window, so only the first 8 KB is stored. It contains the download
 monitor described in [../../docs/asr5601_monitor.md](../../docs/asr5601_monitor.md).
 
-The two independent reads are byte-identical. The trimmed files drop the
-trailing `0xFF`, which starts at offset `0x5BA14`.
+The two SWD reads are byte-identical, and the later J3-only read matches them.
+The trimmed files drop the trailing `0xFF`, which starts at offset `0x5BA14`.
 
 ## Layout
 
@@ -66,5 +66,7 @@ and verifies the application image before jumping.
 
 ## Status
 
-Read-only capture. Nothing was written to the chip. There is no factory restore
-image for this part, so do not run erase or burn against it.
+The dump itself was a read-only capture. Later write tests touched only the
+blank ATE sector at `0x100F0000`; the bootloader and application regions were
+not written. There is no factory restore image for this part, so do not run
+erase or burn against it.

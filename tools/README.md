@@ -50,10 +50,12 @@ python3 tools/duty_sweep.py --port COM5
 
 Set `ROADSHOCK_PORT` instead of passing `--port` if you prefer.
 
-## ASR5601S read-only probe and dump
+## ASR5601S probe and legacy dump attempt
 
-This tool speaks only the text monitor on the ASR's UART1. It refuses any
-command containing `erase`, `burn`, `boot`, `write` or `program`.
+`asr5601_dump.py` was the first read attempt. This panel's monitor rejects the
+bulk read commands, so the verified dump uses SWD or the J3 stub instead. The
+tool still probes the monitor and parses captures, and it refuses any command
+containing `erase`, `burn`, `boot`, `write` or `program`.
 
 ```bash
 python3 tools/asr5601_dump.py --selftest
@@ -117,6 +119,6 @@ pipeline, not as a polished application.
 | `asr_disasm.py` | capstone listing, symbols and strings |
 | `asr_index.py` | function index from the Ghidra decomp |
 | `asr_ram_boot.py` | build and encode a RAM boot image for the ROM monitor |
-| `asr_stub/` | tested RAM stub that erases and programs flash |
+| `asr_stub/` | tested RAM stubs that erase and program flash, and dump it |
 | `asr5601_j3_capture.py` | drive the Feather and send the dump stub over J3 |
 | `asr5601_j3_dump.py` | rebuild and verify a flash image from a J3 capture |

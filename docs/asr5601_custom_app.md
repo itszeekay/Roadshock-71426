@@ -20,9 +20,9 @@ against those ROM entry points and replaces only the application region.
 
 | Item | Status |
 |---|---|
-| Full flash backup | `dumps/asr/asr_flash.bin`, two identical reads, hash recorded |
+| Full flash backup | `dumps/asr/asr_flash.bin`, two SWD reads and one J3 read, all identical |
 | Mask ROM backup | `dumps/asr/asr_rom.bin`, 8 KB |
-| Read path | SWD, and the ROM monitor over J3 |
+| Read path | SWD, and a full J3-only dump through the ROM monitor |
 | Word read and write over J3 | `rdreg` and `wrreg`, verified |
 | Code execution over J3 | RAM boot with a self-built image, verified |
 | Boot strap control | `SEL0` from the Feather, or a jumper |
@@ -180,7 +180,7 @@ network. No hardware change is needed for BLE.
 
 ## Recommended order when the work starts
 
-1. Build the flash stub and prove it on the ATE partition.
+1. The flash stub is built and proven on the ATE partition.
 2. Write a minimal application that keeps the stock vector table and header and
    only toggles one output, then confirm the bootloader accepts it.
 3. Add the BLE stack calls and verify advertising with a phone.

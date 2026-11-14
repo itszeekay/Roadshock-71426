@@ -1,7 +1,7 @@
 # Reverse engineering
 
-Decompiled reconstructions of the two STM8 images, plus annotated listings and
-function indexes.
+Decompiled reconstructions of the two STM8 images and the ASR5601S image, plus
+annotated listings and function indexes.
 
 | File | Contents |
 |---|---|
@@ -10,6 +10,7 @@ function indexes.
 | `base_function_index.md` | address / name / role |
 | `panel_function_index.md` | same for the panel |
 | `base_symbols.md`, `panel_symbols.md` | symbol notes |
+| `asr/` | ASR5601S application and bootloader output, see `asr/README.md` |
 
 Annotated listings are generated on demand with
 `tools/ghidra/dump_asm.py` (output to `analysis/asm_named_true.txt` /
@@ -57,8 +58,9 @@ concatenation step.
 Every functional claim names its source: dump hash, function address, or
 captured frame. Where the decompilation disagrees on ambiguous points
 (register-bank spills, dispatch twins, 0xFF filler), the conservative reading
-is recorded in `docs/firmware.md` and `docs/protocol.md (section "Stock channel modes")`, and bench or
-dump work is named as the decider rather than guessing. Uncertain items stay
+is recorded in `docs/firmware.md` and in the "Stock channel modes" section of
+`docs/protocol.md`, and bench or dump work is named as the decider rather than
+guessing. Uncertain items stay
 marked uncertain in the index roles.
 
 ## Licensing

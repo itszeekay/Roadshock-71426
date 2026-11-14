@@ -21,10 +21,9 @@ nylon bristle brush and a small amount of IPA. A pogo fixture can replace hand
 peeling for repeatable flashing; see [`pogo_fixture.md`](pogo_fixture.md). The
 button panel is not potted.
 
-The base board SWIM header has four pads: `V+`, `GND`, `SWIM`, `RST`. The pad
-pitch has not been measured; the panel J3 pads are approximately 1.27 mm pitch.
-Wire the ST-Link to the SWIM header: `V+`, `GND`, `SWIM`, and `RST` for reliable
-flashing. **Power the board from 12 V only with the ST-Link's 3.3 V
+The base board SWIM header has four pads: `V+`, `GND`, `SWIM`, `RST`. Pad
+positions and pitch are in [pinouts.md](pinouts.md). Wire the ST-Link to the
+header: `V+`, `GND`, `SWIM`, and `RST` for reliable flashing. **Power the board from 12 V only with the ST-Link's 3.3 V
 disconnected.**
 
 ```bash

@@ -56,12 +56,14 @@ tolerant" caution was wrong.
 | Package | QFN48, 6 x 6 mm, 0.4 mm pitch |
 | GPIO | 30 digital I/O on the QFN48 |
 
-The panel's exact flash size is still not confirmed. Read 1 MB first and trim a
-`0xFF` tail if the part is the 512 KB version.
+This panel is the 1 MB part: a full 1 MB read succeeded and the content ends at
+`0x5BA14`, followed by `0xFF`. For a 512 KB variant, read 1 MB first and trim
+the tail, or stop at `0x80000`.
 
 ### UART pin options
 
-The pin mux gives several pins per UART. This narrows the display-link search.
+The pin mux gives several pins per UART. The firmware selects P13/P14 for
+UART3, the display link; the alternatives below are unused on this panel.
 
 | UART | TX/RX pin options | Notes |
 |---|---|---|
@@ -147,25 +149,19 @@ and an 8 ms startup delay after VBATB reaches 1.7 V.
 
 P06/P07 are SWD at the default pin function. The datasheet also lists alternate
 SWD sets on P02/P03, P12/P18 and P19/P20 at function 8, but those require the
-firmware to remap them. The ROM default is still P06/P07, so the SWD fallback in
-the dump record in [asr5601_dump.md](asr5601_dump.md) is unchanged.
+firmware to remap them. The ROM default is P06/P07, which is where the first
+dump connected; see [asr5601_swd_dump.md](asr5601_swd_dump.md).
 
 ## What the datasheet does not change
 
 - It does not document the `welcome to download` / `>>>` monitor.
 - It does not document `coredump flash all` or any read-back command.
 - It does not say whether the panel's debug port is locked.
-- It does not decode the panel's exact part variant or flash size.
+- It does not state which flash size is fitted. This panel reads as 1 MB.
 
-The dump record still starts with the J3 UART probe and falls back to SWD on
-P06/P07.
-
-## What to check next
-
-1. Beep STM8 PD5/PD6 against the UART2 and UART3 candidate pins above to find
-   the display link.
-2. When the ASR dump exists, check KEYPAD and GPIO register accesses to identify
-   the button scan.
-3. Confirm whether the panel's ASR is the 512 KB or 1 MB part.
+The dump settled the open points the datasheet could not: the display link is
+UART3 on P13/P14, the buttons use the keypad matrix, and the part is 1 MB. Both
+read paths are in [asr5601_dump.md](asr5601_dump.md). Remaining open items are
+in [asr5601_firmware.md](asr5601_firmware.md).
 4. Compare the panel's actual power passives with the datasheet reference values
    before using them for repair.

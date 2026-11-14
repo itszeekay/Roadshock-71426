@@ -57,8 +57,8 @@ SWIM header. Clean residue off the four pads with a stiff nylon bristle brush
 and a small amount of IPA. A pogo fixture can replace hand peeling for repeatable
 flashing; see [pogo_fixture.md](pogo_fixture.md).
 
-The four SWIM pads are `V+`, `GND`, `SWIM`, `RST`. The pad pitch has not been
-measured; the panel J3 pads are approximately 1.27 mm pitch.
+The four SWIM pads are `V+`, `GND`, `SWIM`, `RST`. Pad positions and pitch are
+in [pinouts.md](pinouts.md).
 
 ---
 

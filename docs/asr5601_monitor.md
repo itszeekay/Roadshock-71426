@@ -105,8 +105,8 @@ The payload is decrypted in place with RC4, using the key at `0x30` repeated to
 polynomial `0x04C11DB7`, initial value `0xFFFFFFFF`, most significant bit first,
 no final XOR.
 
-The key length and the digest offset overlap in the code as read, so the exact
-header layout still needs confirmation before an image is sent. A wrong image
+The non-secure path has been used on hardware. The secure header layout has not
+been exercised, so confirm it before sending a secure image. A wrong image
 fails the verify step and prints `1F2E3D85`; it does not touch flash.
 
 ### Measured attempt
@@ -131,7 +131,8 @@ builds such an image.
 
 That path allows running a supplied image from RAM. It is the route to a
 J3-only flash programmer, because a RAM stub can then use the ROM flash
-routines. The image digest algorithm has not been reproduced yet.
+routines. The CRC32 for the secure header is implemented in
+`tools/asr_ram_boot.py`, which uses the non-secure path for the bench stubs.
 
 ## Related
 

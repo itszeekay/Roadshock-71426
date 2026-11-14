@@ -66,9 +66,11 @@ Keep the protocol/state logic portable; only the port layer is board-specific.
    - No display-link wiring is involved in this phase.
 
 3. **CAN**
-   - Add MCP2515 or CAN2040; test with a USB-CAN adapter or a second Feather.
-   - Bench note: early testing used an Adafruit RP2040 CAN Bus Feather
-     (MCP25625). It is not part of the current design.
+   - Current design: ESP32-S2 Mini with TWAI and an SN65HVD230 transceiver.
+     MCP2515 and CAN2040 remain alternatives for other boards.
+   - Test with a USB-CAN adapter or a second node.
+   - Early testing used an Adafruit RP2040 CAN Bus Feather (MCP25625); it is not
+     part of the current design.
    - Implement the CAN ID map (below, without the LED entry).
 
 4. **PDU variant**
@@ -95,7 +97,8 @@ not a firmware rewrite.
 ## Open decisions
 
 1. Exact stock mode timing rules.
-2. CAN controller for the PDU (MCP2515 vs CAN2040 vs ESP32 TWAI).
+2. CAN controller for the PDU: ESP32-S2 TWAI is the current choice; MCP2515 and
+   CAN2040 remain alternatives.
 3. Current sensing for the PDU (v1 or later).
 4. ASR firmware is dumped and analyzed; the runtime pin map and BLE service
    list remain open and are not required for the J2 gateway.

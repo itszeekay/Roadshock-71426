@@ -1,8 +1,8 @@
 # ASR5601S RAM flash stub
 
-A small bare-metal program that runs from RAM after the ROM monitor `boot`
-command, copies the bootloader's flash routines into RAM, and erases and
-programs one sector.
+Small bare-metal programs that run from RAM after the ROM monitor `boot`
+command. `stub.bin` erases and programs one sector; `dumpstub.bin` reads the
+whole flash and streams it over the same UART.
 
 ## Build
 
@@ -74,19 +74,27 @@ Use the panel's own UI instead: with the stock base connected, double-click
 Mode on a channel and watch the indicator color. The mode order and the
 nibbles are documented in `docs/asr5601_firmware.md`.
 
-## Planned: dump stub
+## Dump stub
 
-A read-side equivalent of this stub, not yet written or tested:
+`dumpstub.c` is the read-side stub. It runs from RAM through `boot`, reads
+`0x10000000` to `0x100FFFFF` through the memory-mapped flash window, and prints
+32 hex characters per line between `DUMP START` and `DUMP END` through the ROM
+monitor's print routine at `0x000009B0`.
 
-1. Runs from RAM through the ROM monitor `boot` command.
-2. Reads `0x10000000` to `0x100FFFFF` directly; the flash is memory-mapped.
-3. Formats the bytes as ASCII hex and prints them through the ROM monitor's
-   print routine at `0x000009B0`, so it uses the monitor's own 115200 UART.
-4. The host captures the text and rebuilds the binary.
+Build it with the same toolchain:
 
-At 115200 the text is about 2 MB, so expect several minutes. Validate it on a
-unit that also has a SWD dump and compare SHA-256 before trusting it on an
-unknown variant.
+```bash
+arm-none-eabi-gcc -mcpu=cortex-m0plus -mthumb -Os -nostdlib -nostartfiles \
+  -fno-builtin -Wl,-T,link.ld -Wl,--gc-sections \
+  -o dumpstub.elf dumpstub.c vectors_dump.S
+arm-none-eabi-objcopy -O binary dumpstub.elf dumpstub.bin
+```
 
-This is the piece that would make J3-only workflows complete. Flash erase and
-program over J3 are already proven.
+Send it with `tools/asr5601_j3_capture.py`, then rebuild the binary from the
+capture with `tools/asr5601_j3_dump.py`. The host stops on `DUMP END`; the stub
+then halts in a loop instead of resetting, so the final UART bytes drain.
+Power-cycle the panel afterwards.
+
+Tested on this panel: 65,536 lines, `DUMP END` received, and the rebuilt 1 MB
+image matched the SWD dump byte for byte. At 115200 the text is about 2.2 MB and
+the run takes roughly three minutes.

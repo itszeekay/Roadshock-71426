@@ -14,9 +14,10 @@ Everything here was measured on real hardware or read from the dumped images.
 | Panel flash | **8192 B**, ROP `0x00` (unprotected) |
 | Panel EEPROM | 128 B, all zero |
 | Panel option bytes | 64 B (same as base) |
+| ASR flash | **1 MB**, read twice over SWD and once over J3 alone, all identical |
 
-Both flash images were read twice with independent reads and were byte-identical
-each time.
+Both STM8 flash images were read twice with independent reads and were
+byte-identical each time.
 
 SHA-256 values are in [`dumps/SHA256SUMS`](../dumps/SHA256SUMS).
 
@@ -128,6 +129,8 @@ testing.
 ## Open
 
 - J2-only LED override.
-- Exact display-nibble color names (the nibble-to-mode mapping is recovered; see [asr5601_firmware.md](asr5601_firmware.md)).
+- A direct bench check of the inferred display colors, red, blue, green and
+  yellow. The nibble-to-mode mapping is recovered; see
+  [asr5601_firmware.md](asr5601_firmware.md).
 - PDU current sensing.
 - ASR runtime pin map and BLE service list.

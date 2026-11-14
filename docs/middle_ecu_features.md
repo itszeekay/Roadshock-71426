@@ -29,11 +29,15 @@ A reply is the request with `dir = 0xFF` and `type | 0x10`.
 
 ## Features by effort
 
-### Easy: protocol already exists
+### Easy: commands already implemented
+
+These per-channel commands are in this repository's custom base firmware. With
+a stock base, the middle ECU can inject panel button frames (`0x08 0x0C`) and
+master power (`0x07`), but it does not understand types `0x09` and above.
 
 | Feature | How |
 |---|---|
-| Remote on/off of all eight outputs | send `0x09` per channel, or `0x07` to the panel |
+| Remote on/off of all eight outputs | `0x09` per channel on the custom base, or `0x07` master power on either base |
 | PWM dimming and fan speed | `0x09` mode 2, duty and frequency per channel |
 | Soft start for pumps and fans | `0x09` mode 3 with soft-start ticks |
 | Timed output, momentary action | `0x10` pulse in milliseconds |
@@ -75,12 +79,12 @@ A reply is the request with `dir = 0xFF` and `type | 0x10`.
 
 ## What the panel already gives us for free
 
-- A 4x5 keypad matrix with press and release events.
+- A 4 by 4 keypad matrix with ten buttons and press and release events.
 - A backlight setting mode and an RGB cycle timer.
 - A work mode entered by repeated key 13 presses.
 - Temporary all-off and restore.
 - Per-channel control mode stored in panel RAM.
-- BLE advertising through the ASR stack.
+- A BLE stack and advertising template, enabled conditionally by the firmware.
 
 Emulating button presses on the panel link is enough to reach all of these
 without touching the panel firmware.
@@ -100,7 +104,7 @@ without touching the panel firmware.
 ## Open items that affect the list
 
 - Runtime pinout of the ASR, needed only if an ASR image change is planned.
-- LED color table, needed only for direct LED control from the panel side.
+- Access to the private display link, needed only for direct LED control.
 - BLE provisioning details, needed only for BLE features.
 
 ## Protocol details for the implementer

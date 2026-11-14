@@ -1,8 +1,9 @@
 # ASR5601S SWD dump
 
-How to read the ASR5601S SiP flash over SWD with an ST-Link. This is the
-fallback path in [asr5601_dump.md](asr5601_dump.md); the UART paths
-are documented there and are not usable on this unit.
+How to read the ASR5601S SiP flash over SWD with an ST-Link. SWD needs two
+soldered wires but reads the part in under a minute. The J3-only method is also
+verified and needs no soldering; both are in
+[asr5601_dump.md](asr5601_dump.md).
 
 The procedure is read-only. It sends `init`, `halt`, `mdw` and `dump_image`
 and nothing else.
@@ -174,12 +175,12 @@ layout note in `reference/asr560x/drive/ASR560X_test_image_layout.md`.
 | `0x48000` | `0x10048000` | | application |
 | `0xF0000` | `0x100F0000` | | ATE |
 
-Offsets are from the ASR test image layout and have not been confirmed on this
-panel yet.
+These offsets are confirmed by the dump from this panel; the image matches the
+ASR test layout.
 
 ## Safety
 
-- Never send `erase`, `burn`, `boot` or `program`. There is no factory restore
-  image for this chip.
+- Do not send `erase` or `burn`. `boot` is only for the tested RAM stubs, and
+  there is no factory restore image for this chip.
 - Keep the panel on its own 3.3 V supply.
 - If the debug port is locked, stop. Decapsulation is out of scope.

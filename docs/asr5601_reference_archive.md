@@ -89,9 +89,9 @@ DOGO parses the reply as `:<ten-character label><hex>$`. The separate Read Image
 path captures `$<hex>$` blocks and the Generate Bin button converts them to
 `flash_image_bin.bin`.
 
-The command is documented for the 582X family and has not yet been proven on the
-5601S. The probe order and fallbacks are in
-[asr5601_dump.md](asr5601_dump.md). The host tool is
+The command is documented for the 582X family, but this panel's monitor rejects
+`coredump`. The fallbacks that worked are SWD and, later, a RAM stub over J3.
+See [asr5601_dump.md](asr5601_dump.md). The earlier host probe is
 [`tools/asr5601_dump.py`](../tools/asr5601_dump.py).
 
 ## Pins: what reaches a pad
@@ -109,26 +109,23 @@ part marked `331`, which is a 330 ohm resistor network and not a header.
 | RSTN | 44 | not on J3 |
 | P00 / SEL0 | 40 | `J3 SEL0` |
 | P01 / SEL1 | 41 | no pad; internal pull-down = 0 |
-| P06 / SWCLK | 37 | **no known pad** |
-| P07 / SWDIO | 36 | **no known pad**; `PZ20` is the only candidate |
+| P06 / SWCLK | 37 | via on the trace from U1 pin 37; used for SWD |
+| P07 / SWDIO | 36 | via on the trace from U1 pin 36; used for SWD |
 
-The ROM bootloader signal set is on a labeled header. SWD is not, which is why
-the DOGO read path matters more than the SWD fallback.
+The ROM monitor is on the labeled J3 header. SWD is not broken out; the first
+dump soldered fine wires to the two vias. `PZ20` has no continuity to pins 36
+or 37 and is not an SWD breakout. After the first dump, J3 alone proved
+sufficient for a full read and for flash writes.
 
-Continuity checks still worth running with the board unpowered:
-
-- Pins 36 and 37 to their vias, and neither via to anything else.
-- `J3 TX/RX` to the `J2` signal wires: must J2 be disconnected during a
-  bootloader session?
-
-Measured: `PZ20` has no continuity to pins 36 or 37, so it is not an SWD
-breakout.
+J3 is UART1 and J2 is UART0, so a monitor session on J3 does not contend with
+the base link.
 
 ## Status
 
 Completed: the ROM monitor was probed and its command set recovered
-(`init`, `boot`, `wrreg`, `rdreg`), the flash was read over SWD, RAM boot was
-proven, and erase plus program were proven on the ATE sector.
+(`init`, `boot`, `wrreg`, `rdreg`), the flash was read over SWD and again over
+J3 alone, RAM boot was proven, and erase plus program were proven on the ATE
+sector.
 
 Open: runtime pinout, a live BLE service scan, and programming the application
 region.

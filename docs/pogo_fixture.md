@@ -16,7 +16,7 @@ the four SWIM pads.
 | Constraint | Value | Source |
 |---|---|---|
 | Base board SWIM pad pitch | **not yet measured** | To be measured on a known-good unit |
-| J3 (panel ASR UART) pad pitch | ~1.27 mm | `asr5601_dump.md` |
+| J3 (panel ASR UART) pad pitch | ~1.27 mm | `pinouts.md` |
 | Base board SWIM pad count | 4 (V+, GND, SWIM, RST) | `pinouts.md` |
 | Button panel not potted | Yes | `hardware.md` |
 | Base board potted with silicone | Yes | `hardware.md` |

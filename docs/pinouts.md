@@ -86,8 +86,8 @@ so the LEDs are active-low / common-anode).
 | 6 | PC6 | PC7 | PD0 |
 | 7 | PD2 | PD3 | PD4 |
 
-The R/G/B order within each triplet and the exact color per display nibble
-still need a bench confirmation.
+The R/G/B order within each triplet still needs a bench confirmation. The
+nibble-to-color mapping is in [asr5601_firmware.md](asr5601_firmware.md).
 
 ## ASR5601S (QFN-48)
 

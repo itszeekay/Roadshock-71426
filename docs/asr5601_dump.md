@@ -130,8 +130,9 @@ Bench results:
 | Application console, `SEL0` low, 921600 | answers `ERROR` to every text command tried, including bare CRLF |
 
 The ROM monitor implements `init`, `boot`, `wrreg` and `rdreg`, with no bulk
-flash read command. The application console rejects all text input. That closed
-the bulk UART read path.
+flash read command. The application console rejects all text input. That ruled
+out a direct command-line read; a RAM stub loaded with `boot` later provided the
+bulk read described above.
 
 The read command `coredump flash all` comes from ASR's ASR582X FAQ and is issued
 on the application's UART1 log port. It was tried on both links here and was

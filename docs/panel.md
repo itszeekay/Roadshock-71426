@@ -33,11 +33,10 @@ The ten buttons cannot fit on the STM8: apart from the 24 LED pins, only PD7
 would be free. The live capture with the panel connected to the base shows
 button frames, so something scans them. The ASR is the only other IC that can.
 
-The ASR datasheet says the chip has a hardware keypad controller with up to 112
-keys and `KEY_ROW0..13` / `KEY_COL0..7` alternate functions. The panel's ten
-buttons may use that matrix rather than eight plain GPIO inputs. The exact row
-and column pins are not confirmed; when the ASR firmware is dumped, check
-accesses to the KEYPAD block at `0x4001_5000`.
+The ASR firmware confirms the matrix: columns P06, P07, P08 and P09, rows P28,
+P25, P26 and P29, with ten of the sixteen positions populated. `keypad_irq`
+reports row, column and pressed state to the UI. The scan and key actions are
+in [asr5601_firmware.md](asr5601_firmware.md#buttons).
 
 ## Why the status LEDs stay dark without the base
 
@@ -86,17 +85,12 @@ LEDs.
 
 ## What is still unknown
 
-- The ASR firmware has been dumped and analyzed; see
-  [asr5601_firmware.md](asr5601_firmware.md). Remaining details are the runtime
-  pin map and the BLE service list.
-- Whether a hidden 2400-baud command can influence the LEDs (possible, but no
-  evidence yet).
-- The exact color mapping of the eight display nibbles. The nibbles and their
-  mode mapping are recovered in [asr5601_firmware.md](asr5601_firmware.md); the
-  color names still need a bench check.
-- Which UART2/UART3 pin pair carries the display link. The dump shows UART3 on
-  P13/P14. The datasheet pin mux also lists
-  P06/P07, P10, P13/P14, P25/P26 (UART3); identify by continuity from STM8
-  PD5/PD6.
+- The BLE service list. Advertising name and template are known; the services
+  are registered at runtime.
+- Whether any hidden 2400-baud command can influence the LEDs. Possible, but
+  there is no evidence yet.
+- A direct bench check of the inferred color names for nibbles 1, 3, 5 and 7.
+  The mapping is recovered and consistent with the owner's manual and the STM8
+  pattern table; see [asr5601_firmware.md](asr5601_firmware.md#led-pipeline).
 
-See [asr5601.md](asr5601.md) for the ASR pinout, boot mode, and dump options.
+See [asr5601.md](asr5601.md) for the ASR pinout, J3 and boot mode.
