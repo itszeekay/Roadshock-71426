@@ -38,7 +38,7 @@ datasheet says:
 - P02-P05 follow VBATA. When VBATA is below 3.3 V, all I/O follows VBATA.
 
 The panel runs the ASR at 3.3 V, so this does not change the current wiring. It
-does mean the base link on P04/P05 is 5 V capable, and the blanket "not 5 V
+does mean the base link on P02/P03 is 5 V capable, and the blanket "not 5 V
 tolerant" caution was wrong.
 
 ## What the datasheet adds

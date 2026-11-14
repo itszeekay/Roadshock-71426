@@ -9,9 +9,9 @@ The panel contains two processors that do different jobs.
    buttons → │ ASR5601S   main controller                   │
              │  · scans 10 buttons (8 channel + power + mode) │
              │  · runs the UI / modes                       │
-             │  · 2400-baud base link (UART1, P04/P05)      │
+             │  · 2400-baud base link (UART0, P02/P03)      │
              │  · optional BLE                              │
-             │  · 115200 display link (UART2/3)             │
+             │  · 115200 display link (UART3, P13/P14)      │
              └───────────────┬──────────────────────────────┘
                              │ 9-byte 0x5A…0xEE, 115200
              ┌───────────────▼──────────────────────────────┐
