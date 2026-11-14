@@ -27,8 +27,8 @@ What was actually done:
 
   The via connectivity was checked with a multimeter, and each via had no other
   connection. That is a bench measurement, not something the firmware reports.
-  The firmware does configure `P06` and `P07` in its pin setup, which is why SWD
-  only works while the application is not running.
+  The firmware configures `P06` and `P07` as keypad columns 0 and 1 (function
+  code 6), which is why SWD only works while the application is not running.
 - The J3 pad labeled `RST` is not the ASR reset. No reset wire was used.
   Download mode was entered with a jumper from J3 `SEL0` to J3 `+3.3` and a
   power cycle, which leaves the ROM monitor running and the application stopped.

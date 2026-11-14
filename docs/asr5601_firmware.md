@@ -60,21 +60,32 @@ Confirmed from the initialization code:
 | P14 | UART3 RX | 115200 | `0x1004E854` |
 
 The remaining pins are configured through `pinmux_set` with a configuration
-class, not the datasheet `Func=0..4` index. Groups seen:
+class. The switch that maps a class to the 4-bit function code is decoded:
 
-| Pins | Class |
-|---|---|
-| P02, P03 | 13 |
-| P04, P05 | 14 |
-| P08, P09, P25, P26, P28, P29 | 12 |
-| P10, P15, P16, P22, P24 | 3 |
-| P13, P14 | 16 |
+| Class | Function code | Pins | Role |
+|---|---|---|---|
+| 3 | 0 | P10, P15, P16, P22, P24 | GPIO |
+| 12 | 6 | P06, P07, P08, P09 | keypad columns 0 to 3 |
+| 12 | 6 | P25, P26, P28, P29 | keypad rows 2, 3, 1, 4 |
+| 13 | 1 | P02, P03 | UART0 |
+| 14 | 1 | P04, P05 | UART1 |
+| 16 | 1 | P13, P14 | UART3 |
 
-Those groups cover the keypad matrix and the audio front end, but the class
-numbers do not map to names without the pinmux register definition. ASR's
-Peripheral User's Guide documents the keypad and UART APIs but not the pin mux
-register layout, so the public documents do not close this gap. A runtime read
-of `0x40110068` to `0x40110074` is the reliable way to finish the table.
+Function code 6 is the keypad row/column function in the ASR pin mux table.
+That gives a 4 by 4 matrix:
+
+| | COL0 P06 | COL1 P07 | COL2 P08 | COL3 P09 |
+|---|---|---|---|---|
+| ROW1 P28 | key | key | key | key |
+| ROW2 P25 | key | key | key | key |
+| ROW3 P26 | key | key | key | key |
+| ROW4 P29 | key | key | key | key |
+
+Sixteen positions, ten used by the panel buttons.
+
+This explains the SWD behaviour: at reset P06/P07 are `SWC`/`SWD`, and the
+application switches them to keypad columns during init, which removes the
+debug port.
 
 The keypad itself supports up to 14 rows by 8 columns in hardware; this panel
 uses 4 rows by 5 columns, and the firmware handles keys 1 through 14.
