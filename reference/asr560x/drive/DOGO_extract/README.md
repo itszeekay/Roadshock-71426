@@ -64,4 +64,4 @@ fills gaps with `0xFF`.
 
 `coredump flash all` is a read. Do not send `erase`, `burn`, `boot` or any
 write command before a verified dump exists. The ASR has no factory restore
-image. See `docs/asr5601_dump_plan.md`.
+image. See `docs/asr5601_dump.md`.

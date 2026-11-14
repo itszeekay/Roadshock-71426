@@ -1,7 +1,7 @@
 # ASR5601S SWD dump
 
 How to read the ASR5601S SiP flash over SWD with an ST-Link. This is the
-fallback path in [asr5601_dump_plan.md](asr5601_dump_plan.md); the UART paths
+fallback path in [asr5601_dump.md](asr5601_dump.md); the UART paths
 are documented there and are not usable on this unit.
 
 The procedure is read-only. It sends `init`, `halt`, `mdw` and `dump_image`

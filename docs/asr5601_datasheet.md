@@ -148,7 +148,7 @@ and an 8 ms startup delay after VBATB reaches 1.7 V.
 P06/P07 are SWD at the default pin function. The datasheet also lists alternate
 SWD sets on P02/P03, P12/P18 and P19/P20 at function 8, but those require the
 firmware to remap them. The ROM default is still P06/P07, so the SWD fallback in
-the dump plan is unchanged.
+the dump record in [asr5601_dump.md](asr5601_dump.md) is unchanged.
 
 ## What the datasheet does not change
 
@@ -157,7 +157,7 @@ the dump plan is unchanged.
 - It does not say whether the panel's debug port is locked.
 - It does not decode the panel's exact part variant or flash size.
 
-The dump plan still starts with the J3 UART probe and falls back to SWD on
+The dump record still starts with the J3 UART probe and falls back to SWD on
 P06/P07.
 
 ## What to check next

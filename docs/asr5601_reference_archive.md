@@ -24,7 +24,7 @@ print. The ASR582X page above is kept because it documents the read command.
 ASR's 560X demo image contains the bootloader, BLE ROM and app; its partition
 layout is in `reference/asr560x/drive/ASR560X_test_image_layout.md`.
 
-## What Phase 0 changed
+## What the tool analysis changed
 
 `DOGO_VP2.3.8.exe` is a PyInstaller one-file build of a Python 3.5/Qt app. Its
 entry module is `pyserial_demo.pyc`; its chip database is `data.pyc` inside
@@ -91,7 +91,7 @@ path captures `$<hex>$` blocks and the Generate Bin button converts them to
 
 The command is documented for the 582X family and has not yet been proven on the
 5601S. The probe order and fallbacks are in
-[asr5601_dump_plan.md](asr5601_dump_plan.md). The host tool is
+[asr5601_dump.md](asr5601_dump.md). The host tool is
 [`tools/asr5601_dump.py`](../tools/asr5601_dump.py).
 
 ## Pins: what reaches a pad

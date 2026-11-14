@@ -18,7 +18,7 @@ Examples:
 Notes:
 
     Base address is 0x10000000 (bootloader). The layout is documented in
-    docs/asr5601_dump_plan.md and reference/asr560x/drive/
+    docs/asr5601_dump.md and reference/asr560x/drive/
     ASR560X_test_image_layout.md.
 
     If OpenOCD cannot read the IDCODE, the debug port is disabled or the

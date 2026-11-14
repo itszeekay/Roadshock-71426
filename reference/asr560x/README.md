@@ -82,7 +82,7 @@ into the ordinary send box.
 
 The command is documented for the 582X family and has not yet been proven on
 the 5601S. The probe order and fallbacks are in
-[docs/asr5601_dump_plan.md](../../docs/asr5601_dump_plan.md).
+[docs/asr5601_dump.md](../../docs/asr5601_dump.md).
 
 ## Provenance
 

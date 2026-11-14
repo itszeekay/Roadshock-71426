@@ -17,7 +17,7 @@ Usage:
     python asr5601_dump.py --parse dumps/asr/capture-20261109-120000.txt
 
 The board must already be in download mode. On the panel that means SEL0 high
-and a reset pulse. See docs/asr5601_dump_plan.md.
+and a reset pulse. See docs/asr5601_dump.md.
 """
 
 from __future__ import annotations

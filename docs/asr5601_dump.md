@@ -1,0 +1,110 @@
+# ASR5601S dump
+
+Record of what was needed and what happened while reading the ASR5601S flash.
+The result is in [`dumps/asr/`](../dumps/asr/); the procedure is in
+[asr5601_swd_dump.md](asr5601_swd_dump.md); the firmware analysis is in
+[asr5601_firmware.md](asr5601_firmware.md).
+
+## Result
+
+| Item | Value |
+|---|---|
+| Image | 1 MB from `0x10000000` |
+| SHA-256 | `b7b92dab982a262b6e2dc295bf7b2781ce070091b58d6b82c5a0596a9ba163fb` |
+| Reads | two, byte-identical |
+| Programmed content | `0x00000` to `0x5BA14`, then `0xFF` |
+| Bootloader | `ASRBOOTLOADER-560X-MX-V2.0.2` |
+| BLE stack | `ASONATA_BLE_NONOS_V1.4.1` (`rom-asr-1.00`) |
+| Application | `app-1.0.2-20240319.1000` |
+
+Layout:
+
+| Offset | Contents |
+|---|---|
+| `0x00000` | bootloader |
+| `0x08000` | OTA tag |
+| `0x0A000` | NVDS, tag only |
+| `0x0C000` | coredump area, empty |
+| `0x0D000` | BLE stack ROM |
+| `0x48000` | application |
+| `0xF0000` | ATE partition, blank |
+
+## What was required
+
+| Item | Use |
+|---|---|
+| Panel powered at 3.3 V through J2 | the panel powers itself; no base board |
+| ST-Link V2 | SWD adapter, firmware V2J24 or newer |
+| Two fine wires | soldered to the vias on the traces from U1 pins 36 and 37 |
+| Ground wire | board ground |
+| Jumper | J3 `SEL0` to J3 `+3.3`, to stay in the ROM monitor |
+| Multimeter | continuity and idle level checks |
+| OpenOCD 0.12 | `winget install xpack-dev-tools.openocd-xpack` |
+| Python 3 | `tools/asr5601_swd_dump.py` |
+
+## What happened with the UART first
+
+The panel's J3 header is the ASR's UART1, and on this firmware UART1 is a
+921600 log port. The 2400 base link is a different UART (UART0 on P02/P03), so
+J3 never carried the product protocol.
+
+Bench results:
+
+| Link | Result |
+|---|---|
+| ROM monitor, `SEL0` high, 115200 | prints `1F2E3D00`; accepts `init`; rejects `get_chip_type`, `help`, `version` and `coredump` with status `87` |
+| Application console, `SEL0` low, 921600 | answers `ERROR` to every text command tried, including bare CRLF |
+
+The ROM monitor only accepts the commands DOGO uses for writing: `init`,
+`erase`, `burn` and `boot`. There is no read command. The application console
+rejects all text input. That closed the UART path.
+
+The read command `coredump flash all` comes from ASR's ASR582X FAQ and is issued
+on the application's UART1 log port. It was tried on both links here and was
+not accepted.
+
+## Bench findings that changed the approach
+
+- The J3 pad labelled `RST` is not the ASR reset. With the wire off it reads
+  0 V and has no pull-up, unlike `RSTN` pin 44. No reset wire was used.
+- The J3 pad labelled `SEL0` is the real boot strap. Tying it to `+3.3` stops
+  the application from starting, which is how the ROM monitor was reached.
+- P06 and P07 are SWD at reset, but the application reassigns them to UART3,
+  the LED display link. SWD therefore only works while the application is not
+  running, which the `SEL0` strap guarantees.
+- `PZ20`, previously assumed to be a possible SWD header, is a 6-pin part
+  marked `331`, a 330 ohm resistor network. It has no continuity to pins 36 or
+  37. The SWD wires go to the vias on those two traces.
+- ST-Link reports target voltage 3.2 V and DPIDR `0x0bc11477` (Cortex-M0+ r0p1).
+  Adapter speed settles at 950 kHz. A full 1 MB read takes about 48 seconds.
+
+## Vendor tool notes
+
+The DOGO tool is a Python 3.5 PyInstaller build. Its embedded chip table has an
+explicit `5601S` entry:
+
+| Item | Value |
+|---|---|
+| Handshake | `AsrIot560x` (ASCII, trailing space, no CRLF) |
+| Entry baud | 921600 |
+| Bootloader base | `0x10000000` |
+| BLE ROM base | `0x1000D000` |
+| App base | `0x10048000` |
+| ATE base | `0x100F0000` |
+| OTA tag address | `0x10008000` |
+| Bootloader size | 32768 bytes |
+
+The host side parses `:<10-char label><hex>$` lines for the coredump path and
+`$<hex>$` blocks for the read-image path. None of that applies here because the
+monitor has no read command.
+
+## What is still open
+
+- Write path on J3: burn a pattern into the blank ATE partition at `0x100F0000`,
+  read it back over SWD, then erase it. Not yet run.
+- Runtime pinout: read `0x40110068` to `0x40110074` after pin mux init.
+- BLE name and services: set at runtime, NVDS is blank.
+
+There is no factory restore image for this chip. The verified dump in
+[`dumps/asr/`](../dumps/asr/) is the restore path, so do not erase anything
+until the ATE test passes.

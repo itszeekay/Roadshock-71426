@@ -101,6 +101,8 @@ Other entry points:
 # What Works Today
 
 - **Read the base firmware**: SWIM dump, 8 KB flash + 128 B EEPROM.
+- **Read the ASR5601S firmware**: SWD dump, 1 MB, two identical reads, hash recorded.
+- **Analyze the ASR firmware**: 360 application functions and 101 bootloader functions decompiled; UART map, keypad, LED path and base link documented.
 - **Read the panel firmware**: same, ROP open.
 - **Capture the 2400-baud bus** with a Feather RP2040 (listen-only or MITM).
 - **Injection**: button frames, master power, and our custom `0x09` PWM command.
@@ -114,9 +116,11 @@ Other entry points:
 
 ## What Is Still Open
 
-- The **ASR5601S firmware** has not been dumped. Its button/UI logic is not yet understood. SWD (P06/P07) is the reliable dump route. The J3 UART monitor also has a documented read candidate, `coredump flash all`, which is a capture command and needs no license. See [`docs/asr5601_dump_plan.md`](docs/asr5601_dump_plan.md).
+- **ASR write path**: the ROM monitor accepts `erase` and `burn`, and a verified dump now exists, but the ATE write test has not been run yet. See [`docs/asr5601_dump.md`](docs/asr5601_dump.md).
+- **ASR runtime pinout**: the pin mux classes are decoded; the definitive per-pin table needs a register read from the running application.
+- **ASR BLE name and services**: set at runtime, the NVDS block is blank.
 - Bench verification of the four stock channel modes and the low-frequency TIM1 prescaler fix. Both are built, but the prebuilt full image has not been flashed for those tests.
-- Direct control of the panel LEDs without touching the private 115200 link.
+- Direct control of the panel LEDs without touching the private 115200 link; the ASR owns that link (UART3 on P06/P07).
 - Over J2 alone, the LEDs remain under the ASR's UI control.
 - The final CAN gateway/PDU hardware (CAN controller choice, current sensing).
 

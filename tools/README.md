@@ -67,7 +67,7 @@ the stream uses address labels.
 
 The board must already be in download mode: `SEL0 = 1`, `SEL1 = 0`, reset.
 Start at 115200; use `--baud 921600` for high-speed mode. See
-[`docs/asr5601_dump_plan.md`](../docs/asr5601_dump_plan.md) for the wiring and
+[`docs/asr5601_dump.md`](../docs/asr5601_dump.md) for the wiring and
 the exact command order.
 
 The full capture path can be tested without hardware. The fake monitor answers

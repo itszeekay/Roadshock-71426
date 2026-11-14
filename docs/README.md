@@ -40,8 +40,8 @@ Pick the path that matches what you want to do.
   pin map, UART mux, keypad, memory map, 5 V I/O
 - [asr5601_reference_archive.md](asr5601_reference_archive.md) - curated ASR
   archive, embedded chip table, DOGO read path
-- [asr5601_dump_plan.md](asr5601_dump_plan.md) - step-by-step plan to dump the
-  ASR over J3, with the measured UART results and why SWD is the remaining path
+- [asr5601_dump.md](asr5601_dump.md) - what the dump required, what the UART
+  attempts showed, and the verified result
 - [asr5601_swd_dump.md](asr5601_swd_dump.md) - step-by-step SWD read of the ASR
   flash with an ST-Link and OpenOCD, including wiring and verification
 - [asr5601_firmware.md](asr5601_firmware.md) - what the ASR firmware does: UARTs, base link, keypad, LED path
@@ -81,7 +81,7 @@ Pick the path that matches what you want to do.
 | [asr5601.md](asr5601.md) | ASR5601S pin map, J3, boot mode, dump options |
 | [asr5601_datasheet.md](asr5601_datasheet.md) | Datasheet review |
 | [asr5601_reference_archive.md](asr5601_reference_archive.md) | Curated ASR archive, chip table, DOGO read path |
-| [asr5601_dump_plan.md](asr5601_dump_plan.md) | Step-by-step plan to dump the ASR over J3 |
+| [asr5601_dump.md](asr5601_dump.md) | ASR dump record: requirements, UART findings, result |
 | [asr5601_swd_dump.md](asr5601_swd_dump.md) | SWD read of the ASR flash over OpenOCD |
 | [asr5601_firmware.md](asr5601_firmware.md) | Panel firmware behaviour: UARTs, base link, keypad, LEDs |
 | [middle_ecu_features.md](middle_ecu_features.md) | Middle ECU feature list with feasibility |
