@@ -38,6 +38,25 @@ public class ApplyAsrNames extends GhidraScript {
         {0x1005187CL, "led_nibble_encode_b", "Even to odd nibble encode"},
         {0x1004F710L, "rx_buffer_toggle", "Flips the receive buffer selector"},
         {0x100516D8L, "led_frame_send", "Builds 5A 00 <6 bytes> EE and sends it to UART3"},
+        {0x1004E854L, "uart3_init", "P13/P14, 115200; display link to the panel STM8"},
+        {0x10050160L, "led_color_set", "Stores a color nibble for one LED: selector 0..3 -> 1, 2, 5, 7"},
+        {0x10051754L, "led_encode_a_send", "Applies encoder A to the six LED payload bytes"},
+        {0x1005189CL, "led_encode_b_send", "Applies encoder B to the six LED payload bytes"},
+        {0x10051674L, "led_state_reset", "Clears the LED state block at 0x20003908"},
+        {0x1004FFE0L, "led_mode_update", "Updates one channel nibble and sends the frame"},
+        {0x1004FE88L, "all_leds_set", "Sets all LEDs to color 1 (red) and posts a delay"},
+        {0x1004FDF8L, "all_leds_blink", "Blinks all LEDs using color 1"},
+        {0x100501FCL, "mode_query", "Searches the per-channel mode list for a value"},
+    };
+
+    private static final Object[][] DATA = new Object[][] {
+        {0x100573B0L, "pinmux_class_table", "Per-pin default function table used by pinmux_set"},
+        {0x10057F01L, "hex_digit_table", "ASCII 0-9A-F used when formatting the BLE name"},
+        {0x10059122L, "ble_adv_template", "19 09 Controller8 Wired-xxxxxx"},
+        {0x20003908L, "led_state_block", "Per-channel LED state; payload at +0x57"},
+        {0x2000395FL, "led_payload", "Six bytes, 12 nibbles, sent to UART3"},
+        {0x20003481L, "uart0_rx_ring", "32-byte receive slots for the base link"},
+        {0x20003904L, "led_encode_toggle", "Alternates encoder A and B"},
     };
 
     private static final Object[][] BOOT = new Object[][] {
@@ -100,6 +119,24 @@ public class ApplyAsrNames extends GhidraScript {
         }
     }
 
+    private void labelData(Object[][] table) {
+        for (Object[] row : table) {
+            Address a = toAddr((Long) row[0]);
+            if (a == null) {
+                continue;
+            }
+            try {
+                createLabel(a, (String) row[1], true);
+            } catch (Exception e) {
+                println("label failed at " + a + ": " + e);
+            }
+            String c = (String) row[2];
+            if (!c.isEmpty()) {
+                setPlateComment(a, c);
+            }
+        }
+    }
+
     @Override
     public void run() throws Exception {
         String name = currentProgram.getName();
@@ -108,6 +145,7 @@ public class ApplyAsrNames extends GhidraScript {
         } else {
             apply(APP);
             seedVectors();
+            labelData(DATA);
         }
         println("ApplyAsrNames done for " + name);
     }
