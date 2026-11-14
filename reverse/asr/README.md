@@ -42,8 +42,17 @@ public repository, the same rule used for the STM8 reconstructions.
 - P06/P07 are keypad columns in the application pin setup, which is why SWD
   stops working once the application starts.
 - The UART0 RX callback stores bytes in a 32-byte ring buffer and publishes
-  event `0x28`; `base_link_byte_handler` at `0x1004E1A0` treats the first byte
-  as a length and posts message `0x0B`.
+  message `0x28`; `app_msg_dispatch` at `0x1004E1A0` handles app messages
+  `0x28` to `0x37`, copies the received byte count and buffer pointer on
+  `0x28`, and posts the frame as message `0x0B`.
+- Outgoing frames go through `tx_frame_enqueue` at `0x1004FCF8` into a
+  20-entry queue with a `sum8_checksum` at `0x1004F814`.
+- Panel LED output is internal to the application. `all_leds_set` at
+  `0x1004FE88` sends `0x11` (red) to all eight LEDs and starts the `all_leds_blink`
+  loop at `0x1004FDF8`, which alternates all-off and all-red every 200 ms.
+  `all_leds_flash_green` at `0x1004FE40` sends `0x55`. These run from app
+  messages `0x34` to `0x36`, raised by the key handler; no base-link frame
+  reaches them, and there is no per-channel flash.
 - The keypad is a 4 by 4 matrix: columns P06/P07/P08/P09, rows P28/P25/P26/P29.
   Ten positions have buttons; `keypad_irq` at `0x1004DD24` reports row, column
   and pressed state.
@@ -55,9 +64,12 @@ public repository, the same rule used for the STM8 reconstructions.
 - Bootloader `ASRBOOTLOADER-560X-MX-V2.0.2`, app
   `app-1.0.2-20240319.1000`, BLE stack `ASONATA_BLE_NONOS_V1.4.1`.
 
+The wire frame is not length-prefixed. The count that `app_msg_dispatch` reads
+on message `0x28` is the number of bytes that arrived in one burst, matching
+the gap-delimited framing used by the base firmware.
+
 ## Open
 
-- Whether the wire frame is length-prefixed ahead of the 11-byte frame.
 - Runtime pin mux values for a definitive pinout.
 - BLE service list; services are registered at runtime, so a live scan is needed.
 - Programming the application region; only the ATE sector has been written so far.

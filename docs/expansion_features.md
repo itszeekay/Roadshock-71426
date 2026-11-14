@@ -13,16 +13,16 @@ The base board is a fused, high-side switched 8-channel 12 V PDU with a 10-butto
 - **Garage / workshop:** Battery charger, compressor cycling, lighting, pump control.
 - **EV / conversion:** Output gating on cranking, CAN-mapped PWM for pumps/fans.
 
-## Owner feedback (from forums)
+## What owners want (cheap PDM segment, $150-$200)
 
-- **Cheap PDM ($150-$200) market:** Users want programmable, input-driven behavior (On/Off/On-with-high-beam) and persistence across power cycles.
-- **No Bluetooth/app for basic operation:** Want a direct switch interface, BLE optional.
-- **Simple, failsafe wiring:** One power wire, chassis ground, per-channel control.
-- **Over-current sensing and auto-reset:** Detect short/overload, retry, then stay off.
-- **Diagnostic datalogging:** Record on-time, cycle count, fault events per circuit.
-- **CAN integration:** Receive commands from vehicle ECU, publish status, error kill.
-- **PWM control:** Soft-start for fuel pumps, variable-speed fans.
-- **Safety design:** Solid-state electronics fail closed, recommend mechanical master relay.
+- Programmable, input-driven behavior (On/Off/On-with-high-beam) and persistence across power cycles.
+- Direct switch interface, no Bluetooth/app required for basic operation.
+- Simple, failsafe wiring: one power wire, chassis ground, per-channel control.
+- Over-current sensing and auto-reset (detect short/overload, retry, then stay off).
+- Diagnostic datalogging: on-time, cycle count, fault events per circuit.
+- CAN integration: receive commands from vehicle ECU, publish status, error kill.
+- PWM control: soft-start for fuel pumps, variable-speed fans.
+- Safety: solid-state electronics fail closed; mechanical master relay recommended.
 
 Open-source PDMs (dingoPDM, Synapse PDM, OpenPDM) follow the same feature set: limited current outputs, digital inputs, CAN, basic programmability.
 
@@ -30,18 +30,18 @@ Open-source PDMs (dingoPDM, Synapse PDM, OpenPDM) follow the same feature set: l
 
 ### Output feedback
 
-Add per-channel current sensing (shunt + ADC, or I²C sensor like INA219/INA226):
+Add per-channel current sensing (shunt + ADC, or I2C sensor like INA219/INA226):
 
-- **Open-circuit detection:** light reads zero current when on.
+- **Open-circuit / load monitoring:** The stock panel only shows a fuse-blown LED (no per-channel current readout). Adding shunt + ADC or I2C sensors gives actual open-circuit and load data.
 - **Over-current shutdown:** prevent fuse blow or MOSFET failure.
--   Load shedding when rail sags.
--   Consumption totals for battery management.
+- Load shedding when rail sags.
+- Consumption totals for battery management.
 
 Integration: `0x121 + n` status frame slot in proposed CAN ID map.
 
 ### Temperature monitoring
 
-I²C sensor (MCP9808) on MOSFET or battery:
+I2C sensor (MCP9808) on MOSFET or battery:
 
 - Thermal foldback (reduce PWM as MOSFET heats).
 - Fan auto-on above setpoint.

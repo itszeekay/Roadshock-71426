@@ -109,24 +109,35 @@ The callback does not parse the frame itself. It stores the byte in a 32-byte
 ring buffer and publishes event `0x28` through the BLE stack's event publisher
 (`0x1000DF44`).
 
-`base_link_byte_handler` at `0x1004E1A0` handles events `0x28` through `0x37`.
-Event `0x28` is the frame path: it takes the current byte count of the slot as
-the message length, fills a queue entry `{count, payload pointer, callback}` and
-posts message `0x0B`. The count is not a wire byte; it is the number of bytes
-that arrived in that burst. The other events dispatch to decode and output
-functions:
+`app_msg_dispatch` at `0x1004E1A0` handles application messages `0x28` through
+`0x37`. These are internal message ids, not wire bytes. Event `0x28` is the
+frame path: it takes the current byte count of the slot as the message length,
+fills a queue entry `{count, payload pointer, callback}` and posts message
+`0x0B`. The count is not a wire byte; it is the number of bytes that arrived in
+that burst. The other events dispatch to timer, LED and UI functions:
 
-| Event | Handler |
-|---|---|
-| `0x28` | queue the frame, post `0x0B` |
-| `0x29` | `0x1004F7E0` |
-| `0x2D` | `0x1005147C` |
-| `0x30` | `0x100512EC` |
-| `0x2A` | `0x10051B7C` |
-| `0x2F` | `0x10050488` |
-| `0x2E` | `0x10050448` |
-| `0x2B` | `0x10051B04` |
-| `0x31` to `0x37` | `0x10051654`, `0x1005032C`, `0x100502EC`, `0x1004FE88`, `0x1004FE40`, `0x1004FDF8`, `0x1004F7BC` |
+| Event | Handler | Role |
+|---|---|---|
+| `0x28` | inline | queue the frame, post `0x0B` |
+| `0x29` | `0x1004F7E0` | `key_highlight_tick` |
+| `0x2A` | `0x10051B7C` | `led_anim_finish` |
+| `0x2B` | `0x10051B04` | `led_update`, 200 ms LED animation tick |
+| `0x2D` | `0x1005147C` | periodic UI update |
+| `0x2E` | `0x10050448` | UI state reset |
+| `0x2F` | `0x10050488` | UI countdown |
+| `0x30` | `0x100512EC` | periodic UI update |
+| `0x31` | `0x10051654` | one-shot task |
+| `0x32` | `0x1005032C` | UI state reset |
+| `0x33` | `0x100502EC` | setting-mode exit |
+| `0x34` | `0x1004FE88` | `all_leds_set`: all eight LEDs red, then flash |
+| `0x35` | `0x1004FE40` | `all_leds_flash_green`: up to three green frames |
+| `0x36` | `0x1004FDF8` | `all_leds_blink`: all-off and all-red every 200 ms |
+| `0x37` | `0x1004F7BC` | `key_highlight_clear` |
+
+The LED messages are reached from the key handler, not from the base link.
+Outgoing frames are built by `tx_frame_enqueue` at `0x1004FCF8`, which fills a
+20-entry queue with a sequence number, direction, type, flag, payload and a
+`sum8_checksum` over the frame, and gives each entry its own timer.
 
 Frames are delimited by an idle gap, not by a length field. The base firmware
 confirms the same scheme from the other end: its UART1 receive ISR accumulates
@@ -290,5 +301,14 @@ The verified full image is the restore path.
 - Because the ASR keeps the whole UI and LED authority, a middle ECU that
   reproduces the base frames gets the full panel behavior without touching the
   panel firmware.
+- The middle ECU cannot set panel LEDs directly. The LED messages `0x34` to
+  `0x36` are internal app messages raised by the key handler; no base-link
+  frame reaches them. The most a frame can do is drive the existing UI, for
+  example by injecting a button bitmask that changes a channel's mode colour.
+- Each channel LED holds one of four steady colours, red, blue, green or
+  yellow, taken from its mode index. There is no per-channel flash in the
+  panel firmware; the only flash is all eight LEDs together.
+- Arbitrary LED signalling therefore needs either a tap on the internal
+  display link at ASR P13/P14 and STM8 PD5/PD6, or a modified ASR image.
 - The J3 log port at 921600 is a debugging side channel, separate from the
   product link.
