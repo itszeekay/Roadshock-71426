@@ -11,7 +11,7 @@ The result is in [`dumps/asr/`](../dumps/asr/); the procedure is in
 |---|---|
 | Image | 1 MB from `0x10000000` |
 | SHA-256 | `b7b92dab982a262b6e2dc295bf7b2781ce070091b58d6b82c5a0596a9ba163fb` |
-| Reads | two, byte-identical |
+| Reads | two over SWD, byte-identical; a J3-only read matches both |
 | Programmed content | `0x00000` to `0x5BA14`, then `0xFF` |
 | Bootloader | `ASRBOOTLOADER-560X-MX-V2.0.2` |
 | BLE stack | `ASONATA_BLE_NONOS_V1.4.1` (`rom-asr-1.00`) |
@@ -63,11 +63,11 @@ Status of each operation over J3 alone:
 | Read and write single words (`rdreg`, `wrreg`) | proven |
 | Run a RAM stub (`boot`) | proven |
 | Erase and program flash | proven on the ATE sector |
-| Full flash dump | designed, not yet exercised: a RAM stub reads the whole part and streams it over UART1 |
+| Full flash dump | proven over J3 alone; the capture matches `dumps/asr/asr_flash.bin` byte for byte (SHA-256 `b7b92dab...`) |
 
 A J3-only dump is slower than SWD, because it shares the 115200 monitor link,
-but it removes the soldering step. SWD remains the faster fallback and the
-method used for the verified image in `dumps/asr/`.
+but it removes the soldering step. Both methods produce the same image, so SWD
+remains the faster fallback and J3 is the field method.
 
 ### Running a J3-only dump
 

@@ -92,7 +92,7 @@ def main():
     ser.close()
 
     print("captured %d bytes to %s" % (total, out))
-    if b"STREAM DONE" not in bytes(tail):
+    if b"STREAM DONE" not in bytes(tail) and b"DUMP END" not in bytes(tail):
         print("stream did not report completion")
         return 1
 

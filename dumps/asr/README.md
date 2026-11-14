@@ -15,6 +15,10 @@ SWD with an ST-Link V2 and OpenOCD 0.12, from the ASR's own debug port:
 
 Procedure: [../../docs/asr5601_swd_dump.md](../../docs/asr5601_swd_dump.md).
 
+The image was later read again over J3 alone, with the ROM monitor and a RAM
+stub, and it matched this file byte for byte. That path needs no SWD wires; see
+[../../docs/asr5601_dump.md](../../docs/asr5601_dump.md).
+
 The part answered with DPIDR `0x0bc11477` (Cortex-M0+ r0p1), and the vector
 table at `0x10000000` is valid (`SP=0x20012000`, reset `0x100014C5`).
 
