@@ -79,12 +79,12 @@ through J2 or the ST-Link. No SWD wires.
 3. Run:
 
    ```
-   python tools/asr5601_j3_capture.py --port COM4 --seconds 600 --drive D:
+   python tools/asr5601_j3_capture.py --port COM4 --out dump.txt --seconds 600
    ```
 
    This sends the dump stub in `tools/asr_stub/dumpstub.bin` with `boot`, then
-   tells the Feather to capture to `/dump.txt`. It waits for completion and, if
-   `--drive` is given, copies the capture to the local disk.
+   asks the Feather to stream the received text over USB. The host writes it to
+   `dump.txt` and stops when `DUMP END` arrives.
 4. Rebuild and verify:
 
    ```
@@ -93,6 +93,9 @@ through J2 or the ST-Link. No SWD wires.
 
    The capture is 32 hex characters per line between `DUMP START` and
    `DUMP END`. The parser keeps only those lines.
+
+The capture streams over USB rather than writing a file on CIRCUITPY, because
+the board side of that filesystem can be read-only while the host has it mounted.
 
 The dump stub source is `tools/asr_stub/dumpstub.c`. It prints through the ROM
 monitor's own UART routine, so the link rate is the monitor's 115200 and the run

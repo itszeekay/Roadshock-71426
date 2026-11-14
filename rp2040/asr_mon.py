@@ -34,7 +34,7 @@ import time
 FORBIDDEN = ("erase", "burn", "boot", "write", "program")
 
 uart = busio.UART(board.TX, board.RX, baudrate=115200, timeout=0,
-                  receiver_buffer_size=4096)
+                  receiver_buffer_size=16384)
 BAUD = 115200
 
 sel0 = digitalio.DigitalInOut(board.D24)
@@ -65,7 +65,7 @@ def uart_init(baud):
     except Exception:
         pass
     uart = busio.UART(board.TX, board.RX, baudrate=baud, timeout=0,
-                      receiver_buffer_size=4096)
+                      receiver_buffer_size=16384)
     BAUD = baud
 
 
@@ -127,6 +127,21 @@ def do_capture(secs, path):
     print("captured %d bytes to %s" % (total, path))
 
 
+def do_stream(secs):
+    end = time.monotonic() + secs
+    total = 0
+    while time.monotonic() < end:
+        n = uart.in_waiting
+        if n:
+            d = uart.read(n)
+            if d:
+                total += len(d)
+                sys.stdout.write(d.decode("ascii", "ignore"))
+        else:
+            time.sleep(0.001)
+    print("\nSTREAM DONE %d" % total)
+
+
 print("ASR MON READY baud=%d sel0=%s" % (BAUD, "high" if sel0.value else "low"))
 
 line = ""
@@ -141,7 +156,7 @@ while True:
         if not cmd:
             continue
         if low == "help":
-            print("status sel0 0|1 release reset dl boot baud N read S capture S PATH tx TEXT raw HH..")
+            print("status sel0 0|1 release reset dl boot baud N read S stream S capture S PATH tx TEXT raw HH..")
         elif low == "status":
             print("baud=%d sel0=%s" % (BAUD, "high" if sel0.value else "low"))
         elif low == "release":
@@ -180,6 +195,10 @@ while True:
                 read_for(float(cmd[5:]))
             except Exception as e:
                 print("read error", e)
+        elif low.startswith("stream"):
+            parts = low.split()
+            secs = float(parts[1]) if len(parts) > 1 else 60.0
+            do_stream(secs)
         elif low.startswith("capture"):
             parts = low.split()
             secs = float(parts[1]) if len(parts) > 1 else 60.0
