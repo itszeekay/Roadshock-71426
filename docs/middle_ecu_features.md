@@ -102,3 +102,43 @@ without touching the panel firmware.
 - Runtime pinout of the ASR, needed only if an ASR image change is planned.
 - LED colour table, needed only for direct LED control from the panel side.
 - BLE provisioning details, needed only for BLE features.
+
+## Protocol details for the implementer
+
+Frame, both directions, 11 bytes:
+
+```
+seq  dir  type  flag  p0 p1 p2 p3 p4 p5  sum
+```
+
+- `dir` is `0x00` for panel to base and `0xFF` for base to panel.
+- `sum` is the low byte of the sum of all preceding bytes.
+- Frames are separated by line idle; do not send back to back.
+- At 2400 8N1 one byte takes 4.17 ms, so an 11-byte frame takes about 46 ms.
+  A gap of at least one frame time is safe.
+
+Boot sequence toward the panel:
+
+1. Send `00 FF 1B 02 00 00 00 00 00 00 1C` once.
+2. Answer each panel frame with `dir = 0xFF`, `type = request | 0x10`, flag `0`,
+   payload echoed.
+3. Type `0x07` replies are 12 bytes: an extra status byte before the payload.
+
+Panel frames to expect:
+
+| Type | Meaning |
+|---|---|
+| `0x08` flag `0x0C` | buttons currently held, one frame on press and one on release |
+| `0x07` flag `0x00` / `0x01` | power button off / on |
+
+Button bits in `0x08`: `p0` bit `0x10` is button 1, bit `0x01` is button 2,
+`p1` continues with buttons 3 and 4, and so on through button 8 in `p3`.
+`p4` and `p5` are zero.
+
+A middle ECU that only needs to observe can stay listen-only on both
+directions. One that needs to act replies to the panel and sends base commands
+on the other side.
+
+Ready-made builders are in `tools/protocol_ref.py`, including `startup_frame`,
+`build_reply`, the custom `0x09` to `0x12` builders and the hidden command
+builders.

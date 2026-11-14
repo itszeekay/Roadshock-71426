@@ -77,6 +77,14 @@ def power(seq, on: bool) -> bytes:
     return build(seq, 0x07, 0x01 if on else 0x00, bytes(6))
 
 
+def startup_frame() -> bytes:
+    """The one frame the stock base sends at boot: 00 FF 1B 02 00*6 1C.
+
+    The panel appears to wait for this before it drives the status LEDs.
+    """
+    return build(0x00, 0x1B, 0x02, bytes(6), direction=0xFF)
+
+
 def build_reply(req) -> bytes:
     """Model the stock base-board reply: dir 0xFF, type|0x10.
 
@@ -203,6 +211,10 @@ if __name__ == "__main__":
     print("key frames ok, e.g. button 6:", key_press(0x40, 6).hex(" "))
     print("release all:", key_release(0x41).hex(" "))
     print("power on:", power(0x42, True).hex(" "))
+
+    sf = startup_frame()
+    assert sf.hex(" ") == "00 ff 1b 02 00 00 00 00 00 00 1c", sf.hex(" ")
+    print("startup frame:", sf.hex(" "))
 
     # hidden-command builders (see docs/hidden_commands.md)
     for fr, ty in [(hidden_0b(0x10, 5), 0x0B), (hidden_0d(0x10, 0), 0x0D),
