@@ -33,3 +33,9 @@ venv/
 # curated ASR reference archive: these are deliberately published
 !reference/asr560x/drive/*.pdf
 !reference/asr560x/drive/DOGO_extract/*.pyc
+
+# ASR analysis working files (per-function decomp and listings stay local)
+reverse/asr/decomp/
+reverse/asr/decomp_boot/
+reverse/asr/decomp_ram/
+reverse/asr/*.lst
