@@ -11,7 +11,7 @@
 # the ROM monitor if the Feather is already running when the panel powers up,
 # which means the Feather must be powered from USB, not from J3 +3.3.
 # Set it to False to keep SEL0 high-Z at boot and drive it by command instead.
-SEL0_AT_BOOT = False
+SEL0_AT_BOOT = True
 #
 # Commands on the USB console:
 #   help
@@ -104,6 +104,29 @@ def read_for(secs):
     show(bytes(data))
 
 
+def do_capture(secs, path):
+    f = open(path, "w")
+    end = time.monotonic() + secs
+    total = 0
+    buf = bytearray()
+    while time.monotonic() < end:
+        n = uart.in_waiting
+        if n:
+            d = uart.read(n)
+            if d:
+                total += len(d)
+                buf.extend(d)
+                if len(buf) >= 1024:
+                    f.write(buf.decode("ascii", "ignore"))
+                    buf = bytearray()
+        else:
+            time.sleep(0.001)
+    if buf:
+        f.write(buf.decode("ascii", "ignore"))
+    f.close()
+    print("captured %d bytes to %s" % (total, path))
+
+
 print("ASR MON READY baud=%d sel0=%s" % (BAUD, "high" if sel0.value else "low"))
 
 line = ""
@@ -118,7 +141,7 @@ while True:
         if not cmd:
             continue
         if low == "help":
-            print("status sel0 0|1 release reset dl boot baud N read S tx TEXT raw HH..")
+            print("status sel0 0|1 release reset dl boot baud N read S capture S PATH tx TEXT raw HH..")
         elif low == "status":
             print("baud=%d sel0=%s" % (BAUD, "high" if sel0.value else "low"))
         elif low == "release":
@@ -157,6 +180,11 @@ while True:
                 read_for(float(cmd[5:]))
             except Exception as e:
                 print("read error", e)
+        elif low.startswith("capture"):
+            parts = low.split()
+            secs = float(parts[1]) if len(parts) > 1 else 60.0
+            path = parts[2] if len(parts) > 2 else "/dump.txt"
+            do_capture(secs, path)
         elif low.startswith("tx "):
             send_text(cmd[3:])
         elif low.startswith("raw "):
