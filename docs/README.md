@@ -44,6 +44,8 @@ Pick the path that matches what you want to do.
   ASR over J3, with the measured UART results and why SWD is the remaining path
 - [asr5601_swd_dump.md](asr5601_swd_dump.md) - step-by-step SWD read of the ASR
   flash with an ST-Link and OpenOCD, including wiring and verification
+- [asr5601_firmware.md](asr5601_firmware.md) - what the ASR firmware does: UARTs, base link, keypad, LED path
+- [middle_ecu_features.md](middle_ecu_features.md) - what an ESP32 between J2 and the base can do, by effort
 - [panel_led_map.md](panel_led_map.md) - display frame, pin table, nibble-to-pin
   patterns
 
@@ -81,6 +83,8 @@ Pick the path that matches what you want to do.
 | [asr5601_reference_archive.md](asr5601_reference_archive.md) | Curated ASR archive, chip table, DOGO read path |
 | [asr5601_dump_plan.md](asr5601_dump_plan.md) | Step-by-step plan to dump the ASR over J3 |
 | [asr5601_swd_dump.md](asr5601_swd_dump.md) | SWD read of the ASR flash over OpenOCD |
+| [asr5601_firmware.md](asr5601_firmware.md) | Panel firmware behaviour: UARTs, base link, keypad, LEDs |
+| [middle_ecu_features.md](middle_ecu_features.md) | Middle ECU feature list with feasibility |
 | [panel_led_map.md](panel_led_map.md) | Display frame, pin table, nibble-to-pin patterns |
 | [bench-results.md](bench-results.md) | Everything verified on hardware, plus the dump text-mode trap |
 | [startup_guide.md](startup_guide.md) | Step-by-step build, flash, test, and configuration guide |

@@ -34,6 +34,21 @@ seq  dir  type  flag  p0 p1 p2 p3 p4 p5  sum
 
 The link is **full duplex**: two separate signal wires, idle high.
 
+### Framing
+
+Frames are separated by line idle, not by a length field. Both ends accumulate
+bytes into a 32-byte buffer and treat a short idle gap as the end of a frame.
+The base firmware does this in its UART1 receive ISR; the panel does the same in
+its UART0 receive path. A frame is accepted only when the checksum matches, so a
+noise burst or a truncated frame is discarded.
+
+The practical rules for a middle ECU:
+
+- Send one frame, then leave the line idle before the next one.
+- The 11-byte form above is the application frame; the transport tolerates up
+  to 32 bytes, and the checksum is always the last byte of the burst.
+- Do not add a length prefix. It would be parsed as the first field.
+
 ### Message types
 
 | Type | Direction | Flag | Meaning |

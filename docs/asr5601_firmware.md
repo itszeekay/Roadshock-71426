@@ -90,9 +90,11 @@ ring buffer and publishes event `0x28` through the BLE stack's event publisher
 (`0x1000DF44`).
 
 `base_link_byte_handler` at `0x1004E1A0` handles events `0x28` through `0x37`.
-Event `0x28` is the frame path: it reads the first byte of the ring buffer as a
-length, fills a queue entry `{length, payload pointer, callback}` and posts
-message `0x0B`. The other events dispatch to decode and output functions:
+Event `0x28` is the frame path: it takes the current byte count of the slot as
+the message length, fills a queue entry `{count, payload pointer, callback}` and
+posts message `0x0B`. The count is not a wire byte; it is the number of bytes
+that arrived in that burst. The other events dispatch to decode and output
+functions:
 
 | Event | Handler |
 |---|---|
@@ -106,9 +108,12 @@ message `0x0B`. The other events dispatch to decode and output functions:
 | `0x2B` | `0x10051B04` |
 | `0x31` to `0x37` | `0x10051654`, `0x1005032C`, `0x100502EC`, `0x1004FE88`, `0x1004FE40`, `0x1004FDF8`, `0x1004F7BC` |
 
-The first byte being treated as a length is the key open question: either the
-panel's wire frame is length-prefixed ahead of the 11-byte frame, or this queue
-serves a second, length-prefixed protocol on the same pins.
+Frames are delimited by an idle gap, not by a length field. The base firmware
+confirms the same scheme from the other end: its UART1 receive ISR accumulates
+bytes into a 32-byte buffer, a timeout marks the burst as complete, and
+`frame_handler` validates the checksum over the received count. The 11-byte
+frame is the application format; the transport is gap-delimited and the
+checksum rejects anything malformed.
 
 ## Buttons
 
