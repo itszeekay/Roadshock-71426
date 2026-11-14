@@ -172,7 +172,9 @@ Findings are tagged where it matters:
 - **Inferred**: consistent with the evidence but not proven.
 - **Unknown**: not yet determined.
 
-The protocol, pin maps, dump integrity, PWM behavior, and the STM8 display driver are verified. The custom firmware's auto-functions (valet, delayed-off, double-tap latch, force override) and wiper control are implemented and bench-verified. The four stock channel modes and the low-frequency prescaler fix are built but not yet flashed for bench testing. The ASR firmware and any J2-only LED control are not verified.
+The protocol, pin maps, dump integrity, PWM behavior, and the STM8 display driver are verified. The custom firmware's auto-functions (valet, delayed-off, double-tap latch, force override) and wiper control are implemented and bench-verified. The four stock channel modes and the low-frequency prescaler fix are built but not yet flashed for bench testing.
+
+The ASR firmware is dumped, decompiled, and analyzed: read over SWD, two identical reads, RAM boot and flash erase/program proven on the ATE sector. Its runtime pin map and BLE service list are still open. J2-only LED control is not verified.
 
 ---
 
