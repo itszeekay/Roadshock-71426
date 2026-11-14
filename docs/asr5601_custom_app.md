@@ -27,14 +27,14 @@ against those ROM entry points and replaces only the application region.
 | Code execution over J3 | RAM boot with a self-built image, verified |
 | Boot strap control | `SEL0` from the Feather, or a jumper |
 | Recovery | SWD in the ROM monitor, or a power cycle |
+| ARM toolchain | GCC 5.4 2016q3, verified compiling for Cortex-M0+ |
+| Flash programming stub | `tools/asr_stub`, erase and program proven on the ATE sector |
 
 ## Still needed
 
 | Item | Why | Notes |
 |---|---|---|
-| ASR BLE NONOS SDK | headers, linker scripts, ROM API declarations | ASR distributes it from its site and Drive links |
-| ARM toolchain | build the application | GCC 5.4 2016q3, the exact version bundled with the SDK |
-| Flash programming stub | write the application region | **done**, proven on the ATE sector; source in `tools/asr_stub` |
+| ASR BLE NONOS SDK | headers, linker scripts, ROM API declarations | ASR distributes it from its site and free-form download page |
 | Application image header | the bootloader verifies the app before jumping | reuse the stock header as the template |
 | BLE configuration | name, services, advertising | NVDS is blank on this unit |
 | Test plan | verify radio and panel behavior | needs a phone and the panel wired to a base or an emulator |
