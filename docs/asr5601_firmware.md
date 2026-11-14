@@ -69,8 +69,13 @@ class, not the datasheet `Func=0..4` index. Groups seen:
 | P13, P14 | 16 |
 
 Those groups cover the keypad matrix and the audio front end, but the class
-numbers do not map to names without the pinmux register definition. A runtime
-read of `0x40110068` to `0x40110074` is the reliable way to finish the table.
+numbers do not map to names without the pinmux register definition. ASR's
+Peripheral User's Guide documents the keypad and UART APIs but not the pin mux
+register layout, so the public documents do not close this gap. A runtime read
+of `0x40110068` to `0x40110074` is the reliable way to finish the table.
+
+The keypad itself supports up to 14 rows by 8 columns in hardware; this panel
+uses 4 rows by 5 columns, and the firmware handles keys 1 through 14.
 
 ## Base link handling
 
