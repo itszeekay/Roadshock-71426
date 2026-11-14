@@ -72,11 +72,24 @@ the ST-Link only senses that rail.
    application.
 5. Check the idle level on both wires. Both should sit near 3.3 V.
 
-The application reassigns `P06` and `P07` to UART3, the LED display link, which
-removes SWD after boot. The reliable sequence is the `SEL0` to `+3.3` jumper
+The application repurposes `P06` and `P07` in its pin setup, which removes SWD
+after boot. The display link is not involved; UART3 is on P13/P14. The reliable sequence is the `SEL0` to `+3.3` jumper
 plus a power cycle: the chip stays in the ROM download monitor and never starts
 the application. Attaching quickly after a normal power cycle is not reliable
 because the remap happens early in the boot.
+
+### Boot strap behaviour, measured
+
+- `SEL0` is sampled at power-on only. A soft reset through SWD returns to the
+  ROM monitor even when `SEL0` is low at that moment.
+- To run the application, power-cycle with `SEL0` low.
+- The Feather helper `rp2040/asr_mon.py` has a `SEL0_AT_BOOT` constant. With it
+  set to `True` the Feather drives `SEL0` high as soon as it boots, so powering
+  the board afterwards selects the ROM monitor. Set it to `False` for a session
+  where the application must run.
+- If the Feather is powered from the same rail as the panel, it restarts during
+  a panel power cycle and drops `SEL0`. Power the Feather from USB, or hold
+  `SEL0` with a physical jumper to `+3.3`.
 
 ## Step 2: probe the debug port
 
@@ -142,7 +155,7 @@ layout note in `reference/asr560x/drive/ASR560X_test_image_layout.md`.
 | Read returns all `0xFF` | wrong base address or locked region | confirm `0x10000000`, then stop |
 | Only works at 100 kHz | long wires or series parts | keep 100 kHz; speed is not needed |
 | Two reads differ | signal integrity or power | lower the speed, shorten wires, retry |
-| Cannot halt after boot | app reassigned `P06`/`P07` | use the `SEL0` jumper and a power cycle |
+| Cannot halt after boot | app repurposed `P06`/`P07` | use the `SEL0` jumper and a power cycle |
 
 ## What the image contains
 

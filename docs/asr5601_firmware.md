@@ -24,7 +24,7 @@ application uses three UARTs, each with a different job.
 |---|---|---|---|---|
 | UART0 | `0x40000000` | P02 TX, P03 RX | **2400** | base board link (J2) |
 | UART1 | `0x40001000` | P04 TX, P05 RX | **921600** | log and console, broken out on J3 |
-| UART3 | `0x40018000` | P06 TX, P07 RX | display link | RGB LED frames to the panel STM8 |
+| UART3 | `0x40018000` | P13 TX, P14 RX | 115200 | display link, RGB LED frames to the panel STM8 |
 
 Evidence:
 
@@ -34,6 +34,7 @@ Evidence:
   921600.
 - `led_frame_send` at `0x100516D8` writes through `uart3_write` at `0x1004E888`,
   which targets `0x40018000`.
+- The UART3 setup at `0x1004E854` configures pins P13 and P14 with class 16.
 
 Consequences:
 
@@ -41,8 +42,9 @@ Consequences:
   port, but it says nothing about the J2 protocol.
 - The 2400 base link reaches the ASR on **P02/P03**. That is what a middle ECU
   must drive on the panel side.
-- The app reassigns P06/P07 to UART3, which is why SWD only worked in the ROM
-  monitor.
+- The application repurposes P06 and P07 in its pin setup, so SWD only works
+  while the application is not running. The display link is not the cause; it
+  is on P13/P14. P06/P07 belong to the keypad group in the pin setup.
 
 ## Pinout
 
@@ -54,8 +56,8 @@ Confirmed from the initialisation code:
 | P03 | UART0 RX | 2400 | `uart0_base_link_init` |
 | P04 | UART1 TX | 921600 | `uart1_log_init` |
 | P05 | UART1 RX | 921600 | `uart1_log_init` |
-| P06 | UART3 TX | display | `led_frame_send` path |
-| P07 | UART3 RX | display | `led_frame_send` path |
+| P13 | UART3 TX | 115200 | `0x1004E854` |
+| P14 | UART3 RX | 115200 | `0x1004E854` |
 
 The remaining pins are configured through `pinmux_set` with a configuration
 class, not the datasheet `Func=0..4` index. Groups seen:
