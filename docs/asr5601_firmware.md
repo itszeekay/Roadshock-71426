@@ -87,8 +87,10 @@ This explains the SWD behaviour: at reset P06/P07 are `SWC`/`SWD`, and the
 application switches them to keypad columns during init, which removes the
 debug port.
 
-The keypad itself supports up to 14 rows by 8 columns in hardware; this panel
-uses 4 rows by 5 columns, and the firmware handles keys 1 through 14.
+`keypad_irq` scans four row words and five column bits, so the driver covers up
+to 20 positions; the pin table above wires four columns, which gives the
+16-position matrix used here. The application also has strings for keys 1
+through 14.
 
 ## Base link handling
 
@@ -141,7 +143,7 @@ The keypad is a hardware matrix, not individual GPIO inputs.
 |---|---|
 | peripheral | KEYPAD block, `0x40015000` |
 | interrupt | IRQ19, `0x1004DD24` (`keypad_irq`) |
-| matrix | 4 rows by 5 columns, 20 possible keys |
+| matrix | 4 rows by 4 columns on this panel, 16 positions, 10 buttons |
 | callback | row, column, pressed |
 | log | `keypad irq`, `col = %ld,row = %ld,press stat:%d` |
 
@@ -263,16 +265,21 @@ and red plus green is yellow. See [panel_led_map.md](panel_led_map.md).
 
 ## Flashing over J3
 
-The ROM monitor on UART1 is the programming interface. It accepts `init`,
-`erase`, `burn` and `boot`; `init` was confirmed on the bench. We hold a
-verified full image, so a restore path exists.
+The ROM monitor on UART1 is the entry point, but it has only `init`, `boot`,
+`wrreg` and `rdreg`. There is no erase or burn command; those names belong to
+the DOGO host tool. Programming therefore runs a RAM stub: `boot` loads it, and
+the stub calls the bootloader flash routines. See
+[asr5601_monitor.md](asr5601_monitor.md) and
+[asr5601_custom_app.md](asr5601_custom_app.md).
 
 Safe validation, without touching the boot image:
 
 1. `SEL0` high, power cycle, connect at 115200.
-2. Burn a small pattern into the blank ATE partition at `0x100F0000`.
-3. Read it back over SWD.
+2. Burn a small pattern into the blank ATE partition at `0x100F0000` with the RAM stub.
+3. Read it back over J3, or over SWD.
 4. Erase it back to `0xFF`.
+
+The verified full image is the restore path.
 
 ## What this means for the middle ECU
 

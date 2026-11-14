@@ -5,7 +5,7 @@ Image: `dumps/asr/asr_flash.bin`. The application occupies `0x10048000` to
 
 | File | Contents |
 |---|---|
-| `app_firmware.c` | application reconstruction, 360 functions in address order |
+| `app_firmware.c` | application reconstruction, 375 functions in address order |
 | `boot_firmware.c` | bootloader reconstruction, 101 functions |
 | `app_index.md` | function index: peripherals, strings, calls |
 | `app_symbols.md` | vector table and BL targets |
@@ -36,18 +36,27 @@ public repository, the same rule used for the STM8 reconstructions.
   `0x10056E..` symbols are veneers into that RAM copy.
 - UART0 on P02/P03 at 2400 is the base board link.
 - UART1 on P04/P05 at 921600 is the log and console, broken out on J3.
-- UART3 on P06/P07 drives the LED display link; frame `5A 00 <6 bytes> EE`
-  from `led_frame_send` at `0x100516D8`.
+- UART3 on P13/P14 at 115200 drives the LED display link; frame
+  `5A 00 <6 bytes> EE` from `led_frame_send` at `0x100516D8`.
+- P06/P07 are keypad columns in the application pin setup, which is why SWD
+  stops working once the application starts.
 - The UART0 RX callback stores bytes in a 32-byte ring buffer and publishes
   event `0x28`; `base_link_byte_handler` at `0x1004E1A0` treats the first byte
   as a length and posts message `0x0B`.
+- The keypad is a 4 by 4 matrix: columns P06/P07/P08/P09, rows P28/P25/P26/P29.
+  Ten positions have buttons; `keypad_irq` at `0x1004DD24` reports row, column
+  and pressed state.
+- LED colour follows the mode index: state 0 to 3 stores nibble 1, 2, 5, 7.
+  Visible colours are 1 red, 3 blue, 5 green, 7 yellow; `led_update` at
+  `0x10051B04` alternates two nibble encoders.
+- Advertising uses the template at `0x10059122`: `Controller8 Wired-XXXXXX`,
+  with the last six characters taken from the BLE MAC.
 - Bootloader `ASRBOOTLOADER-560X-MX-V2.0.2`, app
   `app-1.0.2-20240319.1000`, BLE stack `ASONATA_BLE_NONOS_V1.4.1`.
 
 ## Open
 
 - Whether the wire frame is length-prefixed ahead of the 11-byte frame.
-- Button scan pins and the mode, long-press and double-click rules.
-- The LED color table behind `0x10051734` and `0x1005187C`.
 - Runtime pin mux values for a definitive pinout.
-- BLE advertising name and services.
+- BLE service list; services are registered at runtime, so a live scan is needed.
+- Programming the application region; only the ATE sector has been written so far.
