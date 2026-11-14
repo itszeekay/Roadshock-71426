@@ -44,6 +44,34 @@ Consequences:
 - The app reassigns P06/P07 to UART3, which is why SWD only worked in the ROM
   monitor.
 
+## Pinout
+
+Confirmed from the initialisation code:
+
+| Pin | Function | Baud | Evidence |
+|---|---|---|---|
+| P02 | UART0 TX | 2400 | `uart0_base_link_init` |
+| P03 | UART0 RX | 2400 | `uart0_base_link_init` |
+| P04 | UART1 TX | 921600 | `uart1_log_init` |
+| P05 | UART1 RX | 921600 | `uart1_log_init` |
+| P06 | UART3 TX | display | `led_frame_send` path |
+| P07 | UART3 RX | display | `led_frame_send` path |
+
+The remaining pins are configured through `pinmux_set` with a configuration
+class, not the datasheet `Func=0..4` index. Groups seen:
+
+| Pins | Class |
+|---|---|
+| P02, P03 | 13 |
+| P04, P05 | 14 |
+| P08, P09, P25, P26, P28, P29 | 12 |
+| P10, P15, P16, P22, P24 | 3 |
+| P13, P14 | 16 |
+
+Those groups cover the keypad matrix and the audio front end, but the class
+numbers do not map to names without the pinmux register definition. A runtime
+read of `0x40110068` to `0x40110074` is the reliable way to finish the table.
+
 ## Base link handling
 
 | Item | Value |
