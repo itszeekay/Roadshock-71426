@@ -142,7 +142,7 @@ The base board sends frames to the panel over UART0. The `0x28` handler in
 `app_msg_dispatch` reads two bytes from the ring buffer: the byte value and the
 offset index. It accumulates the byte values into a 16-byte buffer at
 `0x1004E2B8`, one byte per call. The offset counts up to 1; when it reaches
-1, the handler resets the offset to 0 and calls `FUN_100538E8(0xB)` to post
+1, the handler resets the offset to 0 and calls `post_task_msg(0xB)` to post
 the base-frame-complete notification to the task queue.
 
 The notification handler (message `0x0B`) triggers the LED mask apply path:
@@ -160,48 +160,14 @@ The notification handler (message `0x0B`) triggers the LED mask apply path:
 5. `base_frame_process` sets the animation flag, posts message `0x2D` (100 ms
    periodic UI update), and calls `led_mask_apply` again to apply the new mask.
 
-### LED mask apply path
-
-The full path from base frame to LED output:
-
-1. **UART0 RX** (`uart0_rx_callback`, `0x1004F728`): appends bytes to the 32-byte
-   ring buffer.
-2. **Event `0x28`** posted to the task queue.
-3. **`app_msg_dispatch`** (`0x1004E1A0`): reads two bytes from the ring buffer,
-   copies them into the 16-byte accumulator at `0x1004E2B8`. When offset = 1,
-   calls `FUN_100538E8(0xB)`.
-4. **`FUN_100538E8(0xB)`** posts message `0x0B` (base frame complete) to the
-   task queue.
-5. **`led_mask_apply`** (`0x1004F0B0`): reads the 6-byte LED mask from
-   `DAT_1004F428`, applies each nibble to the 12-nibble payload at
-   `DAT_1004F420 + 0x57`, and calls `FUN_1004FD78` (base frame send) to re-send
-   the updated frame.
-6. **`led_update`** (`0x10051B04`): alternates between two nibble encoders
-   (`led_nibble_encode_a` at `0x10051734` and `led_nibble_encode_b` at
-   `0x1005187C`) and sends the 9-byte UART3 frame.
-7. **`led_frame_send`** (`0x100516D8`): builds `5A 00 <6 bytes> EE` and calls
-   `uart3_write` (`0x1004E888`).
-8. **UART3 TX** at 115200 on P13/P14 to the STM8S003K3 display driver.
-
-The encoder alternation at `0x20003904` toggles between two nibble encodings
-on each `led_update` call. The odd nibble is the visible color (red=1, blue=3,
-green=5, yellow=7), and the even nibble is always 8 (off).
-
 ### Base-disconnected behavior
 
-When the base is disconnected:
-
-- The base stops sending frames on UART0.
-- The UART0 RX callback no longer appends bytes to the ring buffer.
-- Event `0x28` is no longer posted, so `app_msg_dispatch` is not called.
-- `FUN_100538E8(0xB)` is not called, so message `0x0B` is not posted.
-- `led_mask_apply` is not triggered, so the LED mask accumulator at
-  `0x1004F428` is not updated.
-- The `0x2D` periodic UI update timer (`FUN_1005147C`, 100 ms) still runs but
-  does not re-send the LED frame unless the base frame data is ready
-  (`DAT_1004E2C8` is non-zero).
-- The LEDs stop updating. The panel does not enter a fail-safe or default
-  state; it simply stops sending frames to the STM8.
+When the base is disconnected, no more frames arrive on UART0, so no `0x28`
+events are posted and no `0x0B` notifications fire. `led_mask_apply` is not
+called, the 12-nibble payload is never rewritten, and the `led_update` timer
+does not re-emit a new frame because it only fires when `base_frame_process`
+has marked data as ready. The LEDs therefore stop changing; there is no
+fail-safe or default state.
 
 ## Buttons
 
@@ -250,10 +216,10 @@ bytes 2 to 5 into eight 3-bit RGB groups, as documented in
 
 | Caller | Note |
 |---|---|
-| `0x1004FDF8` | calls `0x10053918` first |
-| `0x1004FE40` | same |
-| `0x1004FE88` | same, plus `0x1004EAC0` |
-| `0x10051B04` | calls `0x10051734` and `0x1005187C` |
+| `all_leds_blink` | posts a message first, then sends one frame |
+| `all_leds_flash_green` | posts a message first, then sends up to three frames |
+| `all_leds_set` | posts a message first, then sends the red frame and starts the flash loop |
+| `led_update` | calls `led_nibble_encode_a` and `led_nibble_encode_b` and sends the frame |
 
 `led_update` at `0x10051B04` is the next layer up. It takes six color bytes,
 writes the LED frame, and alternates between two nibble encodings on every
@@ -261,8 +227,8 @@ call using a toggle at `0x20003904`:
 
 | Function | Role |
 |---|---|
-| `0x10051734` | odd to even nibble remap |
-| `0x1005187C` | even to odd nibble encode |
+| `led_nibble_encode_a` | odd to even nibble remap |
+| `led_nibble_encode_b` | even to odd nibble encode |
 
 The mapping is recoverable from the code even though there is no table. Each
 channel keeps a 0-3 state byte, and `0x10050160` turns that value into a stored
