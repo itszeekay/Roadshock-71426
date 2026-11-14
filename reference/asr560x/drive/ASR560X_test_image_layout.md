@@ -48,3 +48,23 @@ The 4 KB coredump area at `0x1000C000` is empty in this image. The read command
 `coredump flash all` is documented as a capture. If it only reports this area,
 it is not a full flash read. The full read must cover the bootloader, BLE ROM
 and app regions above.
+
+## Measured against the panel dump
+
+The published image was downloaded from the link in
+[SOURCES.md](../SOURCES.md). It is 409600 bytes (`0x64000`) and its SHA-256
+begins `9e40558422a39f0d`.
+
+It is a different build of the same SDK, not a byte-identical reference:
+
+| Region | Bytes equal to the panel dump |
+|---|---|
+| bootloader `0x00000`-`0x08000` | 36 % |
+| OTA and NVDS `0x08000`-`0x0D000` | 68 % |
+| BLE ROM `0x0D000`-`0x48000` | 28 % |
+| application `0x48000`-`0x64000` | 32 % |
+
+The boundaries and signatures match, but the versions differ: the test image
+bootloader resets at `0x10000D59` and its ROM string is `rom-1.0.0`, while the
+panel uses reset `0x100014C5` and `rom-asr-1.00`. Treat the test image as a
+layout template, not as shared code.

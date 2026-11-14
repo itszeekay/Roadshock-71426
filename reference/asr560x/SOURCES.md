@@ -28,6 +28,8 @@
 | `drive/ASR560X_Datasheet_V1.4.0_EN.ocr.txt` | OCR text of ASR's V1.4.0 datasheet |
 | `drive/ASR560X_Datasheet_V1.4.0_EN.print_150dpi.pdf` | 150 dpi print of the datasheet |
 | `meta/ASR560X_datasheet_provenance.md` | Source, original size, OCR method and limitations |
+| `ASR560X Transparent Transmission Test Bin` | https://drive.google.com/file/d/15PWqvktRdqpaRSQ3lrGuPQahQKwdiC1G/view |
+| ASR560X product download page (registration form) | https://www.asrmicro.com/en/goods/download |
 
 The `coredump flash all` procedure is quoted from ASR's ASR582X FAQ:
 https://asriot-cn.readthedocs.io/zh/latest/ASR582X/常见问题/582X_开发常见问题.html
