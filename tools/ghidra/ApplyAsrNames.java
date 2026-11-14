@@ -27,6 +27,9 @@ public class ApplyAsrNames extends GhidraScript {
         {0x1004D690L, "mic_pins_config", "Configures P27/P28/P29 for the audio front end"},
         {0x1004E7F0L, "uart1_log_init", "UART1 on P04/P05 at 921600; the J3 log/console port"},
         {0x1004E8A4L, "uart0_base_link_init", "UART0 on P02/P03 at 2400; the base board link"},
+        {0x1004E1A0L, "base_link_byte_handler", "Dispatches a received UART0 byte: 0x28 '(' posts 11 bytes, 0x29 ')', 0x2d '-', 0x30 '0', 0x2a '*'"},
+        {0x1004F728L, "uart0_rx_callback", "Feeds received UART0 bytes into the 0x20003481 ring buffer"},
+        {0x1004F788L, "uart1_rx_callback", "Feeds received UART1 log bytes into a second ring buffer"},
         {0x1004E888L, "uart3_write", "Writes a buffer to UART3, the display link"},
         {0x100516D8L, "led_frame_send", "Builds 5A 00 <6 bytes> EE and sends it to UART3"},
     };
@@ -73,6 +76,7 @@ public class ApplyAsrNames extends GhidraScript {
         0x1004AFA0L, 0x1004C0A4L, 0x20001070L, 0x1004C76AL, 0x1004C760L,
         0x1004C774L, 0x1004C77EL, 0x1004CB80L, 0x1004CBB4L, 0x1004CEE8L,
         0x1004C4ACL, 0x1004CF34L, 0x1004DD24L, 0x1004DBE0L, 0x1004DBF4L,
+        0x1004E1A0L, 0x1004F728L, 0x1004F788L, 0x1004C4E8L
     };
 
     private void seedVectors() {

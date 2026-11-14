@@ -57,19 +57,30 @@ The hardware ISR `0x1004C760` calls the generic UART handler `0x1004C4E8(0)`,
 which reads the data register and calls the registered callback. The callback
 appends the byte to a 32-byte ring buffer and signals a consumer.
 
-The dispatcher compares the received byte against ASCII command bytes:
+The callback does not parse the frame itself. It stores the byte in a 32-byte
+ring buffer and publishes event `0x28` through the BLE stack's event publisher
+(`0x1000DF44`).
 
-| Byte | Character | Action |
-|---|---|---|
-| `0x28` | `(` | builds a message from the ring buffer and posts 11 bytes |
-| `0x29` | `)` | calls `0x1004F7E0(0)` |
-| `0x2D` | `-` | calls `0x1005147C(0)` |
-| `0x30` | `0` | calls `0x100512EC(0)`, then 40 |
-| `0x2A` | `*` | further branch |
+`base_link_byte_handler` at `0x1004E1A0` handles events `0x28` through `0x37`.
+Event `0x28` is the frame path: it reads the first byte of the ring buffer as a
+length, fills a queue entry `{length, payload pointer, callback}` and posts
+message `0x0B`. The other events dispatch to decode and output functions:
 
-This is a byte-level command interface layered on the same link. The 11-byte
-post matches the panel frame length, so the binary frame and this byte protocol
-share the transport. The exact command semantics are still being decoded.
+| Event | Handler |
+|---|---|
+| `0x28` | queue the frame, post `0x0B` |
+| `0x29` | `0x1004F7E0` |
+| `0x2D` | `0x1005147C` |
+| `0x30` | `0x100512EC` |
+| `0x2A` | `0x10051B7C` |
+| `0x2F` | `0x10050488` |
+| `0x2E` | `0x10050448` |
+| `0x2B` | `0x10051B04` |
+| `0x31` to `0x37` | `0x10051654`, `0x1005032C`, `0x100502EC`, `0x1004FE88`, `0x1004FE40`, `0x1004FDF8`, `0x1004F7BC` |
+
+The first byte being treated as a length is the key open question: either the
+panel's wire frame is length-prefixed ahead of the 11-byte frame, or this queue
+serves a second, length-prefixed protocol on the same pins.
 
 ## LED pipeline
 
