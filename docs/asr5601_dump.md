@@ -69,6 +69,35 @@ A J3-only dump is slower than SWD, because it shares the 115200 monitor link,
 but it removes the soldering step. SWD remains the faster fallback and the
 method used for the verified image in `dumps/asr/`.
 
+### Running a J3-only dump
+
+Hardware: Feather on J3 `TX`/`RX`/`GND`, `SEL0` driven high, panel powered
+through J2 or the ST-Link. No SWD wires.
+
+1. Copy `rp2040/asr_mon.py` to `CIRCUITPY/code.py`. It boots with `SEL0` high.
+2. Power the board so the ROM monitor starts. Check for `1F2E3D00` at 115200.
+3. Run:
+
+   ```
+   python tools/asr5601_j3_capture.py --port COM4 --seconds 600 --drive D:
+   ```
+
+   This sends the dump stub in `tools/asr_stub/dumpstub.bin` with `boot`, then
+   tells the Feather to capture to `/dump.txt`. It waits for completion and, if
+   `--drive` is given, copies the capture to the local disk.
+4. Rebuild and verify:
+
+   ```
+   python tools/asr5601_j3_dump.py dump.txt --out dumps/asr/j3_flash.bin        --compare dumps/asr/asr_flash.bin
+   ```
+
+   The capture is 32 hex characters per line between `DUMP START` and
+   `DUMP END`. The parser keeps only those lines.
+
+The dump stub source is `tools/asr_stub/dumpstub.c`. It prints through the ROM
+monitor's own UART routine, so the link rate is the monitor's 115200 and the run
+takes several minutes.
+
 ## What was required
 
 | Item | Use |

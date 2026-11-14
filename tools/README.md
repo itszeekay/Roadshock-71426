@@ -118,3 +118,5 @@ pipeline, not as a polished application.
 | `asr_index.py` | function index from the Ghidra decomp |
 | `asr_ram_boot.py` | build and encode a RAM boot image for the ROM monitor |
 | `asr_stub/` | tested RAM stub that erases and programs flash |
+| `asr5601_j3_capture.py` | drive the Feather and send the dump stub over J3 |
+| `asr5601_j3_dump.py` | rebuild and verify a flash image from a J3 capture |
