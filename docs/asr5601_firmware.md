@@ -183,10 +183,43 @@ call using a toggle at `0x20003904`:
 | `0x10051734` | odd to even nibble remap |
 | `0x1005187C` | even to odd nibble encode |
 
-The two encodings match the STM8 side, which maps odd nibbles to colors and
-treats even nibbles as off. The color table itself is fed from a message
-handler, not a direct call, so the caller has to be found through the message
-system rather than the call graph.
+The mapping is recoverable from the code even though there is no table. Each
+channel keeps a 0-3 state byte, and `0x10050160` turns that value into a stored
+nibble:
+
+| Mode | State value | Stored nibble |
+|---|---|---|
+| toggle | 0 | 1 |
+| momentary | 1 | 2 |
+| pulse | 2 | 5 |
+| blinking | 3 | 7 |
+
+The key handler cycles the state byte with the mode and calls
+`0x10050160(channel, value)`, so the state value is the mode index. `led_update`
+then alternates between the two encoders on each call:
+
+| Stored | Encoder A | Encoder B |
+|---|---|---|
+| 1 | 0 | 1 |
+| 2 | 2 | 3 |
+| 5 | 4 | 5 |
+| 7 | 6 | 7 |
+
+The even nibble is all-high, which the STM8 treats as off, and the odd nibble is
+the visible colour. Combining that with the owner's manual (toggle red,
+momentary blue, pulse green, blinking yellow) gives:
+
+| Nibble | Colour |
+|---|---|
+| 0 | off |
+| 1 | red |
+| 3 | blue |
+| 5 | green |
+| 7 | yellow |
+
+Nibbles 2, 4 and 6 appear only as the off phase of the alternating encoder. The
+all-channel helpers use `0x11`, which is red on every LED, or `0x00` for all
+off.
 
 ## BLE
 
