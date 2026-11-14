@@ -41,7 +41,9 @@ Pick the path that matches what you want to do.
 - [asr5601_reference_archive.md](asr5601_reference_archive.md) - curated ASR
   archive, embedded chip table, DOGO read path
 - [asr5601_dump_plan.md](asr5601_dump_plan.md) - step-by-step plan to dump the
-  ASR over J3
+  ASR over J3, with the measured UART results and why SWD is the remaining path
+- [asr5601_swd_dump.md](asr5601_swd_dump.md) - step-by-step SWD read of the ASR
+  flash with an ST-Link and OpenOCD, including wiring and verification
 - [panel_led_map.md](panel_led_map.md) - display frame, pin table, nibble-to-pin
   patterns
 
@@ -78,6 +80,7 @@ Pick the path that matches what you want to do.
 | [asr5601_datasheet.md](asr5601_datasheet.md) | Datasheet review |
 | [asr5601_reference_archive.md](asr5601_reference_archive.md) | Curated ASR archive, chip table, DOGO read path |
 | [asr5601_dump_plan.md](asr5601_dump_plan.md) | Step-by-step plan to dump the ASR over J3 |
+| [asr5601_swd_dump.md](asr5601_swd_dump.md) | SWD read of the ASR flash over OpenOCD |
 | [panel_led_map.md](panel_led_map.md) | Display frame, pin table, nibble-to-pin patterns |
 | [bench-results.md](bench-results.md) | Everything verified on hardware, plus the dump text-mode trap |
 | [startup_guide.md](startup_guide.md) | Step-by-step build, flash, test, and configuration guide |

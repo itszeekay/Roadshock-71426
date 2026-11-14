@@ -2,14 +2,16 @@
 
 MCU: **ASR5601S** (QFN-48) - button panel main controller. This plan dumps the ASR, not either STM8S003.
 
-Status: Phase 0 is complete. The protocol is known well enough to run on the
-bench, but nothing has been read from the ASR yet. The remaining unknowns are
-behavioral, not structural:
+Status: Phase 0 and the UART phases are complete. Both UART questions are
+answered, and the answer is no:
 
-1. Does the ASR5601S download monitor accept `coredump flash all`?
-2. Does the stream use the `:<label><hex>$` framing that DOGO parses?
+1. The ROM download monitor accepts `init`, `erase`, `burn` and `boot`, and
+   rejects everything else, including `coredump flash all`.
+2. The application's UART1 console at 921600 answers `ERROR` to every text
+   command tried.
 
-Both are answered with non-destructive traffic.
+Nothing has been read from the ASR yet. SWD is the active path; see
+[asr5601_swd_dump.md](asr5601_swd_dump.md).
 
 ## What Phase 0 established
 
@@ -222,17 +224,22 @@ flashable, and it still has no factory restore file.
 
 ## Phase 5: SWD fallback
 
-Only if Phases 2 and 3 fail.
+Phases 2 and 3 are closed on this unit. The ROM monitor has no read command and
+the application console rejects text. SWD is now the active path; the full
+procedure is in [asr5601_swd_dump.md](asr5601_swd_dump.md).
 
-1. Board unpowered. Beep J3 TX against the PZ20 pads. If it beeps, PZ20 is on
-   the ASR side; map all six pads.
-2. Beep PZ20 against QFN pins 36 and 37. If either connects, SWD costs a wire,
-   not a rework.
-3. OpenOCD with the ST-Link: `cortex_m` target, connect-under-reset,
-   `dump_image asr.bin 0x10000000 0x100000` for the 1 MB part, or `0x80000` for
-   the 512 KB part.
-4. If reads return zeros or fault, the debug port is locked. Stop. That is
-   decap territory and out of scope.
+What the bench established:
+
+1. `PZ20` is a 6-pin part marked `331`, which is a 330 ohm resistor network, not
+   a header. It has no continuity to QFN pins 36 or 37, so it is not an SWD
+   breakout.
+2. Pins 36 (`P07`, SWDIO) and 37 (`P06`, SWCLK) have short traces ending in vias
+   with nothing else on them. Solder to the vias.
+3. Read the flash with OpenOCD 0.12, a generic `cortex_m` target and
+   `dump_image 0x10000000 0x100000` for the 1 MB part, or `0x80000` for the
+   512 KB part.
+4. If the IDCODE does not read, or reads but `0x10000000` faults, the debug port
+   or the flash is locked. Stop. That is decap territory and out of scope.
 
 ## Decision table
 
@@ -241,12 +248,13 @@ Only if Phases 2 and 3 fail.
 | No banner at 115200 | try 921600, then swap TX/RX, then check SEL0 and reset |
 | Banner but no prompt | send CRLF; if still silent, send `AsrIot560x ` and read again |
 | `coredump flash all` echoes but no data | wait longer; the dump may be slow, then retry at 921600 |
-| Monitor rejects `coredump` | boot the app and send the same command on UART1 |
+| Monitor rejects `coredump` | confirmed on this unit: use SWD, there is no read command |
 | Capture has `:<label><hex>$` | normal; the tool rebuilds `flash.bin` |
 | Capture has only `$<hex>$` | normal for the ReadImage path; the tool writes `readimage.bin` |
 | Read returns all `0xFF` | wrong base address or a protected region; try the app base `0x10048000` |
 | Read is clean for 512 KB, then all `0xFF` | the part is the 512 KB version; trim the tail |
 | Only one clean read, second differs | treat it as no dump; the ASR has no restore image |
+| SWD IDCODE does not read | wiring, ground or target power |
 | SWD locked, UART has no read | stop and reassess; no cheap path left |
 | CLI help lists erase but no read | do not experiment with erase; the restore image does not exist |
 
@@ -256,8 +264,9 @@ Two byte-identical full-flash images, their SHA-256, a carved partition map, and
 a note in `docs/` describing exactly how they were read. That matches the
 standard used for the STM8 dumps.
 
-Phases 1 to 3 are an afternoon if the monitor accepts the command. If it does
-not, Phase 5 is a short detour only when PZ20 reaches the SWD pads.
+The UART phases are closed. The remaining work is the SWD read in
+[asr5601_swd_dump.md](asr5601_swd_dump.md), which needs only the two SWD wires
+soldered to the vias on pins 36 and 37.
 
 ## Risks
 
@@ -266,9 +275,8 @@ not, Phase 5 is a short detour only when PZ20 reaches the SWD pads.
 - The text monitor commands are destructive by nature. Type one command at a
   time and read the echo. The host tool refuses anything containing erase, burn,
   boot, write or program.
-- `coredump flash all` is documented for the 582X family. Treat it as a strong
-  candidate for the 5601S, not as a confirmed command. It is described as a
-  capture, not an erase. If the monitor prints an erase or write message, stop
-  and power down.
+- `coredump flash all` is documented for the 582X family. It was tried on this
+  unit and rejected. Do not retry it with variations; the monitor has no read
+  command.
 - The ASR560X datasheet is still gated, so the memory map comes from the
   Peripheral User's Guide, the Memory Layout page and the binary constants.

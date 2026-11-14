@@ -98,7 +98,7 @@ The command is documented for the 582X family and has not yet been proven on the
 
 From the panel photos: `U1` is the ASR5601S QFN-48, `U2` the STM8S003K3, `J3`
 the 6-pad ASR UART header, `J1` the 3-pad STM8 SWIM header, and `PZ20` a 6-pin
-unlabelled header to the right of the ASR, on the pin 36-43 side.
+part marked `331`, which is a 330 ohm resistor network and not a header.
 
 | Signal | Pin | Pad |
 |---|---|---|
@@ -106,7 +106,7 @@ unlabelled header to the right of the ASR, on the pin 36-43 side.
 | 3.3 V | 12 / 22 | `J3 +3.3` |
 | P04 / UART1_TX | 13 | `J3 TX` |
 | P05 / UART1_RX | 14 | `J3 RX` |
-| RSTN | 44 | `J3 RST` |
+| RSTN | 44 | not on J3 |
 | P00 / SEL0 | 40 | `J3 SEL0` |
 | P01 / SEL1 | 41 | no pad; internal pull-down = 0 |
 | P06 / SWCLK | 37 | **no known pad** |
@@ -117,10 +117,12 @@ the DOGO read path matters more than the SWD fallback.
 
 Continuity checks still worth running with the board unpowered:
 
-- `PZ20` to `J3 TX`: is PZ20 on the ASR side?
-- `PZ20` to QFN pin 36 or 37: is SWD a wire or a rework?
+- Pins 36 and 37 to their vias, and neither via to anything else.
 - `J3 TX/RX` to the `J2` signal wires: must J2 be disconnected during a
   bootloader session?
+
+Measured: `PZ20` has no continuity to pins 36 or 37, so it is not an SWD
+breakout.
 
 ## Next steps
 
@@ -131,7 +133,9 @@ Continuity checks still worth running with the board unpowered:
 3. Send `coredump flash all`, capture the stream, and let the tool rebuild
    `flash.bin`. Read twice and compare SHA-256, the same rule used for the STM8
    images.
-4. Use SWD only if the monitor has no read command and PZ20 carries P06/P07.
+4. Use SWD. The monitor has no read command and `PZ20` does not carry P06/P07,
+   so the SWD wires go to pins 36 and 37; see
+   [asr5601_swd_dump.md](asr5601_swd_dump.md).
 
 Do not run `Flash Erase` or `Burn` before a verified dump exists. There is no
 factory restore image for the ASR.
