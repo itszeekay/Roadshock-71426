@@ -132,7 +132,7 @@ The ASR side supplies nibbles `1`, `3`, `5`, `7` for the four channel modes, and
 the owner's manual names those modes toggle red, momentary blue, pulse green and
 blinking yellow. Combined with the pattern table above:
 
-| Nibble | Pins lit | Colour |
+| Nibble | Pins lit | Color |
 |---|---|---|
 | 1 | pin1 | red |
 | 3 | pin3 | blue |

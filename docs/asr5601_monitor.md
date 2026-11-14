@@ -73,7 +73,7 @@ flashing.
 `rdreg` and `wrreg` give 32-bit read and write to any address, with one
 protected range:
 
-| Range | Behaviour |
+| Range | Behavior |
 |---|---|
 | `0x40031FFF` < address <= `0x4003203F` | rejected with `1F2E3D88` |
 

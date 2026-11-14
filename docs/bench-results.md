@@ -128,6 +128,6 @@ testing.
 ## Open
 
 - J2-only LED override.
-- Exact display-nibble colour names (the nibble-to-mode mapping is recovered; see [asr5601_firmware.md](asr5601_firmware.md)).
+- Exact display-nibble color names (the nibble-to-mode mapping is recovered; see [asr5601_firmware.md](asr5601_firmware.md)).
 - PDU current sensing.
 - ASR runtime pin map and BLE service list.

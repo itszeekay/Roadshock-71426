@@ -85,7 +85,7 @@ Pick the path that matches what you want to do.
 | [asr5601_reference_archive.md](asr5601_reference_archive.md) | Curated ASR archive, chip table, DOGO read path |
 | [asr5601_dump.md](asr5601_dump.md) | ASR dump record: requirements, UART findings, result |
 | [asr5601_swd_dump.md](asr5601_swd_dump.md) | SWD read of the ASR flash over OpenOCD |
-| [asr5601_firmware.md](asr5601_firmware.md) | Panel firmware behaviour: UARTs, base link, keypad, LEDs |
+| [asr5601_firmware.md](asr5601_firmware.md) | Panel firmware behavior: UARTs, base link, keypad, LEDs |
 | [asr5601_monitor.md](asr5601_monitor.md) | ROM monitor: handshake, commands, status codes, RAM boot |
 | [asr5601_custom_app.md](asr5601_custom_app.md) | Custom BLE application prerequisites and status |
 | [middle_ecu_features.md](middle_ecu_features.md) | Middle ECU feature list with feasibility |

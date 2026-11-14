@@ -65,9 +65,9 @@ not accepted.
 
 ## Bench findings that changed the approach
 
-- The J3 pad labelled `RST` is not the ASR reset. With the wire off it reads
+- The J3 pad labeled `RST` is not the ASR reset. With the wire off it reads
   0 V and has no pull-up, unlike `RSTN` pin 44. No reset wire was used.
-- The J3 pad labelled `SEL0` is the real boot strap. Tying it to `+3.3` stops
+- The J3 pad labeled `SEL0` is the real boot strap. Tying it to `+3.3` stops
   the application from starting, which is how the ROM monitor was reached.
 - P06 and P07 are SWD at reset. The application repurposes them in its pin
   setup, so SWD only works while the application is not running, which the

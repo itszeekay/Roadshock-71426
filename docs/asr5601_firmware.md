@@ -48,7 +48,7 @@ Consequences:
 
 ## Pinout
 
-Confirmed from the initialisation code:
+Confirmed from the initialization code:
 
 | Pin | Function | Baud | Evidence |
 |---|---|---|---|
@@ -140,9 +140,9 @@ The key index is the matrix position, and the panel firmware supports keys 1
 through 14 even though this unit has 10 physical buttons.
 
 The event handler at `0x100505B4` (`key_event_handler`) maps a key to an
-action. Behaviour found so far, from strings and branches:
+action. Behavior found so far, from strings and branches:
 
-| Behaviour | Evidence |
+| Behavior | Evidence |
 |---|---|
 | Per-key press logging | `key1 press` through `key14 press` |
 | Work mode entry by repeated key 13 | `KEY13 %d times press,enter setting work mode` |
@@ -206,10 +206,10 @@ then alternates between the two encoders on each call:
 | 7 | 6 | 7 |
 
 The even nibble is all-high, which the STM8 treats as off, and the odd nibble is
-the visible colour. Combining that with the owner's manual (toggle red,
+the visible color. Combining that with the owner's manual (toggle red,
 momentary blue, pulse green, blinking yellow) gives:
 
-| Nibble | Colour |
+| Nibble | Color |
 |---|---|
 | 0 | off |
 | 1 | red |

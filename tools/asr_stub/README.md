@@ -65,11 +65,11 @@ have a verified backup.
 
 ## Standalone UART3 test
 
-A variant was tried that initialised UART3 from the stub and sent display
-frames with known nibbles, to check the colour mapping without the base. It
+A variant was tried that initialized UART3 from the stub and sent display
+frames with known nibbles, to check the color mapping without the base. It
 faulted at `PC 0xFFFFFFFE` because the application's UART3 init calls into app
 state that does not exist in the RAM-only context.
 
 Use the panel's own UI instead: with the stock base connected, double-click
-Mode on a channel and watch the indicator colour. The mode order and the
+Mode on a channel and watch the indicator color. The mode order and the
 nibbles are documented in `docs/asr5601_firmware.md`.

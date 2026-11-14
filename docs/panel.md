@@ -93,7 +93,7 @@ LEDs.
   evidence yet).
 - The exact color mapping of the eight display nibbles. The nibbles and their
   mode mapping are recovered in [asr5601_firmware.md](asr5601_firmware.md); the
-  colour names still need a bench check.
+  color names still need a bench check.
 - Which UART2/UART3 pin pair carries the display link. The dump shows UART3 on
   P13/P14. The datasheet pin mux also lists
   P06/P07, P10, P13/P14, P25/P26 (UART3); identify by continuity from STM8

@@ -172,10 +172,15 @@ Four wires: power, GND, and two 2400-baud signal wires.
 | `+3.3` | 3.3 V |
 | `TX` | ASR P04 / UART1 TX (pin 13) |
 | `RX` | ASR P05 / UART1 RX (pin 14) |
-| `RST` | ASR RSTN (pin 44) |
-| `SEL0` | ASR P00 (pin 40) |
+| `RST` | labeled RST, but measured 0 V with the wire off; it is not the ASR reset |
+| `SEL0` | ASR P00 (pin 40), the boot strap |
 
 `SEL1` (P01, pin 41) is not brought out; it has an internal pull-down.
+
+Measured on the panel: tying the `SEL0` pad to `+3.3` stops the application from
+booting, so it is the strap. The `RST` pad does not behave like `RSTN`, which
+has an internal pull-up, so download mode is entered with the `SEL0` jumper and
+a power cycle rather than a reset wire.
 
 ## Feather RP2040 wiring
 

@@ -21,7 +21,7 @@ What was actually done:
 - Two thin wires soldered to the vias on the traces from U1 pin 37 (`P06`,
   SWCLK) and pin 36 (`P07`, SWDIO). Both vias have no other connection, so they
   are dedicated test points.
-- The J3 pad labelled `RST` is not the ASR reset. No reset wire was used.
+- The J3 pad labeled `RST` is not the ASR reset. No reset wire was used.
   Download mode was entered with a jumper from J3 `SEL0` to J3 `+3.3` and a
   power cycle, which leaves the ROM monitor running and the application stopped.
 - ST-Link V2 clone, VTREF taken from the board 3.3 V rail, common ground.
@@ -78,7 +78,7 @@ plus a power cycle: the chip stays in the ROM download monitor and never starts
 the application. Attaching quickly after a normal power cycle is not reliable
 because the remap happens early in the boot.
 
-### Boot strap behaviour, measured
+### Boot strap behavior, measured
 
 - `SEL0` is sampled at power-on only. A soft reset through SWD returns to the
   ROM monitor even when `SEL0` is low at that moment.

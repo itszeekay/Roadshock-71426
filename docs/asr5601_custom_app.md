@@ -37,7 +37,7 @@ against those ROM entry points and replaces only the application region.
 | Flash programming stub | write the application region | **done**, proven on the ATE sector; source in `tools/asr_stub` |
 | Application image header | the bootloader verifies the app before jumping | reuse the stock header as the template |
 | BLE configuration | name, services, advertising | NVDS is blank on this unit |
-| Test plan | verify radio and panel behaviour | needs a phone and the panel wired to a base or an emulator |
+| Test plan | verify radio and panel behavior | needs a phone and the panel wired to a base or an emulator |
 
 ## Vendor tooling and where it lives
 
@@ -184,7 +184,7 @@ network. No hardware change is needed for BLE.
 2. Write a minimal application that keeps the stock vector table and header and
    only toggles one output, then confirm the bootloader accepts it.
 3. Add the BLE stack calls and verify advertising with a phone.
-4. Only then replace the UI behaviour.
+4. Only then replace the UI behavior.
 
 Step 2 is the safety gate: if the bootloader rejects the image, the stock
 application is still intact in the backup.

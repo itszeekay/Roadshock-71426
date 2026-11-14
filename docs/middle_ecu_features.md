@@ -70,7 +70,7 @@ A reply is the request with `dir = 0xFF` and `type | 0x10`.
 |---|---|
 | Custom BLE name and services | requires an ASR image change, then J3 flashing |
 | Direct LED control from the ESP32 | the ASR owns the LED link; would need an ASR change |
-| New button behaviours in the panel | requires an ASR image change |
+| New button behaviors in the panel | requires an ASR image change |
 | Panel-side configuration storage | ASR NVDS is blank on this unit |
 
 ## What the panel already gives us for free
@@ -85,7 +85,7 @@ A reply is the request with `dir = 0xFF` and `type | 0x10`.
 Emulating button presses on the panel link is enough to reach all of these
 without touching the panel firmware.
 
-## Recommended ESP32 behaviour
+## Recommended ESP32 behavior
 
 1. On boot, send the `0x1B` startup frame to the panel side, then behave as the
    base: answer panel frames and forward selected button events.
@@ -100,7 +100,7 @@ without touching the panel firmware.
 ## Open items that affect the list
 
 - Runtime pinout of the ASR, needed only if an ASR image change is planned.
-- LED colour table, needed only for direct LED control from the panel side.
+- LED color table, needed only for direct LED control from the panel side.
 - BLE provisioning details, needed only for BLE features.
 
 ## Protocol details for the implementer
