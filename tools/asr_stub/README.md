@@ -16,6 +16,10 @@ arm-none-eabi-objcopy -O binary stub.elf stub.bin
 
 For an erase-only build, add `-DERASE_ONLY`.
 
+The two `.bin` files in this directory are prebuilt payloads: `stub.bin` erases
+and programs, `erase.bin` erases only. The `.elf` files are build artifacts and
+are not tracked.
+
 ## Send
 
 ```bash
