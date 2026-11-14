@@ -19,8 +19,16 @@ What was actually done:
 
 - Panel powered from J2 at 3.3 V with no base board connected.
 - Two thin wires soldered to the vias on the traces from U1 pin 37 (`P06`,
-  SWCLK) and pin 36 (`P07`, SWDIO). Both vias have no other connection, so they
-  are dedicated test points.
+  SWCLK) and pin 36 (`P07`, SWDIO).
+
+  The pin identities come from the QFN-48 pin map: `P06` is `SWC` and `P07` is
+  `SWD` at the default function, as listed in [pinouts.md](pinouts.md) and
+  [asr5601.md](asr5601.md).
+
+  The via connectivity was checked with a multimeter, and each via had no other
+  connection. That is a bench measurement, not something the firmware reports.
+  The firmware does configure `P06` and `P07` in its pin setup, which is why SWD
+  only works while the application is not running.
 - The J3 pad labeled `RST` is not the ASR reset. No reset wire was used.
   Download mode was entered with a jumper from J3 `SEL0` to J3 `+3.3` and a
   power cycle, which leaves the ROM monitor running and the application stopped.
