@@ -32,12 +32,36 @@ against those ROM entry points and replaces only the application region.
 
 | Item | Why | Notes |
 |---|---|---|
-| ASR BLE NONOS SDK | headers, linker scripts, ROM API declarations | linked from ASR's Quick Start documentation |
-| ARM toolchain | build the application | `arm-none-eabi-gcc` or Keil |
+| ASR BLE NONOS SDK | headers, linker scripts, ROM API declarations | ASR distributes it from its site and Drive links |
+| ARM toolchain | build the application | GCC 5.4 2016q3, the exact version bundled with the SDK |
 | Flash programming stub | write the application region | the ROM has flash routines; a RAM stub can call them |
 | Application image header | the bootloader verifies the app before jumping | reuse the stock header as the template |
 | BLE configuration | name, services, advertising | NVDS is blank on this unit |
 | Test plan | verify radio and panel behaviour | needs a phone and the panel wired to a base or an emulator |
+
+## Vendor tooling and where it lives
+
+Anything that is publicly downloadable is referenced here, not distributed in
+this repository.
+
+| Item | Version | Where to get it | Local copy |
+|---|---|---|---|
+| ARM GNU toolchain | 5.4, 2016q3 (`5_4-2016q3-20160926`) | ARM's archived release on Launchpad | `toolchains/` in the local archive |
+| ASR BLE NONOS SDK | vendor build | ASR's documentation and Drive links | `toolchains/` or the SDK folder in the local archive |
+| DOGO | VP2.3.8 | ASR | `reference/asr560x/drive/` |
+
+The toolchain archive is executable only from a local disk. Network shares in
+this setup deny execution, so keep the archive copy in the local folder and a
+working copy on the local disk. A quick check:
+
+```
+arm-none-eabi-gcc --version
+# gcc-arm-none-eabi 5.4.1 20160919
+arm-none-eabi-gcc -mcpu=cortex-m0plus -mthumb -c test.c -o test.o
+```
+
+The SDK expects this exact version on Windows. A newer GCC may build, but ASR
+does not support it.
 
 ## The write path
 
@@ -50,9 +74,12 @@ The ROM monitor has no `erase` or `burn`. The working route is:
    uses for OTA writes.
 4. Verify by reading the region back, then reset.
 
-What is not done yet: the stub itself. The bootloader's flash routines are
-decompiled and their addresses are known, so the remaining work is to package
-them into a RAM image and test on the ATE partition first.
+What is not done yet: the stub itself. The bootloader does not program flash
+directly; it calls RAM-resident routines through pointers at `0x10004E6C`
+(`0x20000331`) and `0x10004ECC` (`0x2000002D`). Those routines are copied into
+RAM during boot. The next step is to locate their source bytes and the flash
+controller sequence, then call them from a RAM stub and test on the ATE
+partition first.
 
 ## Application image header
 
@@ -62,9 +89,32 @@ the strings `image token unexpected`, `image length unexpected` and
 `image crc unexpected`, which describe the same header fields: a token, a
 length and a CRC.
 
-The stock application is the reference. Keep its header and vector table layout,
-and replace the body. The exact field offsets still need to be read out of the
-verifier.
+The stock application starts directly with its vector table at `0x10048000`
+(stack `0x20005000`, reset `0x1004AEFD`), and there is no separate header in
+front of it. The OTA tag at `0x10008000` holds `7F 7F FF FF` then `FDB0` and is
+otherwise blank, yet the stock application verifies, so the check is not driven
+by a populated tag on this unit.
+
+Practical rule: keep the vector table and the first vectors exactly where they
+are, and replace only the body. Then test with a minimal application and read
+the bootloader message.
+
+## SDK and build
+
+From ASR's environment guide:
+
+| Item | Value |
+|---|---|
+| Build system | `make TARGET=<project>` from the SDK `build` directory |
+| Environment | `source setBuildEnv.sh` in Git Bash |
+| Toolchain | GCC `arm-none-eabi` 5.4, 2016q3, bundled in `tools/toolchain` |
+| Windows rule | use the SDK-provided toolchain, ASR does not support another version |
+| Output | `build/out/<project>/` |
+| Example target | `sonata_hl_data_trans_demo` |
+| Keil option | generate with `GenkeilPrj.bat`; flash algorithm `ASR560X_2W2D.FLM`; algorithm RAM `0x20000000`, size `0x1000` |
+
+The 2016q3 Windows toolchain was archived by ARM and is still downloadable. It
+is kept outside the public repository with the rest of the vendor tooling.
 
 ## BLE notes from the dump
 
