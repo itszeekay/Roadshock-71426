@@ -150,9 +150,9 @@ The notification handler (message `0x0B`) triggers the LED mask apply path:
 1. `led_mask_apply` (`0x1004F0B0`) reads the 6-byte LED mask from the base
    frame accumulator at `0x1004F428`.
 2. For each nibble that is not 8 (off), it writes the nibble into the 12-nibble
-   payload at `DAT_1004F420 + 0x57`, then calls `led_encode_b_send` to update
-   the stored payload byte.
-3. If the animation flag at `DAT_1004F420 + 0x12` is clear, it calls
+   payload in the LED state block (`0x20003908`) at +0x57, then calls
+   `led_encode_b_send` to update the stored payload byte.
+3. If the animation flag in the LED state block at +0x12 is clear, it calls
    `base_frame_process` (`0x10050354`) with the 5 payload bytes, which
    decodes the base frame into per-channel mode and color values.
 4. `base_frame_process` calls `led_frame_send` to send the updated frame to

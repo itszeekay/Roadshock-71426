@@ -15,9 +15,14 @@ import struct
 
 BASE = 0x10000000
 STR = re.compile(r"PTR_s_([A-Za-z0-9_]+)_([0-9a-f]{8})")
-DAT = re.compile(r"\bDAT_([0-9a-f]{8})\b")
+DAT = re.compile(r"\b_?DAT_([0-9a-f]{8})\b")
 FUN = re.compile(r"\bFUN_([0-9a-f]{8})\b")
 FUNC = re.compile(r"// FUNC 0x([0-9a-f]{8})\s+(\S+)")
+# named literal-pool data emitted by the reconstruction
+PERIPH_LIT = re.compile(r"\b(?:lit_)?periph_([0-9a-f]{8})(?:_[0-9a-f]+)?")
+RAM_LIT = re.compile(r"\blit_ptr_ram_([0-9a-f]{8})(?:_[0-9a-f]+)?")
+RAM_BLOCK = re.compile(r"\blit_ptr_[a-z0-9_]+")
+STR_LIT = re.compile(r"\blit_str_([a-z0-9_]+)")
 
 PERIPH = {
     0x40000000: "CLK/RST?",
@@ -76,7 +81,14 @@ def main():
                 d = decode_periph(v)
                 if d:
                     periphs.add(d)
-        strs = sorted({"%s" % s.replace("_", " ") for s, _ in STR.findall(text)})
+        for pm in PERIPH_LIT.finditer(text):
+            d = decode_periph(int(pm.group(1), 16))
+            if d:
+                periphs.add(d)
+        if RAM_LIT.search(text) or RAM_BLOCK.search(text):
+            periphs.add("RAM")
+        strs = sorted({"%s" % s.replace("_", " ") for s, _ in STR.findall(text)}
+                      | {"%s" % s.replace("_", " ") for s in STR_LIT.findall(text)})
         calls = sorted({int(x, 16) for x in FUN.findall(text)} - {addr})
         rows.append((addr, name, periphs, strs, calls))
 
