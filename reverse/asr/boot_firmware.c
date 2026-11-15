@@ -97,7 +97,7 @@ uint flash_wait_ready(void)
   uint uVar2;
   
   uVar2 = *(uint *)(flash_reg_base + 8);
-  iVar1 = lit_const_04c4b401;
+  iVar1 = flash_delay_loop;
   do {
     if ((uVar2 & 0x20) == 0) {
       return uVar2 & 0x20;
@@ -142,7 +142,7 @@ void flash_run_command(void)
   int iVar1;
   
   iVar1 = flash_reg_base_3;
-  *(undefined4 *)(flash_reg_base_3 + 0xc) = lit_const_000f001b;
+  *(undefined4 *)(flash_reg_base_3 + 0xc) = flash_cmd_word;
   *(undefined4 *)(iVar1 + 0xc) = 0;
   return;
 }
@@ -176,7 +176,7 @@ undefined4 flash_set_read_mode(void)
   uint *puVar1;
   
   puVar1 = flash_reg_base_5;
-  flash_reg_base_5[5] = lit_const_09000105;
+  flash_reg_base_5[5] = flash_mode_word;
   *puVar1 = *puVar1 | 0x400000;
   puVar1[4] = 0;
   puVar1[9] = 1;
@@ -199,7 +199,7 @@ undefined4 flash_set_write_mode(void)
   uint *puVar1;
   
   puVar1 = flash_reg_base_6;
-  flash_reg_base_6[5] = lit_const_09000105_0274;
+  flash_reg_base_6[5] = flash_mode_word_2;
   *puVar1 = *puVar1 | 0x400000;
   puVar1[4] = 0;
   puVar1[9] = 2;
@@ -225,11 +225,11 @@ void flash_set_window(void)
   
   flash_arm_command();
   flash_wait_ready_long();
-  iVar2 = lit_const_4e1c253b;
+  iVar2 = flash_timing_magic;
   piVar1 = flash_reg_base_7;
   iVar3 = *lit_ptr_ram_20000ef4;
   if (*lit_ptr_ram_20000ef4 == 0) {
-    iVar3 = lit_const_08004801;
+    iVar3 = flash_window_default;
   }
   *flash_reg_base_7 = iVar3;
   piVar1[1] = 0x140000;
@@ -242,7 +242,7 @@ void flash_set_window(void)
   piVar1[9] = 0;
   piVar1[10] = 0;
   piVar1[0xb] = 0;
-  piVar1[0xc] = lit_const_0012ffff;
+  piVar1[0xc] = flash_cfg_limit;
   *flash_window_size = 0x200;
   return;
 }
@@ -337,7 +337,7 @@ undefined4 flash_program_page(undefined4 param_1,int param_2,undefined4 *param_3
     flash_wait_ready();
     flash_set_write_mode();
     uVar5 = uVar6 - 0x20;
-    *(undefined4 *)(iVar2 + 0x14) = lit_const_01002502;
+    *(undefined4 *)(iVar2 + 0x14) = flash_const_1002502;
     *(int *)(iVar2 + 0x10) = param_2 + -1;
     *(undefined4 *)(iVar2 + 0x18) = param_1;
     while ((uVar6 != 0 && (uVar5 != uVar6))) {
@@ -417,7 +417,7 @@ int strcmp(uint *param_1,uint *param_2)
       param_1 = param_1 + 1;
       uVar3 = *param_2;
       param_2 = param_2 + 1;
-      uVar4 = uVar2 - lit_const_01010101 & ~uVar2 & lit_const_01010101 << 7;
+      uVar4 = uVar2 - bitspread_test & ~uVar2 & bitspread_test << 7;
       if (uVar4 != 0) {
         iVar1 = (uVar2 & 0xff) - (uVar3 & 0xff);
         if ((((uVar4 & 0xff) == 0 && iVar1 == 0) &&
@@ -970,7 +970,7 @@ void hardfault_handler(void)
 void boot_jump_to_app(undefined4 param_1)
 
 {
-  *(undefined4 *)(lit_const_e000e104 + 0x7c) = 0xffffffff;
+  *(undefined4 *)(misc_const_e000e104 + 0x7c) = 0xffffffff;
   *(undefined4 *)(lit_sys_scb_cpuid + 8) = param_1;
   call_app_reset_vector();
   return;
@@ -1068,7 +1068,7 @@ void boot_delay_us(int param_1)
   uint uVar2;
   undefined4 uStack_c;
   
-  iVar1 = aeabi_uidivmod(*lit_ptr_ram_20000624,lit_const_000f4240);
+  iVar1 = aeabi_uidivmod(*lit_ptr_ram_20000624,clk_1mhz);
   uVar2 = aeabi_uidivmod(iVar1 * param_1,0x11);
   if (uVar2 < 0xc) {
     uVar2 = 0xc;
@@ -1642,7 +1642,7 @@ uint crc32(void)
     do {
       uVar3 = uVar2 << 1;
       if ((int)uVar2 < 0) {
-        uVar3 = uVar3 ^ lit_const_04c11db7;
+        uVar3 = uVar3 ^ crc32_poly;
       }
       cVar5 = cVar5 + -1;
       uVar2 = uVar3;
@@ -1776,9 +1776,9 @@ void uart_pins_config_alt(void)
   uStack_8 = 0;
   disableIRQinterrupts();
   iVar1 = reg_read_indexed(1);
-  uVar3 = lit_const_2e408c04;
+  uVar3 = misc_const_2e408c04;
   if (iVar1 << 1 < 0) {
-    uVar3 = lit_const_6e408c04;
+    uVar3 = misc_const_6e408c04;
   }
   reg_write_indexed(1,uVar3);
   uVar2 = reg_read_indexed(1);
@@ -1835,9 +1835,9 @@ void uart_pins_config(void)
   
   disableIRQinterrupts();
   iVar1 = reg_read_indexed(1);
-  uVar3 = lit_const_2e408c04;
+  uVar3 = misc_const_2e408c04;
   if (iVar1 << 1 < 0) {
-    uVar3 = lit_const_6e408c04;
+    uVar3 = misc_const_6e408c04;
   }
   reg_write_indexed(1,uVar3);
   uVar2 = reg_read_indexed(1);
@@ -1895,20 +1895,20 @@ void uart_pinmux_select(void)
     return;
   }
   iVar3 = *(int *)(lit_ptr_ram_20030000_1784 + 0xc);
-  if (iVar3 == lit_const_27da826e) {
+  if (iVar3 == misc_const_27da826e) {
     uVar4 = 0;
   }
   else {
-    if (iVar3 == lit_const_6932842f) goto LAB_10001766;
-    if (iVar3 != lit_const_efa576ca) {
+    if (iVar3 == misc_const_6932842f) goto LAB_10001766;
+    if (iVar3 != misc_const_efa576ca) {
       if (uVar2 == 0) {
-        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = lit_const_27da826e;
+        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = misc_const_27da826e;
       }
       else if (uVar2 == 1) {
-        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = lit_const_6932842f;
+        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = misc_const_6932842f;
       }
       else {
-        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = lit_const_efa576ca;
+        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = misc_const_efa576ca;
       }
       uart_pins_config();
       return;
@@ -1959,11 +1959,11 @@ void uart_init(int param_1,undefined4 param_2)
   
   puVar1 = iomux_func_sel_0;
   if (param_1 == 0x40000000) {
-    uVar2 = lit_const_ffff00ff & *iomux_func_sel_0;
+    uVar2 = misc_const_ffff00ff & *iomux_func_sel_0;
     uVar3 = 0x1100;
   }
   else if (param_1 == uart1_base_2) {
-    uVar2 = lit_const_ff00ffff & *iomux_func_sel_0;
+    uVar2 = mask_clear_bits16_23 & *iomux_func_sel_0;
     uVar3 = 0x110000;
   }
   else {
@@ -2202,7 +2202,7 @@ uint crc16_ccitt(byte *param_1,int param_2)
     do {
       uVar3 = uVar4 << 1;
       if ((short)uVar4 < 0) {
-        uVar3 = uVar3 ^ lit_const_00001021;
+        uVar3 = uVar3 ^ crc_const_1021;
       }
       uVar4 = uVar3 & 0xffff;
       iVar2 = iVar2 + -1;
@@ -2251,15 +2251,15 @@ void flash_erase_range(uint param_1,int param_2,undefined4 param_3,undefined4 pa
     }
     if (((uVar3 & 0xffff) == 0) && (0xf000 < (int)uVar5)) {
       uVar4 = 0x10000;
-      uVar2 = lit_const_000025d8;
+      uVar2 = flash_const_25d8;
     }
     else if (((uVar3 & 0x7fff) == 0) && (0x7000 < (int)uVar5)) {
       uVar4 = 0x8000;
-      uVar2 = lit_const_00002552;
+      uVar2 = flash_const_2552;
     }
     else {
       uVar4 = 0x1000;
-      uVar2 = lit_const_00002520;
+      uVar2 = fmt_const_2520;
     }
     iVar6 = 0;
     bVar1 = (bool)isCurrentModePrivileged();
@@ -2301,7 +2301,7 @@ undefined4 ota_region_clear(int param_1)
   undefined4 uVar1;
   
   uVar1 = 0;
-  if (((*(uint *)(param_1 + 4) & 0xffffff00) != lit_const_a5a55a00) && (*(int *)(param_1 + 0x10) == 0)) {
+  if (((*(uint *)(param_1 + 4) & 0xffffff00) != image_tag_pattern) && (*(int *)(param_1 + 0x10) == 0)) {
     boot_printf(lit_fn_flash_status_veneer_plus_28c,*(undefined4 *)(param_1 + 0x14),*(undefined4 *)(param_1 + 0x18));
     flash_erase_range(*(undefined4 *)(param_1 + 0x14),*(undefined4 *)(param_1 + 0x18));
     *(undefined4 *)(param_1 + 0x10) = 0xffffffff;
@@ -2388,7 +2388,7 @@ void boot_map_exec_region(uint param_1,int param_2)
 {
   *exec_region_attr = lit_code_10048000;
   *exec_region_base = param_1 & 0xfffffc00;
-  *exec_region_dst = param_2 + lit_mask_000003ff & lit_const_00fffc00 | 0x1000000;
+  *exec_region_dst = param_2 + lit_mask_000003ff & misc_const_fffc00 | 0x1000000;
   return;
 }
 
@@ -2406,7 +2406,7 @@ void boot_rollback_update(int *param_1)
   
   uVar1 = lit_fn_flash_status_veneer_plus_2b3;
   uVar2 = param_1[1];
-  if (((uVar2 & 0xffffff00) == lit_const_a5a55a00_1d7c) && ((uVar2 & 0xff) != 0)) {
+  if (((uVar2 & 0xffffff00) == image_tag_pattern_2) && ((uVar2 & 0xff) != 0)) {
     if ((uVar2 & 0xff) < 3) {
       param_1[1] = uVar2 + 1;
       boot_printf(lit_fn_flash_status_veneer_plus_2d1);
@@ -2457,7 +2457,7 @@ LAB_10001ebc:
         if (iVar1 != 0) {
           boot_printf(lit_fn_flash_status_veneer_plus_38c);
           DataSynchronizationBarrier(0xf);
-          *(undefined4 *)(lit_sys_scb_cpuid_1edc + 0xc) = lit_const_05fa0004;
+          *(undefined4 *)(lit_sys_scb_cpuid_1edc + 0xc) = flash_cmd_word_2;
           DataSynchronizationBarrier(0xf);
           do {
                     /* WARNING: Do nothing block with infinite loop */
@@ -2486,7 +2486,7 @@ LAB_10001ebc:
       if ((*(uint *)(param_1 + 0x60) & 0xffff) != uVar4) {
         boot_printf(lit_fn_flash_status_veneer_plus_36a);
         DataSynchronizationBarrier(0xf);
-        *(undefined4 *)(lit_sys_scb_cpuid_1edc + 0xc) = lit_const_05fa0004;
+        *(undefined4 *)(lit_sys_scb_cpuid_1edc + 0xc) = flash_cmd_word_2;
         DataSynchronizationBarrier(0xf);
         do {
                     /* WARNING: Do nothing block with infinite loop */
@@ -2509,7 +2509,7 @@ LAB_10001e28:
       param_2[3] = *(uint *)(param_1 + 0x5c);
       param_2[1] = 0;
       param_2[4] = 0;
-      if (*(int *)(param_1 + 0x68) == lit_const_a5a55a00_1ef4) {
+      if (*(int *)(param_1 + 0x68) == image_tag_pattern_3) {
         boot_printf(lit_fn_flash_status_veneer_plus_2d1_1ef8);
         uVar4 = *(uint *)(param_1 + 0x68);
         goto LAB_10001e28;
@@ -2623,7 +2623,7 @@ void crc32_table_init(void)
   uint uVar5;
   
   iVar2 = lit_ptr_ram_20000f04;
-  uVar1 = lit_const_edb88320;
+  uVar1 = crc32_poly_reflected;
   uVar4 = 0;
   do {
     iVar3 = 8;
@@ -3054,7 +3054,7 @@ undefined4 lzma_main(uint *param_1)
         uVar9 = 0xb;
       }
       *(undefined1 *)(param_1 + 0x18) = uVar9;
-      lzma_len(param_1,(int)param_1 + lit_const_00000adc,uVar2);
+      lzma_len(param_1,(int)param_1 + misc_const_0adc,uVar2);
     }
     else {
       *param_1 = uVar10;
@@ -3096,7 +3096,7 @@ undefined4 lzma_main(uint *param_1)
           *param_1 = uVar6;
           *puVar13 = uVar1 + (short)((int)(0x800 - (uint)uVar1) >> 5);
         }
-        iVar4 = lit_const_000005d4;
+        iVar4 = misc_const_05d4;
       } while (uVar10 < 0x40);
       uVar10 = uVar10 - 0x40;
       if (uVar10 < 4) {
@@ -3225,7 +3225,7 @@ undefined8 xz_dec_lzma2_run(undefined4 *param_1,int *param_2,undefined4 param_3)
   piVar9 = param_2;
 LAB_1000287e:
   do {
-    iVar3 = lit_const_00006ee0;
+    iVar3 = misc_const_6ee0;
     pbVar7 = (byte *)(param_1 + 0x10);
     uVar12 = param_2[2];
     do {
@@ -3266,9 +3266,9 @@ LAB_10002bce:
               if (uVar11 < (uint)param_1[0x12]) {
                 uVar12 = uVar11;
               }
-              memcpy((int)param_1 + lit_const_00006ee4_2cf4,*param_2 + param_2[1],uVar12,lit_const_00006ee4_2cf4,puVar13
+              memcpy((int)param_1 + misc_const_6ee4_2,*param_2 + param_2[1],uVar12,misc_const_6ee4_2,puVar13
                      ,piVar9,param_3);
-              *(uint *)((int)param_1 + lit_const_00006ee0_2cf0) = uVar12;
+              *(uint *)((int)param_1 + misc_const_6ee0_2) = uVar12;
 LAB_10002ba6:
               param_2[1] = param_2[1] + uVar12;
             }
@@ -3282,20 +3282,20 @@ LAB_10002ba6:
             if (uVar11 < uVar12) {
               uVar12 = uVar11;
             }
-            iVar4 = (int)param_1 + lit_const_00006ee4;
+            iVar4 = (int)param_1 + misc_const_6ee4;
             memcpy(iVar4 + iVar3,*param_2 + param_2[1],uVar12,*param_2,puVar13,piVar9,param_3);
-            piVar9 = *(int **)((int)param_1 + lit_const_00006ee0);
+            piVar9 = *(int **)((int)param_1 + misc_const_6ee0);
             uVar11 = uVar12 + (int)piVar9;
             if (uVar11 != param_1[0x12]) {
               if (0x14 < uVar11) {
                 param_1[5] = uVar11 - 0x15;
                 goto LAB_1000290c;
               }
-              *(uint *)((int)param_1 + lit_const_00006ee0) = uVar11;
+              *(uint *)((int)param_1 + misc_const_6ee0) = uVar11;
               goto LAB_10002ba6;
             }
             memset(iVar4 + uVar11,0,0x3f - uVar11,param_1[0x12],puVar13,piVar9);
-            piVar9 = *(int **)((int)param_1 + lit_const_00006ee0);
+            piVar9 = *(int **)((int)param_1 + misc_const_6ee0);
             param_1[5] = (int)piVar9 + uVar12;
 LAB_1000290c:
             param_1[3] = iVar4;
@@ -3303,16 +3303,16 @@ LAB_1000290c:
             iVar3 = lzma_main(param_1);
             if (iVar3 == 0) goto LAB_10002a3a;
             uVar11 = param_1[4];
-            uVar5 = *(uint *)((int)param_1 + lit_const_00006ee0);
+            uVar5 = *(uint *)((int)param_1 + misc_const_6ee0);
             if (uVar12 + uVar5 < uVar11) goto LAB_10002a3a;
             param_1[0x12] = param_1[0x12] - uVar11;
-            iVar3 = lit_const_00006ee0_2cf0;
+            iVar3 = misc_const_6ee0_2;
             if (uVar5 <= uVar11) {
               param_2[1] = (param_2[1] - uVar5) + uVar11;
               *(undefined4 *)((int)param_1 + iVar3) = 0;
               goto LAB_10002bce;
             }
-            *(uint *)((int)param_1 + lit_const_00006ee0) = uVar5 - uVar11;
+            *(uint *)((int)param_1 + misc_const_6ee0) = uVar5 - uVar11;
             memmove(iVar4,iVar4 + uVar11);
           }
           iVar4 = param_1[8];
@@ -3341,7 +3341,7 @@ LAB_1000290c:
           }
           if ((param_2[5] != iVar6) &&
              ((param_2[1] != param_2[2] ||
-              ((uint)param_1[0x12] <= *(uint *)((int)param_1 + lit_const_00006ee0_2cf0))))) goto LAB_1000287e;
+              ((uint)param_1[0x12] <= *(uint *)((int)param_1 + misc_const_6ee0_2))))) goto LAB_1000287e;
         }
         uVar1 = 0;
         goto LAB_10002a3c;
@@ -3378,7 +3378,7 @@ LAB_10002a3c:
 LAB_10002a0c:
     if (uVar12 < 0x80) {
       if (2 < uVar12) goto LAB_10002a3a;
-      *(short *)(param_1 + 0x10) = (short)lit_const_00000803;
+      *(short *)(param_1 + 0x10) = (short)misc_const_0803;
     }
     else {
       param_1[0x11] = (uVar12 & 0x1f) << 0x10;
@@ -3393,7 +3393,7 @@ LAB_10002a0c:
           param_1[0x16] = 0;
           param_1[0x17] = 0;
           puVar10 = param_1 + 0x1d;
-          puVar8 = (undefined4 *)((int)param_1 + lit_const_00006ee0);
+          puVar8 = (undefined4 *)((int)param_1 + misc_const_6ee0);
           do {
             *(undefined2 *)puVar10 = 0x400;
             puVar10 = (undefined4 *)((int)puVar10 + 2);
@@ -3422,7 +3422,7 @@ int lzma2_create(int param_1,undefined4 param_2)
   int iVar1;
   int iVar2;
   
-  iVar1 = heap_alloc_callback(lit_const_00006f24);
+  iVar1 = heap_alloc_callback(misc_const_6f24);
   if (iVar1 != 0) {
     *(char *)(iVar1 + 0x3c) = (char)param_1;
     *(undefined4 *)(iVar1 + 0x34) = param_2;
@@ -3477,7 +3477,7 @@ undefined4 lzma2_reset(int param_1,uint param_2)
     *(undefined4 *)(param_1 + 100) = 0;
     *(undefined1 *)(param_1 + 0x40) = 0;
     *(undefined1 *)(param_1 + 0x4c) = 1;
-    *(undefined4 *)(param_1 + lit_const_00006ee0_2da0) = 0;
+    *(undefined4 *)(param_1 + misc_const_6ee0_3) = 0;
   }
   return uVar1;
 }
@@ -4917,7 +4917,7 @@ uint xz_crc32_ccitt_update(uint param_1,byte *param_2,int param_3)
     do {
       param_1 = uVar1 << 1;
       if ((int)uVar1 < 0) {
-        param_1 = param_1 ^ lit_const_04c11db7_42f0;
+        param_1 = param_1 ^ crc32_poly_2;
       }
       cVar3 = cVar3 + -1;
       uVar1 = param_1;
@@ -5164,7 +5164,7 @@ LAB_100044ac:
             iVar10 = (uVar4 >> 0xf) + 0x77;
             iVar7 = ((uVar4 >> 0xf) + 0x78) * 8;
           }
-          else if (lit_const_00000554 < uVar5) {
+          else if (misc_const_0554 < uVar5) {
             iVar10 = 0x7e;
             iVar7 = 0x3f8;
           }
@@ -5241,7 +5241,7 @@ LAB_1000442c:
     uVar3 = (uVar14 >> 0xf) + 0x78;
     iVar10 = uVar3 * 8;
   }
-  else if (lit_const_00000554 < uVar3) {
+  else if (misc_const_0554 < uVar3) {
     uVar3 = 0x7f;
     uVar4 = 0x7e;
     iVar10 = 0x3f8;
@@ -5341,7 +5341,7 @@ LAB_100045aa:
     uStack_30 = uVar15 + *lit_ptr_ram_2000139c + 0x10;
   }
   else {
-    uStack_30 = uVar15 + *lit_ptr_ram_2000139c + lit_const_0000100f & 0xfffff000;
+    uStack_30 = uVar15 + *lit_ptr_ram_2000139c + misc_const_100f & 0xfffff000;
   }
   uVar5 = heap_alloc_helper(param_1,uStack_30);
   puVar2 = lit_ptr_ram_2000136c_495c;
@@ -5390,7 +5390,7 @@ LAB_10004668:
       }
       else {
         uVar5 = (uVar5 - uVar6) + 8;
-        uVar9 = (lit_const_00001008 - uVar6) - (uStack_30 + uVar5) & 0xfff;
+        uVar9 = (misc_const_1008 - uVar6) - (uStack_30 + uVar5) & 0xfff;
         iVar10 = heap_alloc_helper(param_1,uVar9);
         if (iVar10 != -1) goto LAB_10004668;
         uStack_30 = ((uVar6 - 8) + uStack_30 + uVar5) - uVar5;
@@ -5746,8 +5746,8 @@ undefined4 heap_alloc(undefined4 param_1,int param_2)
   heap_lock();
   iVar2 = lit_ptr_ram_20000628_4c80;
   uVar4 = *(uint *)(*(int *)(lit_ptr_ram_20000628_4c80 + 8) + 4) & 0xfffffffc;
-  iVar3 = ((uVar4 - param_2) + lit_const_00000fef >> 0xc) - 1;
-  if ((lit_const_00000fef + 0x11 <= iVar3 * 0x1000) &&
+  iVar3 = ((uVar4 - param_2) + misc_const_0fef >> 0xc) - 1;
+  if ((misc_const_0fef + 0x11 <= iVar3 * 0x1000) &&
      (iVar1 = heap_alloc_helper(param_1,0), iVar1 == *(int *)(iVar2 + 8) + uVar4)) {
     iVar1 = heap_alloc_helper(param_1,iVar3 * -0x1000);
     if (iVar1 != -1) {
@@ -5893,7 +5893,7 @@ LAB_10004d0e:
       iVar6 = (uVar3 >> 0xf) + 0x77;
       iVar9 = ((uVar3 >> 0xf) + 0x78) * 8;
     }
-    else if (lit_const_00000554_4e50 < uVar5) {
+    else if (misc_const_0554_2 < uVar5) {
       iVar6 = 0x7e;
       iVar9 = 0x3f8;
     }

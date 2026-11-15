@@ -52,6 +52,7 @@ def main():
     p.add_argument("--decomp", required=True)
     p.add_argument("--out", required=True)
     p.add_argument("--title", default="application")
+    p.add_argument("--datamap", help="TSV of data names and their roles; used to recover peripheral and RAM references after renaming")
     args = p.parse_args()
 
     title = args.title
@@ -59,6 +60,21 @@ def main():
     header = "bootloader" if out_base.startswith("boot") else "application"
 
     img = pathlib.Path(args.image).read_bytes()
+
+    # name -> raw value, recovered from the curated data map
+    name_val = {}
+    if args.datamap:
+        for line in open(args.datamap, encoding="utf-8"):
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) >= 3:
+                m = re.search(r"(?:at|to) 0x([0-9a-fA-F]{8})", parts[2])
+                if m:
+                    name_val[parts[1]] = int(m.group(1), 16)
+
+    name_patterns = None
+    if name_val:
+        alts = "|".join(sorted((re.escape(n) for n in name_val), key=len, reverse=True))
+        name_patterns = re.compile(r"\b(" + alts + r")\b")
 
     def lit(addr):
         off = addr - BASE
@@ -87,6 +103,11 @@ def main():
                 periphs.add(d)
         if RAM_LIT.search(text) or RAM_BLOCK.search(text):
             periphs.add("RAM")
+        if name_patterns is not None:
+            for nm in set(name_patterns.findall(text)):
+                d = decode_periph(name_val[nm])
+                if d:
+                    periphs.add(d)
         strs = sorted({"%s" % s.replace("_", " ") for s, _ in STR.findall(text)}
                       | {"%s" % s.replace("_", " ") for s in STR_LIT.findall(text)})
         calls = sorted({int(x, 16) for x in FUN.findall(text)} - {addr})
