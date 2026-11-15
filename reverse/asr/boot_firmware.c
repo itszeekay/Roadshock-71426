@@ -16,8 +16,8 @@
 void flash_begin(void)
 
 {
-  if ((*lit_periph_40006000 & 2) == 0) {
-    *lit_periph_40006000 = 2;
+  if ((*flash_pwr_ctrl & 2) == 0) {
+    *flash_pwr_ctrl = 2;
   }
   return;
 }
@@ -32,9 +32,9 @@ void flash_end(void)
 {
   int *piVar1;
   
-  piVar1 = lit_periph_40006000_0148;
-  if (*lit_periph_40006000_0148 << 0x1e < 0) {
-    *lit_periph_40006000_0148 = 3;
+  piVar1 = flash_pwr_ctrl_2;
+  if (*flash_pwr_ctrl_2 << 0x1e < 0) {
+    *flash_pwr_ctrl_2 = 3;
     *piVar1 = 0;
   }
   return;
@@ -48,7 +48,7 @@ void flash_end(void)
 uint flash_status(void)
 
 {
-  return ~(*lit_periph_40006000_0158 >> 1) & 1;
+  return ~(*flash_pwr_ctrl_3 >> 1) & 1;
 }
 
 // FUNC 0x1000015c  flash_exit_powerdown
@@ -62,10 +62,10 @@ void flash_exit_powerdown(void)
   uint *puVar1;
   uint uVar2;
   
-  puVar1 = lit_periph_40006000_0174;
-  uVar2 = *lit_periph_40006000_0174;
+  puVar1 = flash_pwr_ctrl_4;
+  uVar2 = *flash_pwr_ctrl_4;
   if ((uVar2 & 2) == 0) {
-    *lit_periph_40006000_0174 = 2;
+    *flash_pwr_ctrl_4 = 2;
     *puVar1 = 3;
     *puVar1 = uVar2 & 2;
   }
@@ -96,14 +96,14 @@ uint flash_wait_ready(void)
   int iVar1;
   uint uVar2;
   
-  uVar2 = *(uint *)(lit_periph_40031000 + 8);
+  uVar2 = *(uint *)(flash_reg_base + 8);
   iVar1 = lit_const_04c4b401;
   do {
     if ((uVar2 & 0x20) == 0) {
       return uVar2 & 0x20;
     }
     iVar1 = iVar1 + -1;
-    uVar2 = *(uint *)(lit_periph_40031000 + 8);
+    uVar2 = *(uint *)(flash_reg_base + 8);
   } while (iVar1 != 0);
   return 1;
 }
@@ -120,13 +120,13 @@ uint flash_wait_ready_long(void)
   uint uVar2;
   
   iVar1 = 0xc9;
-  uVar2 = *(uint *)(lit_periph_40031000_01d0 + 8);
+  uVar2 = *(uint *)(flash_reg_base_2 + 8);
   do {
     if ((uVar2 & 0x40) == 0) {
       return uVar2 & 0x40;
     }
     iVar1 = iVar1 + -1;
-    uVar2 = *(uint *)(lit_periph_40031000_01d0 + 8);
+    uVar2 = *(uint *)(flash_reg_base_2 + 8);
   } while (iVar1 != 0);
   return 1;
 }
@@ -141,8 +141,8 @@ void flash_run_command(void)
 {
   int iVar1;
   
-  iVar1 = lit_periph_40031000_01e0;
-  *(undefined4 *)(lit_periph_40031000_01e0 + 0xc) = lit_const_000f001b;
+  iVar1 = flash_reg_base_3;
+  *(undefined4 *)(flash_reg_base_3 + 0xc) = lit_const_000f001b;
   *(undefined4 *)(iVar1 + 0xc) = 0;
   return;
 }
@@ -158,9 +158,9 @@ undefined4 flash_arm_command(void)
   uint *puVar1;
   uint uVar2;
   
-  puVar1 = lit_periph_40031000_01fc;
-  uVar2 = *lit_periph_40031000_01fc;
-  *lit_periph_40031000_01fc = (uVar2 & 0xfffffffd) + 2;
+  puVar1 = flash_reg_base_4;
+  uVar2 = *flash_reg_base_4;
+  *flash_reg_base_4 = (uVar2 & 0xfffffffd) + 2;
   *puVar1 = uVar2 & 0xfffffffd;
   return 0;
 }
@@ -175,8 +175,8 @@ undefined4 flash_set_read_mode(void)
 {
   uint *puVar1;
   
-  puVar1 = lit_periph_40031000_0234;
-  lit_periph_40031000_0234[5] = lit_const_09000105;
+  puVar1 = flash_reg_base_5;
+  flash_reg_base_5[5] = lit_const_09000105;
   *puVar1 = *puVar1 | 0x400000;
   puVar1[4] = 0;
   puVar1[9] = 1;
@@ -198,8 +198,8 @@ undefined4 flash_set_write_mode(void)
 {
   uint *puVar1;
   
-  puVar1 = lit_periph_40031000_0270;
-  lit_periph_40031000_0270[5] = lit_const_09000105_0274;
+  puVar1 = flash_reg_base_6;
+  flash_reg_base_6[5] = lit_const_09000105_0274;
   *puVar1 = *puVar1 | 0x400000;
   puVar1[4] = 0;
   puVar1[9] = 2;
@@ -226,12 +226,12 @@ void flash_set_window(void)
   flash_arm_command();
   flash_wait_ready_long();
   iVar2 = lit_const_4e1c253b;
-  piVar1 = lit_periph_40031000_03a8;
+  piVar1 = flash_reg_base_7;
   iVar3 = *lit_ptr_ram_20000ef4;
   if (*lit_ptr_ram_20000ef4 == 0) {
     iVar3 = lit_const_08004801;
   }
-  *lit_periph_40031000_03a8 = iVar3;
+  *flash_reg_base_7 = iVar3;
   piVar1[1] = 0x140000;
   piVar1[3] = 0;
   piVar1[4] = 0;
@@ -243,7 +243,7 @@ void flash_set_window(void)
   piVar1[10] = 0;
   piVar1[0xb] = 0;
   piVar1[0xc] = lit_const_0012ffff;
-  *lit_periph_4003108c = 0x200;
+  *flash_window_size = 0x200;
   return;
 }
 
@@ -276,9 +276,9 @@ longlong flash_erase_sector(uint param_1,undefined4 param_2)
   delay_loop(0x20);
   flash_arm_command();
   flash_wait_ready_long();
-  puVar2 = lit_periph_40031090;
-  iVar1 = lit_periph_40031000_0448;
-  *(undefined4 *)(lit_periph_40031000_0448 + 0x14) = 0x106;
+  puVar2 = flash_addr_ptr;
+  iVar1 = flash_reg_base_8;
+  *(undefined4 *)(flash_reg_base_8 + 0x14) = 0x106;
   flash_run_command();
   *puVar2 = 1;
   delay_loop(10);
@@ -328,11 +328,11 @@ undefined4 flash_program_page(undefined4 param_1,int param_2,undefined4 *param_3
     delay_loop(0x20);
     flash_arm_command();
     flash_wait_ready_long();
-    iVar2 = lit_periph_40031000_053c;
-    *(undefined4 *)(lit_periph_40031000_053c + 0x14) = 0x106;
+    iVar2 = flash_reg_base_9;
+    *(undefined4 *)(flash_reg_base_9 + 0x14) = 0x106;
     flash_run_command();
-    puVar3 = lit_periph_40031090_0540;
-    *lit_periph_40031090_0540 = 1;
+    puVar3 = flash_addr_ptr_2;
+    *flash_addr_ptr_2 = 1;
     delay_loop(10);
     flash_wait_ready();
     flash_set_write_mode();
@@ -1012,7 +1012,7 @@ void bootloader_main(void)
   undefined4 uVar3;
   
   boot_clock_init();
-  uart_init(lit_periph_40001000,0x1c200);
+  uart_init(uart1_base,0x1c200);
   uart_pinmux_select();
   puVar1 = lit_ptr_ram_20000e68_0c48;
   memset(lit_ptr_ram_20000e68_0c48,0,0x1c);
@@ -1611,9 +1611,9 @@ void startup_init(void)
   for (; puVar2 < lit_ptr_ram_200015e0; puVar2 = puVar2 + 1) {
     *puVar2 = 0;
   }
-  *lit_periph_40006000_1528 = 1;
-  *lit_periph_40006004 = 2;
-  *lit_periph_40006008 = 2;
+  *flash_pwr_ctrl_5 = 1;
+  *clk_cfg_a = 2;
+  *clk_cfg_b = 2;
   flash_driver_init();
   return;
 }
@@ -1664,10 +1664,10 @@ void boot_clock_init(void)
   int iVar3;
   
   piVar1 = lit_ptr_ram_20030000;
-  uVar2 = *lit_periph_40160024 >> 0x18 & 1;
+  uVar2 = *syscfg_clock_sel >> 0x18 & 1;
   if (*lit_ptr_ram_20030000 == 1) {
     if (uVar2 == 0) {
-      *lit_periph_40160024 = *lit_periph_40160024 | 0x1000000;
+      *syscfg_clock_sel = *syscfg_clock_sel | 0x1000000;
       piVar1[1] = 1;
       piVar1[2] = 1;
       return;
@@ -1677,7 +1677,7 @@ void boot_clock_init(void)
   else if (*lit_ptr_ram_20030000 == 2) {
     if (uVar2 == 0) {
 LAB_100015da:
-      *lit_periph_40160024 = *lit_periph_40160024 | 0x1000000;
+      *syscfg_clock_sel = *syscfg_clock_sel | 0x1000000;
       *piVar1 = 1;
       piVar1[1] = 0;
       piVar1[2] = 0;
@@ -1688,7 +1688,7 @@ LAB_100015da:
   }
   else {
     if (uVar2 == 0) goto LAB_100015da;
-    *lit_periph_40160024 = *lit_periph_40160024 | 0x1000000;
+    *syscfg_clock_sel = *syscfg_clock_sel | 0x1000000;
     iVar3 = 0xff;
     *piVar1 = 1;
   }
@@ -1739,8 +1739,8 @@ void boot_early_image_check(void)
 {
   int iVar1;
   
-  if (((((*lit_periph_40160020 << 8) >> 0x1e != 0) || ((*lit_periph_40160044 & 0xf) == 0)) &&
-      ((*lit_periph_40160020 >> 0x16 & 3) != 1)) && ((*lit_periph_40160020 >> 0x16 & 3) != 2)) {
+  if (((((*syscfg_boot_mode << 8) >> 0x1e != 0) || ((*syscfg_image_flags & 0xf) == 0)) &&
+      ((*syscfg_boot_mode >> 0x16 & 3) != 1)) && ((*syscfg_boot_mode >> 0x16 & 3) != 2)) {
     return;
   }
   iVar1 = crc32();
@@ -1957,20 +1957,20 @@ void uart_init(int param_1,undefined4 param_2)
   uint uVar2;
   uint uVar3;
   
-  puVar1 = lit_periph_40110068;
+  puVar1 = iomux_func_sel_0;
   if (param_1 == 0x40000000) {
-    uVar2 = lit_const_ffff00ff & *lit_periph_40110068;
+    uVar2 = lit_const_ffff00ff & *iomux_func_sel_0;
     uVar3 = 0x1100;
   }
-  else if (param_1 == lit_periph_40001000_1898) {
-    uVar2 = lit_const_ff00ffff & *lit_periph_40110068;
+  else if (param_1 == uart1_base_2) {
+    uVar2 = lit_const_ff00ffff & *iomux_func_sel_0;
     uVar3 = 0x110000;
   }
   else {
-    if (param_1 != lit_periph_40002000) goto LAB_100017ec;
-    uVar2 = *lit_periph_4011006c & 0xffffff00;
+    if (param_1 != uart2_base) goto LAB_100017ec;
+    uVar2 = *iomux_func_sel_1 & 0xffffff00;
     uVar3 = 0x11;
-    puVar1 = lit_periph_4011006c;
+    puVar1 = iomux_func_sel_1;
   }
   *puVar1 = uVar3 | uVar2;
 LAB_100017ec:
@@ -1988,10 +1988,10 @@ LAB_100017ec:
   if (param_1 == 0x40000000) {
     *lit_sys_nvic_iser = 8;
   }
-  else if (param_1 == lit_periph_40001000_1898) {
+  else if (param_1 == uart1_base_2) {
     *lit_sys_nvic_iser = 4;
   }
-  else if (param_1 == lit_periph_40002000) {
+  else if (param_1 == uart2_base) {
     *lit_sys_nvic_iser = 0x10;
   }
   *(uint *)(param_1 + 0x30) = *(uint *)(param_1 + 0x30) | 1;
@@ -2019,7 +2019,7 @@ void reg_write_wait(undefined4 *param_1,undefined4 param_2)
 void reg_write_indexed(int param_1,undefined4 param_2)
 
 {
-  *(undefined4 *)(param_1 * 4 + lit_periph_40160000) = param_2;
+  *(undefined4 *)(param_1 * 4 + syscfg_regs) = param_2;
   return;
 }
 
@@ -2031,7 +2031,7 @@ void reg_write_indexed(int param_1,undefined4 param_2)
 undefined4 reg_read_indexed(int param_1)
 
 {
-  return *(undefined4 *)(param_1 * 4 + lit_periph_40160000_18d0);
+  return *(undefined4 *)(param_1 * 4 + syscfg_regs_2);
 }
 
 // FUNC 0x1000193c  flash_driver_init
@@ -2386,9 +2386,9 @@ undefined4 image_copy(undefined4 param_1,undefined4 param_2)
 void boot_map_exec_region(uint param_1,int param_2)
 
 {
-  *lit_periph_401100a4 = lit_code_10048000;
-  *lit_periph_401100a8 = param_1 & 0xfffffc00;
-  *lit_periph_401100ac = param_2 + lit_mask_000003ff & lit_const_00fffc00 | 0x1000000;
+  *exec_region_attr = lit_code_10048000;
+  *exec_region_base = param_1 & 0xfffffc00;
+  *exec_region_dst = param_2 + lit_mask_000003ff & lit_const_00fffc00 | 0x1000000;
   return;
 }
 
