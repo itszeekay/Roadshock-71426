@@ -14,7 +14,7 @@
  * get_pin1/2/3, pin_clear, pin_set, led_gpio_init, gpio_init,
  * uart1_configure) were assigned from call sites and confirmed
  * against assembly; see tools/ghidra/build_panel_project.py and
- * docs/panel_led_map.md. Generic names (sub_*, FUN_*, gap_*, vec_*)
+ * docs/panel_led_map.md. Generic names (unused Ghidra defaults are no longer present)
  * are Ghidra defaults for code that has not been given a role yet.
  *
  * The display link runs at 115200 (9-byte 0x5A...0xEE frames).
@@ -189,13 +189,13 @@ void VEC00_RESET(void)
 {
   short sVar1;
   
-  _DAT_03fe = 0x8e4a;
+  reset_sp = 0x8e4a;
   sVar1 = ret_one();
   if (sVar1 != 0) {
-    _DAT_03fe = 0x8e50;
+    reset_sp = 0x8e50;
     init_walker();
   }
-  _DAT_03fe = 0x8e53;
+  reset_sp = 0x8e53;
   panel_main_loop();
   bank_helper_2();
   return;
@@ -220,8 +220,8 @@ undefined2 VEC07_EXTI2(undefined2 param_1)
 // FUNC 0x8080  uart1_param_check
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* UART1 parameter check/checker. Validates DAT_000e/DAT_000c/DAT_000d and
-   mask args against valid sets; calls sub_8edd on failure. */
+/* UART1 parameter check/checker. Validates reg_save_s6/reg_save_s4/reg_save_s5 and
+   mask args against valid sets; calls trap_setup_e on failure. */
 
 void uart1_param_check(void)
 
@@ -237,25 +237,25 @@ void uart1_param_check(void)
   
   bank_8b();
   bank_c();
-  bVar2 = DAT_0007;
-  bVar1 = DAT_0006;
-  DAT_000e = save_regs_4();
-  DAT_000c = DAT_0004;
-  DAT_000d = DAT_0005;
-  bVar3 = _DAT_0008 < 9;
-  if (_DAT_0008 == 9) {
-    bVar3 = _DAT_000a < 0x8969;
+  bVar2 = reg_save_w7;
+  bVar1 = reg_save_w6;
+  reg_save_s6 = save_regs_4();
+  reg_save_s4 = reg_save_w4;
+  reg_save_s5 = reg_save_w5;
+  bVar3 = gpio_pin_table < 9;
+  if (gpio_pin_table == 9) {
+    bVar3 = gpio_pin_count < 0x8969;
   }
   if (!bVar3) {
     trap_setup_e(0x61);
   }
-  if ((DAT_000e != 0) && (DAT_000e != 0x10)) {
+  if ((reg_save_s6 != 0) && (reg_save_s6 != 0x10)) {
     trap_setup_e(0x62);
   }
-  if ((((DAT_000c != 0) && (DAT_000c != 0x10)) && (DAT_000c != 0x20)) && (DAT_000c != 0x30)) {
+  if ((((reg_save_s4 != 0) && (reg_save_s4 != 0x10)) && (reg_save_s4 != 0x20)) && (reg_save_s4 != 0x30)) {
     trap_setup_e(99);
   }
-  if (((DAT_000d != 0) && (DAT_000d != 4)) && (DAT_000d != 6)) {
+  if (((reg_save_s5 != 0) && (reg_save_s5 != 4)) && (reg_save_s5 != 6)) {
     trap_setup_e(100);
   }
   if (((bVar2 != 8) && (bVar2 != 0x40)) &&
@@ -268,8 +268,8 @@ void uart1_param_check(void)
     trap_setup_e(0x66);
   }
   UART1_CR1 = UART1_CR1 & 0xef;
-  UART1_CR3 = UART1_CR3 & 0xcf | DAT_000c;
-  UART1_CR1 = (UART1_CR1 | DAT_000e) & 0xf9 | DAT_000d;
+  UART1_CR3 = UART1_CR3 & 0xcf | reg_save_s4;
+  UART1_CR1 = (UART1_CR1 | reg_save_s6) & 0xf9 | reg_save_s5;
   UART1_BRR1 = 0;
   UART1_BRR2 = 0;
   uart_prelude();
@@ -293,7 +293,7 @@ void uart1_param_check(void)
   arith_sub();
   reg_write_a(4);
   div_panel_2();
-  UART1_BRR2 = DAT_0003 & 0xf | UART1_BRR2;
+  UART1_BRR2 = reg_save_w3 & 0xf | UART1_BRR2;
   shr_4(uStack_3);
   UART1_BRR2 = extraout_XL & 0xf0 | UART1_BRR2;
   UART1_BRR1 = (byte)uStack_3 | UART1_BRR1;
@@ -348,7 +348,7 @@ void uart_config_tail(undefined2 param_1,byte param_2,byte param_3)
   arith_sub();
   reg_write_a();
   div_panel_2();
-  UART1_BRR2 = DAT_0003 & 0xf | UART1_BRR2;
+  UART1_BRR2 = reg_save_w3 & 0xf | UART1_BRR2;
   shr_4(param_1);
   UART1_BRR2 = extraout_XL & 0xf0 | UART1_BRR2;
   UART1_BRR1 = (byte)param_1 | UART1_BRR1;
@@ -374,10 +374,10 @@ void uart_config_tail(undefined2 param_1,byte param_2,byte param_3)
 void arith_sub(void)
 
 {
-  DAT_0003 = DAT_0003 - DAT_0007;
-  DAT_0002 = (DAT_0002 - DAT_0006) - (DAT_0002 < DAT_0006);
-  DAT_0001 = (DAT_0001 - DAT_0005) - (DAT_0001 < DAT_0005);
-  DAT_0000 = (DAT_0000 - DAT_0004) - (DAT_0000 < DAT_0004);
+  reg_save_w3 = reg_save_w3 - reg_save_w7;
+  reg_save_w2 = (reg_save_w2 - reg_save_w6) - (reg_save_w2 < reg_save_w6);
+  reg_save_w1 = (reg_save_w1 - reg_save_w5) - (reg_save_w1 < reg_save_w5);
+  reg_save_w0 = (reg_save_w0 - reg_save_w4) - (reg_save_w0 < reg_save_w4);
   return;
 }
 
@@ -398,37 +398,37 @@ void mul_wide(void)
   
   puVar1 = (ushort *)identity_2();
   uVar3 = *puVar1;
-  DAT_0004 = (char)(uVar3 >> 8);
-  DAT_0005 = (char)uVar3;
+  reg_save_w4 = (char)(uVar3 >> 8);
+  reg_save_w5 = (char)uVar3;
   uVar5 = puVar1[1];
-  DAT_0006 = (byte)(uVar5 >> 8);
-  DAT_0007 = (char)uVar5;
-  sVar2 = (uVar3 & 0xff) * (ushort)DAT_0003 +
-          (ushort)DAT_0006 * (ushort)DAT_0002 +
-          (uVar5 & 0xff) * (ushort)DAT_0001 +
-          (ushort)(byte)(DAT_0004 * DAT_0003 +
-                        DAT_0005 * DAT_0002 + DAT_0006 * DAT_0001 + DAT_0007 * DAT_0000) * 0x100;
-  DAT_0000 = (char)((ushort)sVar2 >> 8);
-  uVar3 = (uVar5 & 0xff) * (ushort)DAT_0002;
+  reg_save_w6 = (byte)(uVar5 >> 8);
+  reg_save_w7 = (char)uVar5;
+  sVar2 = (uVar3 & 0xff) * (ushort)reg_save_w3 +
+          (ushort)reg_save_w6 * (ushort)reg_save_w2 +
+          (uVar5 & 0xff) * (ushort)reg_save_w1 +
+          (ushort)(byte)(reg_save_w4 * reg_save_w3 +
+                        reg_save_w5 * reg_save_w2 + reg_save_w6 * reg_save_w1 + reg_save_w7 * reg_save_w0) * 0x100;
+  reg_save_w0 = (char)((ushort)sVar2 >> 8);
+  uVar3 = (uVar5 & 0xff) * (ushort)reg_save_w2;
   uVar4 = uVar3 + sVar2 * 0x100;
   if (CARRY2(uVar3,sVar2 * 0x100)) {
-    DAT_0000 = DAT_0000 + '\x01';
+    reg_save_w0 = reg_save_w0 + '\x01';
   }
-  sVar2 = (ushort)DAT_0006 * (ushort)DAT_0003 + uVar4;
-  DAT_0001 = (byte)((ushort)sVar2 >> 8);
-  if (CARRY2((ushort)DAT_0006 * (ushort)DAT_0003,uVar4)) {
-    DAT_0000 = DAT_0000 + '\x01';
+  sVar2 = (ushort)reg_save_w6 * (ushort)reg_save_w3 + uVar4;
+  reg_save_w1 = (byte)((ushort)sVar2 >> 8);
+  if (CARRY2((ushort)reg_save_w6 * (ushort)reg_save_w3,uVar4)) {
+    reg_save_w0 = reg_save_w0 + '\x01';
   }
-  sVar7 = CONCAT11(DAT_0000,DAT_0001);
-  uVar5 = (uVar5 & 0xff) * (ushort)DAT_0003;
+  sVar7 = CONCAT11(reg_save_w0,reg_save_w1);
+  uVar5 = (uVar5 & 0xff) * (ushort)reg_save_w3;
   sVar6 = uVar5 + sVar2 * 0x100;
-  DAT_0002 = (byte)((ushort)sVar6 >> 8);
-  DAT_0003 = (byte)sVar6;
+  reg_save_w2 = (byte)((ushort)sVar6 >> 8);
+  reg_save_w3 = (byte)sVar6;
   if (CARRY2(uVar5,sVar2 * 0x100)) {
-    sVar7 = CONCAT11(DAT_0000,DAT_0001) + 1;
+    sVar7 = CONCAT11(reg_save_w0,reg_save_w1) + 1;
   }
-  DAT_0000 = (char)((ushort)sVar7 >> 8);
-  DAT_0001 = (byte)sVar7;
+  reg_save_w0 = (char)((ushort)sVar7 >> 8);
+  reg_save_w1 = (byte)sVar7;
   return;
 }
 
@@ -459,60 +459,60 @@ void div_panel_2(void)
   ushort uVar8;
   
   pin_set_call_2();
-  uVar7 = _DAT_0002;
-  if (_DAT_0000 != 0) {
+  uVar7 = sp_save_hi;
+  if (sp_save_lo != 0) {
     cVar6 = ' ';
-    if (DAT_0000 == '\0') {
-      _DAT_0000 = CONCAT31((int3)_DAT_0000,0xff);
+    if (reg_save_w0 == '\0') {
+      sp_save_lo = CONCAT31((int3)sp_save_lo,0xff);
       cVar6 = '\x18';
     }
     uVar7 = 0;
     uVar8 = 0;
     bVar5 = true;
     while( true ) {
-      uVar4 = _DAT_0000;
-      uVar2 = _DAT_0000 & 0x80;
-      uVar3 = _DAT_0000 >> 8;
-      DAT_0003 = DAT_0003 << 1 | bVar5;
-      DAT_0002 = SUB41(uVar4,1);
-      DAT_0002 = DAT_0002 << 1 | uVar2 != 0;
-      DAT_0001 = SUB41(uVar4,2);
-      DAT_0000 = SUB41(uVar4,3);
-      DAT_0001 = DAT_0001 << 1 | (uVar3 & 0x80) != 0;
-      DAT_0000 = DAT_0000 << 1 | (uVar4 >> 0x10 & 0x80) != 0;
+      uVar4 = sp_save_lo;
+      uVar2 = sp_save_lo & 0x80;
+      uVar3 = sp_save_lo >> 8;
+      reg_save_w3 = reg_save_w3 << 1 | bVar5;
+      reg_save_w2 = SUB41(uVar4,1);
+      reg_save_w2 = reg_save_w2 << 1 | uVar2 != 0;
+      reg_save_w1 = SUB41(uVar4,2);
+      reg_save_w0 = SUB41(uVar4,3);
+      reg_save_w1 = reg_save_w1 << 1 | (uVar3 & 0x80) != 0;
+      reg_save_w0 = reg_save_w0 << 1 | (uVar4 >> 0x10 & 0x80) != 0;
       cVar6 = cVar6 + -1;
       if (cVar6 < '\0') break;
       uVar1 = uVar8 & 0x8000;
       uVar8 = uVar8 << 1 | (ushort)((uVar4 & 0x80000000) != 0);
       uVar7 = uVar7 << 1 | (ushort)(uVar1 != 0);
-      bVar5 = uVar7 < _DAT_0004;
-      if (uVar7 == _DAT_0004) {
-        bVar5 = uVar8 < _DAT_0006;
+      bVar5 = uVar7 < div_quot_hi;
+      if (uVar7 == div_quot_hi) {
+        bVar5 = uVar8 < div_quot_lo;
       }
       if (!bVar5) {
-        bVar5 = uVar8 < _DAT_0006;
-        uVar8 = uVar8 - _DAT_0006;
+        bVar5 = uVar8 < div_quot_lo;
+        uVar8 = uVar8 - div_quot_lo;
         if (bVar5) {
           uVar7 = uVar7 - 1;
         }
-        bVar5 = uVar7 < _DAT_0004;
-        uVar7 = uVar7 - _DAT_0004;
+        bVar5 = uVar7 < div_quot_hi;
+        uVar7 = uVar7 - div_quot_hi;
       }
     }
-    _DAT_0004 = uVar7;
-    _DAT_0006 = uVar8;
-    _DAT_0000 = CONCAT22(~_DAT_0000,~_DAT_0002);
+    div_quot_hi = uVar7;
+    div_quot_lo = uVar8;
+    sp_save_lo = CONCAT22(~sp_save_lo,~sp_save_hi);
     return;
   }
-  if (_DAT_0004 == 0) {
-    uVar7 = _DAT_0002 % _DAT_0006;
-    _DAT_0000 = (uint)(_DAT_0002 / _DAT_0006);
-    _DAT_0006 = uVar7;
+  if (div_quot_hi == 0) {
+    uVar7 = sp_save_hi % div_quot_lo;
+    sp_save_lo = (uint)(sp_save_hi / div_quot_lo);
+    div_quot_lo = uVar7;
     return;
   }
-  _DAT_0004 = _DAT_0000;
-  _DAT_0000 = 0;
-  _DAT_0006 = uVar7;
+  div_quot_hi = sp_save_lo;
+  sp_save_lo = 0;
+  div_quot_lo = uVar7;
   return;
 }
 
@@ -532,60 +532,60 @@ void div_helper(void)
   ushort uVar7;
   ushort uVar8;
   
-  uVar7 = _DAT_0002;
-  if (_DAT_0000 != 0) {
+  uVar7 = sp_save_hi;
+  if (sp_save_lo != 0) {
     cVar6 = ' ';
-    if (DAT_0000 == '\0') {
-      _DAT_0000 = CONCAT31((int3)_DAT_0000,0xff);
+    if (reg_save_w0 == '\0') {
+      sp_save_lo = CONCAT31((int3)sp_save_lo,0xff);
       cVar6 = '\x18';
     }
     uVar7 = 0;
     uVar8 = 0;
     bVar5 = true;
     while( true ) {
-      uVar4 = _DAT_0000;
-      uVar2 = _DAT_0000 & 0x80;
-      uVar3 = _DAT_0000 >> 8;
-      DAT_0003 = DAT_0003 << 1 | bVar5;
-      DAT_0002 = SUB41(uVar4,1);
-      DAT_0002 = DAT_0002 << 1 | uVar2 != 0;
-      DAT_0001 = SUB41(uVar4,2);
-      DAT_0000 = SUB41(uVar4,3);
-      DAT_0001 = DAT_0001 << 1 | (uVar3 & 0x80) != 0;
-      DAT_0000 = DAT_0000 << 1 | (uVar4 >> 0x10 & 0x80) != 0;
+      uVar4 = sp_save_lo;
+      uVar2 = sp_save_lo & 0x80;
+      uVar3 = sp_save_lo >> 8;
+      reg_save_w3 = reg_save_w3 << 1 | bVar5;
+      reg_save_w2 = SUB41(uVar4,1);
+      reg_save_w2 = reg_save_w2 << 1 | uVar2 != 0;
+      reg_save_w1 = SUB41(uVar4,2);
+      reg_save_w0 = SUB41(uVar4,3);
+      reg_save_w1 = reg_save_w1 << 1 | (uVar3 & 0x80) != 0;
+      reg_save_w0 = reg_save_w0 << 1 | (uVar4 >> 0x10 & 0x80) != 0;
       cVar6 = cVar6 + -1;
       if (cVar6 < '\0') break;
       uVar1 = uVar8 & 0x8000;
       uVar8 = uVar8 << 1 | (ushort)((uVar4 & 0x80000000) != 0);
       uVar7 = uVar7 << 1 | (ushort)(uVar1 != 0);
-      bVar5 = uVar7 < _DAT_0004;
-      if (uVar7 == _DAT_0004) {
-        bVar5 = uVar8 < _DAT_0006;
+      bVar5 = uVar7 < div_quot_hi;
+      if (uVar7 == div_quot_hi) {
+        bVar5 = uVar8 < div_quot_lo;
       }
       if (!bVar5) {
-        bVar5 = uVar8 < _DAT_0006;
-        uVar8 = uVar8 - _DAT_0006;
+        bVar5 = uVar8 < div_quot_lo;
+        uVar8 = uVar8 - div_quot_lo;
         if (bVar5) {
           uVar7 = uVar7 - 1;
         }
-        bVar5 = uVar7 < _DAT_0004;
-        uVar7 = uVar7 - _DAT_0004;
+        bVar5 = uVar7 < div_quot_hi;
+        uVar7 = uVar7 - div_quot_hi;
       }
     }
-    _DAT_0004 = uVar7;
-    _DAT_0006 = uVar8;
-    _DAT_0000 = CONCAT22(~_DAT_0000,~_DAT_0002);
+    div_quot_hi = uVar7;
+    div_quot_lo = uVar8;
+    sp_save_lo = CONCAT22(~sp_save_lo,~sp_save_hi);
     return;
   }
-  if (_DAT_0004 == 0) {
-    uVar7 = _DAT_0002 % _DAT_0006;
-    _DAT_0000 = (uint)(_DAT_0002 / _DAT_0006);
-    _DAT_0006 = uVar7;
+  if (div_quot_hi == 0) {
+    uVar7 = sp_save_hi % div_quot_lo;
+    sp_save_lo = (uint)(sp_save_hi / div_quot_lo);
+    div_quot_lo = uVar7;
     return;
   }
-  _DAT_0004 = _DAT_0000;
-  _DAT_0000 = 0;
-  _DAT_0006 = uVar7;
+  div_quot_hi = sp_save_lo;
+  sp_save_lo = 0;
+  div_quot_lo = uVar7;
   return;
 }
 
@@ -599,13 +599,13 @@ void reg_write_a(char param_1)
   
   if (param_1 != '\0') {
     do {
-      bVar1 = DAT_0003 & 0x80;
-      DAT_0003 = DAT_0003 << 1;
-      bVar2 = DAT_0002 & 0x80;
-      DAT_0002 = DAT_0002 << 1 | bVar1 != 0;
-      bVar1 = DAT_0001 & 0x80;
-      DAT_0001 = DAT_0001 << 1 | bVar2 != 0;
-      DAT_0000 = DAT_0000 << 1 | bVar1 != 0;
+      bVar1 = reg_save_w3 & 0x80;
+      reg_save_w3 = reg_save_w3 << 1;
+      bVar2 = reg_save_w2 & 0x80;
+      reg_save_w2 = reg_save_w2 << 1 | bVar1 != 0;
+      bVar1 = reg_save_w1 & 0x80;
+      reg_save_w1 = reg_save_w1 << 1 | bVar2 != 0;
+      reg_save_w0 = reg_save_w0 << 1 | bVar1 != 0;
       param_1 = param_1 + -1;
     } while (param_1 != '\0');
   }
@@ -645,7 +645,7 @@ undefined2 identity_fn_2(undefined2 param_1)
 undefined2 save_ptr(undefined2 param_1,undefined2 param_2)
 
 {
-  _DAT_0008 = param_2;
+  gpio_pin_table = param_2;
   return param_1;
 }
 
@@ -700,8 +700,8 @@ undefined2 identity_fn(undefined2 param_1)
 void save_ptr_0(undefined2 param_1,undefined2 param_2)
 
 {
-  _DAT_0000 = param_1;
-  _DAT_0002 = param_2;
+  sp_save_lo = param_1;
+  sp_save_hi = param_2;
   stack_ret();
   return;
 }
@@ -713,8 +713,8 @@ void save_ptr_0(undefined2 param_1,undefined2 param_2)
 void save_ptr_1(undefined2 param_1,undefined2 param_2)
 
 {
-  _DAT_0004 = param_1;
-  _DAT_0006 = param_2;
+  div_quot_hi = param_1;
+  div_quot_lo = param_2;
   stack_ret();
   return;
 }
@@ -726,8 +726,8 @@ void save_ptr_1(undefined2 param_1,undefined2 param_2)
 void save_ptr_2(undefined2 param_1,undefined2 param_2)
 
 {
-  _DAT_0008 = param_1;
-  _DAT_000a = param_2;
+  gpio_pin_table = param_1;
+  gpio_pin_count = param_2;
   stack_ret();
   return;
 }
@@ -739,8 +739,8 @@ void save_ptr_2(undefined2 param_1,undefined2 param_2)
 void save_ptr_3(undefined2 param_1,undefined2 param_2)
 
 {
-  _DAT_000c = param_1;
-  _DAT_000e = param_2;
+  sp_save_a = param_1;
+  sp_save_b = param_2;
   stack_ret();
   return;
 }
@@ -788,10 +788,10 @@ void save_chain_b(void)
 void save_regs_0(void)
 
 {
-  DAT_0000 = DAT_0008;
-  DAT_0001 = DAT_0009;
-  DAT_0002 = DAT_000a;
-  DAT_0003 = DAT_000b;
+  reg_save_w0 = reg_save_s0;
+  reg_save_w1 = reg_save_s1;
+  reg_save_w2 = reg_save_s2;
+  reg_save_w3 = reg_save_s3;
   return;
 }
 
@@ -800,10 +800,10 @@ void save_regs_0(void)
 void save_regs_1(void)
 
 {
-  DAT_0000 = DAT_000c;
-  DAT_0001 = DAT_000d;
-  DAT_0002 = DAT_000e;
-  DAT_0003 = DAT_000f;
+  reg_save_w0 = reg_save_s4;
+  reg_save_w1 = reg_save_s5;
+  reg_save_w2 = reg_save_s6;
+  reg_save_w3 = reg_save_s7;
   return;
 }
 
@@ -812,10 +812,10 @@ void save_regs_1(void)
 void save_regs_2(void)
 
 {
-  DAT_0004 = DAT_0008;
-  DAT_0005 = DAT_0009;
-  DAT_0006 = DAT_000a;
-  DAT_0007 = DAT_000b;
+  reg_save_w4 = reg_save_s0;
+  reg_save_w5 = reg_save_s1;
+  reg_save_w6 = reg_save_s2;
+  reg_save_w7 = reg_save_s3;
   return;
 }
 
@@ -824,10 +824,10 @@ void save_regs_2(void)
 void save_regs_3(void)
 
 {
-  DAT_0004 = DAT_000c;
-  DAT_0005 = DAT_000d;
-  DAT_0006 = DAT_000e;
-  DAT_0007 = DAT_000f;
+  reg_save_w4 = reg_save_s4;
+  reg_save_w5 = reg_save_s5;
+  reg_save_w6 = reg_save_s6;
+  reg_save_w7 = reg_save_s7;
   return;
 }
 
@@ -836,10 +836,10 @@ void save_regs_3(void)
 void save_regs_4(void)
 
 {
-  DAT_0008 = DAT_0000;
-  DAT_0009 = DAT_0001;
-  DAT_000a = DAT_0002;
-  DAT_000b = DAT_0003;
+  reg_save_s0 = reg_save_w0;
+  reg_save_s1 = reg_save_w1;
+  reg_save_s2 = reg_save_w2;
+  reg_save_s3 = reg_save_w3;
   return;
 }
 
@@ -848,10 +848,10 @@ void save_regs_4(void)
 void save_regs_5(void)
 
 {
-  DAT_000c = DAT_0000;
-  DAT_000d = DAT_0001;
-  DAT_000e = DAT_0002;
-  DAT_000f = DAT_0003;
+  reg_save_s4 = reg_save_w0;
+  reg_save_s5 = reg_save_w1;
+  reg_save_s6 = reg_save_w2;
+  reg_save_s7 = reg_save_w3;
   return;
 }
 
@@ -874,7 +874,7 @@ void display_frame_handler(void)
   byte abStack_8 [8];
   
   pcVar3 = (char *)bank_8b();
-  uVar2 = DAT_000c;
+  uVar2 = reg_save_s4;
   if (pcVar3[9] != '\t') {
     frame_fail();
     return;
@@ -888,21 +888,21 @@ void display_frame_handler(void)
     return;
   }
   pbVar4 = (byte *)(pcVar3 + 2);
-  _DAT_0000 = abStack_8;
-  DAT_0002 = '\x04';
+  sp_save_lo = abStack_8;
+  reg_save_w2 = '\x04';
   do {
-    DAT_0003 = *pbVar4;
-    *_DAT_0000 = DAT_0003 >> 4;
-    _DAT_0000[1] = DAT_0003 & 0xf;
-    _DAT_0000 = _DAT_0000 + 2;
+    reg_save_w3 = *pbVar4;
+    *sp_save_lo = reg_save_w3 >> 4;
+    sp_save_lo[1] = reg_save_w3 & 0xf;
+    sp_save_lo = sp_save_lo + 2;
     pbVar4 = pbVar4 + 1;
-    DAT_0002 = DAT_0002 + -1;
-  } while (DAT_0002 != '\0');
-  _DAT_000a = abStack_8;
-  _DAT_0008 = 0x10;
-  DAT_000c = '\b';
+    reg_save_w2 = reg_save_w2 + -1;
+  } while (reg_save_w2 != '\0');
+  gpio_pin_count = abStack_8;
+  gpio_pin_table = 0x10;
+  reg_save_s4 = '\b';
   do {
-    bVar1 = *_DAT_000a;
+    bVar1 = *gpio_pin_count;
     if (bVar1 == 0) {
 LAB_84e1:
       pin1_set_high();
@@ -938,11 +938,11 @@ LAB_84f2:
       pin_clear();
     }
 LAB_84f8:
-    _DAT_0008 = _DAT_0008 + 9;
-    _DAT_000a = _DAT_000a + 1;
-    DAT_000c = DAT_000c + -1;
-    if (DAT_000c == '\0') {
-      DAT_000c = uVar2;
+    gpio_pin_table = gpio_pin_table + 9;
+    gpio_pin_count = gpio_pin_count + 1;
+    reg_save_s4 = reg_save_s4 + -1;
+    if (reg_save_s4 == '\0') {
+      reg_save_s4 = uVar2;
       save_chain_a();
       return;
     }
@@ -954,7 +954,7 @@ LAB_84f8:
 void frame_fail(undefined1 param_1)
 
 {
-  DAT_000c = param_1;
+  reg_save_s4 = param_1;
   save_chain_a();
   return;
 }
@@ -972,50 +972,50 @@ void gpio_init(void)
   byte *pbVar2;
   byte *pbVar3;
   
-  _DAT_0008 = (byte *)bank_8b();
-  DAT_000b = DAT_0000;
-  DAT_000a = extraout_A;
-  if (((((DAT_0000 != 0) && (DAT_0000 != 0x40)) && (DAT_0000 != 0x20)) &&
-      ((((DAT_0000 != 0x60 && (DAT_0000 != 0xa0)) &&
-        ((DAT_0000 != 0xe0 && ((DAT_0000 != 0x80 && (DAT_0000 != 0xc0)))))) && (DAT_0000 != 0xb0))))
-     && (((DAT_0000 != 0xf0 && (DAT_0000 != 0x90)) && (DAT_0000 != 0xd0)))) {
+  gpio_pin_table = (byte *)bank_8b();
+  reg_save_s3 = reg_save_w0;
+  reg_save_s2 = extraout_A;
+  if (((((reg_save_w0 != 0) && (reg_save_w0 != 0x40)) && (reg_save_w0 != 0x20)) &&
+      ((((reg_save_w0 != 0x60 && (reg_save_w0 != 0xa0)) &&
+        ((reg_save_w0 != 0xe0 && ((reg_save_w0 != 0x80 && (reg_save_w0 != 0xc0)))))) && (reg_save_w0 != 0xb0))))
+     && (((reg_save_w0 != 0xf0 && (reg_save_w0 != 0x90)) && (reg_save_w0 != 0xd0)))) {
     trap_setup_b(0x4d);
   }
-  if (DAT_000a == 0) {
+  if (reg_save_s2 == 0) {
     trap_setup_b(0x4e);
   }
-  DAT_0000 = ~DAT_000a;
-  pbVar2 = _DAT_0008 + 4;
-  *pbVar2 = *pbVar2 & DAT_0000;
-  if ((DAT_000b & 0x80) == 0) {
-    pbVar3 = _DAT_0008 + 2;
-    bVar1 = *pbVar3 & DAT_0000;
+  reg_save_w0 = ~reg_save_s2;
+  pbVar2 = gpio_pin_table + 4;
+  *pbVar2 = *pbVar2 & reg_save_w0;
+  if ((reg_save_s3 & 0x80) == 0) {
+    pbVar3 = gpio_pin_table + 2;
+    bVar1 = *pbVar3 & reg_save_w0;
   }
   else {
-    if ((DAT_000b & 0x10) == 0) {
-      bVar1 = *_DAT_0008 & DAT_0000;
+    if ((reg_save_s3 & 0x10) == 0) {
+      bVar1 = *gpio_pin_table & reg_save_w0;
     }
     else {
-      bVar1 = *_DAT_0008 | DAT_000a;
+      bVar1 = *gpio_pin_table | reg_save_s2;
     }
-    *_DAT_0008 = bVar1;
-    pbVar3 = _DAT_0008 + 2;
-    bVar1 = *pbVar3 | DAT_000a;
+    *gpio_pin_table = bVar1;
+    pbVar3 = gpio_pin_table + 2;
+    bVar1 = *pbVar3 | reg_save_s2;
   }
   *pbVar3 = bVar1;
-  pbVar3 = _DAT_0008 + 3;
-  if ((DAT_000b & 0x40) == 0) {
-    bVar1 = *pbVar3 & DAT_0000;
+  pbVar3 = gpio_pin_table + 3;
+  if ((reg_save_s3 & 0x40) == 0) {
+    bVar1 = *pbVar3 & reg_save_w0;
   }
   else {
-    bVar1 = *pbVar3 | DAT_000a;
+    bVar1 = *pbVar3 | reg_save_s2;
   }
   *pbVar3 = bVar1;
-  if ((DAT_000b & 0x20) == 0) {
-    bVar1 = *pbVar2 & DAT_0000;
+  if ((reg_save_s3 & 0x20) == 0) {
+    bVar1 = *pbVar2 & reg_save_w0;
   }
   else {
-    bVar1 = *pbVar2 | DAT_000a;
+    bVar1 = *pbVar2 | reg_save_s2;
   }
   *pbVar2 = bVar1;
   save_chain_a();
@@ -1032,39 +1032,39 @@ void uart1_cr_bits_checked(void)
   undefined1 uVar1;
   char extraout_A;
   
-  _DAT_0008 = (undefined *)bank_8();
-  uVar1 = DAT_000a;
-  DAT_000a = extraout_A;
-  if (((((_DAT_0008 != (undefined *)0x100) && (_DAT_0008 != &UNK_0277)) && (_DAT_0008 != &UNK_0266))
-      && ((_DAT_0008 != &UNK_0205 && (_DAT_0008 != &UNK_0244)))) && (_DAT_0008 != &UNK_0346)) {
+  gpio_pin_table = (undefined *)bank_8();
+  uVar1 = reg_save_s2;
+  reg_save_s2 = extraout_A;
+  if (((((gpio_pin_table != (undefined *)0x100) && (gpio_pin_table != &UNK_0277)) && (gpio_pin_table != &UNK_0266))
+      && ((gpio_pin_table != &UNK_0205 && (gpio_pin_table != &UNK_0244)))) && (gpio_pin_table != &UNK_0346)) {
     trap_setup_e(0xd8);
   }
-  if ((DAT_000a != '\0') && (DAT_000a != '\x01')) {
+  if ((reg_save_s2 != '\0') && (reg_save_s2 != '\x01')) {
     trap_setup_e(0xd9);
   }
-  nibble_get(DAT_0009);
-  if (DAT_000a == '\0') {
-    DAT_0000 = ~DAT_0000;
-    if (DAT_0008 == '\x01') {
-      UART1_CR1 = UART1_CR1 & DAT_0000;
+  nibble_get(reg_save_s1);
+  if (reg_save_s2 == '\0') {
+    reg_save_w0 = ~reg_save_w0;
+    if (reg_save_s0 == '\x01') {
+      UART1_CR1 = UART1_CR1 & reg_save_w0;
     }
-    else if (DAT_0008 == '\x02') {
-      UART1_CR2 = UART1_CR2 & DAT_0000;
+    else if (reg_save_s0 == '\x02') {
+      UART1_CR2 = UART1_CR2 & reg_save_w0;
     }
     else {
-      UART1_CR4 = UART1_CR4 & DAT_0000;
+      UART1_CR4 = UART1_CR4 & reg_save_w0;
     }
   }
-  else if (DAT_0008 == '\x01') {
-    UART1_CR1 = UART1_CR1 | DAT_0000;
+  else if (reg_save_s0 == '\x01') {
+    UART1_CR1 = UART1_CR1 | reg_save_w0;
   }
-  else if (DAT_0008 == '\x02') {
-    UART1_CR2 = UART1_CR2 | DAT_0000;
+  else if (reg_save_s0 == '\x02') {
+    UART1_CR2 = UART1_CR2 | reg_save_w0;
   }
   else {
-    UART1_CR4 = UART1_CR4 | DAT_0000;
+    UART1_CR4 = UART1_CR4 | reg_save_w0;
   }
-  DAT_000a = uVar1;
+  reg_save_s2 = uVar1;
   save_chain_b();
   return;
 }
@@ -1083,48 +1083,48 @@ void desync_8841(byte param_1)
   byte *pbVar2;
   ushort in_Y;
   
-  DAT_0053 = DAT_0053 << 1;
+  dsync_a2 = dsync_a2 << 1;
   bRAMffff = bRAMffff >> 1;
-  DAT_004f = DAT_004f >> 1;
-  pbVar2 = (byte *)(0xffff / in_Y + _DAT_7068);
+  dsync_a1 = dsync_a1 >> 1;
+  pbVar2 = (byte *)(0xffff / in_Y + dsync_b1);
   *pbVar2 = *pbVar2 << 1 | in_Y == 0;
-  *_DAT_7665 = *_DAT_7665 << 1 | (param_1 & 1) != 0;
-  bVar1 = SCARRY1(DAT_7372,'\x01');
-  DAT_7372 = DAT_7372 + '\x01';
-  DAT_0000 = (char)~((byte)~DAT_0000 >> 1) >> 2;
-  DAT_0067 = DAT_0067 >> 1;
+  *dsync_b2 = *dsync_b2 << 1 | (param_1 & 1) != 0;
+  bVar1 = SCARRY1(dsync_b0,'\x01');
+  dsync_b0 = dsync_b0 + '\x01';
+  reg_save_w0 = (char)~((byte)~reg_save_w0 >> 1) >> 2;
+  display_frame = display_frame >> 1;
   if (bVar1) {
-    DAT_005c = ~DAT_005c - 1;
-    DAT_0000 = DAT_0000 >> 1;
+    led_flash_cnt = ~led_flash_cnt - 1;
+    reg_save_w0 = reg_save_w0 >> 1;
     UNK_006e = 0;
-    DAT_0001 = -DAT_0001;
-    *(undefined1 *)(_DAT_6a65 + 1) = 0;
+    reg_save_w1 = -reg_save_w1;
+    *(undefined1 *)(dsync_b3 + 1) = 0;
     UNK_0075 = ~UNK_0075;
-    DAT_0001 = ~DAT_0001;
+    reg_save_w1 = ~reg_save_w1;
     UNK_0077 = UNK_0077 >> 1;
     UNK_0069 = UNK_0069 << 4 | UNK_0069 >> 4;
-    DAT_0002 = DAT_0002 + -1;
+    reg_save_w2 = reg_save_w2 + -1;
     UNK_0071 = UNK_0071 << 1;
                     /* WARNING: Bad instruction - Truncating control flow here */
     halt_baddata();
   }
   bRAMffff = bRAMffff >> 1;
-  DAT_004f = DAT_004f >> 1;
-  pbVar2 = (byte *)(0xffff / (0xffffU % in_Y) + _DAT_7068);
+  dsync_a1 = dsync_a1 >> 1;
+  pbVar2 = (byte *)(0xffff / (0xffffU % in_Y) + dsync_b1);
   *pbVar2 = *pbVar2 << 1 | 0xffffU % in_Y == 0;
-  *_DAT_7665 = *_DAT_7665 << 1 | (param_1 >> 1 & 1) != 0;
-  DAT_7372 = DAT_7372 + '\x01';
+  *dsync_b2 = *dsync_b2 << 1 | (param_1 >> 1 & 1) != 0;
+  dsync_b0 = dsync_b0 + '\x01';
   UNK_006c = ~UNK_006c;
-  DAT_005c = DAT_003a;
-  DAT_0000 = (byte)~DAT_0000 >> 2;
+  led_flash_cnt = dsync_a0;
+  reg_save_w0 = (byte)~reg_save_w0 >> 2;
   UNK_006e = 0;
-  DAT_0001 = -DAT_0001;
-  *(undefined1 *)(_DAT_6a65 + 1) = 0;
+  reg_save_w1 = -reg_save_w1;
+  *(undefined1 *)(dsync_b3 + 1) = 0;
   UNK_0075 = ~UNK_0075;
-  DAT_0001 = ~DAT_0001;
+  reg_save_w1 = ~reg_save_w1;
   UNK_0077 = UNK_0077 >> 1;
   UNK_0069 = UNK_0069 << 4 | UNK_0069 >> 4;
-  DAT_0002 = DAT_0002 + -1;
+  reg_save_w2 = reg_save_w2 + -1;
   UNK_0071 = UNK_0071 << 1;
                     /* WARNING: Bad instruction - Truncating control flow here */
   halt_baddata();
@@ -1133,9 +1133,9 @@ void desync_8841(byte param_1)
 // FUNC 0x896d  panel_main_loop
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Panel main loop. Calls uart1_init_115200, led_gpio_init, sub_8a52 twice,
-   enables interrupts, prints the DAT_005b buffer, then loops calling
-   display_frame_handler (sub_844c) + sub_8e65. */
+/* Panel main loop. Calls uart1_init_115200, led_gpio_init, led_selftest twice,
+   enables interrupts, prints the display_str_len buffer, then loops calling
+   display_frame_handler (display_frame_handler) + display_kick. */
 
 void panel_main_loop(void)
 
@@ -1145,27 +1145,27 @@ void panel_main_loop(void)
   
   bank_8b();
   pin_ctrl_c(0);
-  DAT_0000 = 0x3f;
+  reg_save_w0 = 0x3f;
   pin_ctrl_b();
-  DAT_0000 = 0x7c;
+  reg_save_w0 = 0x7c;
   pin_ctrl_a();
   pin_ctrl_2();
-  DAT_0000 = 1;
+  reg_save_w0 = 1;
   pin_init();
   uart_cr_a();
   uart1_init_115200();
   uart_clear_20();
   led_gpio_init();
-  DAT_0000 = 1;
+  reg_save_w0 = 1;
   led_selftest();
-  DAT_0000 = 3;
+  reg_save_w0 = 3;
   led_selftest();
   __EnableInterrupt();
-  if (DAT_005b != 0) {
-    _DAT_000a = &DAT_0058;
-    _DAT_0008 = (ushort)DAT_005b;
+  if (display_str_len != 0) {
+    gpio_pin_count = &display_frame_buf;
+    gpio_pin_table = (ushort)display_str_len;
     do {
-      uart1_write_dr(*_DAT_000a);
+      uart1_write_dr(*gpio_pin_count);
       do {
         led_off();
       } while ((bool)(extraout_CC >> 1 & 1));
@@ -1173,10 +1173,10 @@ void panel_main_loop(void)
     } while (!(bool)(extraout_CC_00 >> 1 & 1));
   }
   do {
-    if (DAT_0067 != '\0') {
-      display_frame_handler(DAT_0067,0x5d);
+    if (display_frame != '\0') {
+      display_frame_handler(display_frame,0x5d);
       display_kick();
-      DAT_0067 = '\0';
+      display_frame = '\0';
     }
     pin_ctrl(0x68);
   } while( true );
@@ -1193,31 +1193,31 @@ void led_state_read(void)
   undefined1 uVar2;
   undefined1 uVar3;
   
-  _DAT_0008 = (undefined *)bank_8();
-  uVar2 = DAT_000a;
-  DAT_000a = 0;
-  if (((((_DAT_0008 != (undefined *)0x80) && (_DAT_0008 != (undefined *)0x40)) &&
-       (_DAT_0008 != (undefined *)0x20)) &&
-      ((_DAT_0008 != (undefined *)0x10 && (_DAT_0008 != (undefined *)0x8)))) &&
-     ((_DAT_0008 != (undefined *)0x4 &&
-      ((_DAT_0008 != (undefined *)0x2 && (_DAT_0008 != (undefined *)0x1)))))) {
-    if (_DAT_0008 == &UNK_0101) {
+  gpio_pin_table = (undefined *)bank_8();
+  uVar2 = reg_save_s2;
+  reg_save_s2 = 0;
+  if (((((gpio_pin_table != (undefined *)0x80) && (gpio_pin_table != (undefined *)0x40)) &&
+       (gpio_pin_table != (undefined *)0x20)) &&
+      ((gpio_pin_table != (undefined *)0x10 && (gpio_pin_table != (undefined *)0x8)))) &&
+     ((gpio_pin_table != (undefined *)0x4 &&
+      ((gpio_pin_table != (undefined *)0x2 && (gpio_pin_table != (undefined *)0x1)))))) {
+    if (gpio_pin_table == &UNK_0101) {
       bVar1 = UART1_CR2 & 1;
       goto joined_r0x8a4b;
     }
-    if (_DAT_0008 == &UNK_0210) {
+    if (gpio_pin_table == &UNK_0210) {
       bVar1 = UART1_CR4 & 0x10;
       goto joined_r0x8a4b;
     }
     trap_setup_e(&UNK_023d);
   }
-  bVar1 = DAT_0009 & UART1_SR;
+  bVar1 = reg_save_s1 & UART1_SR;
 joined_r0x8a4b:
   if (bVar1 != 0) {
-    DAT_000a = 1;
+    reg_save_s2 = 1;
   }
-  uVar3 = DAT_000a;
-  DAT_000a = uVar2;
+  uVar3 = reg_save_s2;
+  reg_save_s2 = uVar2;
   save_chain_b(uVar3);
   return;
 }
@@ -1229,12 +1229,12 @@ void led_selftest(void)
 {
   byte bVar1;
   
-  DAT_0009 = bank_8();
-  DAT_0008 = DAT_0000;
-  if (0x18 < DAT_0009) {
+  reg_save_s1 = bank_8();
+  reg_save_s0 = reg_save_w0;
+  if (0x18 < reg_save_s1) {
     trap_setup_c(0xe2);
   }
-  if ((((DAT_0008 != '\x02') && (DAT_0008 != '\x01')) && (DAT_0008 != '\0')) && (DAT_0008 != '\x03')
+  if ((((reg_save_s0 != '\x02') && (reg_save_s0 != '\x01')) && (reg_save_s0 != '\0')) && (reg_save_s0 != '\x03')
      ) {
     trap_setup_c(0xe3);
   }
@@ -1242,12 +1242,12 @@ void led_selftest(void)
   if ((bVar1 & 0x28) != 0x28) {
     trap_setup_c(0xe6);
   }
-  if (((DAT_0009 == 0x11) || (DAT_0009 == 0x12)) || (DAT_0009 == 0x17)) {
+  if (((reg_save_s1 == 0x11) || (reg_save_s1 == 0x12)) || (reg_save_s1 == 0x17)) {
     bVar1 = led_shift();
-    DAT_7f75 = ~bVar1 & DAT_7f75;
-    DAT_0000 = DAT_0001;
-    bVar1 = shift_loop_2(DAT_0008);
-    DAT_7f75 = bVar1 | DAT_7f75;
+    led_ctrl_mask = ~bVar1 & led_ctrl_mask;
+    reg_save_w0 = reg_save_w1;
+    bVar1 = shift_loop_2(reg_save_s0);
+    led_ctrl_mask = bVar1 | led_ctrl_mask;
   }
   save_chain_b();
   return;
@@ -1293,23 +1293,23 @@ undefined2 led_nibble_dispatch(byte param_1,short param_2)
   bank_0b(*(undefined2 *)(((ushort)param_1 << 8 | param_2 - 1U >> 8) + 3));
   bank_4();
   bank_8();
-  DAT_005c = 10;
+  led_flash_cnt = 10;
   if ((UART1_SR & 8) != 0) {
     UART1_SR = UART1_SR & 0xf7;
     uart1_read_dr();
   }
-  DAT_0001 = DAT_0066;
-  if (DAT_0066 < 9) {
-    DAT_0066 = DAT_0066 + 1;
-    DAT_0000 = 0;
+  reg_save_w1 = led_nibble_idx;
+  if (led_nibble_idx < 9) {
+    led_nibble_idx = led_nibble_idx + 1;
+    reg_save_w0 = 0;
     bank_0();
     uVar1 = uart1_read_dr();
     puVar2 = &stack0x0002;
     *(undefined1 *)(in_stack_00000002 + 0x5d) = uVar1;
     register0x0008 = (BADSPACEBASE *)&stack0x0002;
-    if (DAT_0066 == 9) {
-      DAT_0067 = 1;
-      DAT_005c = 0;
+    if (led_nibble_idx == 9) {
+      display_frame = 1;
+      led_flash_cnt = 0;
       register0x0008 = (BADSPACEBASE *)puVar2;
     }
   }
@@ -1337,23 +1337,23 @@ undefined2 vec_8b0c_isr(void)
   bank_0b();
   bank_4();
   bank_8();
-  DAT_005c = 10;
+  led_flash_cnt = 10;
   if ((UART1_SR & 8) != 0) {
     UART1_SR = UART1_SR & 0xf7;
     uart1_read_dr();
   }
-  DAT_0001 = DAT_0066;
-  if (DAT_0066 < 9) {
-    DAT_0066 = DAT_0066 + 1;
-    DAT_0000 = 0;
+  reg_save_w1 = led_nibble_idx;
+  if (led_nibble_idx < 9) {
+    led_nibble_idx = led_nibble_idx + 1;
+    reg_save_w0 = 0;
     bank_0();
     uVar1 = uart1_read_dr();
     puVar2 = &stack0x0002;
     *(undefined1 *)(in_stack_00000001 + 0x5d) = uVar1;
     register0x0008 = (BADSPACEBASE *)&stack0x0002;
-    if (DAT_0066 == 9) {
-      DAT_0067 = 1;
-      DAT_005c = 0;
+    if (led_nibble_idx == 9) {
+      display_frame = 1;
+      led_flash_cnt = 0;
       register0x0008 = (BADSPACEBASE *)puVar2;
     }
   }
@@ -1380,8 +1380,8 @@ undefined2 * load_pair_0(void)
   byte *in_stack_00000001;
   
   puVar1 = (undefined2 *)(&stack0x0002 + *in_stack_00000001);
-  _DAT_0000 = *puVar1;
-  _DAT_0002 = puVar1[1];
+  sp_save_lo = *puVar1;
+  sp_save_hi = puVar1[1];
   return puVar1;
 }
 
@@ -1392,8 +1392,8 @@ undefined2 * load_pair_0(void)
 undefined2 * load_pair_1(undefined2 *param_1)
 
 {
-  _DAT_0000 = *param_1;
-  _DAT_0002 = param_1[1];
+  sp_save_lo = *param_1;
+  sp_save_hi = param_1[1];
   return param_1;
 }
 
@@ -1404,8 +1404,8 @@ undefined2 * load_pair_1(undefined2 *param_1)
 undefined2 * load_pair_2(undefined2 *param_1)
 
 {
-  _DAT_0004 = *param_1;
-  _DAT_0006 = param_1[1];
+  div_quot_hi = *param_1;
+  div_quot_lo = param_1[1];
   return param_1;
 }
 
@@ -1420,8 +1420,8 @@ void display_step(void)
   byte *in_stack_00000001;
   
   bVar1 = *in_stack_00000001;
-  *(undefined2 *)(&stack0x0002 + bVar1) = _DAT_0000;
-  *(undefined2 *)(&stack0x0004 + bVar1) = _DAT_0002;
+  *(undefined2 *)(&stack0x0002 + bVar1) = sp_save_lo;
+  *(undefined2 *)(&stack0x0004 + bVar1) = sp_save_hi;
   return;
 }
 
@@ -1433,18 +1433,18 @@ void baud_lookup(void)
 
 {
   if (CLK_CMSR == -0x1f) {
-    _DAT_0006 = (ushort)(byte)bank_helper[(CLK_CKDIVR >> 3 & 0xff03) + 5];
-    _DAT_0004 = 0;
+    div_quot_lo = (ushort)(byte)bank_helper[(CLK_CKDIVR >> 3 & 0xff03) + 5];
+    div_quot_hi = 0;
     div_panel();
     return;
   }
   if (CLK_CMSR != -0x2e) {
-    _DAT_0002 = 0x2400;
-    _DAT_0000 = 0xf4;
+    sp_save_hi = 0x2400;
+    sp_save_lo = 0xf4;
     return;
   }
-  _DAT_0002 = 0xf400;
-  _DAT_0000 = 1;
+  sp_save_hi = 0xf400;
+  sp_save_lo = 1;
   return;
 }
 
@@ -1453,15 +1453,15 @@ void baud_lookup(void)
 void pin_ctrl_a(void)
 
 {
-  DAT_0008 = bank_8();
-  DAT_0009 = DAT_0000;
-  if (((((DAT_0008 != '\0') && (DAT_0008 != '\x01')) && (DAT_0008 != '\x02')) &&
-      ((DAT_0008 != '\x03' && (DAT_0008 != '\x04')))) &&
-     ((DAT_0008 != '\x05' && ((DAT_0008 != '\x06' && (DAT_0008 != '\a')))))) {
+  reg_save_s0 = bank_8();
+  reg_save_s1 = reg_save_w0;
+  if (((((reg_save_s0 != '\0') && (reg_save_s0 != '\x01')) && (reg_save_s0 != '\x02')) &&
+      ((reg_save_s0 != '\x03' && (reg_save_s0 != '\x04')))) &&
+     ((reg_save_s0 != '\x05' && ((reg_save_s0 != '\x06' && (reg_save_s0 != '\a')))))) {
     trap_setup_d(0x44);
   }
-  TIM4_EGR = DAT_0008;
-  TIM4_CNTR = DAT_0009;
+  TIM4_EGR = reg_save_s0;
+  TIM4_CNTR = reg_save_s1;
   save_chain_b();
   return;
 }
@@ -1471,20 +1471,20 @@ void pin_ctrl_a(void)
 void pin_init(void)
 
 {
-  DAT_0009 = bank_8();
-  DAT_0008 = DAT_0000;
-  if (DAT_0009 != 1) {
+  reg_save_s1 = bank_8();
+  reg_save_s0 = reg_save_w0;
+  if (reg_save_s1 != 1) {
     trap_setup_d(0x6e);
   }
-  if (DAT_0008 == '\0') {
-    DAT_0009 = ~DAT_0009;
-    TIM4_ETR = DAT_0009 & TIM4_ETR;
+  if (reg_save_s0 == '\0') {
+    reg_save_s1 = ~reg_save_s1;
+    TIM4_ETR = reg_save_s1 & TIM4_ETR;
   }
   else {
-    if (DAT_0008 != '\x01') {
+    if (reg_save_s0 != '\x01') {
       trap_setup_d(0x6f);
     }
-    TIM4_ETR = TIM4_ETR | DAT_0009;
+    TIM4_ETR = TIM4_ETR | reg_save_s1;
   }
   save_chain_b();
   return;
@@ -1498,14 +1498,14 @@ void display_wait(void)
   byte in_CC;
   
   if ((bool)(in_CC >> 1 & 1)) {
-    DAT_0009 = ~DAT_0009;
-    TIM4_ETR = DAT_0009 & TIM4_ETR;
+    reg_save_s1 = ~reg_save_s1;
+    TIM4_ETR = reg_save_s1 & TIM4_ETR;
   }
   else {
-    if (DAT_0008 != '\x01') {
+    if (reg_save_s0 != '\x01') {
       trap_setup_d(0x6f);
     }
-    TIM4_ETR = TIM4_ETR | DAT_0009;
+    TIM4_ETR = TIM4_ETR | reg_save_s1;
   }
   save_chain_b();
   return;
@@ -1514,7 +1514,7 @@ void display_wait(void)
 // FUNC 0x8c52  led_gpio_init
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* LED GPIO init. Iterates _DAT_0008=0x0010 with DAT_000a=0x18 (24 pins), calls sub_8510 with mode
+/* LED GPIO init. Iterates gpio_pin_table=0x0010 with reg_save_s2=0x18 (24 pins), calls gpio_init with mode
    0xF0. */
 
 void led_gpio_init(void)
@@ -1523,16 +1523,16 @@ void led_gpio_init(void)
   undefined1 uVar1;
   
   bank_8();
-  uVar1 = DAT_000a;
-  _DAT_0008 = (undefined2 *)&led_pin_table;
-  DAT_000a = '\x18';
+  uVar1 = reg_save_s2;
+  gpio_pin_table = (undefined2 *)&led_pin_table;
+  reg_save_s2 = '\x18';
   do {
-    DAT_0000 = 0xf0;
-    gpio_init(*(undefined1 *)(_DAT_0008 + 1),*_DAT_0008);
-    _DAT_0008 = (undefined2 *)((short)_DAT_0008 + 3);
-    DAT_000a = DAT_000a + -1;
-  } while (DAT_000a != '\0');
-  DAT_000a = uVar1;
+    reg_save_w0 = 0xf0;
+    gpio_init(*(undefined1 *)(gpio_pin_table + 1),*gpio_pin_table);
+    gpio_pin_table = (undefined2 *)((short)gpio_pin_table + 3);
+    reg_save_s2 = reg_save_s2 + -1;
+  } while (reg_save_s2 != '\0');
+  reg_save_s2 = uVar1;
   save_chain_b();
   return;
 }
@@ -1559,13 +1559,13 @@ undefined1 uart_brr_clear(void)
 void pin_ctrl_b(void)
 
 {
-  DAT_0008 = bank_8();
-  DAT_0009 = DAT_0000;
-  if (0x7f < DAT_0000) {
+  reg_save_s0 = bank_8();
+  reg_save_s1 = reg_save_w0;
+  if (0x7f < reg_save_w0) {
     trap_setup_f(0x38);
   }
-  WWDG_CR = DAT_0008 | 0xc0;
-  WWDG_WR = DAT_0009 & 0x7f | 0x40;
+  WWDG_CR = reg_save_s0 | 0xc0;
+  WWDG_WR = reg_save_s1 & 0x7f | 0x40;
   save_chain_b();
   return;
 }
@@ -1577,34 +1577,34 @@ void pin_ctrl_c(byte param_1)
 {
   undefined1 uVar1;
   
-  uVar1 = DAT_0008;
-  DAT_0008 = param_1;
+  uVar1 = reg_save_s0;
+  reg_save_s0 = param_1;
   if ((((param_1 != 0) && (param_1 != 8)) && (param_1 != 0x10)) && (param_1 != 0x18)) {
     trap_setup_a(&UNK_01a2);
   }
   clk_trim_clear();
-  CLK_CKDIVR = CLK_CKDIVR | DAT_0008;
-  DAT_0008 = uVar1;
+  CLK_CKDIVR = CLK_CKDIVR | reg_save_s0;
+  reg_save_s0 = uVar1;
   return;
 }
 
 // FUNC 0x8d26  uart1_init_115200
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* UART1 init for 115200 (Roadstm8Panel). Sets DAT_0007=0x0C, DAT_0006=0x80,
-   DAT_0002=0xC200 (115200), then calls the configure chain. Parallel to the
-   base board uart1_init_2400 (0x9B17, DAT_0002=0x960). */
+/* UART1 init for 115200 (Roadstm8Panel). Sets reg_save_w7=0x0C, reg_save_w6=0x80,
+   reg_save_w2=0xC200 (115200), then calls the configure chain. Parallel to the
+   base board uart1_init_2400 (0x9B17, reg_save_w2=0x960). */
 
 undefined1 uart1_init_115200(void)
 
 {
   uart_brr_clear();
-  DAT_0007 = 0xc;
-  DAT_0006 = 0x80;
-  DAT_0005 = 0;
-  DAT_0004 = 0;
-  _DAT_0002 = 0xc200;
-  _DAT_0000 = 1;
+  reg_save_w7 = 0xc;
+  reg_save_w6 = 0x80;
+  reg_save_w5 = 0;
+  reg_save_w4 = 0;
+  sp_save_hi = 0xc200;
+  sp_save_lo = 1;
   uart1_param_check(0);
   uart1_cr_bits_checked(1,&UNK_0205);
   return 1;
@@ -1617,8 +1617,8 @@ undefined2 vec_8d4d_isr(undefined2 param_1)
 {
   bank_0b();
   bank_4();
-  if ((DAT_005c != '\0') && (DAT_005c = DAT_005c + -1, DAT_005c == '\0')) {
-    DAT_0067 = 1;
+  if ((led_flash_cnt != '\0') && (led_flash_cnt = led_flash_cnt + -1, led_flash_cnt == '\0')) {
+    display_frame = 1;
   }
   pin_ctrl_3(1);
   save_ptr_1();
@@ -1659,13 +1659,13 @@ void pin_ctrl(byte param_1)
 {
   undefined1 uVar1;
   
-  uVar1 = DAT_0008;
-  DAT_0008 = param_1;
+  uVar1 = reg_save_s0;
+  reg_save_s0 = param_1;
   if (0x7f < param_1) {
     trap_setup_f(0x48);
   }
-  WWDG_CR = DAT_0008 & 0x7f;
-  DAT_0008 = uVar1;
+  WWDG_CR = reg_save_s0 & 0x7f;
+  reg_save_s0 = uVar1;
   return;
 }
 
@@ -1676,14 +1676,14 @@ void pin_ctrl_2(byte param_1)
 {
   undefined1 uVar1;
   
-  uVar1 = DAT_0008;
-  DAT_0008 = param_1;
+  uVar1 = reg_save_s0;
+  reg_save_s0 = param_1;
   if (param_1 != 1) {
     trap_setup_d(&UNK_015b);
   }
-  DAT_0008 = ~DAT_0008;
-  TIM4_IER = DAT_0008;
-  DAT_0008 = uVar1;
+  reg_save_s0 = ~reg_save_s0;
+  TIM4_IER = reg_save_s0;
+  reg_save_s0 = uVar1;
   return;
 }
 
@@ -1694,14 +1694,14 @@ void pin_ctrl_3(byte param_1)
 {
   undefined1 uVar1;
   
-  uVar1 = DAT_0008;
-  DAT_0008 = param_1;
+  uVar1 = reg_save_s0;
+  reg_save_s0 = param_1;
   if (param_1 != 1) {
     trap_setup_d(&UNK_018a);
   }
-  DAT_0008 = ~DAT_0008;
-  TIM4_IER = DAT_0008;
-  DAT_0008 = uVar1;
+  reg_save_s0 = ~reg_save_s0;
+  TIM4_IER = reg_save_s0;
+  reg_save_s0 = uVar1;
   return;
 }
 
@@ -1730,12 +1730,12 @@ undefined1 * addr_lookup(undefined1 *param_1)
 {
   undefined1 in_YL;
   
-  _DAT_0002 = param_1;
-  for (; _DAT_0000 != 0; _DAT_0000 = _DAT_0000 + -1) {
+  sp_save_hi = param_1;
+  for (; sp_save_lo != 0; sp_save_lo = sp_save_lo + -1) {
     *param_1 = in_YL;
     param_1 = param_1 + 1;
   }
-  return _DAT_0002;
+  return sp_save_hi;
 }
 
 // FUNC 0x8e1b  init_walker
@@ -1745,7 +1745,7 @@ void init_walker(void)
 {
   code *pcVar1;
   
-  for (pcVar1 = (code *)&DAT_8d99; pcVar1 != pin_ctrl; pcVar1 = (code *)func_0x0000eb80(pcVar1 + 2))
+  for (pcVar1 = (code *)&walker_entry; pcVar1 != pin_ctrl; pcVar1 = (code *)func_0x0000eb80(pcVar1 + 2))
   {
   }
   return;
@@ -1760,7 +1760,7 @@ void reg_read_a(void)
 {
   undefined1 uStack_1;
   
-  _DAT_0008 = bank_8();
+  gpio_pin_table = bank_8();
   do {
     noop(1,&uStack_1);
   } while( true );
@@ -1776,13 +1776,13 @@ void reset_chain(void)
 {
   short sVar1;
   
-  _DAT_03fe = 0x8e4a;
+  reset_sp = 0x8e4a;
   sVar1 = ret_one();
   if (sVar1 != 0) {
-    _DAT_03fe = 0x8e50;
+    reset_sp = 0x8e50;
     init_walker();
   }
-  _DAT_03fe = 0x8e53;
+  reset_sp = 0x8e53;
   panel_main_loop();
   bank_helper_2();
   return;
@@ -1793,8 +1793,8 @@ void reset_chain(void)
 void led_shift(void)
 
 {
-  DAT_0000 = (DAT_0009 & 3) << 1;
-  DAT_0001 = DAT_0000;
+  reg_save_w0 = (reg_save_s1 & 3) << 1;
+  reg_save_w1 = reg_save_w0;
   shift_loop_2(3);
   return;
 }
@@ -1806,7 +1806,7 @@ void led_shift(void)
 void display_kick(void)
 
 {
-  _DAT_0000 = 10;
+  sp_save_lo = 10;
   addr_lookup(0x5d);
   return;
 }
@@ -1818,7 +1818,7 @@ void display_kick(void)
 undefined2 get_pin3(void)
 
 {
-  return *(undefined2 *)(_DAT_0008 + 6);
+  return *(undefined2 *)(gpio_pin_table + 6);
 }
 
 // FUNC 0x8e7f  get_pin2
@@ -1828,7 +1828,7 @@ undefined2 get_pin3(void)
 undefined2 get_pin2(void)
 
 {
-  return *(undefined2 *)(_DAT_0008 + 3);
+  return *(undefined2 *)(gpio_pin_table + 3);
 }
 
 // FUNC 0x8e8c  uart_clear_20
@@ -1872,8 +1872,8 @@ ushort shr_4(ushort param_1)
 void step_pair(void)
 
 {
-  _DAT_000a = _DAT_000a + 1;
-  _DAT_0008 = _DAT_0008 + -1;
+  gpio_pin_count = gpio_pin_count + 1;
+  gpio_pin_table = gpio_pin_table + -1;
   return;
 }
 
@@ -1884,8 +1884,8 @@ void step_pair(void)
 void trap_setup_a(undefined2 param_1)
 
 {
-  _DAT_0000 = 0;
-  _DAT_0002 = param_1;
+  sp_save_lo = 0;
+  sp_save_hi = param_1;
   spin_wdt(0x8867);
   return;
 }
@@ -1897,8 +1897,8 @@ void trap_setup_a(undefined2 param_1)
 void trap_setup_b(undefined2 param_1)
 
 {
-  _DAT_0000 = 0;
-  _DAT_0002 = param_1;
+  sp_save_lo = 0;
+  sp_save_hi = param_1;
   spin_wdt(s_E__eaton_projects_guangzhou_weim_86db);
   return;
 }
@@ -1910,8 +1910,8 @@ void trap_setup_b(undefined2 param_1)
 void trap_setup_c(undefined2 param_1)
 
 {
-  _DAT_0000 = 0;
-  _DAT_0002 = param_1;
+  sp_save_lo = 0;
+  sp_save_hi = param_1;
   spin_wdt(0x88ea);
   return;
 }
@@ -1923,8 +1923,8 @@ void trap_setup_c(undefined2 param_1)
 void trap_setup_d(undefined2 param_1)
 
 {
-  _DAT_0000 = 0;
-  _DAT_0002 = param_1;
+  sp_save_lo = 0;
+  sp_save_hi = param_1;
   spin_wdt(s_E__eaton_projects_guangzhou_weim_875f);
   return;
 }
@@ -1936,8 +1936,8 @@ void trap_setup_d(undefined2 param_1)
 void trap_setup_e(undefined2 param_1)
 
 {
-  _DAT_0000 = 0;
-  _DAT_0002 = param_1;
+  sp_save_lo = 0;
+  sp_save_hi = param_1;
   spin_wdt(s_E__eaton_projects_guangzhou_weim_8656);
   return;
 }
@@ -1949,8 +1949,8 @@ void trap_setup_e(undefined2 param_1)
 void trap_setup_f(undefined2 param_1)
 
 {
-  _DAT_0000 = 0;
-  _DAT_0002 = param_1;
+  sp_save_lo = 0;
+  sp_save_hi = param_1;
   spin_wdt(0x87e3);
   return;
 }
@@ -1960,10 +1960,10 @@ void trap_setup_f(undefined2 param_1)
 void shift_loop_2(void)
 
 {
-  if (DAT_0000 != '\0') {
+  if (reg_save_w0 != '\0') {
     do {
-      DAT_0000 = DAT_0000 + -1;
-    } while (DAT_0000 != '\0');
+      reg_save_w0 = reg_save_w0 + -1;
+    } while (reg_save_w0 != '\0');
   }
   return;
 }
@@ -1975,7 +1975,7 @@ void shift_loop_2(void)
 undefined2 get_pin1(void)
 
 {
-  return *_DAT_0008;
+  return *gpio_pin_table;
 }
 
 // FUNC 0x8f06  led_off
@@ -2031,7 +2031,7 @@ void uart_prelude(void)
 void pin_or_low(byte param_1,byte *param_2)
 
 {
-  DAT_0000 = param_1;
+  reg_save_w0 = param_1;
   *param_2 = *param_2 | param_1;
   return;
 }
@@ -2071,7 +2071,7 @@ void pin1_set_high(void)
 void nibble_get(void)
 
 {
-  DAT_0000 = nibble_map();
+  reg_save_w0 = nibble_map();
   return;
 }
 
@@ -2128,7 +2128,7 @@ void pin_clear(byte param_1,byte *param_2)
 void pin_set(byte param_1,byte *param_2)
 
 {
-  DAT_0000 = param_1;
+  reg_save_w0 = param_1;
   *param_2 = *param_2 | param_1;
   return;
 }

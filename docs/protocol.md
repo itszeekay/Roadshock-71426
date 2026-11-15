@@ -128,7 +128,7 @@ The stock base sends one unsolicited frame during init:
 ```
 
 - `dir = FF`, `type = 1B`, `flag = 02`, payload zero at boot.
-- Sent once from the base's init (`sub_8E5C`); the sequence counter is 0 at boot.
+- Sent once from the base's init (`0x8E5C (system_init)`); the sequence counter is 0 at boot.
 - The panel's ASR appears to wait for this (or for replies in general) before it
   updates the status LEDs. See [panel.md](panel.md).
 
@@ -270,7 +270,7 @@ free (probably a command/checksum in the ASR firmware).
 
 ### Nibble → 3-pin pattern
 
-From the STM8 `sub_844C`; H = high, L = low. LEDs are active-low, so **L = lit**.
+From the STM8 `display_frame_handler (0x844C)`; H = high, L = low. LEDs are active-low, so **L = lit**.
 
 | nibble | pin1 | pin2 | pin3 |
 |---:|---|---|---|

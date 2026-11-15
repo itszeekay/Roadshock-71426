@@ -76,7 +76,7 @@ posts a `0x1B` message.
 void cmd_0d_handler(void) {
   tmp_b0 = frame_flag;
   if (frame_flag == 0) {
-    _DAT_02cb = 10000;
+    msg_timeout = 10000;
     noop_c();
     return;
   }
@@ -146,8 +146,8 @@ the same frame format but adds new handlers for types `0x09`, `0x0A`, `0x0B`,
 
 Recorded in the Roadstm8true project via `tools/ghidra_scripts/build_project.py`
 (verified with `ListAnnotations.java`):
-- `sub_851a` -> `frame_handler`
+- 0x851A -> `frame_handler`
 - `cmd_0b_handler`/`cmd_0d_handler`/`cmd_19_handler` (0x8640/0x8689/0x860C)
-- `sub_86cb`/`sub_86d1`/`sub_86d8` -> `msg_post`/`msg_next`/`msg_peek`
-- `sub_9927`/`sub_9af3` -> `eeprom_write`/`state_clear`
+- 0x86CB/0x86D1/0x86D8 -> `msg_post`/`msg_next`/`msg_peek`
+- 0x9927/0x9AF3 -> `eeprom_write`/`state_clear`
 - Plate comments on each

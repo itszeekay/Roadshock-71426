@@ -156,8 +156,8 @@
 | 0x9C47 | `init_walker` |
 | 0x9C5B | `frame_get` |
 | 0x9C6F | `msg_alloc` |
-| 0x9C76 | `flash_write_key_ae` |
-| 0x9C82 | `flash_write_key_56` |
+| 0x9C76 | `queue_slot_ptr` |
+| 0x9C82 | `reset_init` |
 | 0x9C95 | `iwdg_setup` |
 | 0x9CA7 | `flash_unlock` |
 | 0x9CB8 | `poll_busy` |
@@ -198,8 +198,8 @@
 | 0x9E46 | `sum_add` |
 | 0x9E4F | `clk_trim_clear` |
 | 0x9E58 | `itc_clear` |
-| 0x9E61 | `pin_bit_a` |
-| 0x9E6A | `pin_bit_b` |
+| 0x9E61 | `tim2_duty_write` |
+| 0x9E6A | `tim2_period_hi` |
 | 0x9E73 | `tim4_egr_set` |
 | 0x9E7C | `nibble_map` |
 | 0x9E85 | `noop_e` |
@@ -210,9 +210,9 @@
 | 0x9EAC | `clk_gate_enable_3` |
 | 0x9EB3 | `poll_call` |
 | 0x9EBA | `pin_or` |
-| 0x9EC1 | `tim2_set_ccr1l` |
+| 0x9EC1 | `rmw_and` |
 | 0x9EC8 | `noop_4` |
-| 0x9ECF | `tim4_clear_egr` |
+| 0x9ECF | `tim2_period_init` |
 | 0x9ED6 | `tx_index_ret` |
 | 0x9EDC | `iwdg_refresh` |
 | 0x9EE1 | `iwdg_kick_cc` |

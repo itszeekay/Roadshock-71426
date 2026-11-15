@@ -91,32 +91,32 @@ Low-level setters (verified from assembly):
 
 | function | assembly | effect |
 |---|---|---|
-| `sub_8efd` | `LDW X,0x0008; INCW X; INCW X; LD A,(X); LDW X,[0x0008]` | returns pin1 mask in A, port in X |
-| `sub_8e7f` | `LDW X,0x0008; ADDW X,#5; LD A,(X); LDW X,[0x0008+3]` | returns pin2 mask in A, port in X |
-| `sub_8e72` | `LDW X,0x0008; ADDW X,#8; LD A,(X); LDW X,[0x0008+6]` | returns pin3 mask in A, port in X |
-| `sub_8f68` → `sub_8f31` | `OR A,0x0000; LD (X),A` | set pin high (off) |
-| `sub_8f65` → `sub_8f59` | `CPL A; AND A,(X); LD (X),A` | clear pin low (on) |
+| `get_pin1` | `LDW X,0x0008; INCW X; INCW X; LD A,(X); LDW X,[0x0008]` | returns pin1 mask in A, port in X |
+| `get_pin2` | `LDW X,0x0008; ADDW X,#5; LD A,(X); LDW X,[0x0008+3]` | returns pin2 mask in A, port in X |
+| `get_pin3` | `LDW X,0x0008; ADDW X,#8; LD A,(X); LDW X,[0x0008+6]` | returns pin3 mask in A, port in X |
+| `pin_set` → `pin_or_low` | `OR A,0x0000; LD (X),A` | set pin high (off) |
+| `pin_clear` → `pin_and_low` | `CPL A; AND A,(X); LD (X),A` | clear pin low (on) |
 
 Composed forms:
 
 | composed | calls | effect |
 |---|---|---|
-| `sub_8f44` | `sub_8efd` + `sub_8f68` | pin1 high (off) |
-| `sub_8f38` | `sub_8efd` + `sub_8f65` | pin1 low (on) |
-| `sub_8f3e` | `sub_8e7f` + `sub_8f68` | pin2 high (off) |
+| `pin1_set_high` | `get_pin1` + `pin_set` | pin1 high (off) |
+| `pin1_set_low` | `get_pin1` + `pin_clear` | pin1 low (on) |
+| `pin2_set_high` | `get_pin2` + `pin_set` | pin2 high (off) |
 
 Dispatch (assembly at 0x84AD-0x84F8, DEC-chain on the nibble):
 
 | nibble | calls | pin1 | pin2 | pin3 | lit |
 |---:|---|---|---|---|---|
-| 0 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | H | H | H | off |
-| 1 | `sub_8f38`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | L | H | H | pin1 only |
-| 2 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | H | H | H | off |
-| 3 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f65` | H | H | L | pin3 only |
-| 4 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | H | H | H | off |
-| 5 | `sub_8f44`, `sub_8e7f`+`sub_8f65`, `sub_8e72`+`sub_8f68` | H | L | H | pin2 only |
-| 6 | `sub_8f44`, `sub_8f3e`, `sub_8e72`+`sub_8f68` | H | H | H | off |
-| 7 | `sub_8f38`, `sub_8e7f`+`sub_8f65`, `sub_8e72`+`sub_8f68` | L | L | H | pin1 + pin2 |
+| 0 | `pin1_set_high`, `pin2_set_high`, `get_pin3`+`pin_set` | H | H | H | off |
+| 1 | `pin1_set_low`, `pin2_set_high`, `get_pin3`+`pin_set` | L | H | H | pin1 only |
+| 2 | `pin1_set_high`, `pin2_set_high`, `get_pin3`+`pin_set` | H | H | H | off |
+| 3 | `pin1_set_high`, `pin2_set_high`, `get_pin3`+`pin_clear` | H | H | L | pin3 only |
+| 4 | `pin1_set_high`, `pin2_set_high`, `get_pin3`+`pin_set` | H | H | H | off |
+| 5 | `pin1_set_high`, `get_pin2`+`pin_clear`, `get_pin3`+`pin_set` | H | L | H | pin2 only |
+| 6 | `pin1_set_high`, `pin2_set_high`, `get_pin3`+`pin_set` | H | H | H | off |
+| 7 | `pin1_set_low`, `get_pin2`+`pin_clear`, `get_pin3`+`pin_set` | L | L | H | pin1 + pin2 |
 | 8-15 | (fall through, no writes) | - | - | - | unchanged |
 
 H = high (off), L = low (on, active-low). Only odd nibbles produce a non-off

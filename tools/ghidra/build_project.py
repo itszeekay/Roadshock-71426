@@ -488,17 +488,17 @@ plate(0x993C,
 plate(0x816D,
       "Mode handler (Roadstm8true, 2026-11-09).\n"
       "Converts incoming mode byte 1/3/5/7 -> internal 0/2/4/8 (off/toggle/momentary/pulse).\n"
-      "Dispatches on internal mode to sub_84b3/sub_84b9/sub_84c5/sub_8485 + sub_848b + sub_828d.\n"
+      "Dispatches on internal mode to mode_off_entry/toggle_head/mode_head/channel_pair_get + channel_index_get + channel_state_write.\n"
       "See docs/protocol.md, section Stock channel modes. Timing constants still need bench measurement.")
 plate(0x8F7E,
       "UART1 configure (Roadstm8true, 2026-11-09). Caller is uart1_init_2400 at 0x9B17.\n"
-      "Caller sets DAT_0007=0x0C, DAT_0006=0x80, DAT_0005=0, DAT_0004=0, DAT_0002=0x960 (2400)\n"
-      "then CALLs this function. BRR1/BRR2 split via sub_99dc (>>4). Live value: 2400 baud\n"
+      "Caller sets uart_mode=0x0C, uart_ctrl_c=0x80, uart_ctrl_b=0, uart_ctrl_a=0, uart_baud=0x960 (2400)\n"
+      "then CALLs this function. BRR1/BRR2 split via shr_4 (>>4). Live value: 2400 baud\n"
       "(BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/protocol.md, section Stock channel modes.")
 plate(0x8FB5, "UART1 configure with explicit params (CR1/BRR/CR2/CR3 from args).")
 plate(0x8E5C,
       "System init. Calls uart1_init_2400, clk_set_divider, uart1_set_control_bits,\n"
-      "sub_9b72 (output init), enables interrupts, posts message 0x1B.")
+      "outputs_init (output init), enables interrupts, posts message 0x1B.")
 plate(0x8EE6,
       "Link service loop. When uart_flag_c is set, copies the RX frame and calls frame_handler.\n"
       "Also services frame_ready/acc_count and the pin-table block at sched_block.")
@@ -506,16 +506,16 @@ plate(0x9223,
       "ACC sense sample. Reads PA_IDR bit1 (PA1), debounce 8 samples into acc_data,\n"
       "stores to acc_buf. sched_flag selects the sample vs reset path.")
 plate(0x8700,
-      "Mode tick. DAT_02d7 divider (every 3rd pass), toggles pin_state_d3/d4 via\n"
-      "sub_8811/8814/881c. Blink/pulse state advance.")
+      "Mode tick. mode_div divider (every 3rd pass), toggles pin_state_d3/d4 via\n"
+      "tick_b/8814/881c. Blink/pulse state advance.")
 plate(0x94D6,
       "Outputs init. GPIO_Init on PD (0x40), tim2_set_ccr1l twice, then iterates the\n"
-      "12-entry pin table at DAT_02df calling sub_9541 + FUN_9f12 per channel.")
+      "12-entry pin table at pin_table calling gpio_init + pin_and per channel.")
 plate(0x935E,
       "TX queue drain. Loops msg_post/msg_peek over 0..9, decrements counts,\n"
-      "then scans DAT_02ce queue for zero-count messages.")
+      "then scans tx_msg_queue queue for zero-count messages.")
 plate(0x9541,
-      "GPIO_Init helper (SPL-style). Mode bits 0x80/0x10 in DAT_0000 select\n"
+      "GPIO_Init helper (SPL-style). Mode bits 0x80/0x10 in GPIO register select\n"
       "ODR/DDR/CR1/CR2 read-modify-write via the port pointer.")
 plate(0x8DC3, "32-bit division/modulo helper (compiler library).")
 plate(0x8D31, "Wide multiply helper (MUL with carry).")
@@ -523,11 +523,11 @@ plate(0x99B6, "Small multiply helper (MUL X,A).")
 plate(0x9A34, "Block move (backward copy).")
 plate(0x995A, "Memory compare (returns 0/-1/1).")
 plate(0x98B6,
-      "Clock/baud lookup. Reads CLK_CMSR, looks up sub_9ef5 table by CKDIVR.\n"
-      "Returns DAT_0002=0x2400 (2400 baud) for the default clock, 0xF400 otherwise.")
+      "Clock/baud lookup. Reads CLK_CMSR, looks up table_lookup table by CKDIVR.\n"
+      "Returns uart_baud=0x2400 (2400 baud) for the default clock, 0xF400 otherwise.")
 plate(0x9B17,
       "UART init for 2400 baud (Roadstm8true, 2026-11-09).\n"
-      "Sets the UART control masks and DAT_0002=0x960, then CALLs uart1_configure (0x8F7E).\n"
+      "Sets the UART control masks and uart_baud=0x960, then CALLs uart1_configure (0x8F7E).\n"
       "Called from 0x8E9B. This resolves the formerly open static-caller question.")
 plate(0x9C1B,
       "Flash key dispatch (Roadstm8true, 2026-11-09).\n"
@@ -537,18 +537,18 @@ plate(0x9C1B,
 plate(0x8146,
       "Type-7 config mode handler (Roadstm8true, 2026-11-09).\n"
       "Called from frame_handler with 12 nibbles (abStack_b) expanded from the 6-byte payload.\n"
-      "Copies the block via sub_9b92, then loops calling mode_handler logic per channel.\n"
+      "Copies the block via block_copy, then loops calling mode_handler logic per channel.\n"
       "See docs/hidden_commands.md.")
 plate(0x851A,
-      "Frame handler. Validates 11-byte checksum, dispatches on DAT_021f (type).\n"
+      "Frame handler. Validates 11-byte checksum, dispatches on frame type field (type).\n"
       "Type 7: master power/parameter (6 bytes -> 12 nibbles at 0x9E85, post 0x1700).\n"
       "Type 8: button bitmask (button_bitmask_handler, post 0x1800).\n"
       "Type 0x0B: cmd_0b_handler. Type 0x0D: cmd_0d_handler.\n"
       "Type 0x19: cmd_19_handler. See docs/hidden_commands.md.")
 plate(0x8640, "Hidden command 0x0B handler. Updates cfg_value, writes EEPROM via eeprom_write, posts 0x1B.")
-plate(0x8689, "Hidden command 0x0D handler. Type 0 -> _DAT_02cb=10000; Type 1 -> reset state, DAT_0206=10.")
+plate(0x8689, "Hidden command 0x0D handler. Type 0 -> msg_timeout=10000; Type 1 -> reset state, cfg_value=10.")
 plate(0x860C, "Hidden command 0x19 handler. Searches message queue for matching seq, clears it.")
-plate(0x9927, "EEPROM write helper. Called from sub_86e8 and cmd_0b_handler.")
+plate(0x9927, "EEPROM write helper. Called from eeprom_sequencer and cmd_0b_handler.")
 plate(0x9AF3, "State clear helper. Clears the per-channel state at param_1.")
 plate(0x8000,
       "STM8S003 vector area: 32 x 4-byte entries (0x8000-0x807F).\n"

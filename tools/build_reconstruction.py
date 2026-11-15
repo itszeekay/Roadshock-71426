@@ -41,7 +41,7 @@ HEADER_BASE = """/*
  * assigned from call sites and confirmed against assembly; see
  * tools/ghidra/build_project.py and docs/protocol.md (section "Stock channel modes"),
  * docs/hidden_commands.md. Generic names
- * (sub_*, FUN_*, gap_*, vec_*) are Ghidra defaults for code that has
+ * (unused Ghidra defaults are no longer present) are Ghidra defaults for code that has
  * not been given a role yet.
  *
  * Data consumed directly from the driver regions is in flash at
@@ -67,7 +67,7 @@ HEADER_PANEL = """/*
  * get_pin1/2/3, pin_clear, pin_set, led_gpio_init, gpio_init,
  * uart1_configure) were assigned from call sites and confirmed
  * against assembly; see tools/ghidra/build_panel_project.py and
- * docs/panel_led_map.md. Generic names (sub_*, FUN_*, gap_*, vec_*)
+ * docs/panel_led_map.md. Generic names (unused Ghidra defaults are no longer present)
  * are Ghidra defaults for code that has not been given a role yet.
  *
  * The display link runs at 115200 (9-byte 0x5A...0xEE frames).
@@ -82,7 +82,7 @@ ROLE = {
     0x8000: "reset vector",
     0x9CD8: "reset/startup: SP=0x03FF",
     0x8F7E: "UART1 configure (CR1/CR3/BRR1/BRR2/CR2)",
-    0x9B17: "UART1 init for 2400 baud (DAT_0002=0x960)",
+    0x9B17: "UART1 init for 2400 baud (uart_baud=0x960)",
     0x9780: "UART1 control-bit set/clear",
     0x9F7E: "UART1 read data register",
     0x9F82: "UART1 write data register",
@@ -99,8 +99,8 @@ ROLE = {
     0x816D: "event decoder (maps 1,3,5,7 -> 0,2,4,6)",
     0x8146: "type-7 config mode handler (12 nibbles)",
     0x82B3: "button bitmask handler (type 8)",
-    0x848B: "channel index get (DAT_000e)",
-    0x8485: "channel pair get (DAT_000e >> 1)",
+    0x848B: "channel index get (channel idx)",
+    0x8485: "channel pair get (channel pair)",
     0x828D: "channel state write",
     0x8504: "channel advance",
     0x851A: "frame handler (checksum, type dispatch)",
@@ -108,7 +108,7 @@ ROLE = {
     0x8689: "hidden command 0x0D handler",
     0x860C: "hidden command 0x19 handler",
     0x86CB: "message post (0x25)",
-    0x86D1: "message next (DAT_0002++)",
+    0x86D1: "message next (uart_baud++)",
     0x86D8: "message peek",
     0x9927: "EEPROM write helper",
     0x9AF3: "state clear helper",
@@ -127,10 +127,10 @@ ROLE = {
     0x8D26: "UART1 configure for display link (115200)",
     0x8252: "wide multiply helper",
     0x833B: "mode dispatch block variant (pointer param)",
-    0x8700: "mode tick (DAT_02d7 /3, pin_state_d3/d4)",
+    0x8700: "mode tick (mode_div/3, pin_state_d3/d4)",
     0x896D: "panel main loop (UART/GPIO/display)",
     0x8A46: "type-7 param block apply (calls config_mode_handler)",
-    0x8B96: "button frame builder (gated by DAT_01f9)",
+    0x8B96: "button frame builder (gated by button_enabled)",
     0x8C31: "idle reply builder (0x88 fill)",
     0x8D31: "wide multiply helper",
     0x8DC3: "32-bit division/modulo helper",
@@ -139,7 +139,7 @@ ROLE = {
     0x8FB5: "UART1 configure with explicit params",
     0x917B: "state table init (UNK_01bf, ret_935e/ret_8700 ptrs)",
     0x9223: "ACC sense sample (PA_IDR bit1, 8-sample debounce)",
-    0x92C2: "channels apply (DAT_0182, 12 entries)",
+    0x92C2: "channels apply (12 ch config entries)",
     0x935E: "TX queue drain (msg_post/msg_peek 0..9)",
     0x93E5: "clock switch helper (SWCR/SWR)",
     0x94D6: "outputs init (GPIO_Init PD + pin table)",
@@ -147,7 +147,7 @@ ROLE = {
     0x966A: "ITC priority write (SPR1/SPR2)",
     0x9728: "UART1 control register write (CR1/CR2/CR4)",
     0x9823: "mode remap (0<->1, 2<->3, 4<->5, 6->7, 7->next)",
-    0x9872: "pin table apply (DAT_02df, 12 entries)",
+    0x9872: "pin table apply (pin_table, 12 entries)",
     0x98B6: "clock/baud lookup (CMSR -> 0x2400/0xF400)",
     0x995A: "memory compare (returns 0/-1/1)",
     0x99B6: "small multiply helper",
@@ -271,7 +271,7 @@ ROLE = {
     0x86AB: "post if 0xFF",
     0x86A6: "EEPROM flush",
     0x86DF: "reset state",
-    0x86D3: "DAT_0002 return",
+    0x86D3: "return uart_baud value",
     0x8B71: "to button frame",
     0x8B8E: "channel index set",
     0x908F: "bank post 8",

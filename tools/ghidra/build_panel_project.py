@@ -263,18 +263,18 @@ plate(0x844C,
       "Nibble table: 0/2/4/6=off, 1=pin1, 3=pin3, 5=pin2, 7=pin1+pin2, 8-15=unchanged.\n"
       "Active-low: low=lit. See docs/panel_led_map.md.")
 plate(0x8C52,
-      "LED GPIO init. Iterates _DAT_0008=0x0010 with DAT_000a=0x18 (24 pins), calls sub_8510 with mode 0xF0.")
+      "LED GPIO init. Iterates gpio_pin_table=0x0010 with reg_save_s2=0x18 (24 pins), calls gpio_init with mode 0xF0.")
 plate(0x8D26,
-      "UART1 init for 115200 (Roadstm8Panel). Sets DAT_0007=0x0C, DAT_0006=0x80,\n"
-      "DAT_0002=0xC200 (115200), then calls the configure chain. Parallel to the\n"
-      "base board uart1_init_2400 (0x9B17, DAT_0002=0x960).")
+      "UART1 init for 115200 (Roadstm8Panel). Sets reg_save_w7=0x0C, reg_save_w6=0x80,\n"
+      "reg_save_w2=0xC200 (115200), then calls the configure chain. Parallel to the\n"
+      "base board uart1_init_2400 (0x9B17, reg_save_w2=0x960).")
 plate(0x8080,
-      "UART1 parameter check/checker. Validates DAT_000e/DAT_000c/DAT_000d and\n"
-      "mask args against valid sets; calls sub_8edd on failure.")
+      "UART1 parameter check/checker. Validates reg_save_s6/reg_save_s4/reg_save_s5 and\n"
+      "mask args against valid sets; calls trap_setup_e on failure.")
 plate(0x896D,
-      "Panel main loop. Calls uart1_init_115200, led_gpio_init, sub_8a52 twice,\n"
-      "enables interrupts, prints the DAT_005b buffer, then loops calling\n"
-      "display_frame_handler (sub_844c) + sub_8e65.")
+      "Panel main loop. Calls uart1_init_115200, led_gpio_init, led_selftest twice,\n"
+      "enables interrupts, prints the display_str_len buffer, then loops calling\n"
+      "display_frame_handler (display_frame_handler) + display_kick.")
 plate(0x8252, "Wide multiply helper (MUL with carry), panel twin of base mul_wide.")
 plate(0x8841, "Decompiler desync artifact (SP-relative heap arithmetic). Not a real entry point.")
 plate(0x816D, "Ghidra split artifact: starts mid-UART-config (BRR writes). Real entry is uart1_param_check.")

@@ -18,7 +18,7 @@ using the Ghidra names recorded in `tools/ghidra/build_project.py`. They match
   scheduler tick started.
 - `uart1_init_2400` (0x9B17): sets `UART1_CR1 mask 0x0C`, `UART1_CR3 mask 0x80`,
   `baud argument 0x960`, then calls `uart1_configure` (0x8F7E). The BRR split is
-  done via `shr_4` (`sub_99dc`, `>> 4`). Live value: 2400 baud
+  done via `shr_4` (`shr_4`, `>> 4`). Live value: 2400 baud
   (`BRR1=0xA0`, `BRR2=0x1A`).
 - `outputs_init` (0x94D6) and `pa_outputs_init` (0x9B72): `gpio_init`
   (0x9541) on PD and PA, then the 12-entry pin table is applied.
@@ -175,7 +175,7 @@ panel LEDs, and firmware replacement do not.
   routines; `tools/build_reconstruction.py` concatenates the per-function
   output into `reverse/base_firmware.c`.
 - The decompiled C is a reconstruction, not original source. Generic names
-  (`sub_*`, `FUN_*`, `gap_*`, `vec_*`) remain for code that has no confirmed
+  (`unused Ghidra defaults` are no longer present) remain for code that has no confirmed
   role; the named ones above are confirmed against assembly and, where
   possible, the wire.
 

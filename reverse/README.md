@@ -38,7 +38,7 @@ Known decompiler artifacts:
 
 - The function lists include some data tables decoded as tiny "functions"
   (e.g. the pin table region).
-- `sub_8398`/`sub_83A2` are compiler register-bank helpers, not application
+- `the 0x8398/0x83A2 register-bank helpers` are compiler register-bank helpers, not application
   logic.
 
 

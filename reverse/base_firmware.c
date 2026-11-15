@@ -15,7 +15,7 @@
  * assigned from call sites and confirmed against assembly; see
  * tools/ghidra/build_project.py and docs/protocol.md (section "Stock channel modes"),
  * docs/hidden_commands.md. Generic names
- * (sub_*, FUN_*, gap_*, vec_*) are Ghidra defaults for code that has
+ * (unused Ghidra defaults are no longer present) are Ghidra defaults for code that has
  * not been given a role yet.
  *
  * Data consumed directly from the driver regions is in flash at
@@ -180,8 +180,8 @@
  *  9C47  init_walker
  *  9C5B  frame_get
  *  9C6F  msg_alloc
- *  9C76  flash_write_key_ae
- *  9C82  flash_write_key_56
+ *  9C76  queue_slot_ptr
+ *  9C82  reset_init
  *  9C95  iwdg_setup
  *  9CA7  flash_unlock
  *  9CB8  poll_busy
@@ -222,8 +222,8 @@
  *  9E46  sum_add
  *  9E4F  clk_trim_clear
  *  9E58  itc_clear
- *  9E61  pin_bit_a
- *  9E6A  pin_bit_b
+ *  9E61  tim2_duty_write
+ *  9E6A  tim2_period_hi
  *  9E73  tim4_egr_set
  *  9E7C  nibble_map
  *  9E85  noop_e
@@ -234,9 +234,9 @@
  *  9EAC  clk_gate_enable_3
  *  9EB3  poll_call
  *  9EBA  pin_or
- *  9EC1  tim2_set_ccr1l
+ *  9EC1  rmw_and
  *  9EC8  noop_4
- *  9ECF  tim4_clear_egr
+ *  9ECF  tim2_period_init
  *  9ED6  tx_index_ret
  *  9EDC  iwdg_refresh
  *  9EE1  iwdg_kick_cc
@@ -299,13 +299,13 @@ void VEC00_RESET(void)
 {
   short sVar1;
   
-  _DAT_03fe = 0x9c89;
+  reset_sp = 0x9c89;
   sVar1 = ret_one();
   if (sVar1 != 0) {
-    _DAT_03fe = 0x9c8f;
+    reset_sp = 0x9c8f;
     init_walker();
   }
-  _DAT_03fe = 0x9c92;
+  reset_sp = 0x9c92;
   system_init();
   iwdg_reload();
   return;
@@ -336,7 +336,7 @@ void message_post_loop(void)
     if (9 < tmp_b7) break;
     _tmp_b6 = _tmp_b6 & 0xff;
     msg_post();
-    puVar3 = (undefined1 *)flash_write_key_ae(_tmp_b6);
+    puVar3 = (undefined1 *)queue_slot_ptr(_tmp_b6);
     if ((bool)(extraout_CC >> 1 & 1)) {
       *puVar3 = 1;
       _tmp_b0 = (undefined2 *)(puVar3 + 1);
@@ -410,7 +410,7 @@ char mode_convert(char param_1)
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Type-7 config mode handler (Roadstm8true, 2026-11-09).
    Called from frame_handler with 12 nibbles (abStack_b) expanded from the 6-byte payload.
-   Copies the block via sub_9b92, then loops calling mode_handler logic per channel.
+   Copies the block via block_copy, then loops calling mode_handler logic per channel.
    See docs/hidden_commands.md. */
 
 void config_mode_handler(void)
@@ -569,8 +569,8 @@ void config_mode_handler(void)
 
 /* Mode handler (Roadstm8true, 2026-11-09).
    Converts incoming mode byte 1/3/5/7 -> internal 0/2/4/8 (off/toggle/momentary/pulse).
-   Dispatches on internal mode to sub_84b3/sub_84b9/sub_84c5/sub_8485 + sub_848b + sub_828d.
-   See docs/protocol.md (section "Stock channel modes"). Timing constants still need bench measurement. */
+   Dispatches on internal mode to mode_off_entry/toggle_head/mode_head/channel_pair_get + channel_index_get + channel_state_write.
+   See docs/mode_timing.md. Timing constants still need bench measurement. */
 
 void mode_handler(short param_1,undefined1 param_2)
 
@@ -759,7 +759,7 @@ void channel_step_b(undefined1 param_1)
 void tim2_path_set(void)
 
 {
-  tim2_set_ccr1l(&PD_ODR);
+  rmw_and(&PD_ODR);
   return;
 }
 
@@ -768,7 +768,7 @@ void tim2_path_set(void)
 void tim2_path_set_b(void)
 
 {
-  tim2_set_ccr1l(&PD_ODR);
+  rmw_and(&PD_ODR);
   return;
 }
 
@@ -1274,7 +1274,7 @@ void channel_advance(void)
 // FUNC 0x851a  frame_handler
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Frame handler. Validates 11-byte checksum, dispatches on DAT_021f (type).
+/* Frame handler. Validates 11-byte checksum, dispatches on the frame type field.
    Type 7: master power/parameter (6 bytes -> 12 nibbles at 0x9E85, post 0x1700).
    Type 8: button bitmask (button_bitmask_handler, post 0x1800).
    Type 0x0B: cmd_0b_handler. Type 0x0D: cmd_0d_handler.
@@ -1422,14 +1422,14 @@ void cmd_0b_handler(void)
 // FUNC 0x8689  cmd_0d_handler
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Hidden command 0x0D handler. Type 0 -> _DAT_02cb=10000; Type 1 -> reset state, DAT_0206=10. */
+/* Hidden command 0x0D handler. Type 0 -> msg_timeout=10000; Type 1 -> reset state, cfg_value=10. */
 
 void cmd_0d_handler(void)
 
 {
   tmp_b0 = frame_flag;
   if (frame_flag == '\0') {
-    _DAT_02cb = 10000;
+    msg_timeout = 10000;
     noop_c();
     return;
   }
@@ -1549,8 +1549,8 @@ void eeprom_sequencer(void)
 
 // FUNC 0x8700  mode_tick
 
-/* Mode tick. DAT_02d7 divider (every 3rd pass), toggles pin_state_d3/d4 via
-   sub_8811/8814/881c. Blink/pulse state advance. */
+/* Mode tick. mode_div (every 3rd pass), toggles pin_state_d3/d4 via
+   noop_2/8814/881c. Blink/pulse state advance. */
 
 char mode_tick(void)
 
@@ -1861,7 +1861,7 @@ void state_dispatch(void)
           channel_index_set();
           return;
         }
-        if (_DAT_02cb == 0) {
+        if (msg_timeout == 0) {
           param_block_apply();
           return;
         }
@@ -1872,7 +1872,7 @@ void state_dispatch(void)
         }
         acc_calc = 1;
         tmp_b0 = 0;
-        sVar2 = _DAT_02cb;
+        sVar2 = msg_timeout;
         break;
       }
     }
@@ -1946,7 +1946,7 @@ LAB_897e:
     }
     tx_index_ret();
   } while (!(bool)(extraout_CC_17 >> 1 & 1));
-  _DAT_02cb = 0;
+  msg_timeout = 0;
   to_button_frame();
   return;
 }
@@ -1980,7 +1980,7 @@ void msg_alloc_loop(void)
     }
     tx_index_ret();
   } while (!(bool)(extraout_CC_02 >> 1 & 1));
-  _DAT_02cb = 0;
+  msg_timeout = 0;
   to_button_frame();
   return;
 }
@@ -2725,7 +2725,7 @@ void init_pair(short param_1)
 // FUNC 0x8e5c  system_init
 
 /* System init. Calls uart1_init_2400, clk_set_divider, uart1_set_control_bits,
-   sub_9b72 (output init), enables interrupts, posts message 0x1B. */
+   pa_outputs_init (output init), enables interrupts, posts message 0x1B. */
 
 void system_init(void)
 
@@ -2834,9 +2834,9 @@ void link_service_loop(void)
 // FUNC 0x8f7e  uart1_configure
 
 /* UART1 configure (Roadstm8true, 2026-11-09). Caller is uart1_init_2400 at 0x9B17.
-   Caller sets DAT_0007=0x0C, DAT_0006=0x80, DAT_0005=0, DAT_0004=0, DAT_0002=0x960 (2400)
-   then CALLs this function. BRR1/BRR2 split via sub_99dc (>>4). Live value: 2400 baud
-   (BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/protocol.md (section "Stock channel modes"). */
+   Caller sets uart_mode=0x0C, uart_ctrl_c=0x80, uart_ctrl_b=0, uart_ctrl_a=0, uart_baud=0x960 (2400)
+   then CALLs this function. BRR1/BRR2 split via shr_4 (>>4). Live value: 2400 baud
+   (BRR1=0xA0, BRR2=0x1A, divider 6666). See docs/mode_timing.md. */
 
 void uart1_configure(void)
 
@@ -3190,7 +3190,7 @@ void save_ptr_0(void)
   tmp_b0 = tmp_ptr3._0_1_;
   tmp_b1 = (undefined1)tmp_ptr3;
   tmp_w0._0_1_ = ch_edit;
-  tmp_w0._1_1_ = DAT_000f;
+  tmp_w0._1_1_ = reg_save_0;
   return;
 }
 
@@ -3226,7 +3226,7 @@ void save_ptr_3(void)
   tmp_ptr3._0_1_ = tmp_b0;
   tmp_ptr3._1_1_ = tmp_b1;
   ch_edit = tmp_w0._0_1_;
-  DAT_000f = (undefined1)tmp_w0;
+  reg_save_0 = (undefined1)tmp_w0;
   return;
 }
 
@@ -3253,30 +3253,30 @@ void state_table_init(void)
     cVar1 = cVar1 + -1;
   } while (cVar1 != '\0');
   sched_cb_b = 1;
-  _DAT_01d5 = 0;
-  _DAT_01d7 = 0x4b;
-  _DAT_01d9 = 0;
-  _DAT_01db = 0;
-  _DAT_01dd = tx_queue_drain;
+  sched_cnt_4 = 0;
+  sched_cnt_5 = 0x4b;
+  sched_cnt_6 = 0;
+  sched_cnt_7 = 0;
+  sched_drain_fn = tx_queue_drain;
   sched_cb_a = 1;
-  _DAT_01ca = 0;
-  _DAT_01cc = 0x32;
-  _DAT_01ce = 0;
-  _DAT_01d0 = 0;
-  _DAT_01d2 = mode_tick;
+  sched_cnt_0 = 0;
+  sched_cnt_1 = 0x32;
+  sched_cnt_2 = 0;
+  sched_cnt_3 = 0;
+  sched_tick_fn = mode_tick;
   tmp_w0 = (ushort)cfg_value;
   _tmp_b0 = (undefined *)0x0;
   eeprom_tx = cfg_value != 0;
   store_pair_0(&UNK_01bf);
   _sched_block = 0;
-  _DAT_01c5 = 0;
-  _DAT_01c7 = channels_apply;
-  DAT_01ea = 1;
-  _DAT_01eb = 0;
-  _DAT_01ed = 10;
-  _DAT_01ef = 0;
-  _DAT_01f1 = 0;
-  _DAT_01f3 = tx_index;
+  sched_entry_cnt = 0;
+  sched_apply_fn = channels_apply;
+  sched_active = 1;
+  sched_cnt_8 = 0;
+  sched_cnt_9 = 10;
+  sched_cnt_10 = 0;
+  sched_cnt_11 = 0;
+  sched_tx_idx_ptr = tx_index;
   return;
 }
 
@@ -3416,7 +3416,7 @@ LAB_9348:
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* TX queue drain. Loops msg_post/msg_peek over 0..9, decrements counts,
-   then scans DAT_02ce queue for zero-count messages. */
+   then scans tx_msg_queue queue for zero-count messages. */
 
 void tx_queue_drain(void)
 
@@ -3560,10 +3560,10 @@ void clk_set_divider(void)
   _tmp_b0 = (undefined *)0x21;
   memset_like(&frame_base);
   boot_chain();
-  load_pair_0(&DAT_01f5);
+  load_pair_0(&clk_cfg_ptr);
   if (_tmp_b0 != &UNK_0134 || tmp_w0 != -0x4bdf) {
-    _DAT_01f5 = &UNK_0134;
-    _DAT_01f7 = 0xb421;
+    clk_cfg_ptr_save = &UNK_0134;
+    clk_cfg_magic = 0xb421;
     cfg_value = 10;
     master_off = 1;
     puVar2 = &ch_state_base;
@@ -3576,7 +3576,7 @@ void clk_set_divider(void)
     reset_state();
     eeprom_rd_a();
   }
-  puVar2 = &DAT_02a0;
+  puVar2 = &ch_state_table;
   cVar1 = '\f';
   do {
     *puVar2 = 0;
@@ -3592,8 +3592,8 @@ void clk_set_divider(void)
 
 // FUNC 0x94d6  outputs_init
 
-/* Outputs init. GPIO_Init on PD (0x40), tim2_set_ccr1l twice, then iterates the
-   12-entry pin table at DAT_02df calling sub_9541 + FUN_9f12 per channel. */
+/* Outputs init. GPIO_Init on PD (0x40), rmw_and twice, then iterates the
+   12-entry pin table at pin_table calling gpio_init + pin_and per channel. */
 
 void outputs_init(void)
 
@@ -3606,8 +3606,8 @@ void outputs_init(void)
   gpio_init(&PD_ODR);
   tmp_b0 = 0x40;
   gpio_init(0x10,&PD_ODR);
-  pin_state_d3 = tim2_set_ccr1l(8,&PD_ODR);
-  pin_state_d4 = tim2_set_ccr1l(0x10,&PD_ODR);
+  pin_state_d3 = rmw_and(8,&PD_ODR);
+  pin_state_d4 = rmw_and(0x10,&PD_ODR);
   tmp_ptr = (undefined2 *)&pin_table;
   tmp_ptr3._0_1_ = '\f';
   do {
@@ -3626,7 +3626,7 @@ void outputs_init(void)
 
 // FUNC 0x9541  gpio_init
 
-/* GPIO_Init helper (SPL-style). Mode bits 0x80/0x10 in DAT_0000 select
+/* GPIO_Init helper (SPL-style). Mode bits 0x80/0x10 in GPIO register select
    ODR/DDR/CR1/CR2 read-modify-write via the port pointer. */
 
 void gpio_init(byte param_1,byte *param_2)
@@ -3799,8 +3799,8 @@ undefined2 tim4_isr(undefined2 param_1)
     frame_ready = 1;
     tim2_off(cVar1);
   }
-  if (_DAT_02cb != 0) {
-    _DAT_02cb = _DAT_02cb + -1;
+  if (msg_timeout != 0) {
+    msg_timeout = msg_timeout + -1;
   }
   tim4_ier_set_2(1);
   save_pair_1();
@@ -3926,10 +3926,10 @@ void uart1_set_control_bits(char param_1)
     if (((tmp_w0._0_1_ != '\x11') && (tmp_w0._0_1_ != '\x12')) && (tmp_w0._0_1_ != '\x17')) {
       return;
     }
-    DAT_7f75 = DAT_7f75 & tmp_b4 | tmp_b0;
+    uart_ctrl_mask_b = uart_ctrl_mask_b & tmp_b4 | tmp_b0;
     return;
   }
-  DAT_7f73 = DAT_7f73 & tmp_b4 | tmp_b0;
+  uart_ctrl_mask_a = uart_ctrl_mask_a & tmp_b4 | tmp_b0;
   return;
 }
 
@@ -4045,8 +4045,8 @@ void pin_table_apply(void)
 // FUNC 0x98b6  baud_lookup
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Clock/baud lookup. Reads CLK_CMSR, looks up sub_9ef5 table by CKDIVR.
-   Returns DAT_0002=0x2400 (2400 baud) for the default clock, 0xF400 otherwise. */
+/* Clock/baud lookup. Reads CLK_CMSR, looks up table_lookup table by CKDIVR.
+   Returns uart_baud=0x2400 (2400 baud) for the default clock, 0xF400 otherwise. */
 
 void baud_lookup(void)
 
@@ -4089,7 +4089,7 @@ void clk_gate_enable_1(void)
 // FUNC 0x9927  eeprom_write
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* EEPROM write helper. Called from sub_86e8 and cmd_0b_handler. */
+/* EEPROM write helper. Called from eeprom_sequencer and cmd_0b_handler. */
 
 void eeprom_write(void)
 
@@ -4224,8 +4224,8 @@ undefined2 ext0_pa1_isr(undefined2 param_1)
 void tim4_reset(void)
 
 {
-  tim4_clear_egr(0);
-  pin_bit_b(0);
+  tim2_period_init(0);
+  tim2_period_hi(0);
   tmp_b0 = 1;
   tim2_ier_write(1);
   tim2_cr1_or_80(1);
@@ -4365,7 +4365,7 @@ void state_clear(undefined1 *param_1)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* UART init for 2400 baud (Roadstm8true, 2026-11-09).
-   Sets the UART control masks and DAT_0002=0x960, then CALLs uart1_configure (0x8F7E).
+   Sets the UART control masks and uart_baud=0x960, then CALLs uart1_configure (0x8F7E).
    Called from 0x8E9B. This resolves the formerly open static-caller question. */
 
 undefined1 uart1_init_2400(void)
@@ -4527,7 +4527,7 @@ void init_walker(void)
 {
   code *pcVar1;
   
-  for (pcVar1 = (code *)&DAT_9b5c; pcVar1 != pa_outputs_init;
+  for (pcVar1 = (code *)&walker_entry; pcVar1 != pa_outputs_init;
       pcVar1 = (code *)func_0x0000eb80(pcVar1 + 2)) {
   }
   return;
@@ -4561,11 +4561,11 @@ void msg_alloc(byte param_1)
   return;
 }
 
-// FUNC 0x9c76  flash_write_key_ae
+// FUNC 0x9c76  queue_slot_ptr
 
-/* FLASH key 0xAE -> FLASH_KEYREG_A (0x5062), STM8 mass-key idiom. */
+/* Queue slot pointer helper used by message_post_loop (call at 0x80A8). */
 
-void flash_write_key_ae(void)
+void queue_slot_ptr(void)
 
 {
   short sVar1;
@@ -4575,24 +4575,24 @@ void flash_write_key_ae(void)
   return;
 }
 
-// FUNC 0x9c82  flash_write_key_56
+// FUNC 0x9c82  reset_init
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* FLASH key 0x56 -> FLASH_KEYREG_B (0x5064), STM8 mass-key idiom. */
+/* Reset/init entry: SP=0x03FF, calls ret_one, init_walker, system_init. */
 
-void flash_write_key_56(void)
+void reset_init(void)
 
 {
   short sVar1;
   
-  _DAT_03fe = 0x9c89;
+  reset_sp = 0x9c89;
   sVar1 = ret_one();
   if (sVar1 != 0) {
-    _DAT_03fe = 0x9c8f;
+    reset_sp = 0x9c8f;
     init_walker();
   }
-  _DAT_03fe = 0x9c92;
+  reset_sp = 0x9c92;
   system_init();
   iwdg_reload();
   return;
@@ -4618,7 +4618,7 @@ void flash_unlock(void)
   flash_and_505a(0);
   flash_key_dispatch();
   tmp_ptr2._0_1_ = 0;
-  tmp_ptr = &DAT_01f5;
+  tmp_ptr = &clk_cfg_ptr;
   return;
 }
 
@@ -5045,9 +5045,11 @@ void itc_clear(void)
   return;
 }
 
-// FUNC 0x9e61  pin_bit_a
+// FUNC 0x9e61  tim2_duty_write
 
-void pin_bit_a(void)
+/* TIM2 duty write: TIM2_CCR1H/L from XH/XL. */
+
+void tim2_duty_write(void)
 
 {
   undefined1 in_XH;
@@ -5058,9 +5060,11 @@ void pin_bit_a(void)
   return;
 }
 
-// FUNC 0x9e6a  pin_bit_b
+// FUNC 0x9e6a  tim2_period_hi
 
-void pin_bit_b(void)
+/* TIM2 period top: TIM2_PSCR/ARRH from XH/XL. */
+
+void tim2_period_hi(void)
 
 {
   undefined1 in_XH;
@@ -5163,11 +5167,11 @@ void pin_or(byte param_1,byte *param_2)
   return;
 }
 
-// FUNC 0x9ec1  tim2_set_ccr1l
+// FUNC 0x9ec1  rmw_and
 
-/* Write TIM2 CCR1 low byte (PWM duty helper). */
+/* GPIO RMW helper: *(X+1) & param. Used by outputs_init for PD bits. */
 
-byte tim2_set_ccr1l(byte param_1,short param_2)
+byte rmw_and(byte param_1,short param_2)
 
 {
   tmp_b0 = param_1;
@@ -5182,13 +5186,15 @@ void noop_4(void)
   return;
 }
 
-// FUNC 0x9ecf  tim4_clear_egr
+// FUNC 0x9ecf  tim2_period_init
 
-void tim4_clear_egr(undefined1 param_1)
+/* TIM2 period init: writes TIM2_ARRL, then calls tim2_duty_write. */
+
+void tim2_period_init(undefined1 param_1)
 
 {
   TIM2_ARRL = param_1;
-  pin_bit_a();
+  tim2_duty_write();
   return;
 }
 
