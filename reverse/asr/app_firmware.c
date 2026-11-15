@@ -337,7 +337,7 @@ undefined4 flash_program_page(undefined4 param_1,int param_2,undefined4 *param_3
     flash_wait_ready();
     flash_set_write_mode();
     uVar5 = uVar6 - 0x20;
-    *(undefined4 *)(iVar2 + 0x14) = flash_const_1002502;
+    *(undefined4 *)(iVar2 + 0x14) = flash_prog_cmd_word;
     *(int *)(iVar2 + 0x10) = param_2 + -1;
     *(undefined4 *)(iVar2 + 0x18) = param_1;
     while ((uVar6 != 0 && (uVar5 != uVar6))) {
@@ -970,7 +970,7 @@ void hardfault_handler(void)
 void boot_jump_to_app(undefined4 param_1)
 
 {
-  *(undefined4 *)(misc_const_e000e104 + 0x7c) = 0xffffffff;
+  *(undefined4 *)(nvic_iser1 + 0x7c) = 0xffffffff;
   *(undefined4 *)(lit_sys_scb_cpuid + 8) = param_1;
   call_app_reset_vector();
   return;
@@ -1776,9 +1776,9 @@ void uart_pins_config_alt(void)
   uStack_8 = 0;
   disableIRQinterrupts();
   iVar1 = reg_read_indexed(1);
-  uVar3 = misc_const_2e408c04;
+  uVar3 = syscfg_uart_word_a;
   if (iVar1 << 1 < 0) {
-    uVar3 = misc_const_6e408c04;
+    uVar3 = syscfg_uart_word_b;
   }
   reg_write_indexed(1,uVar3);
   uVar2 = reg_read_indexed(1);
@@ -1835,9 +1835,9 @@ void uart_pins_config(void)
   
   disableIRQinterrupts();
   iVar1 = reg_read_indexed(1);
-  uVar3 = misc_const_2e408c04;
+  uVar3 = syscfg_uart_word_a;
   if (iVar1 << 1 < 0) {
-    uVar3 = misc_const_6e408c04;
+    uVar3 = syscfg_uart_word_b;
   }
   reg_write_indexed(1,uVar3);
   uVar2 = reg_read_indexed(1);
@@ -1895,20 +1895,20 @@ void uart_pinmux_select(void)
     return;
   }
   iVar3 = *(int *)(lit_ptr_ram_20030000_1784 + 0xc);
-  if (iVar3 == misc_const_27da826e) {
+  if (iVar3 == uart_pingroup_id_a) {
     uVar4 = 0;
   }
   else {
-    if (iVar3 == misc_const_6932842f) goto LAB_10001766;
-    if (iVar3 != misc_const_efa576ca) {
+    if (iVar3 == uart_pingroup_id_b) goto LAB_10001766;
+    if (iVar3 != uart_pingroup_id_c) {
       if (uVar2 == 0) {
-        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = misc_const_27da826e;
+        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = uart_pingroup_id_a;
       }
       else if (uVar2 == 1) {
-        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = misc_const_6932842f;
+        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = uart_pingroup_id_b;
       }
       else {
-        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = misc_const_efa576ca;
+        *(int *)(lit_ptr_ram_20030000_1784 + 0xc) = uart_pingroup_id_c;
       }
       uart_pins_config();
       return;
@@ -1959,7 +1959,7 @@ void uart_init(int param_1,undefined4 param_2)
   
   puVar1 = iomux_func_sel_0;
   if (param_1 == 0x40000000) {
-    uVar2 = misc_const_ffff00ff & *iomux_func_sel_0;
+    uVar2 = mask_clear_bits8_15_24_31 & *iomux_func_sel_0;
     uVar3 = 0x1100;
   }
   else if (param_1 == uart1_base_2) {
@@ -2202,7 +2202,7 @@ uint crc16_ccitt(byte *param_1,int param_2)
     do {
       uVar3 = uVar4 << 1;
       if ((short)uVar4 < 0) {
-        uVar3 = uVar3 ^ crc_const_1021;
+        uVar3 = uVar3 ^ crc16_poly;
       }
       uVar4 = uVar3 & 0xffff;
       iVar2 = iVar2 + -1;
@@ -2251,15 +2251,15 @@ void flash_erase_range(uint param_1,int param_2,undefined4 param_3,undefined4 pa
     }
     if (((uVar3 & 0xffff) == 0) && (0xf000 < (int)uVar5)) {
       uVar4 = 0x10000;
-      uVar2 = flash_const_25d8;
+      uVar2 = flash_erase_cmd_64k;
     }
     else if (((uVar3 & 0x7fff) == 0) && (0x7000 < (int)uVar5)) {
       uVar4 = 0x8000;
-      uVar2 = flash_const_2552;
+      uVar2 = flash_erase_cmd_32k;
     }
     else {
       uVar4 = 0x1000;
-      uVar2 = fmt_const_2520;
+      uVar2 = flash_erase_cmd_4k;
     }
     iVar6 = 0;
     bVar1 = (bool)isCurrentModePrivileged();
@@ -2388,7 +2388,7 @@ void boot_map_exec_region(uint param_1,int param_2)
 {
   *exec_region_attr = lit_code_10048000;
   *exec_region_base = param_1 & 0xfffffc00;
-  *exec_region_dst = param_2 + lit_mask_000003ff & misc_const_fffc00 | 0x1000000;
+  *exec_region_dst = param_2 + lit_mask_000003ff & exec_region_align_mask | 0x1000000;
   return;
 }
 
@@ -10598,7 +10598,7 @@ int log_range_search(int param_1,int param_2,int param_3)
     uVar2 = param_2 + *(int *)(iVar1 + 8);
     for (uVar3 = uVar2 & 0xfffff000; uVar3 <= ((param_3 + uVar2) - 1 & 0xfffff000);
         uVar3 = uVar3 + 0x1000) {
-      iVar1 = call_table_1(fmt_const_2520_2,uVar3);
+      iVar1 = call_table_1(flash_erase_cmd_4k_2,uVar3);
       if (iVar1 != 0) {
         return iVar1;
       }
@@ -13250,7 +13250,7 @@ undefined4 tick_ms_read(void)
   undefined4 local_28;
   undefined1 local_24;
   
-  *(undefined4 *)(misc_const_e000e104_2 + 0x7c) = 0x400000;
+  *(undefined4 *)(nvic_iser1_2 + 0x7c) = 0x400000;
   local_28 = 0;
   local_30 = 0;
   local_34 = 0;
@@ -15965,7 +15965,7 @@ void blink_reg_init(void)
   *puVar1 = *puVar1 | 0x800;
   *puVar1 = mask_clear_bits12_15 & *puVar1;
   *puVar1 = *puVar1 | 0x8000;
-  uVar2 = blink_const_0902;
+  uVar2 = blink_reg_val_902;
   puVar1 = iomux_blink_reg;
   *iomux_blink_reg = *iomux_blink_reg & 0xfffff000;
   *puVar1 = *puVar1 | uVar2;
@@ -15979,7 +15979,7 @@ void blink_reg_init(void)
 void blink_state_init(void)
 
 {
-  *iomux_blink_reg_2 = blink_const_0602;
+  *iomux_blink_reg_2 = blink_reg_val_602;
   *blink_ctrl_b = *blink_ctrl_b & 0xffffff | 0x12000000;
   *iomux_func_sel_1_4 = blink_const_fff0ffff & *iomux_func_sel_1_4 | 0x80000;
   *iomux_func_sel_2_2 = *iomux_func_sel_2_2 & 0xffffff0f | 0x80;
@@ -17812,9 +17812,9 @@ void uart3_init_2(void)
   
   disableIRQinterrupts();
   iVar1 = syscfg_read(1);
-  uVar3 = misc_const_2e408c04_2;
+  uVar3 = syscfg_uart_word_a_2;
   if (iVar1 << 1 < 0) {
-    uVar3 = misc_const_6e408c04_2;
+    uVar3 = syscfg_uart_word_b_2;
   }
   syscfg_write(1,uVar3);
   uVar2 = syscfg_read(1);
@@ -17915,7 +17915,7 @@ uint uart3_init_5(uint param_1,uint param_2)
     param_2 = param_2 << 1;
     param_1 = param_1 * 2 + (uint)((param_2 & 0x100) != 0);
     if ((param_1 & 0x10000) != 0) {
-      param_1 = param_1 ^ crc_const_1021_2;
+      param_1 = param_1 ^ crc16_poly_2;
     }
   } while ((param_2 & 0x10000) == 0);
   return param_1 & 0xffff;
